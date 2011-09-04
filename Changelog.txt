@@ -1,0 +1,168 @@
+1.3.17:
+	- GMs now have blue chat color.
+	- Spectator mode 
+
+1.3.16:
+	- Spectate Mode added.
+	- Invisibility check now also fires on PlayerTeleport event.
+
+1.3.15:
+	- Player with invisibility turned on now also turns invisible after relog.
+	- Player now doesnt turn invisible to himself when he relogs.
+
+1.3.14:
+	- GMs now can turn any player invisible for others.
+	- Space to /gm godmode chat message added.
+
+1.3.13:
+	- The way Fire Protection works has been changed.
+	- BlockIgniteEvent log is now only logging events caused by flint and steel.
+	- /unlock command bug has been fixed.
+
+1.3.11:
+	- Login system is no longer case-sensitive.
+	- Chest buffer size increased from 500 to 10000.
+	- Plugin updated for Bukkit build 804.
+	
+1.3.10:
+	- Wooden Planks can now longer burn.
+	- All ignite attempts are now logged.
+	- GMs can now open and unlock any chest regardless on  who is the chest owner.
+	
+1.3.9:
+	- Prices of all items in shop reduced.
+	- Obsidian added to shop item list.
+	- Mob Spawner added to shop item list.
+	- Plugin updated for bukkit build 791.
+	- All BlockBreak and BlockPlace events are now logged.
+
+1.3.8:
+	- Coordinations in gm tp command fixed.
+	- Dirt and Sandstone added to /vip item list.
+
+1.3.7:
+	- onRedstoneChange event also prints coordinates in debug mode.
+	- New GM command for teleportation added.
+	
+1.3.6:
+	- Player is now unable to leave arena for 1 minute instead of 10 seconds after entering.
+	- New Logging system added.
+	- Server now logs all Block Break and Block Place events.
+	
+1.3.5:
+	- All commands moved in new class.
+	- GM Command for immortality added.
+	- VIP command can now only be used after logging in.
+	- GM Command for speed increase added.
+
+1.3.4:
+	- VIP Command added to help.
+	- VIP display name is now updated when status changes, not just on PlayerJoin.
+	- Default commands are no longer usable for VIP.
+	
+1.3.3:
+	- VIP members now also have "VIP'" infront of their name in chat.
+	- New /VIP command added.
+	- VIP can now also teleport to their bed, world spawn, and places they teleported from.
+	
+1.3.2:
+	- VIP players now also have gold name in chat, not just the message.
+	- Changed time now also can be reset back to normal with /time reset.
+
+1.3.1:
+	- VIP Commands can now be only used after Player logs in.
+	- Players with VIP status now can use give command for cobblestone, sand and stone.
+	
+1.3.0
+	- Player now can become VIP.
+	- Players with VIP status now can use teleport command to teleport themselves.
+	- Players with VIP status now can use time command.
+	- Players with VIP status have gold chat color.
+	- Players with VIP status appear gold in Who command.
+
+1.2.2:
+	- Diamond shop price reduced by 50.
+	- Gold ingot shop price reduced by 50.
+	- GM Command for Block Arrays Generation added.
+	
+1.2.1:
+	- Currency Data for a new player are created when player logs in, not when uses /shop command.
+	- Currency Data are now also saved whenever player leaves the server.
+
+1.2.0:
+	- New Shop Command has been added.
+	- Every Player now has Virtual Currency.
+	- Players can now buy items in shop for their virtual currency in shop.
+	- Console now logs all commands players use.
+	- Added log message to all Loading methods.
+	- Added log message to all Saving methods.
+
+1.1.8:
+	- Hunter's regen interval increased to 1 minute.
+	- Miner's drop chances decreased.
+	- Hunter's Increased Movement has been removed.
+	- Miner's bonus drops decreased.
+
+1.1.7:
+	- Console Debug Info completed for all events.
+	- New Debug command added.
+	
+1.1.6:
+	- Hunters now dont need to relog to start regenerating Hp after they choose their profession.
+	- Server Announcement interval increased on 5 minutes.
+	- Using /register command without any args now shows an error message.
+	- Fixed null pointer exception in Register command.
+	- Server Announcement Disable Command now works properly.
+
+1.1.5:
+	- Updated for new Bukkit version (build 999).
+	- All getFace methods replaced with getRelative.
+
+1.1.4:
+	- Another bug fix of null pointer exception in Player Interact Event.
+
+1.1.3:
+	- Fixed bug with null pointer exception in Player Interact Event.
+	- GMs now can destroy any blocks regardless on their level.
+
+1.1.2:
+	- Server announcement is now disabled by default.
+	- Server announcement now can be changed with /gm announce command.
+	
+1.1.1:
+	- Plugin now also displays its version when loaded.
+	- Griefing system now works properly.
+
+1.1.0:
+	- Players below level 5 are not allowed to destroy some types of blocks.
+	- GMs now see gm command in help.
+	- Players below level 10 cannot use Flint and Steel and Bucket with Lava.
+	- Player now gets teleported while not logged in every 4 seconds instead of 10.
+
+1.0.7:
+	- Command for changing World Spawn added.
+	- Server Message Added.
+	
+1.0.6:
+	- Chests can no longer explode.
+	
+1.0.5:
+	- GM Login Error Message is now only shown to GM accounts.
+	- XP Gain from Spiders increased.
+	- Leave Disable duration after a kill in arena increased to one minute.
+	- When Player respawns before logging in, his location, where he will be teleported to is updated.
+	- Hunters now dont regen HP when they ware dead.
+	- Player can now only use /arena leave in arena.
+	- Arena stats now work properly.
+	- Arena stats are a little bit more informative
+	
+1.0.4:
+	- Fixed HP Regen bug in arena world.
+	- GM Commands can now only be used after GM Logs in.
+	
+1.0.3:
+	- Player can no longer leave for a certain amount of times after he joins arena or kills a player.
+	- Who command now also displays a world that player is currently in.
+	- Monsters and Animals can no longer spawn in arena world.
+	- Miner now gets additional Diamond, instead of Diamond ore when mining Diamond Ore
+	- Pvp Stats added
