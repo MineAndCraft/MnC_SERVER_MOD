@@ -117,7 +117,7 @@ public class GugaPlayerListener extends PlayerListener
 		}*/
 		if (p.isOp())
 		{
-			e.setMessage(ChatColor.DARK_BLUE + e.getMessage());
+			e.setMessage(ChatColor.BLUE + e.getMessage());
 		}
 		if (plugin.FindPlayerCurrency(p.getName()).IsVip())
 		{
@@ -177,7 +177,7 @@ public class GugaPlayerListener extends PlayerListener
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{
-			spec.CloneInventory();
+			//spec.CloneInventory();
 		}
 	}
 	public void onPlayerQuit(PlayerQuitEvent e)
@@ -294,7 +294,7 @@ public class GugaPlayerListener extends PlayerListener
 			GugaSpectator spec;
 			if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 			{
-				spec.CloneInventory();
+				//spec.CloneInventory();
 			}
 			GugaProfession prof = plugin.professions.get(p.getName());
 			if (prof == null)

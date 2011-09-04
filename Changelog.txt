@@ -1,6 +1,12 @@
+1.3.18:
+	- Plugin updated for Bukkit 821 and CraftBukkit 1084.
+	- Minor test changes to Spectator mode.
+	- GM color changed from DARK_BLUE to BLUE.
+
 1.3.17:
 	- GMs now have blue chat color.
-	- Spectator mode enhanced and now fully working.
+	- Spectator mode updated <still in testing phase>.
+	
 1.3.16:
 	- Spectator Mode added.
 	- Invisibility check now also fires on PlayerTeleport event.

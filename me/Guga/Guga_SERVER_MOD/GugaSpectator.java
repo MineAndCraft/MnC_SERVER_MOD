@@ -18,7 +18,12 @@ public class GugaSpectator
 		spectatorBaseLocation = spectator.getLocation();
 		spectatorInventory = spectator.getInventory().getContents();
 		Teleport();
-		Invis();
+		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			public void run()
+			{
+				Invis();
+			}
+		}, 5);
 	}
 	public void SpectateStop()
 	{
@@ -53,6 +58,7 @@ public class GugaSpectator
 	}
 	public void Invis()
 	{
+		UnInvis();
 		GugaCommands.InvisPlayerForAll(spectator);
 		GugaCommands.InvisPlayerTo(target, spectator);
 	}
@@ -65,6 +71,5 @@ public class GugaSpectator
 	private Player target;
 	private Location spectatorBaseLocation;
 	private ItemStack[] spectatorInventory;
-	@SuppressWarnings("unused")
 	private Guga_SERVER_MOD plugin;
 }
