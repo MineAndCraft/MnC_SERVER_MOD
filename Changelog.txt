@@ -1,9 +1,8 @@
 1.3.17:
 	- GMs now have blue chat color.
-	- Spectator mode 
-
+	- Spectator mode enhanced and now fully working.
 1.3.16:
-	- Spectate Mode added.
+	- Spectator Mode added.
 	- Invisibility check now also fires on PlayerTeleport event.
 
 1.3.15:
