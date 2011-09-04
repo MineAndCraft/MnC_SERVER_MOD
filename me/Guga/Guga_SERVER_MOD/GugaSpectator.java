@@ -1,5 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +17,7 @@ public class GugaSpectator
 	}
 	public void SpectateStart()
 	{
+		spectatorList.add(spectator);
 		spectatorBaseLocation = spectator.getLocation();
 		spectatorInventory = spectator.getInventory().getContents();
 		Teleport();
@@ -31,6 +34,7 @@ public class GugaSpectator
 		{
 			spectator.getInventory().setContents(spectatorInventory);
 		}
+		spectatorList.remove(spectator);
 		spectator.teleport(spectatorBaseLocation);
 		UnInvis();
 	}
@@ -71,5 +75,7 @@ public class GugaSpectator
 	private Player target;
 	private Location spectatorBaseLocation;
 	private ItemStack[] spectatorInventory;
+	
+	public static ArrayList<Player> spectatorList = new ArrayList<Player>();
 	private Guga_SERVER_MOD plugin;
 }

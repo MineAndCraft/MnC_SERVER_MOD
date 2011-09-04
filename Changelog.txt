@@ -1,3 +1,7 @@
+1.3.19:
+	- Players in spectator now cant pickup items.
+	
+
 1.3.18:
 	- Plugin updated for Bukkit 821 and CraftBukkit 1084.
 	- Minor test changes to Spectator mode.
