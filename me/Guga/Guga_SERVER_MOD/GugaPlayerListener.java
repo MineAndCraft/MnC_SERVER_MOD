@@ -108,20 +108,27 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
 		}
-		/*if (e.getMessage().equals(".ILoveKatyPerry"))
-		{
-			ItemStack tnt = new ItemStack(Material.TNT, 10);
-			PlayerInventory pInventory = p.getInventory();
-			pInventory.addItem(tnt);
-			e.setCancelled(true);
-		}*/
 		if (p.isOp())
 		{
+			if (plugin.acc.UserIsLogged(p))
+			{
 			e.setMessage(ChatColor.BLUE + e.getMessage());
+			}
+			else
+			{
+				e.setCancelled(true);
+			}
 		}
 		if (plugin.FindPlayerCurrency(p.getName()).IsVip())
 		{
-			e.setMessage(ChatColor.GOLD + e.getMessage());
+			if (plugin.acc.UserIsLogged(p))
+			{
+				e.setMessage(ChatColor.GOLD + e.getMessage());
+			}
+			else
+			{
+				e.setCancelled(true);
+			}
 		}
 		/*else if(e.getMessage().contains(".Ownage"))
 		{

@@ -1,7 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
