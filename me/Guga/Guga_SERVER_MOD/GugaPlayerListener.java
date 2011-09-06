@@ -28,6 +28,8 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		GugaNPC npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
+		npc.GenerateNPC();
 		GugaCommands.InvisAllPlayersFor(p);
 		if (GugaCommands.invis.contains(p.getName().toLowerCase()))
 		{
