@@ -58,6 +58,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvent(Event.Type.BLOCK_IGNITE, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.BLOCK_BURN, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_TELEPORT, pListener, Event.Priority.Normal, this);
+		pManager.registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, pListener, Event.Priority.Normal, this);
 		GugaCommands.GetPlugin(this);
 		if (getServer().getWorld("arena") == null)
 		{
