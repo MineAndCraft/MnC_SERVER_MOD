@@ -506,7 +506,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.3.20";
+	public static final String version = "1.4.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 	private int welcomeThread;
