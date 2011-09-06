@@ -29,8 +29,8 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
-		GugaNPC npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
-		npc.GenerateNPC();
+		npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
+		npc.Spawn();
 		GugaCommands.InvisAllPlayersFor(p);
 		if (GugaCommands.invis.contains(p.getName().toLowerCase()))
 		{
@@ -196,6 +196,7 @@ public class GugaPlayerListener extends PlayerListener
 	}
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{
+		npc.Despawn();
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
 		if (plugin.config.accountsModule)
@@ -395,10 +396,13 @@ public class GugaPlayerListener extends PlayerListener
 	}
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e)
 	{
-		e.getPlayer().sendMessage("ID=" + e.getRightClicked().getEntityId());
+		Player p = e.getPlayer();
+		p.sendMessage("pID = "+p.getEntityId() + ",,,eID="+e.getRightClicked().getEntityId());
 	}
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] gmCommands = {"/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time"};
 	public boolean canSpeedUp = true;
+	private GugaNPC npc;
+	
 	public static Guga_SERVER_MOD plugin;
 	}
