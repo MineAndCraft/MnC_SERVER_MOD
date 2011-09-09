@@ -58,7 +58,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvent(Event.Type.BLOCK_IGNITE, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.BLOCK_BURN, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_TELEPORT, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, pListener, Event.Priority.Normal, this);
+		
 		GugaCommands.GetPlugin(this);
 		if (getServer().getWorld("arena") == null)
 		{
@@ -507,7 +507,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.4.0";
+	public static final String version = "1.3.21";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 	private int welcomeThread;

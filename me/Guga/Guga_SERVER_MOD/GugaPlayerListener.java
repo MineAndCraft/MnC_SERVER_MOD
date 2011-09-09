@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -29,8 +28,8 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
-		npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
-		npc.Spawn();
+		//npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
+		//npc.Spawn();
 		GugaCommands.InvisAllPlayersFor(p);
 		if (GugaCommands.invis.contains(p.getName().toLowerCase()))
 		{
@@ -196,7 +195,7 @@ public class GugaPlayerListener extends PlayerListener
 	}
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{
-		npc.Despawn();
+		//npc.Despawn();
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
 		if (plugin.config.accountsModule)
@@ -297,7 +296,6 @@ public class GugaPlayerListener extends PlayerListener
 		}
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
-		p.sendMessage("OLOLOL");
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
 			e.setCancelled(true);
@@ -394,15 +392,10 @@ public class GugaPlayerListener extends PlayerListener
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
-	public void onPlayerInteractEntity(PlayerInteractEntityEvent e)
-	{
-		Player p = e.getPlayer();
-		p.sendMessage("pID = "+p.getEntityId() + ",,,eID="+e.getRightClicked().getEntityId());
-	}
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] gmCommands = {"/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time"};
 	public boolean canSpeedUp = true;
-	private GugaNPC npc;
+	//private GugaNPC npc;
 	
 	public static Guga_SERVER_MOD plugin;
 	}

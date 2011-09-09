@@ -1,16 +1,9 @@
 package me.Guga.Guga_SERVER_MOD;
 
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.MathHelper;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Packet20NamedEntitySpawn;
 import net.minecraft.server.Packet29DestroyEntity;
-import net.minecraft.server.World;
-import net.minecraft.server.WorldServer;
-
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -33,17 +26,11 @@ public class GugaNPC
 	}
 	public void Spawn()
 	{
-		CraftWorld world = (CraftWorld)plugin.getServer().getWorld("world");
-		WorldServer wServer = world.getHandle();
-		MinecraftServer ms = wServer.server;
-		ItemInWorldManager m = new ItemInWorldManager(wServer);
-		EntityPlayer pp = new EntityPlayer(ms, (World) ms.worlds.get(0), "LOLEK", m);
-		plugin.log.info(""+pp.getBukkitEntity().getLocation().getWorld().getName());
 		UpdatePacket();
-		/*for (Player p : plugin.getServer().getOnlinePlayers())
+		for (Player p : plugin.getServer().getOnlinePlayers())
 		{
 			SendPacketSpawn((CraftPlayer)p);
-		}*/
+		}
 	}
 	public void Despawn()
 	{
@@ -79,7 +66,6 @@ public class GugaNPC
 	private void ObtainNewID()
 	{
 		id = plugin.getServer().getWorld("world").getEntities().get(plugin.getServer().getWorld("world").getEntities().size()-1).getEntityId() + 1;
-		id = 1000;
 	}
 	private String name;
 	private int id;

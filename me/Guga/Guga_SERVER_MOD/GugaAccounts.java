@@ -264,8 +264,8 @@ public class GugaAccounts
 	public HashMap<String, Integer> tpTasks = new HashMap<String, Integer>();  // <pName, taskID>
 	
 	// *********************************ACCOUNT DETAILS*********************************
-	public String accNames[] = new String[500];
-	public String passwords[] = new String[500];
+	public String accNames[] = new String[10000];
+	public String passwords[] = new String[10000];
 	
 	private String accountsFile = "plugins/Accounts.acc";
 	public static Guga_SERVER_MOD plugin;
