@@ -1,7 +1,12 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
+
+import net.minecraft.server.Packet20NamedEntitySpawn;
+import net.minecraft.server.Packet29DestroyEntity;
+
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class GugaSpectator 
@@ -11,7 +16,7 @@ public class GugaSpectator
 		plugin = gugaSM;
 		target = tarPlayer;
 		spectator = specPlayer;
-		invis = new GugaInvisibility(spectator, 5, plugin);
+		invis = new GugaInvisibility(spectator, 50, plugin);
 		SpectateStart();
 	}
 	public void SpectateStart()
@@ -21,6 +26,7 @@ public class GugaSpectator
 		//spectatorInventory = spectator.getInventory().getContents();
 		Teleport();
 		invis.Start();
+		InvisTarget();
 	}
 	public void SpectateStop()
 	{
@@ -31,6 +37,7 @@ public class GugaSpectator
 		spectatorList.remove(spectator);
 		spectator.teleport(spectatorBaseLocation);
 		invis.Stop();
+		UnInvisTarget();
 	}
 	public Player GetSpectator()
 	{
@@ -57,13 +64,11 @@ public class GugaSpectator
 	public void InvisTarget()
 	{
 		UnInvisTarget();
-		//GugaCommands.InvisPlayerForAll(spectator);
-		GugaCommands.InvisPlayerTo(target, spectator);
+		((CraftPlayer)spectator).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(target.getEntityId()));
 	}
 	public void UnInvisTarget()
 	{
-		//GugaCommands.UnInvisPlayerForAll(spectator);
-		GugaCommands.UnInvisPlayerTo(target, spectator);
+		((CraftPlayer)spectator).getHandle().netServerHandler.sendPacket(new Packet20NamedEntitySpawn(((CraftPlayer)target).getHandle()));
 	}
 	private Player spectator;
 	private Player target;

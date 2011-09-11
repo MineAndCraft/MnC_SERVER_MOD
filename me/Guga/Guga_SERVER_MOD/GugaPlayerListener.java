@@ -30,16 +30,6 @@ public class GugaPlayerListener extends PlayerListener
 		final Player p = e.getPlayer();
 		//npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
 		//npc.Spawn();
-		GugaCommands.InvisAllPlayersFor(p);
-		if (GugaCommands.invis.contains(p.getName().toLowerCase()))
-		{
-			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
-				public void run()
-				{
-					GugaCommands.InvisPlayerForAll(p);
-				}
-			},10);
-		}
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
 		{
@@ -237,11 +227,6 @@ public class GugaPlayerListener extends PlayerListener
 			e.setRespawnLocation(respawnLoc);
 			plugin.arena.RemovePlayerBaseLocation(p);
 		}
-		if (GugaCommands.invis.contains(p.getName().toLowerCase()))
-		{
-			GugaCommands.InvisPlayerForAll(p);
-		}
-		GugaCommands.InvisAllPlayersFor(p);
 	}
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
@@ -277,10 +262,6 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerTeleport(PlayerTeleportEvent e)
 	{
 		Player p = e.getPlayer();
-		if (GugaCommands.invis.contains(p.getName().toLowerCase()))
-		{
-			GugaCommands.InvisPlayerForAll(p);
-		}
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{

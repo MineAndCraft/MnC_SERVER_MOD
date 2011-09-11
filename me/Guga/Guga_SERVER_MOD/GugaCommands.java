@@ -6,14 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
-import net.minecraft.server.Packet20NamedEntitySpawn;
-import net.minecraft.server.Packet29DestroyEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -26,7 +22,6 @@ public abstract class GugaCommands
 	}
 	public static void CommandWho(Player sender)
 	{		
-		//log.info("<"+sender.getName() + " has used /who Command>");
 		Player[] p = plugin.getServer().getOnlinePlayers();
 		String pName;
 		double playerX;
@@ -975,75 +970,25 @@ public abstract class GugaCommands
 			sender.sendMessage("You have to register first!");
 		}
 	}
-	public static void UnInvisPlayerForAll(Player pHide)
-	{
-		Player [] playerList = pHide.getServer().getOnlinePlayers();
-		int i = 0;
-		while (i < playerList.length)
-		{
-			if (!playerList[i].getName().matches(pHide.getName()))
-			{
-				UnInvisPlayerTo(pHide, playerList[i]);
-			}
-			i++;
-		}
-	}
-	public static void InvisPlayerForAll(Player pHide)
-	{
-		Player [] playerList = pHide.getServer().getOnlinePlayers();
-		int i = 0;
-		while (i < playerList.length)
-		{
-			if (!playerList[i].getName().matches(pHide.getName()))
-			{
-				InvisPlayerTo(pHide, playerList[i]);
-			}
-			i++;
-		}
-	}
-	public static void InvisAllPlayersFor(final Player p)
-	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
-			public void run()
-			{
-				Iterator<String> i;
-				i = GugaCommands.invis.iterator();
-				Player pHide;
-				String pName;
-				while (i.hasNext())
-				{
-					pName = i.next();
-					if (!p.getName().equalsIgnoreCase(pName))
-					{
-						pHide = plugin.getServer().getPlayer(pName);
-						GugaCommands.InvisPlayerTo(pHide, p);
-					}
-				}
-			}
-		}, 10);
-	}
-	public static void InvisPlayerTo(Player pHide, Player pTo)
-	{
-		//((CraftPlayer)pTo).getHandle().netServerHandler.sendPacket(new Packet20NamedEntitySpawn(((CraftPlayer)pHide).getHandle()));
-		((CraftPlayer)pTo).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(pHide.getEntityId()));
-	}
-	public static void UnInvisPlayerTo(Player pHide, Player pTo)
-	{
-		//((CraftPlayer)pTo).getHandle().netServerHandler.sendPacket(new Packet29DestroyEntity(pHide.getEntityId()));
-		((CraftPlayer)pTo).getHandle().netServerHandler.sendPacket(new Packet20NamedEntitySpawn(((CraftPlayer)pHide).getHandle()));
-	}
 	private static void ToggleInvisibility(Player sender, String pName)
 	{
-		if (invis.contains(pName.toLowerCase()))
+		Player p = plugin.getServer().getPlayer(pName);
+		GugaInvisibility inv;
+		if (!p.isOnline())
 		{
-			invis.remove(pName);
-			UnInvisPlayerForAll(sender.getServer().getPlayer(pName));
+			return;
+		}
+		if ( (inv = invis.get(p)) != null)
+		{
+			inv.Stop();
+			invis.remove(p);
 			sender.sendMessage("Invisibility for " + pName + " has been turned off");
 		}
 		else
 		{
-			invis.add(pName.toLowerCase());
-			InvisPlayerForAll(sender.getServer().getPlayer(pName));
+			inv = new GugaInvisibility(p, 50, plugin);
+			inv.Start();
+			invis.put(p, inv);
 			sender.sendMessage("Invisibility for " + pName + " has been turned on");
 		}
 	}
@@ -1066,7 +1011,7 @@ public abstract class GugaCommands
 	}
 	public static ArrayList<String> speed = new ArrayList<String>(); // pName
 	public static ArrayList<String> godMode = new ArrayList<String>();
-	public static ArrayList<String> invis = new ArrayList<String>();
+	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
 	private static Guga_SERVER_MOD plugin;
 }

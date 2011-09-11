@@ -20,7 +20,7 @@ public class GugaInvisibility
 	}
 	public void Start()
 	{
-		plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable() {
+		taskID = plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable() {
 			public void run()
 			{
 				CheckPlayers();
@@ -31,6 +31,8 @@ public class GugaInvisibility
 	public void Stop()
 	{
 		plugin.scheduler.cancelTask(taskID);
+		ShowPlayers();
+		
 	}
 	private void CheckPlayers()
 	{
@@ -62,17 +64,28 @@ public class GugaInvisibility
 
 	private void HidePlayers()
 	{
-		ArrayList <Player> needHideTemp = new ArrayList<Player>();
-		needHideTemp = needHide;
-		Iterator<Player> i = needHideTemp.iterator();
+		Iterator<Player> i = needHide.iterator();
 		while (i.hasNext())
 		{
 			Player p = i.next();
 			SendShowPacket(p);
 			SendHidePacket(p);
-			needHide.remove(p);
 			hidden.add(p);
 		}
+		needHide.clear();
+	}
+	private void ShowPlayers()
+	{
+		Iterator<Player> i = hidden.iterator();
+		while (i.hasNext())
+		{
+			Player p = i.next();
+			if (p != player)
+			{
+				SendShowPacket(p);
+			}
+		}
+		hidden.clear();
 	}
 	private void SendHidePacket(Player p)
 	{
