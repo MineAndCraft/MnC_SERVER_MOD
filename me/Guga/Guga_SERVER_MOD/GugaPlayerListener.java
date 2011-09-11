@@ -228,7 +228,7 @@ public class GugaPlayerListener extends PlayerListener
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{
 			spec.Teleport();
-			spec.Invis();
+			spec.InvisTarget();
 		}
 		plugin.acc.SetStartLocation(p, e.getRespawnLocation());
 		Location respawnLoc;
@@ -285,7 +285,7 @@ public class GugaPlayerListener extends PlayerListener
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{
 			spec.Teleport();
-			spec.Invis();
+			spec.InvisTarget();
 		}
 	}
 	public void onPlayerInteract(PlayerInteractEvent e)

@@ -11,6 +11,7 @@ public class GugaSpectator
 		plugin = gugaSM;
 		target = tarPlayer;
 		spectator = specPlayer;
+		invis = new GugaInvisibility(spectator, 5, plugin);
 		SpectateStart();
 	}
 	public void SpectateStart()
@@ -19,12 +20,7 @@ public class GugaSpectator
 		spectatorBaseLocation = spectator.getLocation();
 		//spectatorInventory = spectator.getInventory().getContents();
 		Teleport();
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
-			public void run()
-			{
-				Invis();
-			}
-		}, 5);
+		invis.Start();
 	}
 	public void SpectateStop()
 	{
@@ -34,7 +30,7 @@ public class GugaSpectator
 		}*/
 		spectatorList.remove(spectator);
 		spectator.teleport(spectatorBaseLocation);
-		UnInvis();
+		invis.Stop();
 	}
 	public Player GetSpectator()
 	{
@@ -58,21 +54,22 @@ public class GugaSpectator
 			spectator.getInventory().setContents(target.getInventory().getContents());
 		}
 	}
-	public void Invis()
+	public void InvisTarget()
 	{
-		UnInvis();
-		GugaCommands.InvisPlayerForAll(spectator);
+		UnInvisTarget();
+		//GugaCommands.InvisPlayerForAll(spectator);
 		GugaCommands.InvisPlayerTo(target, spectator);
 	}
-	public void UnInvis()
+	public void UnInvisTarget()
 	{
-		GugaCommands.UnInvisPlayerForAll(spectator);
+		//GugaCommands.UnInvisPlayerForAll(spectator);
 		GugaCommands.UnInvisPlayerTo(target, spectator);
 	}
 	private Player spectator;
 	private Player target;
 	private Location spectatorBaseLocation;
 	//private ItemStack[] spectatorInventory;
+	private GugaInvisibility invis;
 	
 	public static ArrayList<Player> spectatorList = new ArrayList<Player>();
 	private Guga_SERVER_MOD plugin;

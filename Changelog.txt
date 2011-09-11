@@ -1,3 +1,9 @@
+1.4.0:
+	- Arena Stats sorting order has been inverted.
+	- New Invisibility class added.
+	- Spectator mode is now more reliable.
+	- Invisibility command is now more reliable.		
+
 1.3.21:
 	- Accounts buffer size increased from 500 to 10000
 

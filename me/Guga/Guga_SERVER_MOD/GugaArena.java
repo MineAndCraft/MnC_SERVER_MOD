@@ -180,11 +180,9 @@ public class GugaArena
 		while (iterator.hasNext())
 		{
 			String element;
-			//String name;
 			String value;
 		
 			element = iterator.next().toString();
-			//name = element.split("=")[0];
 			value = element.split("=")[1];
 			
 			buffer.add(element);
@@ -201,10 +199,10 @@ public class GugaArena
 			i++;
 		}
 		Arrays.sort(valuesInt);
-		i = valuesInt.length-1;
+		i = 0;
 		sender.sendMessage("******************************");
 		sender.sendMessage("    ARENA STATS (NAME - KILLS)");
-		while (i >= 0)
+		while (i < valuesInt.length)
 		{
 			String pName = "";
 			Iterator<String> iter = buffer.iterator();
@@ -221,7 +219,7 @@ public class GugaArena
 				}
 			}
 			sender.sendMessage(pName+" - "+valuesInt[i]);
-			i--;
+			i++;
 		}
 	}
 	public void SaveArena()
