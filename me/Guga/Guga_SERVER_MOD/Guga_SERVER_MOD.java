@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.plugin.PluginManager;
@@ -34,8 +33,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
 		SaveProfessions();
 		SaveCurrency();
+		GugaAnnouncement.SaveAnnouncements();
 		arena.SavePvpStats();
-		scheduler.cancelTask(welcomeThread);
 	}
 	public void onEnable() 
 	{
@@ -59,7 +58,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvent(Event.Type.BLOCK_BURN, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_TELEPORT, pListener, Event.Priority.Normal, this);
 		
-		GugaCommands.GetPlugin(this);
+		GugaCommands.SetPlugin(this);
+		GugaAnnouncement.SetPlugin(this);
 		if (getServer().getWorld("arena") == null)
 		{
 			getServer().createWorld("arena", Environment.NORMAL);
@@ -73,15 +73,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
-		welcomeThread = scheduler.scheduleAsyncRepeatingTask(this, new Runnable(){
-			public void run()
-			{
-				if (serverAnnouncement != null)
-				{
-					getServer().broadcastMessage(ChatColor.RED + "[SERVER]: "+ serverAnnouncement );
-				}
-			}
-		}, 40, 6000);
+		GugaAnnouncement.LoadAnnouncements();
+		GugaAnnouncement.StartAnnouncing();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by Guga 2011.");
 	}
@@ -510,8 +503,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public static final String version = "1.4.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
-	private int welcomeThread;
-	public String serverAnnouncement = null;
 	
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;

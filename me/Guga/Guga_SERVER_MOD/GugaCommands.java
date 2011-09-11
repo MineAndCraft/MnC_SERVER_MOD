@@ -16,7 +16,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 public abstract class GugaCommands 
 {
-	public static void GetPlugin(Guga_SERVER_MOD gugaSM)
+	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
@@ -686,7 +686,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm credits - Credits sub-menu.");
 			sender.sendMessage("/gm setvip <name> <months>  -  Set VIP to certain player for (now + months)");
 			sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
-			sender.sendMessage("/gm announce <message>  -  Sets an server announcement that is shown every 2 minutes.");
+			sender.sendMessage("/gm announce  - Announcements sub-menu.");
 			sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
 			sender.sendMessage("/gm speed <name> -  Toggles speed for a certain player.");
 			sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
@@ -705,8 +705,9 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("announce"))
 			{
-				sender.sendMessage("/gm announce disable - disables the announcement");
-				sender.sendMessage("/gm announce <message> - sets a new announcement");
+				sender.sendMessage("/gm announce print - Prints messages and indexes.");
+				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
+				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
 			}
 			else if (subCommand.matches("credits"))
 			{
@@ -737,16 +738,14 @@ public abstract class GugaCommands
 			}
 			else if(subCommand.matches("announce"))
 			{
-				if (arg1.matches("disable"))
+				if (arg1.matches("print"))
 				{
-					if (plugin.serverAnnouncement != null)
+					int i = 0;
+					String msg;
+					while ( (msg = GugaAnnouncement.GetAnnouncement(i)) != null)
 					{
-						plugin.serverAnnouncement = null;
-						sender.sendMessage("Server Announcement has been disabled");
-					}
-					else
-					{
-						sender.sendMessage("Server Announcement is already disabled!");
+						sender.sendMessage("[" + i + "]  -  " + msg);
+						i++;
 					}
 				}
 			}
@@ -812,16 +811,36 @@ public abstract class GugaCommands
 			String subCommand = args[0];
 			if (subCommand.matches("announce"))
 			{
-				int i = 1;
-				String msg = "";
-				while (i<args.length)
+				String arg1 = args[1];
+				if (arg1.matches("remove"))
 				{
-					msg += args[i];
-					msg += " ";
-					i++;
+					String arg2 = args[2];
+					if (arg2 != null)
+					{
+						int num = Integer.parseInt(arg2);
+						if (GugaAnnouncement.RemoveAnnouncement(num))
+						{
+							sender.sendMessage("Announcement has been succesfuly removed.");
+						}
+						else
+						{
+							sender.sendMessage("This announcement doesnt exist!");
+						}
+					}
 				}
-				plugin.serverAnnouncement = msg;
-				sender.sendMessage("Announcement has been succesfuly set to <" + msg + ">");
+				else if (arg1.matches("add"))
+				{
+					String msg = "";
+					int i = 2;
+					while (i < args.length)
+					{
+						msg += args[i];
+						msg += " ";
+						i++;
+					}
+					GugaAnnouncement.AddAnnouncement(msg);
+					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
+				}
 			}
 			else if (subCommand.matches("credits"))
 			{
