@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.bukkit.block.Block;
 
 public class GugaChests 
@@ -178,7 +177,6 @@ public class GugaChests
 	private String locX[] = new String[10000];
 	private String locY[] = new String[10000];
 	private String locZ[] = new String[10000];
-	
 	private String chestsFile = "plugins/Chests.dat";
 	public static Guga_SERVER_MOD plugin;
 }

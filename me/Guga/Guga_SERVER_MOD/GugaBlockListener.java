@@ -300,15 +300,6 @@ public class GugaBlockListener extends BlockListener
 		{
 			plugin.log.info("REDSTONE_CHANGE_EVENT: typeID=" + blockID + ",blockData=" + block.getData() + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
 		}
-		
-		if ((blockID == 64) || (blockID == 71))
-		{
-			plugin.physics.DoorFlow(block);
-		}
-		if (blockID == 96)
-		{
-			plugin.physics.TrapDoorFlow(block);
-		}
 	}
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
 	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};

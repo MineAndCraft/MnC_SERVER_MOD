@@ -344,30 +344,14 @@ public class GugaPlayerListener extends PlayerListener
 						p.sendMessage("This chest is locked!");
 					}
 				}
-				// TRAPDOOR WATER
-			}
-			if (targetBlock.getTypeId() == 96)
-			{		
-				plugin.physics.TrapDoorFlow(targetBlock);
-			}
-			if (targetBlock.getTypeId() == 64 || targetBlock.getTypeId() == 71)
-			{
-				plugin.physics.DoorFlow(targetBlock);
 			}
 		}
-		else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
+		/*else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
 		{
 			Block targetBlock;
 			targetBlock = e.getClickedBlock();
-			if (targetBlock.getTypeId() == 96)
-			{		
-				plugin.physics.TrapDoorFlow(targetBlock);
-			}
-			if (targetBlock.getTypeId() == 64 || targetBlock.getTypeId() == 71)
-			{
-				plugin.physics.DoorFlow(targetBlock);
-			}
-		}
+
+		}*/
 		if (plugin.debug == true)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));

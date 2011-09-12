@@ -1,13 +1,13 @@
 1.4.0:
 	- Arena Stats sorting order has been inverted.
 	- New Invisibility class added.
-	- New Announcement class added.
 	- Spectator mode is now more reliable.
 	- Invisibility command is now more reliable.
+	- New Announcement class added.
 	- Announcements now support more than one message.
 	- Announcements are now being saved in a file.
+	- Water and Lava no longer flows through Door or Trapdoor.
 		
-
 1.3.21:
 	- Accounts buffer size increased from 500 to 10000
 

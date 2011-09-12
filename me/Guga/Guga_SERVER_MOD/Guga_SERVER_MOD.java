@@ -511,7 +511,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
 	public final GugaEntityListener enListener = new GugaEntityListener(this);
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
-	public final GugaPhysics physics = new GugaPhysics(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
 	public final GugaChests chests = new GugaChests(this);
 	public final GugaLogger logger = new GugaLogger(this);
