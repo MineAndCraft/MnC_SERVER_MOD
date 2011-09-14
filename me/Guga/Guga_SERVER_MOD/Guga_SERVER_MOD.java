@@ -73,6 +73,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
+		chests = new GugaChests(this);
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
@@ -512,7 +513,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaEntityListener enListener = new GugaEntityListener(this);
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
-	public final GugaChests chests = new GugaChests(this);
+	public GugaChests chests;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();

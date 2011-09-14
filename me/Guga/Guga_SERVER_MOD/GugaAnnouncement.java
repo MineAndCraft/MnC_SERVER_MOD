@@ -37,7 +37,7 @@ public abstract class GugaAnnouncement
 					position++;
 				}
 			}
-		}, 60, 60);
+		}, 6000, 6000);
 	}
 	public static void StopAnnouncing()
 	{

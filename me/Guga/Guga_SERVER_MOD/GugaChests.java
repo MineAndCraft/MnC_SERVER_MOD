@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 public class GugaChests 
@@ -20,54 +21,37 @@ public class GugaChests
 	public void LockChest(Block chest,String chestOwner)
 	{
 		int i = 0;
-		while (locX[i] != null)
+		while (location[i] != null)
 		{
 			i++;
 		}
-		String x = Double.toString(chest.getLocation().getX());
-		String y = Double.toString(chest.getLocation().getY());
-		String z = Double.toString(chest.getLocation().getZ());
-		locX[i] = x;
-		locY[i] = y;
-		locZ[i] = z;
+		location[i] = chest.getLocation();
 		owner[i] = chestOwner;
 		SaveChests();
 	}
 	public void UnlockChest(Block chest,String chestOwner)
 	{
-		String bufferX[] = new String[10000];
-		String bufferY[] = new String[10000];
-		String bufferZ[] = new String[10000];
+		Location bufferLoc[] = new Location[10000];
 		String bufferOwn[] = new String[10000];
-		
-		String chestX = Double.toString(chest.getLocation().getX());
-		String chestY = Double.toString(chest.getLocation().getY());
-		String chestZ = Double.toString(chest.getLocation().getZ());
 		int i = 0;
 		int i2 = 0;
-		while (locX[i2] != null)
+		while (location[i2] != null)
 		{
-			if ((locX[i2].matches(chestX)) && (locY[i2].matches(chestY)) && (locZ[i2].matches(chestZ)))
+			if (LocationEquals(location[i],chest.getLocation()))
 			{
 				i2++;
 			}
-			bufferX[i] = locX[i2];
-			bufferY[i] = locY[i2];
-			bufferZ[i] = locZ[i2];
+			bufferLoc[i] = location[i2];
 			bufferOwn[i] = owner[i2];
 			i++;
 			i2++;
 		}
 		i=0;
-		locX = new String[10000];
-		locY = new String[10000];
-		locZ = new String[10000];
+		location = new Location[10000];
 		owner = new String[10000];
-		while (bufferX[i] != null)
+		while (bufferLoc[i] != null)
 		{
-			locX[i] = bufferX[i];
-			locY[i] = bufferY[i];
-			locZ[i] = bufferZ[i];
+			location[i] = bufferLoc[i];
 			owner[i] = bufferOwn[i];
 			i++;
 		}
@@ -75,13 +59,10 @@ public class GugaChests
 	}
 	public String GetChestOwner(Block chest)
 	{
-		String chestX = Double.toString(chest.getLocation().getX());
-		String chestY = Double.toString(chest.getLocation().getY());
-		String chestZ = Double.toString(chest.getLocation().getZ());
 		int i = 0;
-		while (locX[i] != null)
+		while (location[i] != null)
 		{
-			if ((locX[i].matches(chestX)) && (locY[i].matches(chestY)) && (locZ[i].matches(chestZ)))
+			if (LocationEquals(location[i],chest.getLocation()))
 			{
 				return owner[i];
 			}
@@ -114,11 +95,15 @@ public class GugaChests
 				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
 				String line;
 				int i = 0;
+				double locX;
+				double locY;
+				double locZ;
 				while ((line = bReader.readLine()) != null)
 				{
-					locX[i] = line.split(";")[0];
-					locY[i] = line.split(";")[1];
-					locZ[i] = line.split(";")[2];
+					locX = Double.parseDouble(line.split(";")[0]);
+					locY = Double.parseDouble(line.split(";")[1]);
+					locZ = Double.parseDouble(line.split(";")[2]);
+					location[i] = new Location(plugin.getServer().getWorld("world"),locX, locY, locZ);
 					owner[i] = line.split(";")[3];
 					i++;
 				}
@@ -131,6 +116,20 @@ public class GugaChests
 				e.printStackTrace();
 			}
 		}
+	}
+	public boolean LocationEquals(Location loc1, Location loc2)
+	{
+		if (loc1.getBlockX() == loc2.getBlockX())
+		{
+			if (loc1.getBlockY() == loc2.getBlockY())
+			{
+				if (loc1.getBlockZ() == loc2.getBlockZ())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	public void SaveChests()
 	{
@@ -153,11 +152,11 @@ public class GugaChests
 				FileWriter fStream = new FileWriter(chests, false);
 				BufferedWriter bWriter;
 				bWriter = new BufferedWriter(fStream);
-				while (locX[i] != null)
+				while (location[i] != null)
 				{
-					String x = locX[i];
-					String y = locY[i];
-					String z = locZ[i];
+					String x = Integer.toString(location[i].getBlockX());
+					String y = Integer.toString(location[i].getBlockY());
+					String z = Integer.toString(location[i].getBlockZ());
 					
 					String line;
 					line = x+";"+y+";"+z+";"+owner[i];
@@ -174,9 +173,7 @@ public class GugaChests
 	}
 	
 	private String owner[] = new String[10000];
-	private String locX[] = new String[10000];
-	private String locY[] = new String[10000];
-	private String locZ[] = new String[10000];
+	private Location[] location = new Location[10000];
 	private String chestsFile = "plugins/Chests.dat";
 	public static Guga_SERVER_MOD plugin;
 }
