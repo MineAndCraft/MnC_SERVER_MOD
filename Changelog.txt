@@ -1,3 +1,7 @@
+1.4.2:
+	- Plugin updated for Minecraft 1.8.1.
+	- Plugin updated for CraftBukkit 1122.
+
 1.4.1:
 	- Plugin updated for Bukkit 834 and CraftBukkit 1118.
 	
@@ -11,7 +15,7 @@
 	- Announcements now support more than one message.
 	- Announcements are now being saved in a file.
 	- Water and Lava no longer flows through Door or Trapdoor.
-	- Chest class performance improved and simplified code abit.
+	- Chest class pe	rformance improved and simplified code abit.
 	- Chests are now saved in Location array instead of x, y, z coords.
 	- Plugin updated for Bukkit 833 and CraftBukkit 1113.
 		
