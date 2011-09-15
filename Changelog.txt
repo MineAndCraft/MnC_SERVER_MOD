@@ -1,4 +1,8 @@
+1.4.1:
+	- Plugin updated for Bukkit 834 and CraftBukkit 1118.
+	
 1.4.0:
+	- Plugin updated for Minecraft 1.8.
 	- Arena Stats sorting order has been inverted.
 	- New Invisibility class added.
 	- Spectator mode is now more reliable.
@@ -9,6 +13,7 @@
 	- Water and Lava no longer flows through Door or Trapdoor.
 	- Chest class performance improved and simplified code abit.
 	- Chests are now saved in Location array instead of x, y, z coords.
+	- Plugin updated for Bukkit 833 and CraftBukkit 1113.
 		
 1.3.21:
 	- Accounts buffer size increased from 500 to 10000

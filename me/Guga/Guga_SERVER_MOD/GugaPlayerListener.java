@@ -167,21 +167,17 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			plugin.log.info("PLAYER_PICKUP_EVENT: playerName=" + e.getPlayer() + ",itemID=" + e.getItem().getItemStack().getTypeId());
 		}
-		if (!plugin.acc.UserIsLogged(e.getPlayer()))
+		Player p = e.getPlayer();
+		if (!plugin.acc.UserIsLogged(p))
 		{
 			e.setCancelled(true);
 			return;
 		}
-		Player p = e.getPlayer();
 		if (GugaSpectator.spectatorList.contains(p))
 		{
 			e.setCancelled(true);
 			return;
 		}
-		/*if ((spec = GugaCommands.spectation.get(p.getName())) != null)
-		{
-			spec.CloneInventory();
-		}*/
 	}
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{

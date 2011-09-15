@@ -501,7 +501,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.4.0";
+	public static final String version = "1.4.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 	
@@ -517,6 +517,5 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();
-	
-	
+	public HashMap <Player,GugaAccounts> accounts = new HashMap<Player, GugaAccounts>();
 }
