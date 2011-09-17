@@ -1,0 +1,2 @@
+ - využít XP bar pro GugaProfessions
+ - in-game log printer?
