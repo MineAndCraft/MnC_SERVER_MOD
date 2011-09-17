@@ -1,2 +1,3 @@
  - využít XP bar pro GugaProfessions
  - in-game log printer?
+ - insta block break pro GM.
