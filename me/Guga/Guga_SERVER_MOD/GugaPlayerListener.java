@@ -28,8 +28,6 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
-		//npc = new GugaNPC(plugin,"Leeroy", p.getLocation(), 278);
-		//npc.Spawn();
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
 		{

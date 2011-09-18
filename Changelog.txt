@@ -3,7 +3,7 @@
 	- New GugaPlace class added.
 	- Players now can port to certain places.
 	- GMs can add/remove places players can teleport to.
-	- Plugin updated for Bukkit x and CraftBukkit y.
+	- Plugin updated for Bukkit 841 and CraftBukkit 1149.
 	
 1.4.4:
 	- Initial entity destroy on spectation start delayed by 10 server ticks.
