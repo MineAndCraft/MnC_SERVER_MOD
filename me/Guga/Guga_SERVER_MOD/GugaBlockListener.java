@@ -25,7 +25,7 @@ public class GugaBlockListener extends BlockListener
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
 		}
-		plugin.logger.LogBlockBreak(e);
+		plugin.logger.LogBlockBreak(e, e.getBlock().getTypeId());
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
 		if (plugin.arena.IsArena(p.getLocation()))

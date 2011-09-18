@@ -168,7 +168,7 @@ public class GugaLogger
 		}
 		return dataBuffer;
 	}
-	public void LogBlockBreak(final BlockBreakEvent e)
+	public void LogBlockBreak(final BlockBreakEvent e, final int typeID)
 	{
 		if (logBlockBreak)
 		{
@@ -194,7 +194,7 @@ public class GugaLogger
 						BufferedWriter bWriter;
 						bWriter = new BufferedWriter(fStream);
 						String line;
-						int typeID = e.getBlock().getTypeId();
+						//int typeID = e.getBlock().getTypeId();
 						int x = e.getBlock().getX();
 						int y = e.getBlock().getY();
 						int z = e.getBlock().getZ();
