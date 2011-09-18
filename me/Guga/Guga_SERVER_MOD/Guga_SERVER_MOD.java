@@ -34,6 +34,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SaveProfessions();
 		SaveCurrency();
 		GugaAnnouncement.SaveAnnouncements();
+		GugaPort.SavePlaces();
 		arena.SavePvpStats();
 	}
 	public void onEnable() 
@@ -58,6 +59,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvent(Event.Type.BLOCK_BURN, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_TELEPORT, pListener, Event.Priority.Normal, this);
 		
+		GugaPort.SetPlugin(this);
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
 		if (getServer().getWorld("arena") == null)
@@ -73,6 +75,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
+		GugaPort.LoadPlaces();
 		chests = new GugaChests(this);
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
@@ -287,9 +290,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		   GugaCommands.CommandWho((Player)sender);
 		   return true;
 		 }
+		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandPlaces((Player)sender, args);
+			 return true;
+		 }
 		 else if (cmd.getName().equalsIgnoreCase("arena") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandArena((Player) sender,args);
+			 GugaCommands.CommandArena((Player) sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("debug") && (sender instanceof ConsoleCommandSender))
@@ -501,10 +509,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.4.4";
+	public static final String version = "1.5.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
-	
+
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
 	

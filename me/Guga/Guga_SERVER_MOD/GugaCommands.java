@@ -141,6 +141,7 @@ public abstract class GugaCommands
 		sender.sendMessage(" /arena  -  Arenas menu.");
 		sender.sendMessage(" /shop  -  Shop menu.");
 		sender.sendMessage(" /vip  -  VIP menu.");
+		sender.sendMessage(" /places - Places menu.");
 		if (sender.isOp())
 		{
 			sender.sendMessage(" /gm  -  GameMaster's menu.");
@@ -583,6 +584,44 @@ public abstract class GugaCommands
 			}
 		}
 	}
+	public static void CommandPlaces(Player sender, String args[])
+	{
+		if (args.length == 0)
+		{
+			sender.sendMessage("PLACES MENU:");
+			sender.sendMessage("/places list  -  List of all possible places player can port to.");
+			sender.sendMessage("/places port <name>  -  Teleports player to specified place.");
+		}
+		else if (args.length == 1)
+		{
+			String subCommand = args[0];
+			if (subCommand.matches("list"))
+			{
+				sender.sendMessage("LIST OF PLACES:");
+				Iterator<GugaPlace> i = GugaPort.GetPlaces().iterator();
+				while (i.hasNext())
+				{
+					GugaPlace e = i.next();
+					sender.sendMessage(" - " + e.GetName());
+				}
+			}
+		}
+		else if (args.length == 2)
+		{
+			String subCommand = args[0];
+			String name = args[1];
+			if (subCommand.matches("port"))
+			{
+				GugaPlace place;
+				if ( (place = GugaPort.GetPlaceByName(name)) != null)
+				{
+					place.Teleport(sender);
+					return;
+				}
+				sender.sendMessage("This place doesnt exist!");
+			}
+		}
+	}
 	public static void CommandModule(String args[])
 	{
 		if (args.length >= 1)	
@@ -693,6 +732,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 			sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 			sender.sendMessage("/gm log - Shows a log records for target block.");
+			sender.sendMessage("/gm places - Places sub-menu.");
 		}
 		else if (args.length == 1)
 		{
@@ -723,6 +763,12 @@ public abstract class GugaCommands
 			{
 				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
 			}
+			else if(subCommand.matches("places"))
+			{
+				sender.sendMessage("/gm places list  - Show list of all places.");	
+				sender.sendMessage("/gm places add <name> - Adds actual position to places.");	
+				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");	
+			}
 		}
 		else if (args.length == 2)
 		{
@@ -738,6 +784,19 @@ public abstract class GugaCommands
 				else
 				{
 					sender.sendMessage("This player is not online!");
+				}
+			}
+			else if (subCommand.matches("places"))
+			{
+				if (arg1.matches("list"))
+				{
+					sender.sendMessage("LIST OF PLACES:");
+					Iterator<GugaPlace> i = GugaPort.GetPlaces().iterator();
+					while (i.hasNext())
+					{
+						GugaPlace e = i.next();
+						sender.sendMessage(" - " + e.GetName());
+					}
 				}
 			}
 			else if(subCommand.matches("announce"))
@@ -844,6 +903,37 @@ public abstract class GugaCommands
 					}
 					GugaAnnouncement.AddAnnouncement(msg);
 					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
+				}
+			}
+			else if (subCommand.matches("places"))
+			{
+				if (args.length == 3)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					if (arg1.matches("add"))
+					{
+						if (GugaPort.GetPlaceByName(arg2) != null)
+						{
+							sender.sendMessage("This place already exists!");
+							return;
+						}
+						GugaPort.AddPlace(arg2, sender.getLocation());
+						sender.sendMessage("Place sucesfully added");
+					}
+					else if (arg1.matches("remove"))
+					{
+						GugaPlace place;
+						if ( (place = GugaPort.GetPlaceByName(arg2)) != null)
+						{
+							GugaPort.RemovePlace(place);
+							sender.sendMessage("Place sucesfully removed");
+						}
+						else
+						{
+							sender.sendMessage("This place doesnt exist!");
+						}
+					}
 				}
 			}
 			else if (subCommand.matches("credits"))
