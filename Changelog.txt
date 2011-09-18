@@ -3,6 +3,9 @@
 	- New GugaPlace class added.
 	- Players now can port to certain places.
 	- GMs can add/remove places players can teleport to.
+	- Command to remove credits from a player added.
+	- GM /speed command now increases mining speed, instead of movement speed.
+	- Redstone dust has been added to /shop item list.
 	- Plugin updated for Bukkit 841 and CraftBukkit 1149.
 	
 1.4.4:

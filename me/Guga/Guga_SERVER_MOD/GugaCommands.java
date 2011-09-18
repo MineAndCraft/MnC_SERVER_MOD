@@ -726,7 +726,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
 			sender.sendMessage("/gm announce  - Announcements sub-menu.");
 			sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
-			sender.sendMessage("/gm speed <name> -  Toggles speed for a certain player.");
+			sender.sendMessage("/gm speed <name> -  Toggles mining speed for a certain player.");
 			sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
@@ -752,6 +752,7 @@ public abstract class GugaCommands
 			else if (subCommand.matches("credits"))
 			{
 				sender.sendMessage("/gm credits add <player> <amount>  -  add credits to a player.");
+				sender.sendMessage("/gm credits remove <player> <amount>  -  remove credits to a player.");
 			}
 			
 			else if (subCommand.matches("spectate"))
@@ -826,15 +827,15 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("speed"))
 			{
-				if (speed.contains(arg1))
+				if (speed.contains(arg1.toLowerCase()))
 				{
 					speed.remove(arg1);
-					sender.sendMessage("Increased speed for " + arg1 + " has been turned off");
+					sender.sendMessage("Increased mining speed for " + arg1 + " has been turned off");
 				}
 				else
 				{
-					speed.add(arg1);
-					sender.sendMessage("Increased speed for " + arg1 + " has been turned on");
+					speed.add(arg1.toLowerCase());
+					sender.sendMessage("Increased mining speed for " + arg1 + " has been turned on");
 				}
 			}
 			else if (subCommand.matches("godmode"))
@@ -964,6 +965,28 @@ public abstract class GugaCommands
 						p.AddCurrency(amount);
 						plugin.getServer().getPlayer(name).sendMessage("You received +" + amount + " credits!");
 						sender.sendMessage("You added +" + amount + " credits to " + name);
+					}
+					else if (arg1.matches("remove"))
+					{
+						if (amount > 1000)
+						{
+							sender.sendMessage("You cannot remove that much!");
+							return;
+						}
+						if (amount <= 0)
+						{
+							sender.sendMessage("Amount has to be > 0!");
+							return;
+						}
+						GugaVirtualCurrency p = plugin.FindPlayerCurrency(name);
+						if (p == null)
+						{
+							sender.sendMessage("Couldnt find player with this name");
+							return;
+						}
+						p.RemoveCurrency(amount);
+						plugin.getServer().getPlayer(name).sendMessage("You lost +" + amount + " credits!");
+						sender.sendMessage("You removed +" + amount + " credits from " + name);
 					}
 				}
 			}

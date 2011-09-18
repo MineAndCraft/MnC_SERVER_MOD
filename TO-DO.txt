@@ -1,5 +1,3 @@
  - využít XP bar pro GugaProfessions
- - insta block break pro GM.
  - MobSpawner API
  - msg na /gm log, když nic nenajde
- - systém teleportù

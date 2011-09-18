@@ -46,6 +46,10 @@ public class GugaVirtualCurrency
 	{
 		currency +=curr;
 	}
+	public void RemoveCurrency(int curr)
+	{
+		currency -= curr;
+	}
 	public void SetCurrency(int curr)
 	{
 		currency = curr;

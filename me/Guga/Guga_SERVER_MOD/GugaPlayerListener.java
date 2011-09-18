@@ -3,7 +3,6 @@ import java.util.Date;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -17,7 +16,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 public class GugaPlayerListener extends PlayerListener 
 {
@@ -229,13 +227,13 @@ public class GugaPlayerListener extends PlayerListener
 			plugin.log.info("PLAYER_MOVE_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		Player p = e.getPlayer();
-		String pName = p.getName().toLowerCase();
+		//String pName = p.getName().toLowerCase();
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{
 			spec.Teleport();
 		}
-		if (GugaCommands.speed.contains(pName))
+		/*if (GugaCommands.speed.contains(pName))
 		{
 			Location dest = e.getTo();
 			Location loc = e.getFrom();
@@ -251,7 +249,7 @@ public class GugaPlayerListener extends PlayerListener
 					}
 				}
 			}
-		}
+		}*/
 	}
 	public void onPlayerTeleport(PlayerTeleportEvent e)
 	{
@@ -340,12 +338,15 @@ public class GugaPlayerListener extends PlayerListener
 				}
 			}
 		}
-		/*else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
+		else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
 		{
-			Block targetBlock;
-			targetBlock = e.getClickedBlock();
-
-		}*/
+			if (GugaCommands.speed.contains(p.getName().toLowerCase()))
+			{
+				Block targetBlock;
+				targetBlock = e.getClickedBlock();
+				targetBlock.setTypeId(0);
+			}
+		}
 		if (plugin.debug == true)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
