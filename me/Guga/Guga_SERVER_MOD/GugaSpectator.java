@@ -25,8 +25,13 @@ public class GugaSpectator
 		spectatorBaseLocation = spectator.getLocation();
 		//spectatorInventory = spectator.getInventory().getContents();
 		Teleport();
-		invis.Start();
-		InvisTarget();
+		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			public void run()
+			{
+				invis.Start();
+				InvisTarget();
+			}
+		}, 10);
 	}
 	public void SpectateStop()
 	{

@@ -26,7 +26,6 @@ public abstract class GugaCommands
 		String pName;
 		double playerX;
 		double playerZ;
-		
 		double senderX = sender.getLocation().getX();
 		double senderZ = sender.getLocation().getZ();
 		
@@ -693,6 +692,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 			sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
+			sender.sendMessage("/gm log - Shows a log records for target block.");
 		}
 		else if (args.length == 1)
 		{
@@ -718,6 +718,10 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("/gm spectate player <name> - Start spectating certain player.");
 				sender.sendMessage("/gm spectate stop - Stop spectating.");
+			}
+			else if (subCommand.matches("log"))
+			{
+				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
 			}
 		}
 		else if (args.length == 2)

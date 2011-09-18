@@ -1,3 +1,8 @@
+1.4.4:
+	- Initial entity destroy on spectation start delayed by 10 server ticks.
+	- New GM Command that prints logs ingame.
+	- Plugin updated for Bukkit 840 and CraftBukkit 1145.		
+
 1.4.3:
 	- Plugin updated for Bukkit 836 and CraftBukkit 1127.
 
