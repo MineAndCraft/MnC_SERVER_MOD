@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.bukkit.Location;
@@ -32,9 +33,9 @@ public abstract class GugaPort
 		}
 		return null;
 	}
-	public static void AddPlace(String name, Location loc)
+	public static void AddPlace(String name, String owner, Location loc)
 	{
-		GugaPlace place = new GugaPlace(name, loc);
+		GugaPlace place = new GugaPlace(name, owner, loc);
 		places.add(place);
 		SavePlaces();
 	}
@@ -115,17 +116,18 @@ public abstract class GugaPort
 				int y;
 				int z;
 				String world;
-				
+				String owner;
 				try {
 					while ((line = bReader.readLine()) != null)
 					{
 						splittedLine = line.split(";");
 						name = splittedLine[0];
-						x = Integer.parseInt(splittedLine[1]);
-						y = Integer.parseInt(splittedLine[2]);
-						z = Integer.parseInt(splittedLine[3]);
+						owner = splittedLine[1];
+						x = Integer.parseInt(splittedLine[2]);
+						y = Integer.parseInt(splittedLine[3]);
+						z = Integer.parseInt(splittedLine[4]);
 						world = splittedLine[4];
-						places.add(new GugaPlace(plugin.getServer().getWorld(world),name , x, y, z));
+						places.add(new GugaPlace(plugin.getServer().getWorld(world),name , owner, x, y, z));
 					}
 					bReader.close();
 					inStream.close();
@@ -140,11 +142,31 @@ public abstract class GugaPort
 			}
 		}
 	}
-	public static ArrayList<GugaPlace> GetPlaces()
+	public static ArrayList<GugaPlace> GetPlacesForPlayer(String pName)
+	{
+		@SuppressWarnings("unchecked")
+		ArrayList<GugaPlace> p = (ArrayList<GugaPlace>) places.clone();
+		
+		Collections.copy(p, places);
+		Iterator<GugaPlace> i = places.iterator();
+		while (i.hasNext())
+		{
+			GugaPlace e = i.next();
+			if (e.GetOwner().equalsIgnoreCase("all"))
+			{
+				// Do nothing
+			}
+			else if (!e.GetOwner().equalsIgnoreCase(pName))
+			{
+				p.remove(e);
+			}
+		}
+		return p;
+	}
+	public static ArrayList<GugaPlace> GetAllPlaces()
 	{
 		return places;
 	}
-	
 	private static String placesFile = "plugins/Places.dat";
 	private static ArrayList<GugaPlace> places = new ArrayList<GugaPlace>();
 	private static Guga_SERVER_MOD plugin;

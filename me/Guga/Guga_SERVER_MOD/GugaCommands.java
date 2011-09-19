@@ -598,11 +598,27 @@ public abstract class GugaCommands
 			if (subCommand.matches("list"))
 			{
 				sender.sendMessage("LIST OF PLACES:");
-				Iterator<GugaPlace> i = GugaPort.GetPlaces().iterator();
+				Iterator<GugaPlace> i;
+				if (sender.isOp())
+				{
+					i = GugaPort.GetAllPlaces().iterator();
+
+				}
+				else
+				{
+					i = GugaPort.GetPlacesForPlayer(sender.getName()).iterator();
+				}
 				while (i.hasNext())
 				{
 					GugaPlace e = i.next();
-					sender.sendMessage(" - " + e.GetName());
+					if (e.GetOwner().equalsIgnoreCase("all"))
+					{
+						sender.sendMessage(ChatColor.BLUE + " - " + e.GetName());
+					}
+					else
+					{
+						sender.sendMessage(ChatColor.YELLOW + " - " + e.GetName());
+					}
 				}
 			}
 		}
@@ -615,8 +631,11 @@ public abstract class GugaCommands
 				GugaPlace place;
 				if ( (place = GugaPort.GetPlaceByName(name)) != null)
 				{
-					place.Teleport(sender);
-					return;
+					if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place))
+					{
+						place.Teleport(sender);
+						return;
+					}
 				}
 				sender.sendMessage("This place doesnt exist!");
 			}
@@ -767,7 +786,7 @@ public abstract class GugaCommands
 			else if(subCommand.matches("places"))
 			{
 				sender.sendMessage("/gm places list  - Show list of all places.");	
-				sender.sendMessage("/gm places add <name> - Adds actual position to places.");	
+				sender.sendMessage("/gm places add <name> <owner> - Adds actual position to places (owner all = public).");	
 				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");	
 			}
 		}
@@ -792,11 +811,11 @@ public abstract class GugaCommands
 				if (arg1.matches("list"))
 				{
 					sender.sendMessage("LIST OF PLACES:");
-					Iterator<GugaPlace> i = GugaPort.GetPlaces().iterator();
+					Iterator<GugaPlace> i = GugaPort.GetAllPlaces().iterator();
 					while (i.hasNext())
 					{
 						GugaPlace e = i.next();
-						sender.sendMessage(" - " + e.GetName());
+						sender.sendMessage(" - " + e.GetName() + "(" + e.GetOwner() + ")");
 					}
 				}
 			}
@@ -908,10 +927,11 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("places"))
 			{
-				if (args.length == 3)
+				if (args.length == 4)
 				{
 					String arg1 = args[1];
 					String arg2 = args[2];
+					String arg3 = args[3];
 					if (arg1.matches("add"))
 					{
 						if (GugaPort.GetPlaceByName(arg2) != null)
@@ -919,7 +939,7 @@ public abstract class GugaCommands
 							sender.sendMessage("This place already exists!");
 							return;
 						}
-						GugaPort.AddPlace(arg2, sender.getLocation());
+						GugaPort.AddPlace(arg2, arg3, sender.getLocation());
 						sender.sendMessage("Place sucesfully added");
 					}
 					else if (arg1.matches("remove"))

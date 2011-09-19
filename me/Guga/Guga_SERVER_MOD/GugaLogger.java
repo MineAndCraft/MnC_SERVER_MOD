@@ -33,6 +33,7 @@ public class GugaLogger
 		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
+				sender.sendMessage("Searching...");
 				ArrayList<String> blockBreakData;
 				ArrayList<String> blockPlaceData;
 				blockBreakData = GetBlockBreakData(block);
@@ -53,6 +54,7 @@ public class GugaLogger
 					String msg = "BLOCK_BREAK: name=" + splitted[1] + "  id=" + splitted[2] + " time=" + splitted[0].substring(0, 20);
 					sender.sendMessage(msg);
 				}
+				sender.sendMessage("Search Completed.");
 			}
 		});
 	}

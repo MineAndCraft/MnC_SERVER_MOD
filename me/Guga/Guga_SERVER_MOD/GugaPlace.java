@@ -6,20 +6,22 @@ import org.bukkit.entity.Player;
 
 public class GugaPlace 
 {
-	GugaPlace(World world, String name, int x, int y, int z)
+	GugaPlace(World world, String name, String owner, int x, int y, int z)
 	{
 		this.name = name;
+		this.owner = owner;
 		this.location = new Location(world, x, y, z);
 	}
-	GugaPlace(String name, Location location)
+	GugaPlace(String name, String owner, Location location)
 	{
 		this.name = name;
+		this.owner = owner;
 		this.location = location;
 	}
 	@Override
 	public String toString()
 	{
-		return name + ";" + location.getBlockX() + ";" + location.getBlockY() + ";" + location.getBlockZ() + ";" + location.getWorld().getName();
+		return name + ";"+ owner + ";" + location.getBlockX() + ";" + location.getBlockY() + ";" + location.getBlockZ() + ";" + location.getWorld().getName();
 	}
 	public void Teleport(Player p)
 	{
@@ -33,6 +35,10 @@ public class GugaPlace
 	{
 		return name;
 	}
+	public String GetOwner()
+	{
+		return owner;
+	}
 	public void SetName(String name)
 	{
 		this.name = name;
@@ -42,5 +48,6 @@ public class GugaPlace
 		this.location = location;
 	}
 	private String name;
+	private String owner;
 	private Location location;
 }

@@ -1,3 +1,9 @@
+1.5.2:
+	- Places now can be public and private.
+	- Private places are usable only for their owners.
+	- GM log searching now prints additional messages.
+		
+
 1.5.1:
 	- Fixed bug with BlockBreak log not showing item id correctly.
 	- GM Announce interval decreased from 5 minutes to 2 minutes.
