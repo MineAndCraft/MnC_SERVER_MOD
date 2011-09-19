@@ -126,7 +126,7 @@ public abstract class GugaPort
 						x = Integer.parseInt(splittedLine[2]);
 						y = Integer.parseInt(splittedLine[3]);
 						z = Integer.parseInt(splittedLine[4]);
-						world = splittedLine[4];
+						world = splittedLine[5];
 						places.add(new GugaPlace(plugin.getServer().getWorld(world),name , owner, x, y, z));
 					}
 					bReader.close();
