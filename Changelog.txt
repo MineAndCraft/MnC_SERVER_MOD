@@ -1,9 +1,18 @@
+1.5.4:
+	- /vip tp bed command is now working properly.
+	- /r now also prints a message player sent.
+	- /tell now also prints message player sent.
+	- Plugin updated for Bukkit 848 and CraftBukkit 1169.
+
+1.5.3:
+	- /gm places remove command is now working properly again.
+	- Players now can use /r in order to reply on a whisper.
+	
 1.5.2:
 	- Places now can be public and private.
 	- Private places are usable only for their owners.
 	- GM log searching now prints additional messages.
 		
-
 1.5.1:
 	- Fixed bug with BlockBreak log not showing item id correctly.
 	- GM Announce interval decreased from 5 minutes to 2 minutes.

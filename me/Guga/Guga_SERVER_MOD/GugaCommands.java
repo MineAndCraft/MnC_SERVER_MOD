@@ -142,6 +142,7 @@ public abstract class GugaCommands
 		sender.sendMessage(" /shop  -  Shop menu.");
 		sender.sendMessage(" /vip  -  VIP menu.");
 		sender.sendMessage(" /places - Places menu.");
+		sender.sendMessage("/r <message>  -  Replies to a whisper.");
 		if (sender.isOp())
 		{
 			sender.sendMessage(" /gm  -  GameMaster's menu.");
@@ -340,7 +341,7 @@ public abstract class GugaCommands
 				else if (arg1.matches("bed"))
 				{
 					vip.SetLastTeleportLoc(sender.getLocation());
-					sender.teleport(sender.getCompassTarget());
+					sender.teleport(sender.getBedSpawnLocation());
 				}
 			}
 			else if (subCommand.matches("time"))
@@ -727,6 +728,29 @@ public abstract class GugaCommands
 			}
 		}
 	}
+	public static void CommandReply(Player sender, String args[])
+	{
+		if (args.length > 0)
+		{
+			Player p;
+			if ( (p = reply.get(sender)) != null)
+			{
+				int i = 0;
+				String msg = "";
+				while (i < args.length)
+				{
+					msg += args[i] + " ";
+					i++;
+				}
+				String cmd = "/tell " + p.getName() + " " + msg;
+				sender.chat(cmd);
+				sender.sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
+				reply.put(p, sender);
+				return;
+			}
+			sender.sendMessage("You have noone to reply to!");
+		}
+	}
 	public static void CommandGM(Player sender, String args[])
 	{
 		if (!plugin.acc.UserIsLogged(sender))
@@ -927,7 +951,25 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("places"))
 			{
-				if (args.length == 4)
+				if (args.length == 3)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					if (arg1.matches("remove"))
+					{
+						GugaPlace place;
+						if ( (place = GugaPort.GetPlaceByName(arg2)) != null)
+						{
+							GugaPort.RemovePlace(place);
+							sender.sendMessage("Place sucesfully removed");
+						}
+						else
+						{
+							sender.sendMessage("This place doesnt exist!");
+						}
+					}
+				}
+				else if (args.length == 4)
 				{
 					String arg1 = args[1];
 					String arg2 = args[2];
@@ -941,19 +983,6 @@ public abstract class GugaCommands
 						}
 						GugaPort.AddPlace(arg2, arg3, sender.getLocation());
 						sender.sendMessage("Place sucesfully added");
-					}
-					else if (arg1.matches("remove"))
-					{
-						GugaPlace place;
-						if ( (place = GugaPort.GetPlaceByName(arg2)) != null)
-						{
-							GugaPort.RemovePlace(place);
-							sender.sendMessage("Place sucesfully removed");
-						}
-						else
-						{
-							sender.sendMessage("This place doesnt exist!");
-						}
 					}
 				}
 			}
@@ -1165,6 +1194,7 @@ public abstract class GugaCommands
 		}
 		return false;
 	}
+	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> speed = new ArrayList<String>(); // pName
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();

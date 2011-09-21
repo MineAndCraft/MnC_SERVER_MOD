@@ -88,6 +88,22 @@ public class GugaPlayerListener extends PlayerListener
 			}
 			i++;
 		}
+		String msg = "";
+		String[] splitted = e.getMessage().split(" ");
+		if (e.getMessage().contains("/tell"))
+		{
+			String pName = splitted[1];
+			i = 2;
+			while (i < splitted.length)
+			{
+				msg += splitted[i];
+				msg += " ";
+				i++;
+			}
+			Player p = plugin.getServer().getPlayer(pName);
+			e.getPlayer().sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
+			GugaCommands.reply.put(p, e.getPlayer());
+		}
 	}
 	public void onPlayerChat(PlayerChatEvent e)
 	{
