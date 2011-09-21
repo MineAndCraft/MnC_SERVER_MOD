@@ -1,5 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import org.bukkit.entity.Player;
+
 
 
 
@@ -56,7 +58,6 @@ public class GugaProfession
 				xpNeeded = xpNeeded * xpIncrement;
 			}
 		}
-		//plugin.getServer().getPlayer(playerName).sendMessage("You are now a level " + level + "!");
 		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " has reached a level " + level + "!");
 		UpdateSkills();
 	}
@@ -109,7 +110,8 @@ public class GugaProfession
 		if (CanLevelUp())
 		{
 			xp = xp+exp;
-			plugin.getServer().getPlayer(playerName).sendMessage("+" + exp + " XP");
+			//plugin.getServer().getPlayer(playerName).sendMessage("+" + exp + " XP");
+			MapXpBar();
 			CheckIfDinged();
 		}
 	}
@@ -124,7 +126,12 @@ public class GugaProfession
 	{
 		return "Profession";
 	}
-	
+	private void MapXpBar()
+	{
+		int inc = xpNeeded / 100;
+		Player p = plugin.getServer().getPlayer(playerName);
+		p.setExperience(xp/inc);
+	}
 	protected int xp;
 	protected int xpNeeded;
 	protected int xpIncrement;

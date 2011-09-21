@@ -1,5 +1,7 @@
 1.5.5:
-
+	- Experience orbs have been disabled.
+	- Experience bar is now showing Profession experience.
+	- + Experience gain message has been removed.		
 
 1.5.4:
 	- /vip tp bed command is now working properly.

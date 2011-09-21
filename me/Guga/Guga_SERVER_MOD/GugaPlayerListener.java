@@ -287,8 +287,6 @@ public class GugaPlayerListener extends PlayerListener
 		}
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
-		p.setExperience(p.getExperience() + 1);
-		p.sendMessage("XP: " + p.getExperience());
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
 			e.setCancelled(true);
