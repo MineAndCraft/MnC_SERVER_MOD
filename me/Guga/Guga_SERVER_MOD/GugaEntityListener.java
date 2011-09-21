@@ -12,6 +12,7 @@ import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -183,6 +184,13 @@ public class GugaEntityListener extends EntityListener
 				}
 				i++;
 			}
+		}
+	}
+	public void onEntityDeath(EntityDeathEvent e)
+	{
+		if (e.getDroppedExp() > 0)
+		{
+			e.setDroppedExp(0);
 		}
 	}
 	public void onEntityExplode(EntityExplodeEvent e)

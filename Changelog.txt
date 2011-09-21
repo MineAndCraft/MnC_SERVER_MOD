@@ -1,3 +1,6 @@
+1.5.5:
+
+
 1.5.4:
 	- /vip tp bed command is now working properly.
 	- /r now also prints a message player sent.

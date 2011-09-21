@@ -26,6 +26,8 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		p.setExperience(0);
+		p.setLevel(9);
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
 		{
@@ -285,6 +287,8 @@ public class GugaPlayerListener extends PlayerListener
 		}
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
+		p.setExperience(p.getExperience() + 1);
+		p.sendMessage("XP: " + p.getExperience());
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
 			e.setCancelled(true);
