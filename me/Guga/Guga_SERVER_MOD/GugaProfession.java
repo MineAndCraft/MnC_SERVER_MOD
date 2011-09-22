@@ -11,23 +11,24 @@ public class GugaProfession
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;
-		lvlCap = 20;
+		lvlCap = 100;
 		xpCap = 4000;
 	}
 	GugaProfession(String pName, int exp, Guga_SERVER_MOD gugaSM)
 	{
-		
 		xpIncrement = 2;
 		xpNeeded = 500;
-		lvlCap = 20;
+		lvlCap = 100;
 		xpCap = 4000;
 		
 		plugin = gugaSM;
 		playerName = pName;
 		level = 1;
 		xp = exp;
+		int xpNeededOld;
 		while (xp >= xpNeeded)
 		{
+			xpNeededOld = xpNeeded;
 			if (level>=lvlCap)
 			{
 				xp=xpNeeded;
@@ -42,24 +43,31 @@ public class GugaProfession
 			{
 			xpNeeded = xpNeeded * xpIncrement;
 			}
+			thisLevel = xpNeeded - xpNeededOld;
 		}
 	}
 	protected void LevelUp()
 	{
 		level++;
+		int xpNeededOld = xpNeeded;
 		if (CanLevelUp())
 		{
 			if (xpNeeded>=xpCap)
 			{
 				xpNeeded +=xpCap;
+				
 			}
 			else
 			{
 				xpNeeded = xpNeeded * xpIncrement;
 			}
 		}
+		thisLevel = xpNeeded - xpNeededOld;
 		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " has reached a level " + level + "!");
-		UpdateSkills();
+		if (level <= 20)
+		{
+			UpdateSkills();
+		}
 	}
 	protected void UpdateSkills()
 	{
@@ -110,7 +118,6 @@ public class GugaProfession
 		if (CanLevelUp())
 		{
 			xp = xp+exp;
-			//plugin.getServer().getPlayer(playerName).sendMessage("+" + exp + " XP");
 			MapXpBar();
 			CheckIfDinged();
 		}
@@ -128,14 +135,16 @@ public class GugaProfession
 	}
 	private void MapXpBar()
 	{
-		int inc = xpNeeded / 100;
+		int inc = thisLevel / 100;
 		Player p = plugin.getServer().getPlayer(playerName);
-		p.setExperience(xp/inc);
+		p.setExperience((thisLevel-(xpNeeded - xp))/inc);
 	}
 	protected int xp;
 	protected int xpNeeded;
 	protected int xpIncrement;
 	protected int xpCap;
+	
+	protected int thisLevel;
 	
 	protected String playerName;
 	

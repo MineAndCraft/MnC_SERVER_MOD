@@ -1,7 +1,13 @@
+1.5.6:
+	- Level cap raised to 100.
+	- Skills improving capped on level 20.
+	- XP Bar is now mapping xp properly.
+	
 1.5.5:
 	- Experience orbs have been disabled.
 	- Experience bar is now showing Profession experience.
-	- + Experience gain message has been removed.		
+	- + Experience gain message has been removed.
+	- Plugin updated for CraftBukkit 1183 and Bukkit 854.		
 
 1.5.4:
 	- /vip tp bed command is now working properly.
