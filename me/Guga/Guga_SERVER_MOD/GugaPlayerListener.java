@@ -356,7 +356,7 @@ public class GugaPlayerListener extends PlayerListener
 				}
 			}
 		}
-		else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
+		/*else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
 		{
 			if (GugaCommands.speed.contains(p.getName().toLowerCase()))
 			{
@@ -364,7 +364,7 @@ public class GugaPlayerListener extends PlayerListener
 				targetBlock = e.getClickedBlock();
 				targetBlock.setTypeId(0);
 			}
-		}
+		}*/
 		if (plugin.debug == true)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));

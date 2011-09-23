@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
@@ -48,17 +49,11 @@ public abstract class GugaCommands
 				distance = Math.sqrt((distX*distX)+(distZ*distZ));
 				distance = Math.round(distance*10);
 				distance = distance/10;
-				if (plugin.FindPlayerCurrency(pName).IsVip())
-				{
-					sender.sendMessage(ChatColor.GOLD + "- " + pName + " " + distance + " blocks away from you");
-				}
-				else
-				{
-					sender.sendMessage("- " + pName + " " + distance + " blocks away from you");
-				}
+				String msg;
 				if (plugin.professions.get(p[i].getName()) != null)
 				{
-					String msg = "     Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel() + "  Status: " + plugin.acc.GetStatus(p[i]) + "  World: " + p[i].getWorld().getName();
+					msg = "- " + pName;
+					msg += "  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel()+ "  " + distance + " blocks away";
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -70,7 +65,7 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					String msg = "      " +" Status: " + plugin.acc.GetStatus(p[i])+ "  World: " + p[i].getWorld().getName();
+					msg = "- " + pName + "  " + distance + " blocks away";
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -83,17 +78,11 @@ public abstract class GugaCommands
 			}
 			else
 			{
-				if (plugin.FindPlayerCurrency(pName).IsVip())
-				{
-					sender.sendMessage(ChatColor.GOLD+"- " + pName);
-				}
-				else
-				{
-					sender.sendMessage("- " + pName);
-				}
+				String msg;
 				if (plugin.professions.get(p[i].getName()) != null)
 				{
-					String msg = "     Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel() + "  Status: " + plugin.acc.GetStatus(p[i])+ "  World: " + p[i].getWorld().getName();
+					msg = "- " + pName;
+					msg += "  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel();
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -105,7 +94,7 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					String msg = "      " +" Status: " + plugin.acc.GetStatus(p[i])+ "  World: " + p[i].getWorld().getName();
+					msg = "- " + pName;
 
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
@@ -632,7 +621,7 @@ public abstract class GugaCommands
 				GugaPlace place;
 				if ( (place = GugaPort.GetPlaceByName(name)) != null)
 				{
-					if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place))
+					if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place) || sender.isOp())
 					{
 						place.Teleport(sender);
 						return;
@@ -769,7 +758,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
 			sender.sendMessage("/gm announce  - Announcements sub-menu.");
 			sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
-			sender.sendMessage("/gm speed <name> -  Toggles mining speed for a certain player.");
+			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 			sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
@@ -868,17 +857,21 @@ public abstract class GugaCommands
 					sender.sendMessage("This player is not a VIP");
 				}
 			}
-			else if (subCommand.matches("speed"))
+			else if (subCommand.matches("gmmode"))
 			{
-				if (speed.contains(arg1.toLowerCase()))
+				if ((p = plugin.getServer().getPlayer(arg1)) != null)
 				{
-					speed.remove(arg1);
-					sender.sendMessage("Increased mining speed for " + arg1 + " has been turned off");
-				}
-				else
-				{
-					speed.add(arg1.toLowerCase());
-					sender.sendMessage("Increased mining speed for " + arg1 + " has been turned on");
+					GameMode mode = p.getGameMode();
+					if (mode == GameMode.CREATIVE)
+					{
+						p.setGameMode(GameMode.SURVIVAL);
+						sender.sendMessage("GM Mode for " + arg1 + " has been turned off");
+					}
+					else
+					{
+						p.setGameMode(GameMode.CREATIVE);
+						sender.sendMessage("GM Mode for " + arg1 + " has been turned on");
+					}
 				}
 			}
 			else if (subCommand.matches("godmode"))
@@ -1195,7 +1188,6 @@ public abstract class GugaCommands
 		return false;
 	}
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
-	public static ArrayList<String> speed = new ArrayList<String>(); // pName
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>

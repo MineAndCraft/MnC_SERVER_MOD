@@ -1,5 +1,12 @@
+1.5.8:
+	- /who command now shows one player per line.
+	- /gm gmmode command has been added to the game.
+	- /gm speed command has been removed.
+	- GMs now can port to any private place properly.
+	- Plugin updated for Bukkit 856 and Craftbukkit 1188.
+
 1.5.7:
-	- Fixed bug with professions not increasing level.
+	- Fixed bug with professions not increasing level properly.
 	
 1.5.6:
 	- Level cap raised to 100.
