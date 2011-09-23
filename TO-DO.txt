@@ -1,1 +1,9 @@
+ - Creative mode pro GM?
+ - /who jen na 1 øádek
+ - moznost pro gm portovat se na vsechny places (private)
+ 
+ 
+ 
+ 
  - MobSpawner API
+ 

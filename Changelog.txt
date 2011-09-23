@@ -1,3 +1,6 @@
+1.5.7:
+	- Fixed bug with professions not increasing level.
+	
 1.5.6:
 	- Level cap raised to 100.
 	- Skills improving capped on level 20.

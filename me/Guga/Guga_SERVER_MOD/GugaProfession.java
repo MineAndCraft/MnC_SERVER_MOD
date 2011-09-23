@@ -43,7 +43,12 @@ public class GugaProfession
 			{
 			xpNeeded = xpNeeded * xpIncrement;
 			}
-			thisLevel = xpNeeded - xpNeededOld;
+			int diff = xpNeeded - xpNeededOld;
+			if (diff <= 0)
+			{
+				diff = xpNeeded;
+			}
+			thisLevel = diff;
 		}
 	}
 	protected void LevelUp()
