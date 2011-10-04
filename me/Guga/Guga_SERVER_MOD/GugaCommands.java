@@ -1005,7 +1005,9 @@ public abstract class GugaCommands
 							return;
 						}
 						p.AddCurrency(amount);
-						plugin.getServer().getPlayer(name).sendMessage("You received +" + amount + " credits!");
+						Player dest = plugin.getServer().getPlayer(name);
+						if (dest != null)
+							dest.sendMessage("You received +" + amount + " credits!");
 						sender.sendMessage("You added +" + amount + " credits to " + name);
 					}
 					else if (arg1.matches("remove"))

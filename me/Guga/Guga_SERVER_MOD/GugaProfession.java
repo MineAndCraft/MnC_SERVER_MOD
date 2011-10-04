@@ -50,6 +50,7 @@ public class GugaProfession
 			}
 			thisLevel = diff;
 		}
+		thisLevel = 500;
 	}
 	protected void LevelUp()
 	{

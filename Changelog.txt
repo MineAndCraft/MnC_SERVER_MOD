@@ -1,3 +1,7 @@
+1.5.9:
+	- Plugin updated for Bukkit 875 and Craftbukkit 1240.
+	- Credits now can be added to offline players aswell.
+
 1.5.8:
 	- /who command now shows one player per line.
 	- /gm gmmode command has been added to the game.
