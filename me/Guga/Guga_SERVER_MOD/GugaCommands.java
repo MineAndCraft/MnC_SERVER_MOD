@@ -733,7 +733,7 @@ public abstract class GugaCommands
 				}
 				String cmd = "/tell " + p.getName() + " " + msg;
 				sender.chat(cmd);
-				sender.sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
+				//sender.sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
 				reply.put(p, sender);
 				return;
 			}
@@ -765,6 +765,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 			sender.sendMessage("/gm log - Shows a log records for target block.");
 			sender.sendMessage("/gm places - Places sub-menu.");
+			sender.sendMessage("/gm regions - Regions sub-menu.");
 		}
 		else if (args.length == 1)
 		{
@@ -802,6 +803,12 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm places add <name> <owner> - Adds actual position to places (owner all = public).");	
 				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");	
 			}
+			else if (subCommand.matches("regions"))
+			{
+				sender.sendMessage("/gm regions list  - Show list of all places.");	
+				sender.sendMessage("/gm regions add <name> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
+				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
+			}
 		}
 		else if (args.length == 2)
 		{
@@ -817,6 +824,28 @@ public abstract class GugaCommands
 				else
 				{
 					sender.sendMessage("This player is not online!");
+				}
+			}
+			else if (subCommand.matches("regions"))
+			{
+				sender.sendMessage("LIST OF REGIONS:");
+				Iterator<GugaRegion> i = GugaRegionHandler.GetAllRegions().iterator();
+				while (i.hasNext())
+				{
+					GugaRegion region = i.next();
+					String ownStr = "";
+					String[] owners = region.GetOwners();
+					int[] coords = region.GetCoords();
+					int i2 = 0;
+					while (i2 < owners.length)
+					{
+						if (i2 == owners.length - 1)
+							ownStr += owners[i2];
+						else
+							ownStr += owners[i2] + ",";
+						i2++;
+					}
+					sender.sendMessage(" - " + region.GetName() + " [" + ownStr + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
 				}
 			}
 			else if (subCommand.matches("places"))
@@ -954,7 +983,7 @@ public abstract class GugaCommands
 						if ( (place = GugaPort.GetPlaceByName(arg2)) != null)
 						{
 							GugaPort.RemovePlace(place);
-							sender.sendMessage("Place sucesfully removed");
+							sender.sendMessage("Place successfully removed");
 						}
 						else
 						{
@@ -975,7 +1004,46 @@ public abstract class GugaCommands
 							return;
 						}
 						GugaPort.AddPlace(arg2, arg3, sender.getLocation());
-						sender.sendMessage("Place sucesfully added");
+						sender.sendMessage("Place successfully added");
+					}
+				}
+			}
+			else if (subCommand.matches("regions"))
+			{
+				if (args.length == 3)
+				{
+					String subCmd = args[1];
+					if (subCmd.matches("remove"))
+					{
+						String name = args[2];
+						GugaRegion region = GugaRegionHandler.GetRegionByName(name);
+						if (region == null)
+						{
+							sender.sendMessage("Region not found!");
+							return;
+						}
+						GugaRegionHandler.RemoveRegion(region);
+						sender.sendMessage("Region successfully removed!");
+					}
+				}
+				if (args.length == 8)
+				{
+					String subCmd = args[1];
+					if (subCmd.matches("add"))
+					{
+						String name = args[2];
+						if (GugaRegionHandler.GetRegionByName(name) != null)
+						{
+							sender.sendMessage("Region with this name already exists!");
+							return;
+						}
+						String[] owners = args[3].split(",");
+						int x1 = Integer.parseInt(args[4]);
+						int x2 = Integer.parseInt(args[5]);
+						int z1 = Integer.parseInt(args[6]);
+						int z2 = Integer.parseInt(args[7]);
+						GugaRegionHandler.AddRegion(name, owners, x1, x2, z1, z2);
+						sender.sendMessage("Region successfully added");
 					}
 				}
 			}

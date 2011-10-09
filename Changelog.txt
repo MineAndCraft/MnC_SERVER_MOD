@@ -1,3 +1,11 @@
+1.6.0:
+	- New class for simple File IO added.
+	- Whisper message on reply is now shown only once.
+	- New GugaRegion class added.
+	- New GugaRegionHandler class added.
+	- New /gm regions command added.
+	- Players now can buy Regions.
+	
 1.5.9:
 	- Plugin updated for Bukkit 875 and Craftbukkit 1240.
 	- Credits now can be added to offline players aswell.

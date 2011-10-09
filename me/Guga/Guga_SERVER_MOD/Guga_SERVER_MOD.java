@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
+
+
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.plugin.PluginManager;
@@ -35,6 +37,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SaveCurrency();
 		GugaAnnouncement.SaveAnnouncements();
 		GugaPort.SavePlaces();
+		GugaRegionHandler.SaveRegions();
 		arena.SavePvpStats();
 	}
 	public void onEnable() 
@@ -63,6 +66,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaPort.SetPlugin(this);
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
+		GugaRegionHandler.SetPlugin(this);
 		if (getServer().getWorld("arena") == null)
 		{
 			getServer().createWorld("arena", Environment.NORMAL);
@@ -77,6 +81,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		LoadProfessions();
 		LoadCurrency();
 		GugaPort.LoadPlaces();
+		GugaRegionHandler.LoadRegions();
 		chests = new GugaChests(this);
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
@@ -518,7 +523,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.5.9";
+	public static final String version = "1.6.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

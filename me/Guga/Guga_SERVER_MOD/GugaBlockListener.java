@@ -1,6 +1,8 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
+
+
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -37,6 +39,14 @@ public class GugaBlockListener extends BlockListener
 			p.sendMessage("You cannot destroy blocks in arena!");
 			e.setCancelled(true);
 			return;
+		}
+		if (!GugaRegionHandler.CanInteract(p.getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		{
+			if (!p.isOp())
+			{
+				e.setCancelled(true);
+				p.sendMessage("You cannot dig in this region!");
+			}
 		}
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
@@ -242,6 +252,14 @@ public class GugaBlockListener extends BlockListener
 			{
 				e.setCancelled(true);
 				return;
+			}
+		}
+		if (!GugaRegionHandler.CanInteract(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		{
+			if (!e.getPlayer().isOp())
+			{
+				e.setCancelled(true);
+				e.getPlayer().sendMessage("You cannot build in this region!");
 			}
 		}
 		int typeId = e.getBlock().getTypeId();
