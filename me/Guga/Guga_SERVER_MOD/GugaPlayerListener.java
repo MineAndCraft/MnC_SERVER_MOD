@@ -53,15 +53,15 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			if (plugin.acc.UserIsRegistered(p))
 			{
-				p.sendMessage("YOU ARE NOT LOGGED IN! Please login by typing /login password.");
+				p.sendMessage("NEJSTE PRIHLASENY! Prosim prihlaste se pomoci /login heslo.");
 				p.sendMessage("");
-				p.sendMessage("!!AFTER YOU LOGIN, YOU WILL BE TELEPORTED TO LOCATION WHERE YOU APPEARED.!!");
+				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
 			}
 			else
 			{
-				p.sendMessage("YOU ARE NOT REGISTERED! Please register by typing /register password.");
+				p.sendMessage("NEJSTE ZAREGISTROVANY! Prosim zaregistrujte se pomoci /register heslo.");
 				p.sendMessage("");
-				p.sendMessage("!!AFTER YOU LOGIN, YOU WILL BE TELEPORTED TO LOCATION WHERE YOU APPEARED.!!");
+				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
 			}
 			p.sendMessage("******************************");
 		}
@@ -85,7 +85,7 @@ public class GugaPlayerListener extends PlayerListener
 			{
 				if ( ( !plugin.acc.UserIsLogged(e.getPlayer()) ) && ( e.getPlayer().isOp() ) )
 				{
-					e.getPlayer().sendMessage("Please Log-in first, before you start using GM Commands.");
+					e.getPlayer().sendMessage("Nejdrive se musite prihlasit ;).");
 					e.setCancelled(true);
 					return;
 				}
@@ -311,7 +311,7 @@ public class GugaPlayerListener extends PlayerListener
 					itemID = item.getTypeId();
 					if ( (itemID == 259) || (itemID == 327))
 					{
-						p.sendMessage("You need to be atleast level 10 to do this!");
+						p.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
 						e.setCancelled(true);
 						return;
 					}
@@ -329,7 +329,7 @@ public class GugaPlayerListener extends PlayerListener
 						itemID = item.getTypeId();
 						if ( (itemID == 259) || (itemID == 327))
 						{
-							p.sendMessage("You need to be atleast level 10 to do this!");
+							p.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
 							e.setCancelled(true);
 							return;
 						}
@@ -353,7 +353,7 @@ public class GugaPlayerListener extends PlayerListener
 					else
 					{
 						e.setCancelled(true);
-						p.sendMessage("This chest is locked!");
+						p.sendMessage("Tato truhla je zamcena!");
 					}
 				}
 			}

@@ -42,7 +42,7 @@ public class GugaArena
 				prof.GainExperience(200);
 			}
 			killer.getWorld().dropItem(killer.getLocation(), new ItemStack(262,20));
-			plugin.getServer().broadcastMessage(killer.getName() + " killed " + victim.getName() + " in the Arena!");
+			plugin.getServer().broadcastMessage(killer.getName() + " rosekal " + victim.getName() + " v Arene!");
 			killCache = victim;
 			ClearCache();
 			DisableLeave(killer,60);
@@ -56,7 +56,7 @@ public class GugaArena
 		{
 			baseLocation.put(p.getName(), p.getLocation());
 		}
-		p.getServer().broadcastMessage(p.getName() + " has entered Arena!");
+		p.getServer().broadcastMessage(p.getName() + " vstoupil do Areny!");
 		if (arenaSpawn != null)
 		{
 			p.teleport(arenaSpawn);
@@ -71,12 +71,12 @@ public class GugaArena
 	{
 		if (cannotLeave.contains(p.getName()))
 		{
-			p.sendMessage("You cannot leave right now!");
+			p.sendMessage("Na opusteni areny je prilis brzy!");
 			return;
 		}
 		if (!IsArena(p.getLocation()))
 		{
-			p.sendMessage("You can only use this command in arena!");
+			p.sendMessage("Tento prikaz jde pouzit pouze v arene!");
 			return;
 		}
 		if (baseLocation.get(p.getName()) != null)
@@ -88,7 +88,7 @@ public class GugaArena
 		{
 			p.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
 		}
-		p.getServer().broadcastMessage(p.getName() + " has left Arena");
+		p.getServer().broadcastMessage(p.getName() + " opustil Arenu");
 	}
 	public boolean IsArena(Location loc)
 	{

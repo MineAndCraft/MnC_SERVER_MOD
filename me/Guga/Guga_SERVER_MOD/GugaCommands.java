@@ -34,7 +34,7 @@ public abstract class GugaCommands
 		double distZ;
 		double distance;
 		sender.sendMessage("******************************");
-		sender.sendMessage("PLAYERS ONLINE:");
+		sender.sendMessage("HRACI ONLINE:");
 		int i = 0;
 		while (i < p.length)
 		{
@@ -53,7 +53,7 @@ public abstract class GugaCommands
 				if (plugin.professions.get(p[i].getName()) != null)
 				{
 					msg = "- " + pName;
-					msg += "  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel()+ "  " + distance + " blocks away";
+					msg += "  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel()+ "  " + distance + " bloku daleko";
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -65,7 +65,7 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					msg = "- " + pName + "  " + distance + " blocks away";
+					msg = "- " + pName + "  " + distance + " bloku daleko";
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -118,20 +118,19 @@ public abstract class GugaCommands
 		sender.sendMessage("******************************");
 		sender.sendMessage("GUGA MINECRAFT SERVER MOD "+Guga_SERVER_MOD.version);
 		sender.sendMessage("******************************");
-		sender.sendMessage("List of possible Commands:");
-		sender.sendMessage(" /lock  -  Locks targeted chest.");
-		sender.sendMessage(" /unlock  -  Unlocks targeted chest.");
-		sender.sendMessage(" /who  -  List of all players online.");
-		sender.sendMessage(" /login <pass>  -  Logs in a registered user.");
-		sender.sendMessage(" /register <pass>  -  Registers a new user.");
-		sender.sendMessage(" /password <old_pass> <new_pass>  -  Changes a password.");
-		sender.sendMessage(" /status <status_msg>  -  Sets your status.");
-		sender.sendMessage(" /rpg  -  Professions menu.");
-		sender.sendMessage(" /arena  -  Arenas menu.");
-		sender.sendMessage(" /shop  -  Shop menu.");
+		sender.sendMessage("Seznam prikazu:");
+		sender.sendMessage(" /lock  -  Zamkne truhlu.");
+		sender.sendMessage(" /unlock  -  Odemkne truhlu.");
+		sender.sendMessage(" /who  -  Seznam online hracu.");
+		sender.sendMessage(" /login <heslo>  -  Prihlasi zaregistrovaneho hrace.");
+		sender.sendMessage(" /register <pass>  -  Zaregistruje noveho hrace.");
+		sender.sendMessage(" /password <stare_heslo> <nove_heslo>  -  Zmeni heslo.");
+		sender.sendMessage(" /rpg  -  Menu Profesi.");
+		sender.sendMessage(" /arena  -  Menu areny.");
+		sender.sendMessage(" /shop  -  Menu Obchodu.");
 		sender.sendMessage(" /vip  -  VIP menu.");
-		sender.sendMessage(" /places - Places menu.");
-		sender.sendMessage("/r <message>  -  Replies to a whisper.");
+		sender.sendMessage(" /places - Menu mist, kam se da teleportovat.");
+		sender.sendMessage("/r <message>  -  Odpoved na whisper.");
 		if (sender.isOp())
 		{
 			sender.sendMessage(" /gm  -  GameMaster's menu.");
@@ -149,16 +148,16 @@ public abstract class GugaCommands
 			if (plugin.chests.GetChestOwner(chest).matches("notFound"))
 			{
 				plugin.chests.LockChest(chest,sender.getName());
-				sender.sendMessage("Your chest has been locked.");
+				sender.sendMessage("Vase truhla byla zamcena.");
 			}
 			else
 			{
-				sender.sendMessage("Chest has an owner already!");
+				sender.sendMessage("Truhlu jiz nekdo zamkl!");
 			}
 		}	
 		else
 		{
-			sender.sendMessage("This is not a chest!");
+			sender.sendMessage("Tento blok neni truhla!");
 		}
 		
 	}
@@ -183,16 +182,16 @@ public abstract class GugaCommands
 			if ( (plugin.chests.GetChestOwner(chest).matches(sender.getName())) || (sender.isOp()) )
 			{
 				plugin.chests.UnlockChest(chest,sender.getName());
-				sender.sendMessage("Chest has been unlocked.");
+				sender.sendMessage("Vase truhla byla odemcena.");
 			}
 			else
 			{
-				sender.sendMessage("You cannot unlock this chest!");
+				sender.sendMessage("Tuto truhlu nemuzete odemknout!");
 			}
 		}	
 		else
 		{
-			sender.sendMessage("This is not a chest!");
+			sender.sendMessage("Tento blok neni truhla!");
 		}
 		
 	}
@@ -207,11 +206,11 @@ public abstract class GugaCommands
 		if (args.length == 0)
 		{
 			sender.sendMessage("Shop Menu:");
-			sender.sendMessage("/shop info  -  Info about Shopping system.");
-			sender.sendMessage("/shop buy <itemID> <amount>  -  Buys specified amount of specified item.");
-			sender.sendMessage("/shop buy <itemID>  -  Buys specified item (1).");
-			sender.sendMessage("/shop balance  -  Shows your account balance.");
-			sender.sendMessage("/shop items  -  Shows all items you can buy.");
+			sender.sendMessage("/shop info  -  Info o Obchodu.");
+			sender.sendMessage("/shop buy <itemID> <pocet>  -  Koupi dany pocet itemu.");
+			sender.sendMessage("/shop buy <itemID>  -  Koupi dany item (1).");
+			sender.sendMessage("/shop balance  -  Zobrazi vase kredity.");
+			sender.sendMessage("/shop items  -  Seznam itemu, ktere se daji koupit.");
 		}
 		else if (args.length == 1)
 		{
@@ -222,14 +221,14 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("balance"))
 			{
-				sender.sendMessage("Your account balance:");
-				sender.sendMessage("Credits: " + p.GetCurrency());
+				sender.sendMessage("Vas ucet:");
+				sender.sendMessage("Kredity: " + p.GetCurrency());
 			}
 			else if(subCommand.matches("items"))
 			{
 				for (Prices i : Prices.values())
 				{
-				 sender.sendMessage(i.toString() +"-    id: " + i.GetItemID()+ "   price: "+ i.GetItemPrice());
+				 sender.sendMessage(i.toString() +"-    id: " + i.GetItemID()+ "   cena: "+ i.GetItemPrice());
 				}
 			}
 		}
@@ -260,21 +259,21 @@ public abstract class GugaCommands
 		GugaVirtualCurrency vip = plugin.FindPlayerCurrency(sender.getName());
 		if (!plugin.acc.UserIsLogged(sender))
 		{
-			sender.sendMessage("You have to login first!");
+			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
 		}
 		if (!vip.IsVip())
 		{
-			sender.sendMessage("Only VIP can use this command!");
+			sender.sendMessage("Pouze VIP mohou pouzivat tento prikaz!");
 			return;
 		}
 		if (args.length == 0)
 		{
 			sender.sendMessage("VIP MENU:");
-			sender.sendMessage("/vip expiration  -  Shows, when your VIP status expires.");
-			sender.sendMessage("/vip tp  -  Teleport subcommand.");
-			sender.sendMessage("/vip time  -  Time subcommand.");
-			sender.sendMessage("/vip item  -  Items subcommand.");
+			sender.sendMessage("/vip expiration  -  Zobrazi, kdy vyprsi vas VIP status.");
+			sender.sendMessage("/vip tp  -  Teleport podprikaz.");
+			sender.sendMessage("/vip time  -  Podprikaz zmeny casu.");
+			sender.sendMessage("/vip item  -  Podprikaz itemu.");
 			
 		}
 		else if (args.length == 1)
@@ -282,26 +281,26 @@ public abstract class GugaCommands
 			String subCommand = args[0];
 			if (subCommand.matches("expiration"))
 			{
-				sender.sendMessage("Your VIP expiration date is: " + new Date(vip.GetExpirationDate()));
+				sender.sendMessage("Vase VIP vyprsi: " + new Date(vip.GetExpirationDate()));
 			}
 			else if (subCommand.matches("tp"))
 			{
 				sender.sendMessage("Teleport Menu:");
-				sender.sendMessage("/vip tp player <name>  -  Teleports you to a certain player.");
-				sender.sendMessage("/vip tp spawn  -  Teleports you to World spawn.");
-				sender.sendMessage("/vip tp back  -  Teleports you to your last location you have teleported from.");
-				sender.sendMessage("/vip tp bed  -  Teleports you to your bed.");
+				sender.sendMessage("/vip tp player <jmeno>  -  Teleport k danemu hraci.");
+				sender.sendMessage("/vip tp spawn  -  Teleport na spawn.");
+				sender.sendMessage("/vip tp back  -  Teleport zpet na predchozi pozici.");
+				sender.sendMessage("/vip tp bed  -  Teleport k posteli.");
 			}
 			else if (subCommand.matches("time"))
 			{
 				sender.sendMessage("Time Menu:");
-				sender.sendMessage("/vip time set <value>  -  Sets time to value between 0-24000");
-				sender.sendMessage("/vip time reset  -  Resets time back to server time.");
+				sender.sendMessage("/vip time set <hodnota>  -  Nastavi cas na 0-24000");
+				sender.sendMessage("/vip time reset  -  Zmeni cas zpet na serverovy cas.");
 			}
 			else if (subCommand.matches("item"))
 			{
 				sender.sendMessage("Item Menu:");
-				sender.sendMessage("/vip item add <itemID>  -  Add stack of item in your inventory");
+				sender.sendMessage("/vip item add <itemID>  -  Prida stack daneho itemu");
 			}
 		}
 		else if (args.length == 2)
@@ -316,7 +315,7 @@ public abstract class GugaCommands
 					Location tpLoc = vip.GetLastTeleportLoc();
 					if (tpLoc == null)
 					{
-						sender.sendMessage("You need to teleport somewhere first!");
+						sender.sendMessage("Nejdrive se musite nekam teleportovat!");
 						return;
 					}
 					sender.teleport(tpLoc);
@@ -340,10 +339,10 @@ public abstract class GugaCommands
 					if (!sender.isPlayerTimeRelative())
 					{
 						sender.resetPlayerTime();
-						sender.sendMessage("Time has been reset");
+						sender.sendMessage("Cas byl restartovan");
 					}
 					else
-						sender.sendMessage("Your time is already equal to server time!");
+						sender.sendMessage("Vas cas nepotrebuje restartovat!");
 				}
 			}
 		}
@@ -371,10 +370,10 @@ public abstract class GugaCommands
 						ItemStack item = new ItemStack(itemID, 64);
 						PlayerInventory pInventory = sender.getInventory();
 						pInventory.addItem(item);
-						sender.sendMessage("Item added!");
+						sender.sendMessage("Item pridan!");
 					}
 					else
-						sender.sendMessage("You cannot add this item!");
+						sender.sendMessage("Tento item nejde pridat!");
 				}
 			}
 			else if (subCommand.matches("time"))
@@ -385,10 +384,10 @@ public abstract class GugaCommands
 					if ( (time >= 0) && (time <= 24000) )
 					{
 						sender.setPlayerTime(time, false);
-						sender.sendMessage("Time has been successfully set");
+						sender.sendMessage("Cas byl uspesne zmenen");
 					}
 					else 
-						sender.sendMessage("You cannot set this value!");
+						sender.sendMessage("Tato hodnota nelze nastavit!");
 				}
 			}
 		}
@@ -398,11 +397,11 @@ public abstract class GugaCommands
 		if (args.length == 0)
 		{
 			sender.sendMessage("RPG MENU:");
-			sender.sendMessage("/rpg status  -  Shows your status.");
-			sender.sendMessage("/rpg skills  -  Shows your skills and bonuses.");
-			sender.sendMessage("/rpg select  -  Selects your professions.");
-			sender.sendMessage("/rpg info  -  Info about professions.");
-			sender.sendMessage("/rpg info <profession>  -  Info about certain profession.");
+			sender.sendMessage("/rpg status  -  Zobrazi vas status.");
+			sender.sendMessage("/rpg skills  -  Zobrazi vase schopnosti a bonusy.");
+			sender.sendMessage("/rpg select <miner/hunter>  -  Vybere profesi.");
+			sender.sendMessage("/rpg info  -  Info o profesich.");
+			sender.sendMessage("/rpg info <miner/hunter>  -  Info o dane profesi.");
 		}
 		else if (args.length == 1)
 		{
@@ -425,7 +424,7 @@ public abstract class GugaCommands
 				}
 				else 
 				{
-					sender.sendMessage("You have to choose your profession first!");
+					sender.sendMessage("Nejdrive si musite zvolit profesi!");
 				}
 			}
 			else if (subCommand.matches("skills"))
@@ -433,7 +432,7 @@ public abstract class GugaCommands
 				GugaProfession prof;
 				if ((prof = plugin.professions.get(sender.getName())) == null)
 				{
-					sender.sendMessage("You have to choose your profession first!");
+					sender.sendMessage("Nejdrive si musite zvolit profesi!");
 				}
 				if (prof instanceof GugaMiner)
 				{
@@ -444,7 +443,7 @@ public abstract class GugaCommands
 					int gold = chance[plugin.GOLD];
 					int diamond = chance[plugin.DIAMOND];
 					sender.sendMessage("********************");
-					sender.sendMessage("**Chance to find in cobblestone:");
+					sender.sendMessage("**Sance na nalezeni ve stonu:");
 					sender.sendMessage("**Iron: " + iron + "%");
 					sender.sendMessage("**Gold: " + gold + "%");
 					sender.sendMessage("**Diamond: " + diamond + "%");
@@ -454,7 +453,7 @@ public abstract class GugaCommands
 					gold = bonus[plugin.GOLD];
 					diamond = bonus[plugin.DIAMOND];
 					
-					sender.sendMessage("**Bonus Drops from Ores:");
+					sender.sendMessage("**Bonusove dropy z:");
 					sender.sendMessage("**Iron: +" + iron);
 					sender.sendMessage("**Gold: +" + gold);
 					sender.sendMessage("**Diamond: +" + diamond);
@@ -468,30 +467,28 @@ public abstract class GugaCommands
 					GugaHunter hunter = (GugaHunter)prof;
 					double regen = ((double)hunter.GetHpRegen())/2;
 					int dmg = hunter.GetDamageIncrease();
-					double speed = hunter.GetSpeedIncrease();
 					sender.sendMessage("********************");
-					sender.sendMessage("**HP Regen: " + regen + "hp per 60 seconds");
-					sender.sendMessage("**Damage Increase: " + dmg);
-					sender.sendMessage("**Movement Speed Increase: " + speed);
+					sender.sendMessage("**HP Regen: " + regen + "hp za minutu");
+					sender.sendMessage("**Zvyseny damage: " + dmg);
 					sender.sendMessage("********************");
 					sender.sendMessage("********************");
 				}
 			}
 			else if (subCommand.matches("select"))
 			{
-				sender.sendMessage("Please type your desired profession name - hunter or miner");
+				sender.sendMessage("Prosim uvedte profesi kterou chcete! Miner nebo Hunter");
 			}
 			else if (subCommand.matches("info"))
 			{
 				sender.sendMessage("********************");
-				sender.sendMessage("**You can choose your profession");
-				sender.sendMessage("**by typing /rpg select <profession>");
-				sender.sendMessage("**There are 2 professions at the moment:");
-				sender.sendMessage("**      -Hunter and Miner");
-				sender.sendMessage("**Each profession has different abilities and skills");
-				sender.sendMessage("**You can get experience for killing mobs and destroying blocks");
-				sender.sendMessage("**Each profession gets different amount of experience for doing this.");
-				sender.sendMessage("**Current max level is " + new GugaProfession().GetLvlCap());
+				sender.sendMessage("**Profesi si muzete vybrat tak, ze napisete");
+				sender.sendMessage("** /rpg select <vase_profese>");
+				sender.sendMessage("**Mate na vyber ze dvou profesi:");
+				sender.sendMessage("**      -Hunter a Miner");
+				sender.sendMessage("**Kazda profese ma jine bonusy");
+				sender.sendMessage("**XP ziskavate za zabijeni monster a kopani");
+				sender.sendMessage("**Kazda profese dostava rozdilny pocet XP.");
+				sender.sendMessage("**Maximalni level: " + new GugaProfession().GetLvlCap());
 			}
 		}
 		else if (args.length == 2)
@@ -508,11 +505,11 @@ public abstract class GugaCommands
 						GugaHunter prof = new GugaHunter(sender.getName(),0,plugin);
 						plugin.professions.put(sender.getName(), prof);
 						prof.StartRegenHp();
-						sender.sendMessage("You are now a Hunter!");
+						sender.sendMessage("Stal jste se Hunterem!");
 					}
 					else 
 					{
-						sender.sendMessage("You already have a profession!");
+						sender.sendMessage("Nemuzete si znovu zvolit profesi!");
 					}
 				}
 				else if (arg1.matches("miner"))
@@ -521,16 +518,16 @@ public abstract class GugaCommands
 					{
 						GugaMiner prof = new GugaMiner(sender.getName(),0,plugin);
 						plugin.professions.put(sender.getName(), prof);
-						sender.sendMessage("You are now a Miner!");
+						sender.sendMessage("Stal jste se Minerem!");
 					}
 					else 
 					{
-						sender.sendMessage("You already have a profession!");
+						sender.sendMessage("Nemuzete si znovu zvolit profesi!");
 					}
 				}
 				else 
 				{
-					sender.sendMessage("This is not a profession!");
+					sender.sendMessage("Toto neni profese!");
 				}
 			}
 			else if (subCommand.matches("info"))
@@ -538,10 +535,9 @@ public abstract class GugaCommands
 				if (arg1.matches("hunter"))
 				{
 					sender.sendMessage("********************");
-					sender.sendMessage("**Hunter's Bonuses:");
-					sender.sendMessage("** - Hp Regen (+0,5 every 2 levels)");
-					sender.sendMessage("** - Bonus Damage (+1 every 4 levels)");
-					sender.sendMessage("** - Increased Movement Speed (+0.1 every level)");
+					sender.sendMessage("**Hunterovo Bonusy:");
+					sender.sendMessage("** - Hp Regen (+0,5 kazde 2 levely)");
+					sender.sendMessage("** - Bonus Damage (+1 kazde 4 levely)");
 					sender.sendMessage("********************");
 					sender.sendMessage("********************");
 					
@@ -549,13 +545,13 @@ public abstract class GugaCommands
 				else if (arg1.matches("miner"))
 				{
 					sender.sendMessage("********************");
-					sender.sendMessage("**Miner's Bonuses:");
-					sender.sendMessage("** - Increased Drops from:");
+					sender.sendMessage("**Minerovo Bonusy:");
+					sender.sendMessage("** - Zvysene dropy z:");
 					sender.sendMessage("**      -Iron (+1 every 6 levels)");
 					sender.sendMessage("**      -Gold (+1 every 8 levels)");
 					sender.sendMessage("**      -Diamond (+1 every 10 levels)");
 					sender.sendMessage("********************");
-					sender.sendMessage("** - Chance on rare drop from Stone:");
+					sender.sendMessage("** - Sance vzacneho dropu ze Stone:");
 					sender.sendMessage("**      -Iron (+1% every 5 levels)");
 					sender.sendMessage("**      -Gold (+1% every 10 levels)");
 					sender.sendMessage("**      -Diamond (+1% on level 15)");
@@ -579,15 +575,15 @@ public abstract class GugaCommands
 		if (args.length == 0)
 		{
 			sender.sendMessage("PLACES MENU:");
-			sender.sendMessage("/places list  -  List of all possible places player can port to.");
-			sender.sendMessage("/places port <name>  -  Teleports player to specified place.");
+			sender.sendMessage("/places list  -  Seznam vsech moznych mist.");
+			sender.sendMessage("/places port <jmeno>  -  Teleportuje hrace na dane misto.");
 		}
 		else if (args.length == 1)
 		{
 			String subCommand = args[0];
 			if (subCommand.matches("list"))
 			{
-				sender.sendMessage("LIST OF PLACES:");
+				sender.sendMessage("SEZNAM MIST:");
 				Iterator<GugaPlace> i;
 				if (sender.isOp())
 				{
@@ -627,7 +623,7 @@ public abstract class GugaCommands
 						return;
 					}
 				}
-				sender.sendMessage("This place doesnt exist!");
+				sender.sendMessage("Toto misto neexistuje!");
 			}
 		}
 	}
@@ -659,7 +655,7 @@ public abstract class GugaCommands
 	{
 		if(plugin.acc.UserIsRegistered(sender))
 		{
-			sender.sendMessage("This name is already registered!");
+			sender.sendMessage("Tento ucet je jiz zaregistrovan!");
 		}
 		else
 		{
@@ -670,7 +666,7 @@ public abstract class GugaCommands
 			}
 			else
 			{
-				sender.sendMessage("Please enter your password!");
+				sender.sendMessage("Prosim zadejte vase heslo!");
 			}
 		}
 	}
@@ -680,9 +676,9 @@ public abstract class GugaCommands
 		{
 			sender.sendMessage("ARENA MENU:");
 			sender.sendMessage("Commands:");
-			sender.sendMessage("/arena join - Moves player to arena");
-			sender.sendMessage("/arena leave - Removes a player from arena");
-			sender.sendMessage("/arena stats - Shows a statistics of best players");
+			sender.sendMessage("/arena join - Teleportuje hrace do areny");
+			sender.sendMessage("/arena leave - Vrati hrace do normalniho sveta");
+			sender.sendMessage("/arena stats - Zobrazi zebricek nejlepsich hracu");
 			//sender.sendMessage("/arena info - Info about arena system");
 		}
 		else if (args.length == 1)
@@ -696,7 +692,7 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					sender.sendMessage("You are already in Arena!");
+					sender.sendMessage("V arene jiz jste!");
 				}
 			}
 			else if (subCommand.matches("leave"))
@@ -737,14 +733,14 @@ public abstract class GugaCommands
 				reply.put(p, sender);
 				return;
 			}
-			sender.sendMessage("You have noone to reply to!");
+			sender.sendMessage("Nemate komu odpovedet!");
 		}
 	}
 	public static void CommandGM(Player sender, String args[])
 	{
 		if (!plugin.acc.UserIsLogged(sender))
 		{
-			sender.sendMessage("You have to be logged to use this command!");
+			sender.sendMessage("Musite byt prihlaseny, aby jste mohl pouzit tento prikaz!");
 			return;
 		}
 		if (args.length == 0)
@@ -807,6 +803,7 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("/gm regions list  - Show list of all places.");	
 				sender.sendMessage("/gm regions add <name> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
+				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
 				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
 			}
 		}
@@ -833,19 +830,9 @@ public abstract class GugaCommands
 				while (i.hasNext())
 				{
 					GugaRegion region = i.next();
-					String ownStr = "";
 					String[] owners = region.GetOwners();
 					int[] coords = region.GetCoords();
-					int i2 = 0;
-					while (i2 < owners.length)
-					{
-						if (i2 == owners.length - 1)
-							ownStr += owners[i2];
-						else
-							ownStr += owners[i2] + ",";
-						i2++;
-					}
-					sender.sendMessage(" - " + region.GetName() + " [" + ownStr + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
+					sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
 				}
 			}
 			else if (subCommand.matches("places"))
@@ -1026,7 +1013,20 @@ public abstract class GugaCommands
 						sender.sendMessage("Region successfully removed!");
 					}
 				}
-				if (args.length == 8)
+				else if (args.length == 4)
+				{
+					String subCmd = args[1];
+					if (subCmd.matches("owners"))
+					{
+						String name = args[2];
+						String[] owners = args[3].split(",");
+						if (GugaRegionHandler.SetRegionOwners(name, owners))
+							sender.sendMessage("Owners successfuly set!");
+						else
+							sender.sendMessage("Region not found!");
+					}
+				}
+				else if (args.length == 8)
 				{
 					String subCmd = args[1];
 					if (subCmd.matches("add"))
@@ -1180,12 +1180,12 @@ public abstract class GugaCommands
 			 }
 			 else
 			 {
-				 sender.sendMessage("You are already logged!");
+				 sender.sendMessage("Jste jiz prihlaseny!");
 			 }
 		 }
 		 else
 		 {
-			 sender.sendMessage("You have to register first!");
+			 sender.sendMessage("Nejdrive se musite zaregistrovat!");
 		 }
 	}
 	public static void CommandDebug()
@@ -1205,17 +1205,17 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					sender.sendMessage("Please enter your old and new password");
+					sender.sendMessage("Prosim vlozte vase stare a nove heslo");
 				}
 			}
 			else
 			{
-				sender.sendMessage("You have to login first!");
+				sender.sendMessage("Nejdrive se musite prihlasit!");
 			}
 		}
 		else
 		{
-			sender.sendMessage("You have to register first!");
+			sender.sendMessage("Nejdrive se musite zaregistrovat!");
 		}
 	}
 	private static void ToggleInvisibility(Player sender, String pName)

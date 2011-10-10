@@ -33,6 +33,10 @@ public class GugaRegion
 		int[] vals = {this.x1, this.x2, this.z1, this.z2};
 		return vals;
 	}
+	public void SetOwners(String[] owners)
+	{
+		this.owners = owners;
+	}
 	private void SortCoords()
 	{
 		if (x1 > x2)

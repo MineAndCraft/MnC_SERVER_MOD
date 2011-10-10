@@ -1,3 +1,7 @@
+1.6.1:
+	- Most of the text has been translated to Czech.
+	- New /gm regions owners to update owner list added.
+
 1.6.0:
 	- New class for simple File IO added.
 	- Whisper message on reply is now shown only once.

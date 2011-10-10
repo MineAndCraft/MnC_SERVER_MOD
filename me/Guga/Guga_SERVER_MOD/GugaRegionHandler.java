@@ -41,6 +41,14 @@ public abstract class GugaRegionHandler
 	{
 		return GugaRegionHandler.regions;
 	}
+	public static boolean SetRegionOwners(String name, String[] owners)
+	{
+		GugaRegion region = GugaRegionHandler.GetRegionByName(name);
+		if (region == null)
+			return false;
+		region.SetOwners(owners);
+		return true;
+	}
 	public static GugaRegion GetRegionByName(String name)
 	{
 		Iterator<GugaRegion> i = GugaRegionHandler.regions.iterator();
@@ -67,6 +75,21 @@ public abstract class GugaRegionHandler
 		}
 		return null;
 	}
+	public static String OwnersToLine(String[] owners)
+	{
+		int i = 0;
+		String ownersString = "";
+		while (i < owners.length)
+		{
+			if (i == owners.length - 1)
+				ownersString += owners[i];
+			else
+				ownersString += owners[i] + ",";
+			
+			i++;
+		}
+		return ownersString;
+	}
 	public static void SaveRegions()
 	{
 		plugin.log.info("Saving Regions file...");
@@ -80,22 +103,11 @@ public abstract class GugaRegionHandler
 		Iterator<GugaRegion> i = GugaRegionHandler.regions.iterator();
 		while (i.hasNext())
 		{
-			String ownersString = "";
 			region = i.next();
 			name = region.GetName();
 			owners = region.GetOwners();
 			coords = region.GetCoords();
-			int i2 = 0;
-			while (i2 < owners.length)
-			{
-				if (i2 == owners.length - 1)
-					ownersString += owners[i2];
-				else
-					ownersString += owners[i2] + ",";
-				
-				i2++;
-			}
-			line = name + ";" + ownersString + ";" + coords[GugaRegion.X1] + ";" + coords[GugaRegion.X2] + ";" + coords[GugaRegion.Z1] + ";" + coords[GugaRegion.Z2];
+			line = name + ";" + GugaRegionHandler.OwnersToLine(owners) + ";" + coords[GugaRegion.X1] + ";" + coords[GugaRegion.X2] + ";" + coords[GugaRegion.Z1] + ";" + coords[GugaRegion.Z2];
 			file.WriteLine(line);
 		}
 		file.Close();

@@ -33,7 +33,7 @@ public class GugaAccounts
 				if (password.matches(passwords[i]))
 				{
 					loggedUsers.add(pName);
-					p.sendMessage("You are now logged in.");
+					p.sendMessage("Byl jste uspesne prihlasen.");
 					//playerStart.remove(pName);
 					Integer taskId = tpTasks.get(pName);
 					if (taskId != null)
@@ -45,7 +45,7 @@ public class GugaAccounts
 				}
 				else
 				{
-					p.sendMessage("Wrong Password!");
+					p.sendMessage("Nespravne heslo!");
 					break;
 				}
 			}
@@ -64,11 +64,11 @@ public class GugaAccounts
 				pl.teleport(playerStart.get(pName));
 				if (UserIsRegistered(pl))
 				{
-					pl.sendMessage("Please Login!");
+					pl.sendMessage("Prosim prihlaste se!");
 				}
 				else
 				{
-					pl.sendMessage("Please Register!");
+					pl.sendMessage("Prosim zaregistrujte se!");
 				}
 			}
 		}, 80, 80);
@@ -107,7 +107,7 @@ public class GugaAccounts
 		}
 		accNames[i] = pName;
 		passwords[i] = password;
-		p.sendMessage("You are succesfuly registered.");
+		p.sendMessage("Registrace probehla uspesne.");
 		SaveAccounts();
 		LoginUser(p,password);
 	}
@@ -126,12 +126,12 @@ public class GugaAccounts
 		if (passwords[i].matches(oldPass))
 		{
 			passwords[i] = newPass;
-			p.sendMessage("Your password has been succesfully changed.");
+			p.sendMessage("Vase heslo bylo uspesne zmeneno.");
 			SaveAccounts();
 		}
 		else
 		{
-			p.sendMessage("Wrong password!");
+			p.sendMessage("Nespravne heslo!");
 		}
 	}
 	public String GetStatus(Player p)

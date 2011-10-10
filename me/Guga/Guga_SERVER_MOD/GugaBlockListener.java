@@ -36,7 +36,7 @@ public class GugaBlockListener extends BlockListener
 			{
 				return;
 			}
-			p.sendMessage("You cannot destroy blocks in arena!");
+			p.sendMessage("V arene nemuzes kopat!");
 			e.setCancelled(true);
 			return;
 		}
@@ -45,7 +45,9 @@ public class GugaBlockListener extends BlockListener
 			if (!p.isOp())
 			{
 				e.setCancelled(true);
-				p.sendMessage("You cannot dig in this region!");
+				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
+				p.sendMessage("Tady nemuzes kopat! Nazev pozemku: " + region.GetName());
+				return;
 			}
 		}
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
@@ -54,11 +56,11 @@ public class GugaBlockListener extends BlockListener
 			p.sendMessage("******************************");
 			if (plugin.acc.UserIsRegistered(p))
 			{
-				p.sendMessage("YOU ARE NOT LOGGED IN! Please login by typing /login password");
+				p.sendMessage("NEJSTE PRIHLASEN! Prihlaste se pomoci /login heslo");
 			}
 			else
 			{
-				p.sendMessage("YOU ARE NOT REGISTERED! Please register by typing /register password");
+				p.sendMessage("NEJSTE ZAREGISTROVAN! Prosim zaregistrujte se /register heslo");
 			}
 			p.sendMessage("******************************");
 			return;
@@ -97,7 +99,7 @@ public class GugaBlockListener extends BlockListener
 			}
 			if (!canBreak)
 			{
-				p.sendMessage("You need to be atleast level 5 to destroy this block!");
+				p.sendMessage("Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
 				e.setCancelled(true);
 				return;
 			}
@@ -134,7 +136,7 @@ public class GugaBlockListener extends BlockListener
 				}
 				if (!canBreak)
 				{
-					p.sendMessage("You need to be atleast level 5 to destroy this block!");
+					p.sendMessage("Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
 					e.setCancelled(true);
 					return;
 				}
@@ -155,11 +157,11 @@ public class GugaBlockListener extends BlockListener
 				e.setCancelled(true);
 				if (chestOwner.matches(p.getName()))
 				{
-					p.sendMessage("You cannot destroy locked chest! Unlock this chest first.");
+					p.sendMessage("Nemuzete rozbit zamcenou truhlu! Nejdrive ji odemknete.");
 				}
 				else
 				{
-					p.sendMessage("You cannot destroy locked chest! " + chestOwner + " is owner of this chest.");
+					p.sendMessage("Nemuzete rozbit zamcenou truhlu! " + chestOwner + " je vlastnikem teto truhly.");
 				}
 			}
 		}
@@ -177,19 +179,19 @@ public class GugaBlockListener extends BlockListener
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
 					prof.GainExperience(25);
-					p.sendMessage("You found a Diamond!");
+					p.sendMessage("Nasel jste diamant!");
 				}
 				else if (bonus == GugaBonusDrop.GOLD)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
 					prof.GainExperience(25);
-					p.sendMessage("You found a Gold!");
+					p.sendMessage("Nasel jste zlato!");
 				}
 				else if (bonus == GugaBonusDrop.IRON)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
 					prof.GainExperience(25);
-					p.sendMessage("You found an Iron!");
+					p.sendMessage("Nasel jste zelezo!");
 				}
 			}
 			else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
@@ -259,7 +261,8 @@ public class GugaBlockListener extends BlockListener
 			if (!e.getPlayer().isOp())
 			{
 				e.setCancelled(true);
-				e.getPlayer().sendMessage("You cannot build in this region!");
+				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
+				e.getPlayer().sendMessage("Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
 			}
 		}
 		int typeId = e.getBlock().getTypeId();

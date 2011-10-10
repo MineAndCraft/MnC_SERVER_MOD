@@ -40,6 +40,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaRegionHandler.SaveRegions();
 		arena.SavePvpStats();
 	}
+	@SuppressWarnings("deprecation")
 	public void onEnable() 
 	{
 		PluginManager pManager = this.getServer().getPluginManager();
@@ -523,7 +524,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.6.0";
+	public static final String version = "1.6.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
