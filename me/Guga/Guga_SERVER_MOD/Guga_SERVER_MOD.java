@@ -70,6 +70,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaRegionHandler.SetPlugin(this);
 		if (getServer().getWorld("arena") == null)
 		{
+			//WorldCreator.name("arena").createWorld();
+			//WorldCreator.name("arena").environment(Environment.NORMAL);
 			getServer().createWorld("arena", Environment.NORMAL);
 		}
 		arena.LoadArena();
