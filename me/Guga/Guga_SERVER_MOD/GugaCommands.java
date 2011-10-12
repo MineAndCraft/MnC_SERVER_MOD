@@ -22,7 +22,7 @@ public abstract class GugaCommands
 		plugin = gugaSM;
 	}
 	public static void CommandWho(Player sender)
-	{		
+	{
 		Player[] p = plugin.getServer().getOnlinePlayers();
 		String pName;
 		double playerX;
