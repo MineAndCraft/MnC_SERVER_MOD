@@ -1,3 +1,15 @@
+1.7.1:
+	- /ah command added to help.
+	- /r in help moved abit.
+	- Minor updates to /ah command messages
+	- XP rewards on death now work properly.
+	- Arena kill announces now work properly.	
+
+1.7.0:
+	- New Auction House System added.
+	- New GugaAuction class added.
+	- New GugaAuctionHandler class added.
+
 1.6.1:
 	- Most of the text has been translated to Czech.
 	- New /gm regions owners to update owner list added.

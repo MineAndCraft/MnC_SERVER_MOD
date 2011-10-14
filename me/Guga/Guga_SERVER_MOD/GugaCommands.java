@@ -130,7 +130,8 @@ public abstract class GugaCommands
 		sender.sendMessage(" /shop  -  Menu Obchodu.");
 		sender.sendMessage(" /vip  -  VIP menu.");
 		sender.sendMessage(" /places - Menu mist, kam se da teleportovat.");
-		sender.sendMessage("/r <message>  -  Odpoved na whisper.");
+		sender.sendMessage(" /ah - Menu Aukce.");
+		sender.sendMessage(" /r <message>  -  Odpoved na whisper.");
 		if (sender.isOp())
 		{
 			sender.sendMessage(" /gm  -  GameMaster's menu.");
@@ -624,6 +625,123 @@ public abstract class GugaCommands
 					}
 				}
 				sender.sendMessage("Toto misto neexistuje!");
+			}
+		}
+	}
+	public static void CommandAH(Player sender, String args[])
+	{
+		if (args.length == 0)
+		{
+			sender.sendMessage("AUCTION HOUSE MENU:");
+			sender.sendMessage("Jako Platidlo slouzi Gold Ingoty!");
+			sender.sendMessage("Prikazy:");
+			sender.sendMessage("/ah show - Zobrazi pocet stran.");
+			sender.sendMessage("/ah show <strana> - Zobrazi danou stranku nabidky aukce.");
+			sender.sendMessage("/ah buy <id> - Koupi aukci podle id z /ah show.");
+			sender.sendMessage("/ah create <itemID> <pocet> <cena> - Vytvori novou aukci.");
+			sender.sendMessage("/ah cancel <id> - Stornuje aukci podle ID z /ah my.");
+			sender.sendMessage("/ah my - Zobrazi vase aukce.");
+			return;
+		}
+		if (args.length >= 1)
+		{
+			String subCmd = args[0];
+			if (subCmd.equalsIgnoreCase("show"))
+			{
+				if (args.length == 1)
+				{
+					sender.sendMessage("Aktualni pocet stran: " + GugaAuctionHandler.GetPagesCount());
+				}
+				else if (args.length == 2)
+				{
+					
+					int page = Integer.parseInt(args[1]);
+					ArrayList<GugaAuction> list = GugaAuctionHandler.GetAuctionPage(page);
+					if (list.size() == 0)
+					{
+						sender.sendMessage("Tato strana neexistuje!");
+						return;
+					}
+					sender.sendMessage("ID ; itemID ; pocet ; cena ; vlastnik");
+					Iterator<GugaAuction> i = list.iterator();
+					int i2 = GugaAuctionHandler.ITEMS_PER_PAGE * (page - 1);
+					while (i.hasNext())
+					{
+						GugaAuction auction = i.next();
+						int itemID = auction.GetItemID();
+						int amount = auction.GetAmount();
+						int price = auction.GetPrice();
+						String owner = auction.GetOwner();
+						sender.sendMessage(i2 + " ; " + itemID + " ; " + amount + " ; " + price + " ; " + owner);
+						i2++;
+					}
+				}
+			}
+			else if (subCmd.equalsIgnoreCase("create"))
+			{
+				if (args.length == 4)
+				{
+					int itemID = Integer.parseInt(args[1]);
+					int amount = Integer.parseInt(args[2]);
+					int price = Integer.parseInt(args[3]);
+					if (GugaAuctionHandler.CreateAuction(itemID, amount, price, sender))
+						sender.sendMessage("Aukce uspesne vytvorena!");
+					else
+					{
+						sender.sendMessage("Nemate dostatek itemu v inventari!");
+					}
+					
+				}
+			}
+			else if (subCmd.equalsIgnoreCase("buy"))
+			{
+				if (args.length == 2)
+				{
+					int index = Integer.parseInt(args[1]);
+					if (GugaAuctionHandler.GetAllAuctions().get(index).GetOwner().matches(sender.getName()))
+					{
+						sender.sendMessage("Nemuzete koupit vlastni aukci!");
+						return;
+					}
+					if (GugaAuctionHandler.BuyAuction(sender, index))
+						sender.sendMessage("Aukce uspesne koupena!");
+					else
+						sender.sendMessage("Nemate na zaplaceni!");
+				}
+			}
+			else if (subCmd.equalsIgnoreCase("cancel"))
+			{
+				if (args.length == 2)
+				{
+					int index = Integer.parseInt(args[1]);
+					if (GugaAuctionHandler.CancelAuction(index, sender))
+						sender.sendMessage("Aukce uspesne zrusena.");
+					else
+						sender.sendMessage("Aukce s timto ID neexistuje!");
+				}
+			}
+			else if (subCmd.equalsIgnoreCase("my"))
+			{
+				if (args.length == 1)
+				{
+					ArrayList<GugaAuction> list = GugaAuctionHandler.GetPlayerAuctions(sender);
+					if (list.size() == 0)
+					{
+						sender.sendMessage("Nemate zadnou aukci!");
+						return;
+					}
+					Iterator<GugaAuction> i = list.iterator();
+					int i2 = 0;
+					sender.sendMessage("ID ; itemID ; amount ; price");
+					while (i.hasNext())
+					{
+						GugaAuction auction = i.next();
+						int itemID = auction.GetItemID();
+						int amount = auction.GetAmount();
+						int price = auction.GetPrice();
+						sender.sendMessage(i2 + " ; " + itemID + " ; " + amount + " ; " + price);
+					}
+				}
 			}
 		}
 	}

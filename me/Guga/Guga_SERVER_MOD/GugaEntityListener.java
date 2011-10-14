@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
@@ -53,23 +54,6 @@ public class GugaEntityListener extends EntityListener
 				return;
 			}
 		}
-		if (plugin.arena.IsArena(e.getEntity().getLocation()))
-		{
-			if (e instanceof EntityDamageByEntityEvent)
-			{
-				EntityDamageByEntityEvent event = (EntityDamageByEntityEvent)e;
-				if ((event.getDamager() instanceof Player) && (event.getEntity() instanceof Player))
-				{
-					Player damager = (Player)event.getDamager();
-					Player target = (Player)event.getEntity();
-					if (event.getDamage() >= target.getHealth())
-					{
-						plugin.arena.ArenaKill(damager, target);
-					}
-				}
-			}
-			return;
-		}
 		if (e instanceof EntityDamageByEntityEvent)
 		{
 			EntityDamageByEntityEvent event = (EntityDamageByEntityEvent)e;
@@ -83,10 +67,6 @@ public class GugaEntityListener extends EntityListener
 				}
 				GugaProfession prof = plugin.professions.get(damager.getName());
 				LivingEntity target = (LivingEntity)event.getEntity();
-				if (xpCache == target)
-				{
-					return;
-				}
 				if (prof instanceof GugaHunter)
 				{
 					if (!(target instanceof Player))
@@ -100,70 +80,6 @@ public class GugaEntityListener extends EntityListener
 					if (!(target instanceof Player))
 					{
 						prof.GainExperience(1);
-					}
-				}
-				if (event.getEntity() instanceof LivingEntity)
-				{
-					// *********************** KILL **************************
-					if (event.getDamage() >= target.getHealth())
-					{
-						if (prof instanceof GugaMiner)
-						{
-							if (target instanceof Creeper)
-							{
-								prof.GainExperience(20);
-							}
-							else if(target instanceof Spider)
-							{
-								prof.GainExperience(15);
-							}
-							else if(target instanceof Skeleton)
-							{
-								prof.GainExperience(15);
-							}
-							else if(target instanceof Zombie)
-							{
-								prof.GainExperience(10);
-							}
-							else if (target instanceof Player)
-							{
-								prof.GainExperience(200);
-								damager.getWorld().dropItem(e.getEntity().getLocation(), new ItemStack(262,20));
-							}
-							else
-							{
-								prof.GainExperience(5);
-							}
-						}
-						else if (prof instanceof GugaHunter)
-						{
-							if (target instanceof Creeper)
-							{
-								prof.GainExperience(75);
-							}
-							else if(target instanceof Spider)
-							{
-								prof.GainExperience(50);
-							}
-							else if(target instanceof Skeleton)
-							{
-								prof.GainExperience(50);
-							}
-							else if(target instanceof Zombie)
-							{
-								prof.GainExperience(25);
-							}
-							else if (target instanceof Player)
-							{
-								prof.GainExperience(200);
-								damager.getWorld().dropItem(e.getEntity().getLocation(), new ItemStack(262,20));
-							}
-							else
-							{
-								prof.GainExperience(15);
-							}
-						}
-						xpCache = target;
 					}
 				}
 			}
@@ -191,6 +107,90 @@ public class GugaEntityListener extends EntityListener
 		if (e.getDroppedExp() > 0)
 		{
 			e.setDroppedExp(0);
+		}
+		if (plugin.arena.IsArena(e.getEntity().getLocation()))
+		{
+			if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent)
+			{
+				EntityDamageByEntityEvent event = (EntityDamageByEntityEvent)e.getEntity().getLastDamageCause();
+				if ((event.getDamager() instanceof Player) && (event.getEntity() instanceof Player))
+				{
+					Player damager = (Player)event.getDamager();
+					Player target = (Player)event.getEntity();
+					plugin.arena.ArenaKill(damager, target);
+				}
+			}
+			return;
+		}
+		if (e.getEntity().getLastDamageCause() != null)
+		{
+			if (!(e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent))
+			{
+				return;
+			}
+			Entity target = e.getEntity();
+			Entity ent = ((EntityDamageByEntityEvent)target.getLastDamageCause()).getDamager();
+			if (ent instanceof Player)
+			{
+				Player damager = (Player)ent;
+				GugaProfession prof = plugin.professions.get(damager.getName());
+				if (prof instanceof GugaMiner)
+				{
+					if (target instanceof Creeper)
+					{
+							prof.GainExperience(20);
+					}
+					else if(target instanceof Spider)
+					{
+						prof.GainExperience(15);
+					}
+					else if(target instanceof Skeleton)
+					{
+						prof.GainExperience(15);
+					}
+					else if(target instanceof Zombie)
+					{
+						prof.GainExperience(10);
+					}
+					else if (target instanceof Player)
+					{
+						prof.GainExperience(200);
+						damager.getWorld().dropItem(e.getEntity().getLocation(), new ItemStack(262,20));
+					}
+					else
+					{
+						prof.GainExperience(5);
+					}
+				}
+				else if (prof instanceof GugaHunter)
+				{
+					if (target instanceof Creeper)
+					{
+						prof.GainExperience(75);
+					}
+					else if(target instanceof Spider)
+					{
+						prof.GainExperience(50);
+					}
+					else if(target instanceof Skeleton)
+					{
+						prof.GainExperience(50);
+					}
+					else if(target instanceof Zombie)
+					{
+						prof.GainExperience(25);
+					}
+					else if (target instanceof Player)
+					{
+						prof.GainExperience(200);
+						damager.getWorld().dropItem(e.getEntity().getLocation(), new ItemStack(262,20));
+					}
+					else
+					{
+						prof.GainExperience(15);
+					}
+				}
+			}
 		}
 	}
 	public void onEntityExplode(EntityExplodeEvent e)
@@ -232,6 +232,5 @@ public class GugaEntityListener extends EntityListener
 			}
 		}
 	}
-	private LivingEntity xpCache;
 	public static Guga_SERVER_MOD plugin;
 }

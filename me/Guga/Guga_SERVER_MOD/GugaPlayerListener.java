@@ -30,6 +30,7 @@ public class GugaPlayerListener extends PlayerListener
 		final Player p = e.getPlayer();
 		p.setExperience(0);
 		p.setLevel(9);
+		GugaAuctionHandler.CheckPayments(p);
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
 		{

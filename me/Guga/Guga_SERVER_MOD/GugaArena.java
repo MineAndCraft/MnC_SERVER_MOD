@@ -42,7 +42,7 @@ public class GugaArena
 				prof.GainExperience(200);
 			}
 			killer.getWorld().dropItem(killer.getLocation(), new ItemStack(262,20));
-			plugin.getServer().broadcastMessage(killer.getName() + " rosekal " + victim.getName() + " v Arene!");
+			plugin.getServer().broadcastMessage(killer.getName() + " rozsekal " + victim.getName() + " v Arene!");
 			killCache = victim;
 			ClearCache();
 			DisableLeave(killer,60);

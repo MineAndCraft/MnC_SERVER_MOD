@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 
+
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.plugin.PluginManager;
@@ -38,6 +39,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAnnouncement.SaveAnnouncements();
 		GugaPort.SavePlaces();
 		GugaRegionHandler.SaveRegions();
+		GugaAuctionHandler.SaveAuctions();
+		GugaAuctionHandler.SavePayments();
 		arena.SavePvpStats();
 	}
 	@SuppressWarnings("deprecation")
@@ -68,6 +71,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
+		GugaAuctionHandler.SetPlugin(this);
 		if (getServer().getWorld("arena") == null)
 		{
 			getServer().createWorld("arena", Environment.NORMAL);
@@ -83,6 +87,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		LoadCurrency();
 		GugaPort.LoadPlaces();
 		GugaRegionHandler.LoadRegions();
+		GugaAuctionHandler.LoadAuctions();
+		GugaAuctionHandler.LoadPayments();
 		chests = new GugaChests(this);
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
@@ -300,6 +306,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandPlaces((Player)sender, args);
+			 return true;
+		 }
+		 else if (cmd.getName().equalsIgnoreCase("ah") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandAH((Player)sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("arena") && (sender instanceof Player))
@@ -524,7 +535,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.6.1";
+	public static final String version = "1.7.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
