@@ -2,6 +2,8 @@ package me.Guga.Guga_SERVER_MOD;
 import java.util.Date;
 
 
+import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -84,7 +86,7 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			if (e.getMessage().contains(gmCommands[i]))
 			{
-				if ( ( !plugin.acc.UserIsLogged(e.getPlayer()) ) && ( e.getPlayer().isOp() ) )
+				if ( ( !plugin.acc.UserIsLogged(e.getPlayer()) ) && ( GameMasterHandler.IsAtleastGM(e.getPlayer().getName()) ) )
 				{
 					e.getPlayer().sendMessage("Nejdrive se musite prihlasit ;).");
 					e.setCancelled(true);
@@ -106,6 +108,7 @@ public class GugaPlayerListener extends PlayerListener
 				i++;
 			}
 			Player p = plugin.getServer().getPlayer(pName);
+			plugin.socketServer.SendChatMsg(e.getPlayer().getName() + " -> " + p.getName() + ": " + msg);
 			e.getPlayer().sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
 			GugaCommands.reply.put(p, e.getPlayer());
 		}
@@ -113,15 +116,24 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerChat(PlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
+		plugin.socketServer.SendChatMsg(e.getPlayer().getName() + ": " + e.getMessage());
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
 		}
-		if (p.isOp())
+		GameMaster gm;
+		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
 		{
 			if (plugin.acc.UserIsLogged(p))
 			{
-			e.setMessage(ChatColor.BLUE + e.getMessage());
+				if (gm.GetRank() == Rank.ADMIN)
+				{
+					e.setMessage(ChatColor.BLUE + e.getMessage());
+				}
+				else if (gm.GetRank() == Rank.GAMEMASTER)
+				{
+					e.setMessage(ChatColor.BLUE + e.getMessage());
+				}
 			}
 			else
 			{
@@ -347,7 +359,7 @@ public class GugaPlayerListener extends PlayerListener
 				if (targetBlock.getTypeId() == 54)
 				{
 					chestOwner = plugin.chests.GetChestOwner(targetBlock);
-					if(chestOwner.matches(p.getName()) || chestOwner.matches("notFound") || p.isOp())
+					if(chestOwner.matches(p.getName()) || chestOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
 					{
 						return;
 					}

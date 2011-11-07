@@ -50,6 +50,7 @@ public abstract class GugaAuctionHandler
 		else
 		{
 			owner.getInventory().addItem(new ItemStack(GugaAuctionHandler.CURRENCY, auction.GetPrice()));
+			owner.sendMessage("Vase aukce se prodala! Ziskal jste " + price + " Gold ingotu.");
 		}
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
@@ -155,6 +156,7 @@ public abstract class GugaAuctionHandler
 				int money = Integer.parseInt(line.split(";")[1]);
 				player.getInventory().addItem(new ItemStack(GugaAuctionHandler.CURRENCY,money));
 				GugaAuctionHandler.payBuffer.remove(line);
+				player.sendMessage("Vase aukce se prodala! Ziskal jste " + money + " Gold ingotu.");
 			}
 		}
 		GugaAuctionHandler.SavePayments();

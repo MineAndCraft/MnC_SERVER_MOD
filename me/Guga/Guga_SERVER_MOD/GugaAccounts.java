@@ -53,6 +53,22 @@ public class GugaAccounts
 		}
 		
 	}
+	public boolean ValidLogin(String acc, String pass)
+	{
+		int i = 0;
+		while (i < this.accNames.length && accNames[i] != null)
+		{
+			if (this.accNames[i].equalsIgnoreCase(acc))
+			{
+				if (this.passwords[i].matches(pass))
+					return true;
+				else
+					return false;
+			}
+			i++;
+		}
+		return false;
+	}
 	public void StartTpTask(Player p)
 	{
 		

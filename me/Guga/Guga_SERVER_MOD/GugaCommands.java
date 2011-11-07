@@ -132,7 +132,7 @@ public abstract class GugaCommands
 		sender.sendMessage(" /places - Menu mist, kam se da teleportovat.");
 		sender.sendMessage(" /ah - Menu Aukce.");
 		sender.sendMessage(" /r <message>  -  Odpoved na whisper.");
-		if (sender.isOp())
+		if (GameMasterHandler.IsAdmin(sender.getName()))
 		{
 			sender.sendMessage(" /gm  -  GameMaster's menu.");
 		}
@@ -180,7 +180,7 @@ public abstract class GugaCommands
 
 		if (blockType == 54)
 		{
-			if ( (plugin.chests.GetChestOwner(chest).matches(sender.getName())) || (sender.isOp()) )
+			if ( (plugin.chests.GetChestOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
 			{
 				plugin.chests.UnlockChest(chest,sender.getName());
 				sender.sendMessage("Vase truhla byla odemcena.");
@@ -586,7 +586,7 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("SEZNAM MIST:");
 				Iterator<GugaPlace> i;
-				if (sender.isOp())
+				if (GameMasterHandler.IsAtleastGM(sender.getName()))
 				{
 					i = GugaPort.GetAllPlaces().iterator();
 
@@ -618,7 +618,7 @@ public abstract class GugaCommands
 				GugaPlace place;
 				if ( (place = GugaPort.GetPlaceByName(name)) != null)
 				{
-					if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place) || sender.isOp())
+					if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place) || GameMasterHandler.IsAtleastGM(sender.getName()))
 					{
 						place.Teleport(sender);
 						return;
@@ -740,6 +740,7 @@ public abstract class GugaCommands
 						int amount = auction.GetAmount();
 						int price = auction.GetPrice();
 						sender.sendMessage(i2 + " ; " + itemID + " ; " + amount + " ; " + price);
+						i2++;
 					}
 				}
 			}

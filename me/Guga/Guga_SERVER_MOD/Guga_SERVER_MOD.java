@@ -1,22 +1,10 @@
 package me.Guga.Guga_SERVER_MOD;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
-
-
-
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.plugin.PluginManager;
@@ -72,6 +60,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAnnouncement.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
 		GugaAuctionHandler.SetPlugin(this);
+		GameMasterHandler.SetPlugin(this);
+		
 		if (getServer().getWorld("arena") == null)
 		{
 			getServer().createWorld("arena", Environment.NORMAL);
@@ -90,206 +80,103 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
 		chests = new GugaChests(this);
+		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
+		
+		this.socketServer = new GugaSocketServer(12451, this);
+		this.socketServer.ListenStart();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by Guga 2011.");
 	}
 	public void SaveCurrency()
 	{
 		log.info("Saving Currency Data...");
-		File curr = new File(currencyFile);
-		if (!curr.exists())
+		GugaFile file = new GugaFile(currencyFile, GugaFile.WRITE_MODE);
+		file.Open();
+		String line;
+		String currency;
+		String vipExp;
+		String name;
+		Iterator<GugaVirtualCurrency> i = playerCurrency.iterator();
+		while (i.hasNext())
 		{
-			try 
-			{
-				curr.createNewFile();
-				
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
+			GugaVirtualCurrency p = i.next();
+			name = p.GetPlayerName();
+			vipExp = Long.toString(p.GetExpirationDate());
+			currency = Integer.toString(p.GetCurrency());
+			line = name + ";" + currency + ";" + vipExp;
+			file.WriteLine(line);
 		}
-		try 
-		{
-			FileWriter fStream = new FileWriter(curr, false);
-			BufferedWriter bWriter;
-			bWriter = new BufferedWriter(fStream);
-			String line;
-			String currency;
-			String vipExp;
-			String name;
-			Iterator<GugaVirtualCurrency> i = playerCurrency.iterator();
-			while (i.hasNext())
-			{
-				GugaVirtualCurrency p = i.next();
-				name = p.GetPlayerName();
-				vipExp = Long.toString(p.GetExpirationDate());
-				currency = Integer.toString(p.GetCurrency());
-				line = name + ";" + currency + ";" + vipExp;
-				bWriter.write(line);
-				bWriter.newLine();
-			}
-			
-			bWriter.close();
-			fStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		file.Close();
 	}
 	public void LoadCurrency()
 	{
 		log.info("Loading Currency Data...");
-		File curr = new File(currencyFile);
-		if (!curr.exists())
+		GugaFile file = new GugaFile(currencyFile, GugaFile.READ_MODE);	
+		file.Open();
+		String line;
+		String []splittedLine;
+		long vipExp;
+		String name;
+		int currency;
+		while ((line = file.ReadLine()) != null)
 		{
-			try 
-			{
-				curr.createNewFile();
-				return;
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-				return;
-			}
+			splittedLine = line.split(";");
+			name = splittedLine[0];
+			currency = Integer.parseInt(splittedLine[1]);				
+			vipExp = Long.parseLong(splittedLine[2]);
+			playerCurrency.add(new GugaVirtualCurrency(this, name, currency,new Date(vipExp)));
 		}
-		else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(curr);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				String []splittedLine;
-				long vipExp;
-				String name;
-				int currency;
-				try {
-					while ((line = bReader.readLine()) != null)
-					{
-						splittedLine = line.split(";");
-						name = splittedLine[0];
-						currency = Integer.parseInt(splittedLine[1]);
-						vipExp = Long.parseLong(splittedLine[2]);
-						
-						playerCurrency.add(new GugaVirtualCurrency(this, name, currency,new Date(vipExp)));
-					}
-					bReader.close();
-					inStream.close();
-					fRead.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}			
-			} 
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			}
-		}
+		file.Close();
 	}
 	public void SaveProfessions()
 	{
 		log.info("Saving Professions Data...");
-		File profs = new File(professionsFile);
-		if (!profs.exists())
+		GugaFile file = new GugaFile(professionsFile, GugaFile.WRITE_MODE);
+		file.Open();
+		String line;
+		Collection<GugaProfession> profCollection;
+		profCollection = professions.values();
+		Object[] objectArray;
+		objectArray = profCollection.toArray();
+		GugaProfession prof;
+		int i =0;
+		while (i<objectArray.length)
 		{
-			try 
-			{
-				profs.createNewFile();
-				
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
+			prof = (GugaProfession) objectArray[i];
+			line = prof.GetPlayerName() + ";" + prof.GetProfession() + ";" + prof.GetXp();
+			file.WriteLine(line);
+			i++;
 		}
-		try 
-		{
-			FileWriter fStream = new FileWriter(profs, false);
-			BufferedWriter bWriter;
-			bWriter = new BufferedWriter(fStream);
-			String line;
-			
-			Collection<GugaProfession> profCollection;
-			profCollection = professions.values();
-			Object[] objectArray;
-			objectArray = profCollection.toArray();
-			GugaProfession prof;
-			int i =0;
-			while (i<objectArray.length)
-			{
-				prof = (GugaProfession) objectArray[i];
-				line = prof.GetPlayerName() + ";" + prof.GetProfession() + ";" + prof.GetXp();
-				bWriter.write(line);
-				bWriter.newLine();
-				i++;
-			}
-			bWriter.close();
-			fStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		file.Close();
 	}
 	public void LoadProfessions()
 	{
 		log.info("Loading Professions Data...");
-		File profs = new File(professionsFile);
-		if (!profs.exists())
+		GugaFile file = new GugaFile(professionsFile, GugaFile.READ_MODE);	
+		file.Open();
+		String line;
+		String []splittedLine;
+		String pName;
+		String profName;
+		String xp;
+		while ((line = file.ReadLine()) != null)
 		{
-			try 
+			splittedLine = line.split(";");
+			pName = splittedLine[0];
+			profName = splittedLine[1];
+			xp = splittedLine[2];
+			if (profName.matches("Miner"))
 			{
-				profs.createNewFile();
-				return;
-			} 
-			catch (IOException e) 
+				professions.put(pName, new GugaMiner(pName,Integer.parseInt(xp),this));
+			}
+			else if (profName.matches("Hunter"))
 			{
-				e.printStackTrace();
-				return;
+				professions.put(pName, new GugaHunter(pName,Integer.parseInt(xp),this));
 			}
 		}
-		else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(profs);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				String []splittedLine;
-				String pName;
-				String profName;
-				String xp;
-				try {
-					while ((line = bReader.readLine()) != null)
-					{
-						splittedLine = line.split(";");
-						pName = splittedLine[0];
-						profName = splittedLine[1];
-						xp = splittedLine[2];
-						if (profName.matches("Miner"))
-						{
-							professions.put(pName, new GugaMiner(pName,Integer.parseInt(xp),this));
-						}
-						else if (profName.matches("Hunter"))
-						{
-							professions.put(pName, new GugaHunter(pName,Integer.parseInt(xp),this));
-						}
-					}
-					bReader.close();
-					inStream.close();
-					fRead.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}			
-			} 
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			}
-		}
+		file.Close();
 	}
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
@@ -302,6 +189,15 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 { 
 		   GugaCommands.CommandWho((Player)sender);
 		   return true;
+		 }
+		 else if (cmd.getName().equalsIgnoreCase("socket"))
+		 {
+		/*	 try {
+				socket.SendData(InetAddress.getByName("146.255.27.116"), "RESTART");
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
@@ -364,7 +260,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 if (sender instanceof Player)
 			 {
-				 if( ((Player)sender).isOp())
+				 if( GameMasterHandler.IsAdmin(((Player)sender).getName()))
 				 {
 					 GugaCommands.CommandGM((Player)sender,args);
 				 }
@@ -535,13 +431,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.7.1";
+	public static final String version = "1.8.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
 	
+	public GugaSocketServer socketServer;
 	public final GugaConfiguration config = new GugaConfiguration(this);
 	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
 	public final GugaEntityListener enListener = new GugaEntityListener(this);

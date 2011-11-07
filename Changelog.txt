@@ -1,3 +1,19 @@
+1.8.0:
+	- New GameMaster class added;
+	- New GameMasterHandler class added;
+	- New SocketServer class added;
+	- GameMasters now have ranks;
+	- Ranks are: Admin, GM, Moderator and Eventer;
+	- Moderator and Eventer are unused for now.
+	- Socket Server added;
+	- Socket server manages connection from Remote server controller application.
+	
+1.7.2:
+	- Player now can see message when his auction is sold.
+	- Command /ah my now shows auction ID properly.
+	- Methods for saving and loading Professions updated, using GugaFile class.
+	- Methods for saving and loading Currency updated, using GugaFile class.
+
 1.7.1:
 	- /ah command added to help.
 	- /r in help moved abit.
