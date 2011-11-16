@@ -22,7 +22,7 @@ public class GugaAccounts
 		plugin = gugaSM;
 		LoadAccounts();
 	}
-	public void LoginUser(Player p,String password)
+	public boolean LoginUser(Player p,String password)
 	{
 		String pName = p.getName();
 		int i = 0;
@@ -41,17 +41,30 @@ public class GugaAccounts
 						plugin.scheduler.cancelTask(taskId.intValue());
 						tpTasks.remove(pName);
 					}
-					break;
+					return true;
 				}
 				else
 				{
 					p.sendMessage("Nespravne heslo!");
-					break;
+					return false;
 				}
 			}
 			i++;
 		}
-		
+		return false;
+	}
+	public String GetPassword(String acc)
+	{
+		int i = 0;
+		while (i < this.accNames.length)
+		{
+			if (this.accNames[i].matches(acc))
+			{
+				return this.passwords[i];
+			}
+			i++;
+		}
+		return null;
 	}
 	public boolean ValidLogin(String acc, String pass)
 	{

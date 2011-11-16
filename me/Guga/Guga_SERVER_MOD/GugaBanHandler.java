@@ -1,0 +1,166 @@
+package me.Guga.Guga_SERVER_MOD;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+
+public abstract class GugaBanHandler 
+{
+	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
+	{
+		plugin = gugaSM;
+	}
+	public static void AddBan(String playerName, long expiration)
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		boolean exists = false;
+		GugaBan ban = null;
+		while (i.hasNext())
+		{
+			ban = i.next();
+			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
+			{
+				exists = true;
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (exists)
+		{
+			if (ban != null)
+			{
+				ban.SetExpiration(expiration);
+			}
+		}
+		else
+		{
+			bans.add(new GugaBan(playerName, expiration));
+		}
+		SaveBans();
+	}
+	public static void UpdateBanAddr(String playerName, String ip)
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
+			{
+				ban.AddIpAddress(ip);
+				SaveBans();
+				return;
+			}
+		}
+	}
+	public static void UpdateBanExpiration(String playerName, long expiration)
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
+			{
+				ban.SetExpiration(expiration);
+				SaveBans();
+				return;
+			}
+		}
+	}
+	public static void RemoveBan(String playerName)
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
+			{
+				ban.SetExpiration(0);
+				SaveBans();
+				return;
+			}
+		}
+	}
+	public static GugaBan GetGugaBan(String playerName)
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
+			{
+				return ban;
+			}
+		}
+		return null;
+	}
+	public static boolean IsBanned(String playerName)
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
+			{
+				Date date = new Date(ban.GetExpiration());
+				Date now = new Date();
+				if (date.after(now))
+					return true;
+			}
+			int i2 = 0;
+			String[] addrs = ban.GetIpAddresses();
+			String addr = plugin.getServer().getPlayer(playerName).getAddress().getAddress().toString();
+			while (i2 < addrs.length)
+			{
+				if (new Date(ban.GetExpiration()).after(new Date()))
+				{
+					if (addrs[i2].matches(addr))
+						return true;
+				}
+				i2++;
+			}
+		}
+		return false;
+	}
+	public static void SaveBans()
+	{
+		plugin.log.info("Saving Bans file...");
+		GugaFile file = new GugaFile(bansFile, GugaFile.WRITE_MODE);
+		file.Open();
+		Iterator<GugaBan> i = bans.iterator();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			file.WriteLine(ban.toString());
+		}
+		file.Close();
+	}
+	public static void LoadBans()
+	{
+		plugin.log.info("Loading Bans file...");
+		GugaFile file = new GugaFile(bansFile, GugaFile.READ_MODE);
+		file.Open();
+		String line = null;
+		while ((line = file.ReadLine()) != null)
+		{
+			String[] split = line.split(";");
+			String playerName = split[0];
+			long expiration = Long.parseLong(split[1]);
+			String[] addresses = new String[split.length - 2];
+			int i = 2;
+			while (i < split.length)
+			{
+				addresses[i - 2] = split[i];
+				i++;
+			}
+			bans.add(new GugaBan(playerName, addresses, expiration));
+		}
+		file.Close();
+	}
+	
+	private static Guga_SERVER_MOD plugin;
+	private static ArrayList<GugaBan> bans = new ArrayList<GugaBan>();
+	private static String bansFile = "plugins/Bans.dat";
+}

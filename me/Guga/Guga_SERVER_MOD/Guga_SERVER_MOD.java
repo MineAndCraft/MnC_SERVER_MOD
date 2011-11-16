@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-
 public class Guga_SERVER_MOD extends JavaPlugin
 {	
 	public void onDisable() 
@@ -29,6 +28,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaRegionHandler.SaveRegions();
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
+		GugaBanHandler.SaveBans();
 		arena.SavePvpStats();
 	}
 	@SuppressWarnings("deprecation")
@@ -61,6 +61,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaRegionHandler.SetPlugin(this);
 		GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
+		GugaBanHandler.SetPlugin(this);
 		
 		if (getServer().getWorld("arena") == null)
 		{
@@ -79,6 +80,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaRegionHandler.LoadRegions();
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
+		GugaBanHandler.LoadBans();
 		chests = new GugaChests(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
@@ -192,12 +194,25 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("socket"))
 		 {
-		/*	 try {
-				socket.SendData(InetAddress.getByName("146.255.27.116"), "RESTART");
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
+			 	/*Connection c;
+				Statement s;
+				try {
+					c = DriverManager.getConnection("jdbc:mysql://mineandcraft.cz:3306/minecraft", "minecraft", "kutilma130");
+					s = c.createStatement();
+					//ResultSet r =/s.executeUpdate("INSERT INTO banned (`name`, `ip`, `expiration`) VALUES ('nigger', '127.0.0.1', '"+new Date().getTime()+"');");
+					ResultSet r = s.executeQuery("SELECT * FROM banned");
+					if (r.next())
+					{
+						this.log.info(r.getString(3));
+					}
+					Calendar c = Calendar.getInstance();
+					c.setTime(new Date());
+					c.add(Calendar.HOUR, 11);
+					c.getT
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
@@ -260,10 +275,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 if (sender instanceof Player)
 			 {
-				 if( GameMasterHandler.IsAdmin(((Player)sender).getName()))
-				 {
-					 GugaCommands.CommandGM((Player)sender,args);
-				 }
+				 GugaCommands.CommandGM((Player)sender,args);
 			 }
 			 else if (sender instanceof ConsoleCommandSender)
 			 {
@@ -431,7 +443,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.8.0";
+	public static final String version = "1.9.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

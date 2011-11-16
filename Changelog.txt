@@ -1,3 +1,38 @@
+1.9.1:
+	- IP logging in ban file now should work properly
+	
+1.9.0:
+	- New banning system added.
+	- /gm ban command added.
+	- New GugaBan class added.
+	- New GugaBanHandler class added.
+	- Bonus drop for miners from iron, gold and diamond has been removed.
+	- Block cache checking for iron gold and diamond has been removed.
+	
+1.8.5:
+	- /vip tp bed command now should work properly.
+	- /gm credits balance command added.
+
+1.8.4:
+	- XP Bar mapping works properly.
+	- Level cap increased to 1000.
+	- Socket server is now protected from crashing.
+	
+1.8.3:
+	- /gm log now works properly for gms too.
+	- minor stability improvements to socket server.
+	- Added more data to GET_PLAYER_INFO socket command.
+
+1.8.2:
+	- New socket command "TELEPORT" added.
+	- New socket command "GET_PLAYER_INFO" added.
+	- /gm log command allowed for GMs.
+
+1.8.1:
+	- New GM system is now properly supported in Block events.
+	- Fixed bug in socket LOGIN command, that returned both, SUCCESS and FAIL messages.
+	- Added FAIL answer to all socket Commands.
+	
 1.8.0:
 	- New GameMaster class added;
 	- New GameMasterHandler class added;

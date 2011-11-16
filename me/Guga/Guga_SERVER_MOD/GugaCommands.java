@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -330,7 +331,29 @@ public abstract class GugaCommands
 				else if (arg1.matches("bed"))
 				{
 					vip.SetLastTeleportLoc(sender.getLocation());
-					sender.teleport(sender.getBedSpawnLocation());
+					Location loc = sender.getBedSpawnLocation();
+					Location tpLoc = loc;
+					boolean canTeleport = false;
+					int i = loc.getBlockY();
+					while (!canTeleport)
+					{
+						loc = tpLoc;
+						loc.add(0, 1, 0);
+						if (loc.getBlock().getTypeId() == 0)
+						{
+							if (loc.getBlock().getRelative(BlockFace.UP).getTypeId() == 0)
+							{
+								tpLoc = loc;
+								break;
+							}
+						}
+						if (i >= 127)
+						{
+							break;
+						}
+						i++;
+					}
+					sender.teleport(tpLoc);
 				}
 			}
 			else if (subCommand.matches("time"))
@@ -439,7 +462,7 @@ public abstract class GugaCommands
 				{
 					GugaMiner miner = (GugaMiner)prof;
 					int chance[] = miner.GetChances();
-					int bonus[] = miner.GetBonusDrops();
+					//int bonus[] = miner.GetBonusDrops();
 					int iron = chance[plugin.IRON];
 					int gold = chance[plugin.GOLD];
 					int diamond = chance[plugin.DIAMOND];
@@ -450,7 +473,7 @@ public abstract class GugaCommands
 					sender.sendMessage("**Diamond: " + diamond + "%");
 					sender.sendMessage("********************");
 					
-					iron = bonus[plugin.IRON];
+					/*iron = bonus[plugin.IRON];
 					gold = bonus[plugin.GOLD];
 					diamond = bonus[plugin.DIAMOND];
 					
@@ -461,7 +484,7 @@ public abstract class GugaCommands
 					
 					sender.sendMessage("********************");
 					sender.sendMessage("********************");
-					
+					*/
 				}
 				else if (prof instanceof GugaHunter)
 				{
@@ -547,11 +570,11 @@ public abstract class GugaCommands
 				{
 					sender.sendMessage("********************");
 					sender.sendMessage("**Minerovo Bonusy:");
-					sender.sendMessage("** - Zvysene dropy z:");
+					/*sender.sendMessage("** - Zvysene dropy z:");
 					sender.sendMessage("**      -Iron (+1 every 6 levels)");
 					sender.sendMessage("**      -Gold (+1 every 8 levels)");
 					sender.sendMessage("**      -Diamond (+1 every 10 levels)");
-					sender.sendMessage("********************");
+					sender.sendMessage("********************");*/
 					sender.sendMessage("** - Sance vzacneho dropu ze Stone:");
 					sender.sendMessage("**      -Iron (+1% every 5 levels)");
 					sender.sendMessage("**      -Gold (+1% every 10 levels)");
@@ -866,24 +889,37 @@ public abstract class GugaCommands
 		{
 			sender.sendMessage("GM MENU:");
 			sender.sendMessage("Commands:");
-			sender.sendMessage("/gm ip <name> - Shows an IP of a player");
-			sender.sendMessage("/gm setspawn - Sets a world spawn to GM's position");
-			sender.sendMessage("/gm credits - Credits sub-menu.");
-			sender.sendMessage("/gm setvip <name> <months>  -  Set VIP to certain player for (now + months)");
-			sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
-			sender.sendMessage("/gm announce  - Announcements sub-menu.");
-			sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
-			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
-			sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
-			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
-			sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
-			sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
+			if (GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				sender.sendMessage("/gm ip <name> - Shows an IP of a player");
+				sender.sendMessage("/gm setspawn - Sets a world spawn to GM's position");
+				sender.sendMessage("/gm credits - Credits sub-menu.");
+				sender.sendMessage("/gm setvip <name> <months>  -  Set VIP to certain player for (now + months)");
+				sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
+				sender.sendMessage("/gm announce  - Announcements sub-menu.");
+				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
+				sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
+				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
+				sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
+				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
+				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
+				sender.sendMessage("/gm places - Places sub-menu.");
+				sender.sendMessage("/gm regions - Regions sub-menu.");
+				sender.sendMessage("/gm ban - Bans sub-menu.");
+			}
 			sender.sendMessage("/gm log - Shows a log records for target block.");
-			sender.sendMessage("/gm places - Places sub-menu.");
-			sender.sendMessage("/gm regions - Regions sub-menu.");
 		}
 		else if (args.length == 1)
 		{
+			if (!GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				String subCommand = args[0];
+				if (subCommand.matches("log"))
+				{
+					plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
+				}
+				return;
+			}
 			String subCommand = args[0];
 			if (subCommand.matches("setspawn"))
 			{
@@ -897,10 +933,16 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
 				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
 			}
+			else if (subCommand.matches("ban"))
+			{
+				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
+				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
+			}
 			else if (subCommand.matches("credits"))
 			{
-				sender.sendMessage("/gm credits add <player> <amount>  -  add credits to a player.");
-				sender.sendMessage("/gm credits remove <player> <amount>  -  remove credits to a player.");
+				sender.sendMessage("/gm credits add <player> <amount>  -  Add credits to a player.");
+				sender.sendMessage("/gm credits remove <player> <amount>  -  Remove credits to a player.");
+				sender.sendMessage("/gm credits balance <player>  -  Shows credits of a player.");
 			}
 			
 			else if (subCommand.matches("spectate"))
@@ -928,6 +970,8 @@ public abstract class GugaCommands
 		}
 		else if (args.length == 2)
 		{
+			if (!GameMasterHandler.IsAdmin(sender.getName()))
+				return;
 			String subCommand = args[0];
 			String arg1 = args[1];
 			Player p;
@@ -1043,6 +1087,8 @@ public abstract class GugaCommands
 		}
 		else if (args.length > 2)
 		{
+			if (!GameMasterHandler.IsAdmin(sender.getName()))
+				return;
 			String subCommand = args[0];
 			if (subCommand.matches("announce"))
 			{
@@ -1075,6 +1121,33 @@ public abstract class GugaCommands
 					}
 					GugaAnnouncement.AddAnnouncement(msg);
 					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
+				}
+			}
+			else if (subCommand.matches("ban"))
+			{
+				if (args.length == 3)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					if (arg1.matches("remove"))
+					{
+						GugaBanHandler.RemoveBan(arg2);
+						sender.sendMessage("Ban succefuly removed!");
+					}
+				}
+				else if (args.length == 4)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					String arg3 = args[3];
+					if (arg1.matches("add"))
+					{
+						Calendar c = Calendar.getInstance();
+						c.setTime(new Date());
+						c.add(Calendar.HOUR, Integer.parseInt(arg3));
+						GugaBanHandler.AddBan(arg2, c.getTimeInMillis());
+						sender.sendMessage("Ban succesfuly added!");
+					}
 				}
 			}
 			else if (subCommand.matches("places"))
@@ -1168,7 +1241,22 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("credits"))
 			{
-				if (args.length == 4)
+				if (args.length == 3)
+				{
+					String arg1 = args[1];
+					String name = args[2];
+					if (arg1.matches("balance"))
+					{
+						GugaVirtualCurrency p = plugin.FindPlayerCurrency(name);
+						if (p == null)
+						{
+							sender.sendMessage("This account doesnt have any credits.");
+							return;
+						}
+						sender.sendMessage("This account has " + p.GetCurrency() + " credits.");
+					}
+				}
+				else if (args.length == 4)
 				{
 					String arg1 = args[1];
 					String name = args[2];
@@ -1286,7 +1374,8 @@ public abstract class GugaCommands
 		 {
 			 if (!plugin.acc.UserIsLogged(sender))
 			 {
-				 plugin.acc.LoginUser(sender, pass);
+				 if (!plugin.acc.LoginUser(sender, pass))
+					 return;
 				 sender.teleport(plugin.acc.playerStart.get(sender.getName()));
 				 GugaProfession prof;
 					if ((prof = plugin.professions.get(sender.getName())) != null)

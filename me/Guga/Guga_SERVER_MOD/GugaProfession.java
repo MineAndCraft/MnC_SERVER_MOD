@@ -11,16 +11,16 @@ public class GugaProfession
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;
-		lvlCap = 100;
+		lvlCap = 1000;
 		xpCap = 4000;
 	}
 	GugaProfession(String pName, int exp, Guga_SERVER_MOD gugaSM)
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;
-		lvlCap = 100;
+		lvlCap = 1000;
 		xpCap = 4000;
-		
+		thisLevel = 500;
 		plugin = gugaSM;
 		playerName = pName;
 		level = 1;
@@ -44,13 +44,9 @@ public class GugaProfession
 			xpNeeded = xpNeeded * xpIncrement;
 			}
 			int diff = xpNeeded - xpNeededOld;
-			if (diff <= 0)
-			{
-				diff = xpNeeded;
-			}
-			thisLevel = diff;
+			if (diff > 0)
+				thisLevel = diff;
 		}
-		thisLevel = 500;
 	}
 	protected void LevelUp()
 	{
@@ -142,6 +138,8 @@ public class GugaProfession
 	private void MapXpBar()
 	{
 		int inc = thisLevel / 100;
+		if (inc == 0)
+			inc = 1;
 		Player p = plugin.getServer().getPlayer(playerName);
 		p.setExperience((thisLevel-(xpNeeded - xp))/inc);
 	}

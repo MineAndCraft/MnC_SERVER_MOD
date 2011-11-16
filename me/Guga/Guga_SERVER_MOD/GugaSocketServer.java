@@ -193,6 +193,8 @@ public class GugaSocketServer
 	}
 	private void CommandHandler()
 	{
+		try
+		{
 		String cmd = new String(this.receivedPacket.getData(), 0, this.receivedPacket.getLength());
 		plugin.log.info(cmd);
 		if (cmd.matches("GET_ONLINE_PLAYERS"))
@@ -211,6 +213,7 @@ public class GugaSocketServer
 				i++;
 			}
 			this.Answer(data);
+			return;
 		}
 		else if (cmd.contains("RUN_COMMAND"))
 		{
@@ -219,6 +222,11 @@ public class GugaSocketServer
 			String args[] = cmd.split(";");
 			if (args[1].matches("BAN_PLAYER_IP"))
 			{
+				if (args.length < 3)
+				{
+					this.Answer("FAIL");
+					return;
+				}
 				int i = 0;
 				Player[] p = this.plugin.getServer().getOnlinePlayers();
 				while (i < p.length)
@@ -232,9 +240,93 @@ public class GugaSocketServer
 							
 					i++;
 				}
+				this.Answer("FAIL");
+				return;
+			}
+			else if (args[1].matches("TELEPORT"))
+			{
+				if (args.length < 4)
+				{
+					this.Answer("FAIL");
+					return;
+				}
+				Player[] p = this.plugin.getServer().getOnlinePlayers();
+				int i = 0;
+				Player from = null;
+				Player to = null;
+				while (i < p.length)
+				{
+					if (p[i].getName().matches(args[2]))
+					{
+						from = p[i];
+					}
+					else if (p[i].getName().matches(args[3]))
+					{
+						to = p[i];
+					}
+					
+					if (from != null && to != null)
+					{
+						from.teleport(to);
+						this.Answer("SUCCESS");
+						return;
+					}
+					i++;
+				}
+				this.Answer("FAIL");
+				return;
+			}
+			else if (args[1].matches("GET_PLAYER_INFO"))
+			{
+				if (args.length < 3)
+				{
+					this.Answer("FAIL");
+					return;
+				}
+				int i = 0;
+				Player[] p = this.plugin.getServer().getOnlinePlayers();
+				while (i < p.length)
+				{
+					if (p[i].getName().equalsIgnoreCase(args[2]))
+					{
+						GugaProfession prof = this.plugin.professions.get(p[i].getName());
+						int lvl;
+						int xp;
+						int xpNeeded;
+						String profName;
+						if (prof == null)
+						{
+							lvl = 0;
+							xp = 0;
+							xpNeeded = 0;
+							profName = "None";
+						}
+						else
+						{
+							lvl = prof.GetLevel();
+							xp = prof.GetXp();
+							xpNeeded = prof.GetXpNeeded();
+							if (prof instanceof GugaMiner)
+								profName = "Miner";
+							else
+								profName = "Hunter";
+						}
+						String data = "SUCCESS;" + p[i].getName() + ";" + this.plugin.acc.GetPassword(p[i].getName()) + ";" + p[i].getAddress().getAddress().toString() + ";" + lvl + ";" + xp + ";" + xpNeeded + ";" + profName;
+						this.Answer(data);
+						return;
+					}
+					i++;
+				}
+				this.Answer("FAIL");
+				return;
 			}
 			else if (args[1].matches("GIVE"))
 			{
+				if (args.length < 5)
+				{
+					this.Answer("FAIL");
+					return;
+				}
 				Player[] p = this.plugin.getServer().getOnlinePlayers();
 				int i = 0;
 				while (i < p.length)
@@ -247,9 +339,16 @@ public class GugaSocketServer
 					}
 					i++;
 				}
+				this.Answer("FAIL");
+				return;
 			}
 			else if (args[1].matches("KICK_PLAYER"))
 			{
+				if (args.length < 3)
+				{
+					this.Answer("FAIL");
+					return;
+				}
 				Player[] p = this.plugin.getServer().getOnlinePlayers();
 				int i = 0;
 				while (i < p.length)
@@ -262,9 +361,16 @@ public class GugaSocketServer
 					}
 					i++;
 				}
+				this.Answer("FAIL");
+				return;
 			}
 			else if (args[1].matches("BAN_PLAYER_ACC"))
 			{
+				if (args.length < 3)
+				{
+					this.Answer("FAIL");
+					return;
+				}
 				Player[] p = this.plugin.getServer().getOnlinePlayers();
 				int i = 0;
 				while (i < p.length)
@@ -278,15 +384,26 @@ public class GugaSocketServer
 					i++;
 				}
 				this.Answer("FAIL");
+				return;
 			}
 			else if (args[1].matches("ANNOUNCE"))
 			{
+				if (args.length < 3)
+				{
+					this.Answer("FAIL");
+					return;
+				}
 				this.plugin.getServer().broadcastMessage(ChatColor.DARK_PURPLE + args[2]);
 				this.Answer("SUCCESS");
 				return;
 			}
 			else if (args[1].matches("WHISPER"))
 			{
+				if (args.length < 4)
+				{
+					this.Answer("FAIL");
+					return;
+				}
 				Player[] p = this.plugin.getServer().getOnlinePlayers();
 				int i = 0;
 				while (i < p.length)
@@ -295,16 +412,22 @@ public class GugaSocketServer
 					{
 						p[i].sendMessage(ChatColor.BLUE + this.GetGMBySocketAddr(this.receivedPacket.getSocketAddress()) + " whispers: " + args[3]);
 						this.Answer("SUCCESS");
-						break;
+						return;
 					}
 					i++;
 				}
 			}
 			this.Answer("FAIL");
+			return;
 		}
 		else if (cmd.contains("LOGIN"))
 		{
 			String args[] = cmd.split(";");
+			if (args.length < 3)
+			{
+				this.Answer("FAIL");
+				return;
+			}
 			if (this.plugin.acc.ValidLogin(args[1], args[2]))
 			{
 				GameMaster gm;
@@ -313,16 +436,24 @@ public class GugaSocketServer
 					String data = "SUCCESS" + ";" + gm.GetRank().GetRankName();
 					this.Answer(data);
 					this.connectedClients.put(args[1], this.receivedPacket.getSocketAddress());
+					return;
 				}
 			}
 			this.Answer("FAIL");
+			return;
 		}
 		else if (cmd.matches("LOGOUT"))
 		{
 			if (this.IsConnected())
 			{
 				this.RemoveConnected(this.receivedPacket.getSocketAddress());
+				return;
 			}
+		}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 	public void SendChatMsg(String msg)

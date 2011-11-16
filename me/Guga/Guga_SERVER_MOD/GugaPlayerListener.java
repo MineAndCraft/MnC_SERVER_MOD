@@ -30,6 +30,16 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		if (GugaBanHandler.IsBanned(p.getName()))
+		{
+			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+			Date d = new Date(ban.GetExpiration());
+			int hours = ((int)d.getTime() - (int)new Date().getTime()) / (60 * 60 * 1000);
+			p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
+			return;
+		}
+		GugaBanHandler.AddBan(p.getName(), 0);
+		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
 		p.setExperience(0);
 		p.setLevel(9);
 		GugaAuctionHandler.CheckPayments(p);

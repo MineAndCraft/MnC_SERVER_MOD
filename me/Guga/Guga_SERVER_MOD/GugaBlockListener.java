@@ -33,7 +33,7 @@ public class GugaBlockListener extends BlockListener
 		Player p = e.getPlayer();
 		if (plugin.arena.IsArena(p.getLocation()))
 		{
-			if (p.isOp())
+			if (GameMasterHandler.IsAtleastGM(p.getName()))
 			{
 				return;
 			}
@@ -43,7 +43,7 @@ public class GugaBlockListener extends BlockListener
 		}
 		if (!GugaRegionHandler.CanInteract(p.getName(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
-			if (!p.isOp())
+			if (!GameMasterHandler.IsAtleastGM(p.getName()))
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
@@ -91,7 +91,7 @@ public class GugaBlockListener extends BlockListener
 					canBreak = false;
 				}
 			}
-			if (p.isOp())
+			if (GameMasterHandler.IsAtleastGM(p.getName()))
 			{
 				if(plugin.acc.UserIsLogged(p))
 				{
@@ -128,7 +128,7 @@ public class GugaBlockListener extends BlockListener
 						canBreak = false;
 					}
 				}
-				if (p.isOp())
+				if (GameMasterHandler.IsAtleastGM(p.getName()))
 				{
 					if(plugin.acc.UserIsLogged(p))
 					{
@@ -195,7 +195,7 @@ public class GugaBlockListener extends BlockListener
 					p.sendMessage("Nasel jste zelezo!");
 				}
 			}
-			else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
+			/*else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
 			{
 				int drops;
 				if (dropsCache.contains(targetBlock))
@@ -227,7 +227,7 @@ public class GugaBlockListener extends BlockListener
 				{
 					prof.GainExperience(25);
 				}
-			}
+			}*/
 		}
 		else if (prof instanceof GugaHunter)
 		{
@@ -251,7 +251,7 @@ public class GugaBlockListener extends BlockListener
 		plugin.logger.LogBlockPlace(e);
 		if (plugin.arena.IsArena(e.getBlock().getLocation()))
 		{
-			if (!e.getPlayer().isOp())
+			if (!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
 				e.setCancelled(true);
 				return;
@@ -259,18 +259,18 @@ public class GugaBlockListener extends BlockListener
 		}
 		if (!GugaRegionHandler.CanInteract(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
-			if (!e.getPlayer().isOp())
+			if (!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
 				e.getPlayer().sendMessage("Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
 			}
 		}
-		int typeId = e.getBlock().getTypeId();
+		/*int typeId = e.getBlock().getTypeId();
 		if ((typeId == 14) || (typeId == 15) || (typeId == 56))
 		{
 			dropsCache.add(e.getBlock());
-		}
+		}*/
 	}
 	public boolean IsInstaBreakBlock(int blockId)
 	{

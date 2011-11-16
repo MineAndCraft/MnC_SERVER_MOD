@@ -49,6 +49,7 @@ public abstract class GameMasterHandler
 	}
 	public static void LoadGMs()
 	{
+		plugin.log.info("Loading GMs file...");
 		GugaFile file = new GugaFile(GameMasterHandler.gmFile, GugaFile.READ_MODE);
 		file.Open();
 		String line;
@@ -61,6 +62,7 @@ public abstract class GameMasterHandler
 	}
 	public static void SaveGMs()
 	{
+		plugin.log.info("Saving GMs file...");
 		GugaFile file = new GugaFile(GameMasterHandler.gmFile, GugaFile.WRITE_MODE);
 		file.Open();
 		Iterator<GameMaster> i = GameMasterHandler.gameMasters.iterator();
@@ -73,7 +75,6 @@ public abstract class GameMasterHandler
 		file.Close();
 	}
 	private static ArrayList<GameMaster> gameMasters = new ArrayList<GameMaster>();
-	@SuppressWarnings("unused")
 	private static Guga_SERVER_MOD plugin;
 	private static String gmFile = "plugins/GameMasters.dat";
 }
