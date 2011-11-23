@@ -120,7 +120,7 @@ public class GugaProfession
 		if (CanLevelUp())
 		{
 			xp = xp+exp;
-			MapXpBar();
+			//MapXpBar();
 			CheckIfDinged();
 		}
 	}
@@ -135,7 +135,8 @@ public class GugaProfession
 	{
 		return "Profession";
 	}
-	private void MapXpBar()
+@SuppressWarnings("unused")
+private void MapXpBar()
 	{
 		int inc = thisLevel / 100;
 		if (inc == 0)

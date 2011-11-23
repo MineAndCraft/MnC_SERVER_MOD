@@ -104,10 +104,10 @@ public class GugaEntityListener extends EntityListener
 	}
 	public void onEntityDeath(EntityDeathEvent e)
 	{
-		if (e.getDroppedExp() > 0)
+		/*if (e.getDroppedExp() > 0)
 		{
 			e.setDroppedExp(0);
-		}
+		}*/
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))
 		{
 			if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent)

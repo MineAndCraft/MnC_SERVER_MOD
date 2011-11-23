@@ -1,3 +1,24 @@
+1.9.7:
+	- Added null check on ban record when player joins.
+	
+1.9.6:
+	- Simple debug tools for ban system added.
+	- Experience now drop again.
+	- RPG Experience is no longer mapped to XP Bar.
+	- IP is saved before ban check, not after.
+
+1.9.5:
+	- Fix attempt #2.
+	
+1.9.4:
+	- Fix attempt for login bug.
+	
+1.9.3:
+	- Updated for Bukkit 1.0.0 and CraftBukkit 1.0.0
+	
+1.9.2:
+	- Fixed a dupe bug in Bans data file.
+	
 1.9.1:
 	- IP logging in ban file now should work properly
 	

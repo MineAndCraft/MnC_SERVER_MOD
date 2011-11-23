@@ -90,6 +90,8 @@ public class GugaAccounts
 		int taskId = plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable(){
 			public void run()
 			{
+				if (UserIsLogged(pl))
+					return;
 				pl.teleport(playerStart.get(pName));
 				if (UserIsRegistered(pl))
 				{

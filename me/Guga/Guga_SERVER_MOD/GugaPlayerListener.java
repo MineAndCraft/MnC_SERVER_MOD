@@ -30,6 +30,9 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
+			GugaBanHandler.AddBan(p.getName(), 0);
+		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
 		if (GugaBanHandler.IsBanned(p.getName()))
 		{
 			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
@@ -38,8 +41,11 @@ public class GugaPlayerListener extends PlayerListener
 			p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 			return;
 		}
-		GugaBanHandler.AddBan(p.getName(), 0);
-		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
+		else
+		{
+			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+			plugin.log.info("DEBUG:PLAYER_NOT_BANNED->DATA: expiration=" + ban.GetExpiration() + " (now = "+ new Date().getTime() +")" + ",IP[0]=" + ban.GetIpAddresses()[0]);
+		}
 		p.setExperience(0);
 		p.setLevel(9);
 		GugaAuctionHandler.CheckPayments(p);

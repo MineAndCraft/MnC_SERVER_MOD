@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -31,7 +32,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.SaveBans();
 		arena.SavePvpStats();
 	}
-	@SuppressWarnings("deprecation")
 	public void onEnable() 
 	{
 		PluginManager pManager = this.getServer().getPluginManager();
@@ -65,7 +65,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		
 		if (getServer().getWorld("arena") == null)
 		{
-			getServer().createWorld("arena", Environment.NORMAL);
+			//getServer().createWorld("arena", Environment.NORMAL);
+			getServer().createWorld(WorldCreator.name("arena").environment(Environment.NORMAL));
 		}
 		arena.LoadArena();
 		arena.LoadPvpStats();
@@ -443,7 +444,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.9.1";
+	public static final String version = "1.9.7";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

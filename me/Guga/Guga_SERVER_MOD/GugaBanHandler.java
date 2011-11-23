@@ -23,10 +23,6 @@ public abstract class GugaBanHandler
 				exists = true;
 				break;
 			}
-			else
-			{
-				break;
-			}
 		}
 		if (exists)
 		{
