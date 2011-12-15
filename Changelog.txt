@@ -1,3 +1,37 @@
+2.0.5:
+	- Implemented a possible fix for falling under a world bug.
+	
+2.0.4:
+	- Offline check for ban message.
+
+2.0.3:
+	- Fixed a little bug in gm commands.
+	- When player is banned, he also gets kicked now.
+	
+2.0.2:
+	- Some gm commands are now available for GAMEMASTER rank ingame too.
+
+2.0.1:
+	- Chest can no longer be placed next to already locked chest.
+	- Hitting mobs no longer gives experience.
+	- Experience gained for killing pigs has been decreased from 15 to 5.
+	- /gm ban list command added.
+	- Banning through app updated for new banning system.
+	- Plugin updated for Bukkit 1047 and CraftBukkit 1529.
+
+2.0.0:
+	- Players with space in their name can no longer connect to the server.
+	- Ban debug messages have been removed.
+	- Level setting to 9 and xp to 0 after player joins has been removed.
+	- Welcome message translated to Czech.
+	- Miner and Hunter have been disabled.
+	- Player now gets his profession automatically on first connect.
+	- Every player now has bonus drops from stone.
+	- /rpg menu has been changed abit.
+	- /who now only shows level, not profession name.
+	- Experince on bonus drop slightly increased.
+	- Plugin updated for Bukkit 1034 and Craftbukkit 1492.
+	
 1.9.7:
 	- Added null check on ban record when player joins.
 	

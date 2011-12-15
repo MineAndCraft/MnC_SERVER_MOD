@@ -166,8 +166,6 @@ public class GugaBlockListener extends BlockListener
 				}
 			}
 		}
-		if (prof instanceof GugaMiner)
-		{
 			int typeId = targetBlock.getTypeId();
 			if (!IsInstaBreakBlock(typeId))
 			{
@@ -175,23 +173,23 @@ public class GugaBlockListener extends BlockListener
 			}
 			if (typeId == 1)
 			{
-				GugaBonusDrop bonus = ((GugaMiner)prof).CobbleStoneDrop();
+				GugaBonusDrop bonus = prof.CobbleStoneDrop();
 				if (bonus == GugaBonusDrop.DIAMOND)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
-					prof.GainExperience(25);
+					prof.GainExperience(50);
 					p.sendMessage("Nasel jste diamant!");
 				}
 				else if (bonus == GugaBonusDrop.GOLD)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
-					prof.GainExperience(25);
+					prof.GainExperience(40);
 					p.sendMessage("Nasel jste zlato!");
 				}
 				else if (bonus == GugaBonusDrop.IRON)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
-					prof.GainExperience(25);
+					prof.GainExperience(30);
 					p.sendMessage("Nasel jste zelezo!");
 				}
 			}
@@ -227,16 +225,16 @@ public class GugaBlockListener extends BlockListener
 				{
 					prof.GainExperience(25);
 				}
-			}*/
+			}
 		}
 		else if (prof instanceof GugaHunter)
 		{
 			int typeId = targetBlock.getTypeId();
 			if (!IsInstaBreakBlock(typeId))
-			{
+			{*/
 				prof.GainExperience(1);
-			}
-		}
+			//}
+		//}
 		if (plugin.debug == true)
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000));
@@ -264,6 +262,51 @@ public class GugaBlockListener extends BlockListener
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
 				e.getPlayer().sendMessage("Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
+			}
+		}
+		//54
+		Block block = e.getBlockPlaced();
+		if (block.getTypeId() == 54)
+		{
+			Block relBlock = block.getRelative(BlockFace.WEST);
+			if (relBlock.getTypeId() == 54)
+			{
+				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				{
+					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+					e.setCancelled(true);
+					return;
+				}
+			}
+			relBlock = block.getRelative(BlockFace.EAST);
+			if (relBlock.getTypeId() == 54)
+			{
+				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				{
+					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+					e.setCancelled(true);
+					return;
+				}
+			}
+			relBlock = block.getRelative(BlockFace.SOUTH);
+			if (relBlock.getTypeId() == 54)
+			{
+				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				{
+					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+					e.setCancelled(true);
+					return;
+				}
+			}
+			relBlock = block.getRelative(BlockFace.NORTH);
+			if (relBlock.getTypeId() == 54)
+			{
+				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				{
+					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+					e.setCancelled(true);
+					return;
+				}
 			}
 		}
 		/*int typeId = e.getBlock().getTypeId();

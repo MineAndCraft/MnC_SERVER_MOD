@@ -92,6 +92,10 @@ public abstract class GugaBanHandler
 		}
 		return null;
 	}
+	public static ArrayList<GugaBan> GetBanList()
+	{
+		return bans;
+	}
 	public static boolean IsBanned(String playerName)
 	{
 		Iterator<GugaBan> i = bans.iterator();

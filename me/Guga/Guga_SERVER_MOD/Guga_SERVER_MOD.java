@@ -12,6 +12,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -172,11 +173,15 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			xp = splittedLine[2];
 			if (profName.matches("Miner"))
 			{
-				professions.put(pName, new GugaMiner(pName,Integer.parseInt(xp),this));
+				professions.put(pName, new GugaProfession(pName,Integer.parseInt(xp),this));
 			}
 			else if (profName.matches("Hunter"))
 			{
-				professions.put(pName, new GugaHunter(pName,Integer.parseInt(xp),this));
+				professions.put(pName, new GugaProfession(pName,Integer.parseInt(xp),this));
+			}
+			else if (profName.matches("Profession"))
+			{
+				professions.put(pName, new GugaProfession(pName,Integer.parseInt(xp),this));
 			}
 		}
 		file.Close();
@@ -437,6 +442,31 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			i++;
 		}
 	}
+	public Location GetAvailablePortLocation(Location loc)
+	{
+		Location tpLoc = getServer().getWorld("").getHighestBlockAt(loc).getLocation();
+		boolean canTeleport = false;
+		int i = loc.getBlockY();
+		while (!canTeleport)
+		{
+			loc = tpLoc;
+			loc.add(0, 1, 0);
+			if (loc.getBlock().getTypeId() == 0)
+			{
+				if (loc.getBlock().getRelative(BlockFace.UP).getTypeId() == 0)
+				{
+					tpLoc = loc;
+					break;
+				}
+			}
+			if (i >= 127)
+			{
+				break;
+			}
+			i++;
+		}
+		return tpLoc;
+	}
 	public HashMap<String,GugaProfession> professions = new HashMap<String,GugaProfession>();
 	
 	// ************* chances *************
@@ -444,7 +474,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "1.9.7";
+	public static final String version = "2.0.5";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

@@ -5,7 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -233,7 +235,10 @@ public class GugaSocketServer
 				{
 					if (p[i].getName().equalsIgnoreCase(args[2]))
 					{
-						this.plugin.getServer().banIP(p[i].getAddress().getHostName());
+						Calendar c = Calendar.getInstance();
+						c.setTime(new Date());
+						c.add(Calendar.HOUR, 72);
+						GugaBanHandler.AddBan(p[i].getName(), c.getTimeInMillis());
 						this.Answer("SUCCESS");
 						return;
 					}

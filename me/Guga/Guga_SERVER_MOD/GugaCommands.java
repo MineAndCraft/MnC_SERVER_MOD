@@ -54,7 +54,7 @@ public abstract class GugaCommands
 				if (plugin.professions.get(p[i].getName()) != null)
 				{
 					msg = "- " + pName;
-					msg += "  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel()+ "  " + distance + " bloku daleko";
+					msg += /*"  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() +*/ "   Level " + plugin.professions.get(p[i].getName()).GetLevel()+ "  " + distance + " bloku daleko";
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -83,7 +83,7 @@ public abstract class GugaCommands
 				if (plugin.professions.get(p[i].getName()) != null)
 				{
 					msg = "- " + pName;
-					msg += "  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() + " lvl " + plugin.professions.get(p[i].getName()).GetLevel();
+					msg += /*"  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() +*/ "   Level " + plugin.professions.get(p[i].getName()).GetLevel();
 					if (plugin.FindPlayerCurrency(pName).IsVip())
 					{
 						sender.sendMessage(ChatColor.GOLD + msg);
@@ -422,10 +422,10 @@ public abstract class GugaCommands
 		{
 			sender.sendMessage("RPG MENU:");
 			sender.sendMessage("/rpg status  -  Zobrazi vas status.");
-			sender.sendMessage("/rpg skills  -  Zobrazi vase schopnosti a bonusy.");
-			sender.sendMessage("/rpg select <miner/hunter>  -  Vybere profesi.");
-			sender.sendMessage("/rpg info  -  Info o profesich.");
-			sender.sendMessage("/rpg info <miner/hunter>  -  Info o dane profesi.");
+			sender.sendMessage("/rpg skills  -  Zobrazi vase bonusy.");
+		//	sender.sendMessage("/rpg select <miner/hunter>  -  Vybere profesi.");
+			sender.sendMessage("/rpg info  -  Info o profesi.");
+		//	sender.sendMessage("/rpg info <miner/hunter>  -  Info o dane profesi.");*/
 		}
 		else if (args.length == 1)
 		{
@@ -438,9 +438,7 @@ public abstract class GugaCommands
 					int lvl = prof.GetLevel();
 					int xp = prof.GetXp();
 					int xpNeeded = prof.GetXpNeeded();
-					String profName = prof.GetProfession();
 					sender.sendMessage("********************");
-					sender.sendMessage("**      " + profName);
 					sender.sendMessage("**Level:" + lvl);
 					sender.sendMessage("**XP:" + xp + "/" + xpNeeded);
 					sender.sendMessage("********************");
@@ -458,19 +456,19 @@ public abstract class GugaCommands
 				{
 					sender.sendMessage("Nejdrive si musite zvolit profesi!");
 				}
-				if (prof instanceof GugaMiner)
-				{
-					GugaMiner miner = (GugaMiner)prof;
-					int chance[] = miner.GetChances();
+					int chance[] = prof.GetChances();
 					//int bonus[] = miner.GetBonusDrops();
 					int iron = chance[plugin.IRON];
 					int gold = chance[plugin.GOLD];
 					int diamond = chance[plugin.DIAMOND];
+					double chanceIron = ( (double)iron / (double)1000 )  * (double)100;
+					double chanceGold = ( (double)gold / (double)1000 )  * (double)100;
+					double chanceDiamond = ( (double)diamond/ (double)1000 )  * (double)100;
 					sender.sendMessage("********************");
 					sender.sendMessage("**Sance na nalezeni ve stonu:");
-					sender.sendMessage("**Iron: " + iron + "%");
-					sender.sendMessage("**Gold: " + gold + "%");
-					sender.sendMessage("**Diamond: " + diamond + "%");
+					sender.sendMessage("**Iron: " + chanceIron + "%");
+					sender.sendMessage("**Gold: " + chanceGold + "%");
+					sender.sendMessage("**Diamond: " + chanceDiamond + "%");
 					sender.sendMessage("********************");
 					
 					/*iron = bonus[plugin.IRON];
@@ -483,10 +481,10 @@ public abstract class GugaCommands
 					sender.sendMessage("**Diamond: +" + diamond);
 					
 					sender.sendMessage("********************");
-					sender.sendMessage("********************");
-					*/
-				}
-				else if (prof instanceof GugaHunter)
+					sender.sendMessage("********************");*/
+					
+				//}
+				/*else if (prof instanceof GugaHunter)
 				{
 					GugaHunter hunter = (GugaHunter)prof;
 					double regen = ((double)hunter.GetHpRegen())/2;
@@ -496,7 +494,7 @@ public abstract class GugaCommands
 					sender.sendMessage("**Zvyseny damage: " + dmg);
 					sender.sendMessage("********************");
 					sender.sendMessage("********************");
-				}
+				}*/
 			}
 			else if (subCommand.matches("select"))
 			{
@@ -504,14 +502,14 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("info"))
 			{
-				sender.sendMessage("********************");
+				/*sender.sendMessage("********************");
 				sender.sendMessage("**Profesi si muzete vybrat tak, ze napisete");
 				sender.sendMessage("** /rpg select <vase_profese>");
 				sender.sendMessage("**Mate na vyber ze dvou profesi:");
 				sender.sendMessage("**      -Hunter a Miner");
-				sender.sendMessage("**Kazda profese ma jine bonusy");
+				sender.sendMessage("**Kazda profese ma jine bonusy");*/
 				sender.sendMessage("**XP ziskavate za zabijeni monster a kopani");
-				sender.sendMessage("**Kazda profese dostava rozdilny pocet XP.");
+			//	sender.sendMessage("**Kazda profese dostava rozdilny pocet XP.");
 				sender.sendMessage("**Maximalni level: " + new GugaProfession().GetLvlCap());
 			}
 		}
@@ -556,7 +554,7 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("info"))
 			{
-				if (arg1.matches("hunter"))
+				/*if (arg1.matches("hunter"))
 				{
 					sender.sendMessage("********************");
 					sender.sendMessage("**Hunterovo Bonusy:");
@@ -565,22 +563,22 @@ public abstract class GugaCommands
 					sender.sendMessage("********************");
 					sender.sendMessage("********************");
 					
-				}
-				else if (arg1.matches("miner"))
-				{
-					sender.sendMessage("********************");
+				}*/
+			//	else if (arg1.matches("miner"))
+			//	{
+					/*sender.sendMessage("********************");
 					sender.sendMessage("**Minerovo Bonusy:");
-					/*sender.sendMessage("** - Zvysene dropy z:");
+					sender.sendMessage("** - Zvysene dropy z:");
 					sender.sendMessage("**      -Iron (+1 every 6 levels)");
 					sender.sendMessage("**      -Gold (+1 every 8 levels)");
-					sender.sendMessage("**      -Diamond (+1 every 10 levels)");
-					sender.sendMessage("********************");*/
-					sender.sendMessage("** - Sance vzacneho dropu ze Stone:");
-					sender.sendMessage("**      -Iron (+1% every 5 levels)");
-					sender.sendMessage("**      -Gold (+1% every 10 levels)");
-					sender.sendMessage("**      -Diamond (+1% on level 15)");
+					sender.sendMessage("**      -Diamond (+1 every 10 levels)");*/
 					sender.sendMessage("********************");
-				}
+					sender.sendMessage("** - Sance vzacneho dropu ze Stone:");
+					sender.sendMessage("**      -Iron (+0.1% kazdych 10 levelu)");
+					sender.sendMessage("**      -Gold (+0.1% kazdych 20 levelu)");
+					sender.sendMessage("**      -Diamond (+0.1% kazdych 50 levelu)");
+					sender.sendMessage("********************");
+			//	}
 			}
 		}
 		else if (args.length == 3)
@@ -880,6 +878,8 @@ public abstract class GugaCommands
 	}
 	public static void CommandGM(Player sender, String args[])
 	{
+		if (!GameMasterHandler.IsAtleastGM(sender.getName()))
+			return;
 		if (!plugin.acc.UserIsLogged(sender))
 		{
 			sender.sendMessage("Musite byt prihlaseny, aby jste mohl pouzit tento prikaz!");
@@ -898,36 +898,31 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
 				sender.sendMessage("/gm announce  - Announcements sub-menu.");
 				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
-				sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
-				sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 				sender.sendMessage("/gm places - Places sub-menu.");
 				sender.sendMessage("/gm regions - Regions sub-menu.");
-				sender.sendMessage("/gm ban - Bans sub-menu.");
 			}
+			sender.sendMessage("/gm ban - Bans sub-menu.");
 			sender.sendMessage("/gm log - Shows a log records for target block.");
+			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
+			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 		}
 		else if (args.length == 1)
 		{
-			if (!GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				String subCommand = args[0];
-				if (subCommand.matches("log"))
-				{
-					plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
-				}
-				return;
-			}
 			String subCommand = args[0];
-			if (subCommand.matches("setspawn"))
+			if (subCommand.matches("log"))
+			{
+				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
+			}
+			else if (subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				Location pLoc = sender.getLocation();
 				sender.getWorld().setSpawnLocation((int)pLoc.getX(), (int)pLoc.getY(), (int)pLoc.getZ());
 				sender.sendMessage("New World Spawn has been set!");
 			}
-			else if (subCommand.matches("announce"))
+			else if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("/gm announce print - Prints messages and indexes.");
 				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
@@ -937,30 +932,27 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
 				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
+				sender.sendMessage("/gm ban list  -  Shows all banned players.");
 			}
-			else if (subCommand.matches("credits"))
+			else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("/gm credits add <player> <amount>  -  Add credits to a player.");
 				sender.sendMessage("/gm credits remove <player> <amount>  -  Remove credits to a player.");
 				sender.sendMessage("/gm credits balance <player>  -  Shows credits of a player.");
 			}
 			
-			else if (subCommand.matches("spectate"))
+			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("/gm spectate player <name> - Start spectating certain player.");
 				sender.sendMessage("/gm spectate stop - Stop spectating.");
 			}
-			else if (subCommand.matches("log"))
-			{
-				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
-			}
-			else if(subCommand.matches("places"))
+			else if(subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("/gm places list  - Show list of all places.");	
 				sender.sendMessage("/gm places add <name> <owner> - Adds actual position to places (owner all = public).");	
 				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");	
 			}
-			else if (subCommand.matches("regions"))
+			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("/gm regions list  - Show list of all places.");	
 				sender.sendMessage("/gm regions add <name> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
@@ -970,12 +962,10 @@ public abstract class GugaCommands
 		}
 		else if (args.length == 2)
 		{
-			if (!GameMasterHandler.IsAdmin(sender.getName()))
-				return;
 			String subCommand = args[0];
 			String arg1 = args[1];
 			Player p;
-			if (subCommand.matches("ip"))
+			if (subCommand.matches("ip") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if ((p = plugin.getServer().getPlayer(arg1)) != null)
 				{
@@ -986,7 +976,7 @@ public abstract class GugaCommands
 					sender.sendMessage("This player is not online!");
 				}
 			}
-			else if (subCommand.matches("regions"))
+			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("LIST OF REGIONS:");
 				Iterator<GugaRegion> i = GugaRegionHandler.GetAllRegions().iterator();
@@ -998,7 +988,7 @@ public abstract class GugaCommands
 					sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
 				}
 			}
-			else if (subCommand.matches("places"))
+			else if (subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (arg1.matches("list"))
 				{
@@ -1011,7 +1001,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if(subCommand.matches("announce"))
+			else if(subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (arg1.matches("print"))
 				{
@@ -1024,7 +1014,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("getvip"))
+			else if (subCommand.matches("getvip") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				GugaVirtualCurrency vip = plugin.FindPlayerCurrency(arg1);
 				if (vip.IsVip())
@@ -1038,6 +1028,12 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("gmmode"))
 			{
+				if (!GameMasterHandler.IsAdmin(sender.getName()))
+					if (!arg1.equalsIgnoreCase(sender.getName()))
+					{
+						sender.sendMessage("You can only set gmmode to yourself!");
+						return;
+					}
 				if ((p = plugin.getServer().getPlayer(arg1)) != null)
 				{
 					GameMode mode = p.getGameMode();
@@ -1066,11 +1062,25 @@ public abstract class GugaCommands
 					sender.sendMessage("Immortality for " + arg1 + " has been turned on");
 				}
 			}
-			else if (subCommand.matches("invis"))
+			else if (subCommand.matches("invis") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				ToggleInvisibility(sender, arg1);
 			}
-			else if (subCommand.matches("spectate"))
+			else if (subCommand.matches("ban"))
+			{
+				if (arg1.matches("list"))
+				{
+					Iterator<GugaBan> i = GugaBanHandler.GetBanList().iterator();
+					sender.sendMessage("List of bans: ");
+					while (i.hasNext())
+					{
+						GugaBan ban = i.next();
+						if (new Date(ban.GetExpiration()).after(new Date()))
+							plugin.log.info(ban.GetPlayerName() + "  -  " + new Date(ban.GetExpiration()).toString());
+					}
+				}
+			}
+			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (arg1.matches("stop"))
 				{
@@ -1087,10 +1097,8 @@ public abstract class GugaCommands
 		}
 		else if (args.length > 2)
 		{
-			if (!GameMasterHandler.IsAdmin(sender.getName()))
-				return;
 			String subCommand = args[0];
-			if (subCommand.matches("announce"))
+			if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				String arg1 = args[1];
 				if (arg1.matches("remove"))
@@ -1146,11 +1154,14 @@ public abstract class GugaCommands
 						c.setTime(new Date());
 						c.add(Calendar.HOUR, Integer.parseInt(arg3));
 						GugaBanHandler.AddBan(arg2, c.getTimeInMillis());
+						Player p = plugin.getServer().getPlayer(arg2);
+						if (p != null)
+							p.kickPlayer("Vas ucet byl zabanovan na " + arg3 + " hodiny.");
 						sender.sendMessage("Ban succesfuly added!");
 					}
 				}
 			}
-			else if (subCommand.matches("places"))
+			else if (subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
 				{
@@ -1187,7 +1198,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("regions"))
+			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
 				{
@@ -1239,7 +1250,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("credits"))
+			else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
 				{
@@ -1309,7 +1320,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("genblock"))
+			else if (subCommand.matches("genblock") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 5)
 				{
@@ -1320,7 +1331,7 @@ public abstract class GugaCommands
 					plugin.GenerateBlockType(sender, typeID, x, y, z);
 				}
 			}
-			else if (subCommand.matches("setvip"))
+			else if (subCommand.matches("setvip") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
 				{
@@ -1351,7 +1362,7 @@ public abstract class GugaCommands
 					sender.teleport(loc);
 				}
 			}
-			else if (subCommand.matches("spectate"))
+			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
 				{
@@ -1377,14 +1388,14 @@ public abstract class GugaCommands
 				 if (!plugin.acc.LoginUser(sender, pass))
 					 return;
 				 sender.teleport(plugin.acc.playerStart.get(sender.getName()));
-				 GugaProfession prof;
+				/* GugaProfession prof;
 					if ((prof = plugin.professions.get(sender.getName())) != null)
 					{
 						if (prof instanceof GugaHunter)
 						{
 							((GugaHunter)prof).StartRegenHp();
 						}
-					}
+					}*/
 			 }
 			 else
 			 {

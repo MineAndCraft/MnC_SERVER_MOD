@@ -1,5 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import java.util.Random;
+
 import org.bukkit.entity.Player;
 
 
@@ -47,6 +49,7 @@ public class GugaProfession
 			if (diff > 0)
 				thisLevel = diff;
 		}
+		UpdateSkills();
 	}
 	protected void LevelUp()
 	{
@@ -66,14 +69,49 @@ public class GugaProfession
 		}
 		thisLevel = xpNeeded - xpNeededOld;
 		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " has reached a level " + level + "!");
-		if (level <= 20)
-		{
+		//if (level <= 20)
+		//{
 			UpdateSkills();
+		//}
+	}
+	public void UpdateSkills()
+	{
+		int newIron = level/10;
+		int newGold = level/20;
+		int newDiamond = level/50;
+		
+		ironChance = newIron;
+		goldChance = newGold;
+		diamondChance = newDiamond;
+	}
+	public GugaBonusDrop CobbleStoneDrop()
+	{
+		Random rnd = new Random();
+		int rNum = rnd.nextInt(1000);
+		if (rNum < diamondChance)
+		{
+			return GugaBonusDrop.DIAMOND;
+		}
+		else if (rNum < goldChance)
+		{
+			return GugaBonusDrop.GOLD;
+		}
+		else if (rNum < ironChance)
+		{
+			return GugaBonusDrop.IRON;
+		}
+		else
+		{
+			return GugaBonusDrop.NOTHING;
 		}
 	}
-	protected void UpdateSkills()
+	public int[] GetChances()
 	{
-		
+		int chances[] = new int[3];
+		chances[0] = ironChance;
+		chances[1] = goldChance;
+		chances[2] = diamondChance;
+		return chances;
 	}
 	protected boolean ReachedNewLevel()
 	{
@@ -135,7 +173,7 @@ public class GugaProfession
 	{
 		return "Profession";
 	}
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "deprecation" })
 private void MapXpBar()
 	{
 		int inc = thisLevel / 100;
@@ -155,6 +193,12 @@ private void MapXpBar()
 	
 	protected int level;
 	protected int lvlCap;
+	
+	
+	int ironChance;
+	int goldChance;
+	int diamondChance;
+	
 	
 	protected Guga_SERVER_MOD plugin;
 }

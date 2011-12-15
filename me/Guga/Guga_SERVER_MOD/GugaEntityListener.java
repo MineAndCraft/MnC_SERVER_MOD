@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
@@ -65,9 +65,10 @@ public class GugaEntityListener extends EntityListener
 					e.setCancelled(true);
 					return;
 				}
-				GugaProfession prof = plugin.professions.get(damager.getName());
-				LivingEntity target = (LivingEntity)event.getEntity();
-				if (prof instanceof GugaHunter)
+				//GugaProfession prof = plugin.professions.get(damager.getName());
+				//LivingEntity target = (LivingEntity)event.getEntity();
+				//prof.GainExperience(3);
+				/*if (prof instanceof GugaHunter)
 				{
 					if (!(target instanceof Player))
 					{
@@ -81,7 +82,7 @@ public class GugaEntityListener extends EntityListener
 					{
 						prof.GainExperience(1);
 					}
-				}
+				}*/
 			}
 		}
 		if (plugin.config.accountsModule)
@@ -134,7 +135,7 @@ public class GugaEntityListener extends EntityListener
 			{
 				Player damager = (Player)ent;
 				GugaProfession prof = plugin.professions.get(damager.getName());
-				if (prof instanceof GugaMiner)
+				/*if (prof instanceof GugaMiner)
 				{
 					if (target instanceof Creeper)
 					{
@@ -163,7 +164,7 @@ public class GugaEntityListener extends EntityListener
 					}
 				}
 				else if (prof instanceof GugaHunter)
-				{
+				{*/
 					if (target instanceof Creeper)
 					{
 						prof.GainExperience(75);
@@ -180,6 +181,10 @@ public class GugaEntityListener extends EntityListener
 					{
 						prof.GainExperience(25);
 					}
+					else if (target instanceof Pig)
+					{
+						prof.GainExperience(5);
+					}
 					else if (target instanceof Player)
 					{
 						prof.GainExperience(200);
@@ -189,7 +194,7 @@ public class GugaEntityListener extends EntityListener
 					{
 						prof.GainExperience(15);
 					}
-				}
+				//}
 			}
 		}
 	}

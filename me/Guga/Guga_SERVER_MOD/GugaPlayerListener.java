@@ -30,8 +30,14 @@ public class GugaPlayerListener extends PlayerListener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		if (p.getName().contains(" "))
+		{
+			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
+			return;
+		}
 		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
 			GugaBanHandler.AddBan(p.getName(), 0);
+		
 		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
 		if (GugaBanHandler.IsBanned(p.getName()))
 		{
@@ -41,13 +47,6 @@ public class GugaPlayerListener extends PlayerListener
 			p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 			return;
 		}
-		else
-		{
-			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-			plugin.log.info("DEBUG:PLAYER_NOT_BANNED->DATA: expiration=" + ban.GetExpiration() + " (now = "+ new Date().getTime() +")" + ",IP[0]=" + ban.GetIpAddresses()[0]);
-		}
-		p.setExperience(0);
-		p.setLevel(9);
 		GugaAuctionHandler.CheckPayments(p);
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
@@ -55,6 +54,8 @@ public class GugaPlayerListener extends PlayerListener
 			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
 			plugin.playerCurrency.add(curr);
 		}
+		if (plugin.professions.get(p.getName()) == null)
+			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
 		else if (curr.IsVip())
 		{
 			curr.UpdateDisplayName();
@@ -65,8 +66,8 @@ public class GugaPlayerListener extends PlayerListener
 		}
 		long timeStart = System.nanoTime();
 		p.sendMessage("******************************");
-		p.sendMessage("Welcome on "+plugin.getServer().getName()+" server.");
-		p.sendMessage("Type /help to show list of possible commands.");
+		p.sendMessage("Vitejte na serveru MineAndCraft!.");
+		p.sendMessage("Pro zobrazeni prikazu napiste /help.");
 		p.sendMessage("******************************");
 		if (plugin.config.accountsModule)
 		{
@@ -282,6 +283,8 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			spec.Teleport();
 		}
+		if (p.getLocation().getBlockY() < 0)
+			p.teleport(plugin.GetAvailablePortLocation(p.getLocation()));
 		/*if (GugaCommands.speed.contains(pName))
 		{
 			Location dest = e.getTo();
