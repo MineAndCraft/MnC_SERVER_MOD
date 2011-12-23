@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -892,8 +893,10 @@ public abstract class GugaCommands
 			sender.sendMessage("Commands:");
 			sender.sendMessage("/event players - Shows players submenu.");
 			sender.sendMessage("/event inventory - Shows inventory submenu.");
+			sender.sendMessage("/event spawners - Shows spawners submenu.");
 			sender.sendMessage("/event teleport - Teleports all tagged players to your location.");
 			sender.sendMessage("/event tpback - Teleports all players back to their original locations.");
+			sender.sendMessage("/event give <itemID> <amount> - Adds specified item to tagged players.");
 			return;
 		}
 		String arg1 = args[0];
@@ -908,6 +911,67 @@ public abstract class GugaCommands
 			GugaEvent.TeleportPlayersBack();
 			sender.sendMessage("Players teleported back.");
 			return;
+		}
+		else if (arg1.equalsIgnoreCase("give"))
+		{
+			if (args.length == 3)
+			{
+				GugaEvent.AddItemToPlayers(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+				sender.sendMessage("Items added.");
+				return;
+			}
+		}
+		else if (arg1.equalsIgnoreCase("spawners"))
+		{
+			if (args.length == 1)
+			{
+				String state;
+				if (GugaEvent.canSpawn)
+					state = "[ON]";
+				else
+					state = "[OFF]";
+				sender.sendMessage("/event spawners add <typeID> <interval> - Creates a spawner.");
+				sender.sendMessage("/event spawners clear - Removes all spawners.");
+				sender.sendMessage("/event spawners toggle" + state + " -  Turns spawning ON or OFF.");
+				sender.sendMessage("/event spawners ids - Prints list of all mob ids.");
+			}
+			else if (args.length == 2)
+			{
+				if (args[1].equalsIgnoreCase("clear"))
+				{
+					GugaEvent.ClearSpawners();
+					sender.sendMessage("All spawners removed.");
+				}
+				else if (args[1].equalsIgnoreCase("toggle"))
+				{
+					GugaEvent.canSpawn = !GugaEvent.canSpawn;
+					String state;
+					if (GugaEvent.canSpawn)
+						state = "[ON]";
+					else
+						state = "[OFF]";
+					sender.sendMessage("Spawning is now " + state);
+				}
+				else if (args[1].equalsIgnoreCase("ids"))
+				{
+					int i = 0;
+					for (CreatureType type : CreatureType.values())
+					{
+						sender.sendMessage(i + type.getName());
+						i++;
+					}
+				}
+				return;
+			}
+			else if (args.length == 4)
+			{
+				if (args[1].equalsIgnoreCase("add"))
+				{
+					GugaEvent.AddSpawner(sender.getLocation(), Integer.parseInt(args[3]), Integer.parseInt(args[2]));
+					sender.sendMessage("Spawner has been added.");
+				}
+				return;
+			}
 		}
 		else if (arg1.equalsIgnoreCase("inventory"))
 		{

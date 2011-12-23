@@ -23,6 +23,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public void onDisable() 
 	{
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
+		GugaEvent.ClearSpawners();
 		SaveProfessions();
 		SaveCurrency();
 		GugaAnnouncement.SaveAnnouncements();

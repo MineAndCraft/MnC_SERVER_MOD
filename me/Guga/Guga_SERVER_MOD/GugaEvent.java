@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Location;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +18,35 @@ public abstract class GugaEvent
 	public static void SetPlugin(Guga_SERVER_MOD plugin)
 	{
 		GugaEvent.plugin = plugin;
+	}
+	public static void ToggleSpawning()
+	{
+		GugaEvent.canSpawn = !canSpawn;
+	}
+	public static void AddSpawner(Location loc, int interval, int typeID)
+	{
+		CreatureType[] vals = CreatureType.values();
+		GugaEvent.spawnerList.add(new GugaSpawner(GugaEvent.plugin, loc, interval, 1000, vals[typeID]));
+	}
+	public static void ClearSpawners()
+	{
+		Iterator<GugaSpawner> i = GugaEvent.spawnerList.iterator();
+		while (i.hasNext())
+		{
+			GugaSpawner spawner = i.next();
+			spawner.TerminateThread();
+		}
+		GugaEvent.spawnerList.clear();
+	}
+	public static void AddItemToPlayers(int itemID, int amount)
+	{
+		Iterator<String> i = GugaEvent.players.iterator();
+		while (i.hasNext())
+		{
+			Player p = GugaEvent.plugin.getServer().getPlayer(i.next());
+			if (p != null)
+				p.getInventory().addItem(new ItemStack(itemID, amount));
+		}
 	}
 	public static void TeleportPlayersTo(String pName)
 	{
@@ -149,5 +179,7 @@ public abstract class GugaEvent
 	private static HashMap<String, Location> teleportCache = new HashMap<String, Location>();
 	private static HashMap<String, ArrayList<ItemStack>> inventoryCache = new HashMap<String, ArrayList<ItemStack>>();
 	private static ArrayList<String> players = new ArrayList<String>();
+	private static ArrayList<GugaSpawner> spawnerList = new ArrayList<GugaSpawner>();
 	private static Guga_SERVER_MOD plugin;
+	public static boolean canSpawn = false;
 }

@@ -198,7 +198,6 @@ public class GugaSocketServer
 		try
 		{
 		String cmd = new String(this.receivedPacket.getData(), 0, this.receivedPacket.getLength());
-		plugin.log.info(cmd);
 		if (cmd.matches("GET_ONLINE_PLAYERS"))
 		{
 			if (!this.IsConnected())

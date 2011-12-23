@@ -1,3 +1,33 @@
+2.1.3:
+	- /event spawners command added.
+	- GMs now can create spawners, that spawn mobs in given interval
+	- Socket server log messages removed from console.
+	MOB IDs:
+		0Chicken
+		1Cow
+		2Creeper
+		3Ghast
+		4Giant
+		5Monster
+		6Pig
+		7PigZombie
+		8Sheep
+		9Skeleton
+		10Slime
+		11Spider
+		12Squid
+		13Zombie
+		14Wolf
+		15CaveSpider
+		16Enderman
+		17Silverfish
+		18EnderDragon
+		19Villager
+		20Blaze
+		21MushroomCow
+		22LavaSlime
+		23SnowMan
+				
 2.1.2:
 	- /event tpback command added.
 	
@@ -9,7 +39,7 @@
 	
 2.1.0:
 	- New class for Event managing added.
-	- GM now can tag players for event, teleport them to his position or clear / give back their inventory contents.
+	- GMs now can tag players for event, teleport them to his position or clear / give back their inventory contents.
 	- Plugin updated for Bukkit 1079 and CraftBukkit 1611.
 	
 2.0.5:
