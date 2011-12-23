@@ -63,6 +63,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
 		GugaBanHandler.SetPlugin(this);
+		GugaEvent.SetPlugin(this);
 		
 		if (getServer().getWorld("arena") == null)
 		{
@@ -197,6 +198,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 { 
 		   GugaCommands.CommandWho((Player)sender);
 		   return true;
+		 }
+		 else if (cmd.getName().equalsIgnoreCase("event"))
+		 {
+			 GugaCommands.CommandEvent((Player)sender, args);
+			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("socket"))
 		 {
@@ -474,7 +480,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.0.5";
+	public static final String version = "2.1.2";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

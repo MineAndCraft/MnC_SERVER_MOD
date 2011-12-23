@@ -1,3 +1,17 @@
+2.1.2:
+	- /event tpback command added.
+	
+2.1.1:
+	- Set plugin added to plugin startup.
+	- /event command added to help.
+	- Some messages added to event commands.
+	- /event players list command added.
+	
+2.1.0:
+	- New class for Event managing added.
+	- GM now can tag players for event, teleport them to his position or clear / give back their inventory contents.
+	- Plugin updated for Bukkit 1079 and CraftBukkit 1611.
+	
 2.0.5:
 	- Implemented a possible fix for falling under a world bug.
 	

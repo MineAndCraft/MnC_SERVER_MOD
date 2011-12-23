@@ -136,6 +136,7 @@ public abstract class GugaCommands
 		if (GameMasterHandler.IsAdmin(sender.getName()))
 		{
 			sender.sendMessage(" /gm  -  GameMaster's menu.");
+			sender.sendMessage("/event  -  Event menu.");
 		}
 		sender.sendMessage("******************************");
 		sender.sendMessage("Created by Guga 2011");
@@ -267,6 +268,11 @@ public abstract class GugaCommands
 		if (!vip.IsVip())
 		{
 			sender.sendMessage("Pouze VIP mohou pouzivat tento prikaz!");
+			return;
+		}
+		if (GugaEvent.ContainsPlayer(sender.getName()))
+		{
+			sender.sendMessage("Nemuzete pouzivat VIP prikazy v prubehu eventu!");
 			return;
 		}
 		if (args.length == 0)
@@ -874,6 +880,104 @@ public abstract class GugaCommands
 				return;
 			}
 			sender.sendMessage("Nemate komu odpovedet!");
+		}
+	}
+	public static void CommandEvent(Player sender, String args[])
+	{
+		if (!GameMasterHandler.IsAtleastGM(sender.getName()))
+			return;
+		if (args.length == 0)
+		{
+			sender.sendMessage("EVENT MENU:");
+			sender.sendMessage("Commands:");
+			sender.sendMessage("/event players - Shows players submenu.");
+			sender.sendMessage("/event inventory - Shows inventory submenu.");
+			sender.sendMessage("/event teleport - Teleports all tagged players to your location.");
+			sender.sendMessage("/event tpback - Teleports all players back to their original locations.");
+			return;
+		}
+		String arg1 = args[0];
+		if (arg1.equalsIgnoreCase("teleport"))
+		{
+			GugaEvent.TeleportPlayersTo(sender.getName());
+			sender.sendMessage("Players teleported.");
+			return;
+		}
+		else if (arg1.equalsIgnoreCase("tpback"))
+		{
+			GugaEvent.TeleportPlayersBack();
+			sender.sendMessage("Players teleported back.");
+			return;
+		}
+		else if (arg1.equalsIgnoreCase("inventory"))
+		{
+			if (args.length == 1)
+			{
+				sender.sendMessage("/event inventory clear - Clears inventories of tagged players.");
+				sender.sendMessage("/event inventory return <0 / 1> - Returns old items back to players. 0 or 1 determines, whether items gained in event gonna be deleted. 0 - not deleted, 1 - deleted.");
+				return;
+			}
+			else if (args.length == 2)
+			{
+				if (args[1].equalsIgnoreCase("clear"))
+				{
+					GugaEvent.ClearInventories();
+					sender.sendMessage("Inventories cleared.");
+				}
+				return;
+			}
+			else if (args.length == 3)
+			{
+				if (args[1].equalsIgnoreCase("return"))
+				{
+					GugaEvent.ReturnInventories(args[2].equals("1"));
+					sender.sendMessage("Inventories returned.");
+				}
+				return;
+			}
+		}
+		else if (arg1.equalsIgnoreCase("players"))
+		{
+			if (args.length == 1)
+			{
+				sender.sendMessage("/event players add <name1,name2,name3> - Tags specified players for event.");
+				sender.sendMessage("/event players clear - Removes all tags.");
+				sender.sendMessage("/event players list - List of tagged players.");
+				return;
+			}
+			else if (args.length == 2) 
+			{
+				if (args[1].equalsIgnoreCase("clear"))
+				{
+					GugaEvent.ClearPlayers();
+					sender.sendMessage("Player list cleared.");
+				}
+				else if (args[1].equalsIgnoreCase("list"))
+				{
+					Iterator<String> i = GugaEvent.GetPlayers().iterator();
+					sender.sendMessage("PLAYER LIST:");
+					while (i.hasNext())
+					{
+						sender.sendMessage(i.next());
+					}
+				}
+				return;
+			}
+			else if (args.length == 3)
+			{
+				if (args[1].equalsIgnoreCase("add"))
+				{
+					String[] names = args[2].split(",");
+					int i = 0;
+					while (i < names.length)
+					{
+						GugaEvent.AddPlayer(names[i]);
+						i++;
+					}
+					sender.sendMessage("Player(s) added.");
+				}
+				return;
+			}
 		}
 	}
 	public static void CommandGM(Player sender, String args[])
