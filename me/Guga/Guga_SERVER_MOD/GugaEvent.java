@@ -19,24 +19,73 @@ public abstract class GugaEvent
 	{
 		GugaEvent.plugin = plugin;
 	}
-	public static void ToggleSpawning()
+	public static void ToggleGroupSpawning(String groupName)
 	{
-		GugaEvent.canSpawn = !canSpawn;
+		Iterator<GugaSpawner> i = GugaEvent.spawners.get(groupName).iterator();
+		if (!i.hasNext())
+			return;
+		GugaSpawner spawner = i.next();
+		spawner.ToggleSpawnState();
+		boolean state = spawner.GetSpawnState();
+		while (i.hasNext())
+		{
+			spawner = i.next();
+			spawner.SetSpawnState(state);
+		}
 	}
-	public static void AddSpawner(Location loc, int interval, int typeID)
+	public static void AddSpawnerToGroup(String groupName, Location loc, int interval, int typeID)
 	{
 		CreatureType[] vals = CreatureType.values();
-		GugaEvent.spawnerList.add(new GugaSpawner(GugaEvent.plugin, loc, interval, 1000, vals[typeID]));
+		ArrayList<GugaSpawner> list = GugaEvent.spawners.get(groupName);
+		if (list == null)
+		{
+			list = new ArrayList<GugaSpawner>();
+			list.add(new GugaSpawner(GugaEvent.plugin, loc, interval, 1000, vals[typeID]));
+			GugaEvent.spawners.put(groupName, list);
+		}
+		else
+		{
+			GugaSpawner spawner = new GugaSpawner(GugaEvent.plugin, loc, interval, 1000, vals[typeID]);
+			spawner.SetSpawnState(GugaEvent.GetGroupState(groupName));
+			list.add(spawner);
+		}
 	}
-	public static void ClearSpawners()
+	public static void ClearSpawnersFromGroup(String groupName)
 	{
-		Iterator<GugaSpawner> i = GugaEvent.spawnerList.iterator();
+		ArrayList<GugaSpawner> list = GugaEvent.spawners.get(groupName);
+		if (list == null)
+			return;
+		Iterator<GugaSpawner> i = list.iterator();
 		while (i.hasNext())
 		{
 			GugaSpawner spawner = i.next();
 			spawner.TerminateThread();
 		}
-		GugaEvent.spawnerList.clear();
+		list.clear();
+		GugaEvent.spawners.remove(groupName);
+	}
+	public static boolean GetGroupState(String groupName)
+	{
+		Iterator<GugaSpawner> i = GugaEvent.spawners.get(groupName).iterator();
+		if (i == null || !i.hasNext())
+			return false;
+		return i.next().GetSpawnState();
+	}
+	public static void ClearAllGroups()
+	{
+		Iterator<String> i = GugaEvent.GetGroupNames().iterator();
+		while (i.hasNext())
+		{
+			GugaEvent.ClearSpawnersFromGroup(i.next());
+		}
+	}
+	public static ArrayList<GugaSpawner> GetSpawnersOfGroup(String groupName)
+	{
+		return GugaEvent.spawners.get(groupName);
+	}
+	public static Set<String> GetGroupNames()
+	{
+		return GugaEvent.spawners.keySet();
 	}
 	public static void AddItemToPlayers(int itemID, int amount)
 	{
@@ -176,10 +225,11 @@ public abstract class GugaEvent
 			p.getInventory().addItem(item);
 		}
 	}
+	public static ArrayList<String> players = new ArrayList<String>();
+	public static boolean godMode = false;
 	private static HashMap<String, Location> teleportCache = new HashMap<String, Location>();
 	private static HashMap<String, ArrayList<ItemStack>> inventoryCache = new HashMap<String, ArrayList<ItemStack>>();
-	private static ArrayList<String> players = new ArrayList<String>();
-	private static ArrayList<GugaSpawner> spawnerList = new ArrayList<GugaSpawner>();
+	//private static ArrayList<GugaSpawner> spawnerList = new ArrayList<GugaSpawner>();
+	private static HashMap<String, ArrayList<GugaSpawner>> spawners = new HashMap<String, ArrayList<GugaSpawner>>();
 	private static Guga_SERVER_MOD plugin;
-	public static boolean canSpawn = false;
 }

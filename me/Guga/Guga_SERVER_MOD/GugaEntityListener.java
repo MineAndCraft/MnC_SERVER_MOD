@@ -53,6 +53,14 @@ public class GugaEntityListener extends EntityListener
 				e.setCancelled(true);
 				return;
 			}
+			if (GugaEvent.godMode)
+			{
+				if (GugaEvent.players.contains(((Player)e.getEntity()).getName().toLowerCase()))
+				{
+					e.setCancelled(true);
+					return;
+				}
+			}
 		}
 		if (e instanceof EntityDamageByEntityEvent)
 		{

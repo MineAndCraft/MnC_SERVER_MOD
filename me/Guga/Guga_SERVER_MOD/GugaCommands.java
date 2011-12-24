@@ -889,6 +889,11 @@ public abstract class GugaCommands
 			return;
 		if (args.length == 0)
 		{
+			String state;
+			if (GugaEvent.godMode)
+				state = "[ON]";
+			else
+				state = "[OFF]";
 			sender.sendMessage("EVENT MENU:");
 			sender.sendMessage("Commands:");
 			sender.sendMessage("/event players - Shows players submenu.");
@@ -897,6 +902,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/event teleport - Teleports all tagged players to your location.");
 			sender.sendMessage("/event tpback - Teleports all players back to their original locations.");
 			sender.sendMessage("/event give <itemID> <amount> - Adds specified item to tagged players.");
+			sender.sendMessage("/event godmode " + state + " - Toggles immortality for tagged players.");
 			return;
 		}
 		String arg1 = args[0];
@@ -905,6 +911,16 @@ public abstract class GugaCommands
 			GugaEvent.TeleportPlayersTo(sender.getName());
 			sender.sendMessage("Players teleported.");
 			return;
+		}
+		else if (arg1.equalsIgnoreCase("godmode"))
+		{
+			GugaEvent.godMode = !GugaEvent.godMode;
+			String state;
+			if (GugaEvent.godMode)
+				state = "[ON]";
+			else
+				state = "[OFF]";
+			sender.sendMessage("GodMode " + state);
 		}
 		else if (arg1.equalsIgnoreCase("tpback"))
 		{
@@ -925,32 +941,61 @@ public abstract class GugaCommands
 		{
 			if (args.length == 1)
 			{
-				String state;
-				if (GugaEvent.canSpawn)
-					state = "[ON]";
-				else
-					state = "[OFF]";
-				sender.sendMessage("/event spawners add <typeID> <interval> - Creates a spawner.");
-				sender.sendMessage("/event spawners clear - Removes all spawners.");
-				sender.sendMessage("/event spawners toggle" + state + " -  Turns spawning ON or OFF.");
+				sender.sendMessage("/event spawners add <group> <typeID> <interval> - Creates a spawner.");
+				sender.sendMessage("/event spawners clear <group> - Removes all spawners of a specified group.");
+				sender.sendMessage("/event spawners toggle <group> - Turns spawning ON or OFF.");
+				sender.sendMessage("/event spawners list - Prints all spawner groups.");
+				sender.sendMessage("/event spawners list <group> - Prints all spawners of specified group.");
 				sender.sendMessage("/event spawners ids - Prints list of all mob ids.");
 			}
 			else if (args.length == 2)
 			{
+				if (args[1].equalsIgnoreCase("list"))
+				{
+					Iterator<String> i = GugaEvent.GetGroupNames().iterator();
+					while (i.hasNext())
+					{
+						String group = i.next();
+						String state;
+						if (GugaEvent.GetGroupState(group))
+							state = "[ON]";
+						else
+							state = "[OFF]";
+						sender.sendMessage(group + " " + state);
+					}
+				}
+			}
+			else if (args.length == 3)
+			{
+				if (args[1].equalsIgnoreCase("list"))
+				{
+					Iterator<GugaSpawner> i = GugaEvent.GetSpawnersOfGroup(args[2]).iterator();
+					while (i.hasNext())
+					{
+						GugaSpawner spawner = i.next();
+						Location loc = spawner.GetLocation();
+						String state;
+						if (spawner.GetSpawnState())
+							state = "[ON]";
+						else
+							state = "[OFF]";
+						sender.sendMessage(loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " " + state);
+					}
+				}
 				if (args[1].equalsIgnoreCase("clear"))
 				{
-					GugaEvent.ClearSpawners();
+					GugaEvent.ClearSpawnersFromGroup(args[2]);
 					sender.sendMessage("All spawners removed.");
 				}
 				else if (args[1].equalsIgnoreCase("toggle"))
 				{
-					GugaEvent.canSpawn = !GugaEvent.canSpawn;
 					String state;
-					if (GugaEvent.canSpawn)
+					GugaEvent.ToggleGroupSpawning(args[2]);
+					if (GugaEvent.GetGroupState(args[2]))
 						state = "[ON]";
 					else
 						state = "[OFF]";
-					sender.sendMessage("Spawning is now " + state);
+					sender.sendMessage(args[2] + " " + state);
 				}
 				else if (args[1].equalsIgnoreCase("ids"))
 				{
@@ -963,11 +1008,11 @@ public abstract class GugaCommands
 				}
 				return;
 			}
-			else if (args.length == 4)
+			else if (args.length == 5)
 			{
 				if (args[1].equalsIgnoreCase("add"))
 				{
-					GugaEvent.AddSpawner(sender.getLocation(), Integer.parseInt(args[3]), Integer.parseInt(args[2]));
+					GugaEvent.AddSpawnerToGroup(args[2], sender.getLocation(), Integer.parseInt(args[4]), Integer.parseInt(args[3]));
 					sender.sendMessage("Spawner has been added.");
 				}
 				return;

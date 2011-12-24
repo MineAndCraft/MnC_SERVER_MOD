@@ -8,25 +8,43 @@ public class GugaSpawner
 	public GugaSpawner(Guga_SERVER_MOD plugin, Location loc, int interval)
 	{
 		this.isRunning = true;
+		this.canSpawn = false;
 		this.plugin = plugin;
 		this.location = loc;
 		this.interval = interval;
 		this.cap = 10;
 		this.spawnType = null;
-		this.StartSpawning();
+		this.StartThread();
 	}
 	public GugaSpawner(Guga_SERVER_MOD plugin, Location loc, int interval, int cap, CreatureType spawnType)
 	{
 		this.isRunning = true;
+		this.canSpawn = false;
 		this.plugin = plugin;
 		this.location = loc;
 		this.interval = interval;
 		this.cap = cap;
 		this.spawnedCount = 0;
 		this.spawnType = spawnType;
-		this.StartSpawning();
+		this.StartThread();
 	}
-	public void StartSpawning()
+	public void ToggleSpawnState()
+	{
+		this.canSpawn = !this.canSpawn;
+	}
+	public void SetSpawnState(boolean canSpawn)
+	{
+		this.canSpawn = canSpawn;
+	}
+	public boolean GetSpawnState()
+	{
+		return this.canSpawn;
+	}
+	public Location GetLocation()
+	{
+		return this.location;
+	}
+	public void StartThread()
 	{
 		this.spawnThread = new Thread(new Runnable() {
 			@Override
@@ -34,10 +52,9 @@ public class GugaSpawner
 			{
 				while (isRunning)
 				{
-					plugin.log.info("RUNNING");
 					try 
 					{
-						if (GugaEvent.canSpawn && (spawnedCount < cap))
+						if (canSpawn && (spawnedCount < cap))
 						{
 							plugin.getServer().getWorld("world").spawnCreature(location, spawnType);
 							spawnedCount++;
@@ -64,5 +81,6 @@ public class GugaSpawner
 	private int cap;
 	private int spawnedCount;
 	private Thread spawnThread;
-	private boolean isRunning = true;
+	private boolean isRunning;
+	private boolean canSpawn;
 }
