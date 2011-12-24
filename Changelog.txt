@@ -1,3 +1,8 @@
+2.1.5:
+	- /event join command added.
+	- Players now can join event with a command.
+	- /event stats command added.
+	
 2.1.4:
 	- /event godmode command added.
 	- /event spawners greatly improved.

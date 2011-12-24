@@ -1,6 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -97,6 +98,10 @@ public abstract class GugaEvent
 				p.getInventory().addItem(new ItemStack(itemID, amount));
 		}
 	}
+	public static void ToggleAcceptInvites()
+	{
+		GugaEvent.acceptInv = !GugaEvent.acceptInv;
+	}
 	public static void TeleportPlayersTo(String pName)
 	{
 		Player teleporter = GugaEvent.plugin.getServer().getPlayer(pName);
@@ -180,6 +185,37 @@ public abstract class GugaEvent
 	{
 		GugaEvent.players.clear();
 	}
+	public static ArrayList<String> GetItemCountStats(int id)
+	{
+		int[] values = new int[GugaEvent.players.size()];
+		String[] array = new String[GugaEvent.players.size()];
+		Iterator<String> iter = GugaEvent.players.iterator();
+		int i = 0;
+		while (iter.hasNext())
+		{
+			String pName = iter.next();
+			int count = GugaEvent.GetItemCountById(pName, id);
+			array[i] = pName + ";" + count;
+			values[i] = count;
+			i++;
+		}
+		Arrays.sort(values);
+		i = (values.length - 1);
+		ArrayList<String> returnArray = new ArrayList<String>();
+		while (i >= 0)
+		{
+			int i2 = 0;
+			while (i2 < values.length)
+			{
+				int val = Integer.parseInt(array[i2].split(";")[1]);
+				if (val == values[i])
+					returnArray.add(array[i2]);
+				i2++;
+			}
+			i--;
+		}
+		return returnArray;
+	}
 	public static boolean ContainsPlayer(String pName)
 	{
 		Iterator<String> i = GugaEvent.players.iterator();
@@ -225,8 +261,29 @@ public abstract class GugaEvent
 			p.getInventory().addItem(item);
 		}
 	}
+	private static int GetItemCountById(String pName, int id)
+	{
+		Player p = GugaEvent.plugin.getServer().getPlayer(pName);
+		if (p == null)
+			return 0;
+		
+		ItemStack[] items = p.getInventory().getContents();
+		int count = 0;
+		int i = 0;
+		while (i < items.length)
+		{
+			if (items[i] != null)
+			{
+				if (items[i].getTypeId() == id)
+					count += items[i].getAmount();
+			}
+			i++;
+		}
+		return count;
+	}
 	public static ArrayList<String> players = new ArrayList<String>();
 	public static boolean godMode = false;
+	public static boolean acceptInv = false;
 	private static HashMap<String, Location> teleportCache = new HashMap<String, Location>();
 	private static HashMap<String, ArrayList<ItemStack>> inventoryCache = new HashMap<String, ArrayList<ItemStack>>();
 	//private static ArrayList<GugaSpawner> spawnerList = new ArrayList<GugaSpawner>();

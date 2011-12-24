@@ -886,14 +886,34 @@ public abstract class GugaCommands
 	public static void CommandEvent(Player sender, String args[])
 	{
 		if (!GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if (args.length > 0)
+			{
+				if (args[0].equalsIgnoreCase("join"))
+				{
+					if (GugaEvent.acceptInv)
+					{
+						GugaEvent.AddPlayer(sender.getName().toLowerCase());
+						sender.sendMessage("Byl jste uspesne prihlasen k eventu");
+					}
+					else
+						sender.sendMessage("Nyni se nemuzete prihlasit k zadnemu eventu!");
+				}
+			}
 			return;
+		}
 		if (args.length == 0)
 		{
-			String state;
+			String stateGodMode;
 			if (GugaEvent.godMode)
-				state = "[ON]";
+				stateGodMode = "[ON]";
 			else
-				state = "[OFF]";
+				stateGodMode = "[OFF]";
+			String stateInv;
+			if (GugaEvent.acceptInv)
+				stateInv = "[ON]";
+			else
+				stateInv = "[OFF]";
 			sender.sendMessage("EVENT MENU:");
 			sender.sendMessage("Commands:");
 			sender.sendMessage("/event players - Shows players submenu.");
@@ -902,7 +922,9 @@ public abstract class GugaCommands
 			sender.sendMessage("/event teleport - Teleports all tagged players to your location.");
 			sender.sendMessage("/event tpback - Teleports all players back to their original locations.");
 			sender.sendMessage("/event give <itemID> <amount> - Adds specified item to tagged players.");
-			sender.sendMessage("/event godmode " + state + " - Toggles immortality for tagged players.");
+			sender.sendMessage("/event godmode " + stateGodMode + " - Toggles immortality for tagged players.");
+			sender.sendMessage("/event stats <itemID> - Prints stats of all tagged players.");
+			sender.sendMessage("/event allowinv " + stateInv + " - Allow players to join your event.");
 			return;
 		}
 		String arg1 = args[0];
@@ -911,6 +933,16 @@ public abstract class GugaCommands
 			GugaEvent.TeleportPlayersTo(sender.getName());
 			sender.sendMessage("Players teleported.");
 			return;
+		}
+		else if (arg1.equalsIgnoreCase("allowinv"))
+		{
+			GugaEvent.ToggleAcceptInvites();
+			String stateInv;
+			if (GugaEvent.acceptInv)
+				stateInv = "[ON]";
+			else
+				stateInv = "[OFF]";
+			sender.sendMessage("Accept Invites " + stateInv);
 		}
 		else if (arg1.equalsIgnoreCase("godmode"))
 		{
@@ -921,11 +953,26 @@ public abstract class GugaCommands
 			else
 				state = "[OFF]";
 			sender.sendMessage("GodMode " + state);
+			return;
 		}
 		else if (arg1.equalsIgnoreCase("tpback"))
 		{
 			GugaEvent.TeleportPlayersBack();
 			sender.sendMessage("Players teleported back.");
+			return;
+		}
+		else if (arg1.equalsIgnoreCase("stats"))
+		{
+			sender.sendMessage("PLAYER STATS FOR ID " + args[1] + ":");
+			if (args.length == 2)
+			{
+				Iterator<String> i = GugaEvent.GetItemCountStats(Integer.parseInt(args[1])).iterator();
+				while (i.hasNext())
+				{
+					String[] split = i.next().split(";");
+					sender.sendMessage(split[0] + " - " + split[1]);
+				}
+			}
 			return;
 		}
 		else if (arg1.equalsIgnoreCase("give"))
