@@ -1,3 +1,25 @@
+2.2.0:
+	- New InventoryBackup class added.
+	- Event inventory saving has been rewritten.
+	- Arena system updated and enhanced.
+	- Players now get ranks based on pvp stats.
+	- Player now get a predefined items when entering arena based on their rank.
+	- Player now gets an inventory backup when entering arena.
+	- VIP commands cannot be used while in arena.
+	- Places commands cannot be used while in arena.
+	- /arena info command added.
+	- On kill arena message removed.
+	- Players in arena no longer drop arrows.
+	
+2.1.7:
+	- Rank Moderator changed on Builder.
+	- Required rank to build in arena and in regions is now a builder instead of GM.
+	
+2.1.6:
+	- /event players remove command added.
+	- Clearing inventory of tagged players now also removes players armor.
+	- /event spawners remove command added.
+
 2.1.5:
 	- /event join command added.
 	- Players now can join event with a command.

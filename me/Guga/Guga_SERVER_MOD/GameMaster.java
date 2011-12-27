@@ -15,6 +15,12 @@ public class GameMaster
 	{
 		return this.rank;
 	}
+	public boolean IsAtleastRank(Rank req)
+	{
+		if (this.rank.IsRanked(req))
+			return true;
+		return false;
+	}
 	public boolean IsAtleastGM()
 	{
 		if (this.rank.IsRanked(Rank.GAMEMASTER))
@@ -29,7 +35,7 @@ public class GameMaster
 	}
 	public static enum Rank
 	{
-		ADMIN(0, "ADMIN"), GAMEMASTER(1, "GAMEMASTER"), MODERATOR(2, "MODERATOR"), EVENTER(3, "EVENTER");
+		ADMIN(0, "ADMIN"), GAMEMASTER(1, "GAMEMASTER"), BUILDER(2, "BUILDER"), EVENTER(3, "EVENTER");
 		private Rank(int val, String rankName)
 		{
 			this.val = val;

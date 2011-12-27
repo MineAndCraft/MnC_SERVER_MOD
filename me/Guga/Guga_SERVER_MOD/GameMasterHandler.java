@@ -27,6 +27,16 @@ public abstract class GameMasterHandler
 		}
 		return null;
 	}
+	public static boolean IsAtleastRank(String name, Rank req)
+	{
+		GameMaster gm;
+		if ((gm = GameMasterHandler.GetGMByName(name)) != null)
+		{
+			if (gm.IsAtleastRank(req))
+				return true;
+		}
+		return false;
+	}
 	public static boolean IsAtleastGM(String name)
 	{
 		GameMaster gm;

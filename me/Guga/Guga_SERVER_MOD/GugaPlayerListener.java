@@ -268,6 +268,7 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			e.setRespawnLocation(respawnLoc);
 			plugin.arena.RemovePlayerBaseLocation(p);
+			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
 	}
 	public void onPlayerMove(PlayerMoveEvent e)

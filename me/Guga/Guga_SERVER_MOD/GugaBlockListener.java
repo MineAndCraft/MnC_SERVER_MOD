@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 
 
+import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -33,7 +35,7 @@ public class GugaBlockListener extends BlockListener
 		Player p = e.getPlayer();
 		if (plugin.arena.IsArena(p.getLocation()))
 		{
-			if (GameMasterHandler.IsAtleastGM(p.getName()))
+			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 			{
 				return;
 			}
@@ -43,7 +45,7 @@ public class GugaBlockListener extends BlockListener
 		}
 		if (!GugaRegionHandler.CanInteract(p.getName(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
-			if (!GameMasterHandler.IsAtleastGM(p.getName()))
+			if (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
@@ -249,7 +251,7 @@ public class GugaBlockListener extends BlockListener
 		plugin.logger.LogBlockPlace(e);
 		if (plugin.arena.IsArena(e.getBlock().getLocation()))
 		{
-			if (!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
 				return;
@@ -257,7 +259,7 @@ public class GugaBlockListener extends BlockListener
 		}
 		if (!GugaRegionHandler.CanInteract(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
-			if (!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());

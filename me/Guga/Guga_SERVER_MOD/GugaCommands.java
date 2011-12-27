@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -274,6 +277,11 @@ public abstract class GugaCommands
 		if (GugaEvent.ContainsPlayer(sender.getName()))
 		{
 			sender.sendMessage("Nemuzete pouzivat VIP prikazy v prubehu eventu!");
+			return;
+		}
+		if (plugin.arena.IsArena(sender.getLocation()))
+		{
+			sender.sendMessage("VIP Prikazy nemuzete pouzivat v arene!");
 			return;
 		}
 		if (args.length == 0)
@@ -643,6 +651,11 @@ public abstract class GugaCommands
 			String name = args[1];
 			if (subCommand.matches("port"))
 			{
+				if (plugin.arena.IsArena(sender.getLocation()))
+				{
+					sender.sendMessage("V arene nemuzete pouzit prikaz /places!");
+					return;
+				}
 				GugaPlace place;
 				if ( (place = GugaPort.GetPlaceByName(name)) != null)
 				{
@@ -826,7 +839,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/arena join - Teleportuje hrace do areny");
 			sender.sendMessage("/arena leave - Vrati hrace do normalniho sveta");
 			sender.sendMessage("/arena stats - Zobrazi zebricek nejlepsich hracu");
-			//sender.sendMessage("/arena info - Info about arena system");
+			sender.sendMessage("/arena info - Info about arena and ranks");
 		}
 		else if (args.length == 1)
 		{
@@ -846,17 +859,23 @@ public abstract class GugaCommands
 			{
 				plugin.arena.PlayerLeave(sender);
 			}
-			else if (subCommand.matches("setspawn"))
+			else if (subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				plugin.arena.SetSpawn(sender);
 			}
-			else if (subCommand.matches("removespawn"))
+			else if (subCommand.matches("removespawn") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				plugin.arena.RemoveSpawn(sender);
 			}
 			else if (subCommand.matches("stats"))
 			{
 				plugin.arena.ShowPvpStats(sender);
+			}
+			else if (subCommand.matches("info"))
+			{
+				Integer kills = plugin.arena.GetPlayerStats(sender);
+				sender.sendMessage("Vas rank: " +ArenaTier.GetTier(kills).toString());
+				sender.sendMessage("Pocet killu: " +kills);
 			}
 		}
 	}
@@ -989,6 +1008,7 @@ public abstract class GugaCommands
 			if (args.length == 1)
 			{
 				sender.sendMessage("/event spawners add <group> <typeID> <interval> - Creates a spawner.");
+				sender.sendMessage("/event spawners remove <group> <index> - Removes spawner from a group.");
 				sender.sendMessage("/event spawners clear <group> - Removes all spawners of a specified group.");
 				sender.sendMessage("/event spawners toggle <group> - Turns spawning ON or OFF.");
 				sender.sendMessage("/event spawners list - Prints all spawner groups.");
@@ -1017,6 +1037,8 @@ public abstract class GugaCommands
 				if (args[1].equalsIgnoreCase("list"))
 				{
 					Iterator<GugaSpawner> i = GugaEvent.GetSpawnersOfGroup(args[2]).iterator();
+					int index = 0;
+					sender.sendMessage(args[2] + " SPAWNERS:");
 					while (i.hasNext())
 					{
 						GugaSpawner spawner = i.next();
@@ -1026,7 +1048,8 @@ public abstract class GugaCommands
 							state = "[ON]";
 						else
 							state = "[OFF]";
-						sender.sendMessage(loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " " + state);
+						sender.sendMessage(index + ": " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " " + state);
+						index++;
 					}
 				}
 				if (args[1].equalsIgnoreCase("clear"))
@@ -1052,6 +1075,15 @@ public abstract class GugaCommands
 						sender.sendMessage(i + type.getName());
 						i++;
 					}
+				}
+				return;
+			}
+			else if (args.length == 4)
+			{
+				if (args[1].equalsIgnoreCase("remove"))
+				{
+					GugaEvent.RemoveSpawnerFromGroup(args[2], Integer.parseInt(args[3]));
+					sender.sendMessage("Spawner removed.");
 				}
 				return;
 			}
@@ -1097,6 +1129,7 @@ public abstract class GugaCommands
 			if (args.length == 1)
 			{
 				sender.sendMessage("/event players add <name1,name2,name3> - Tags specified players for event.");
+				sender.sendMessage("/event players remove <name> - Removes specified player from the list.");
 				sender.sendMessage("/event players clear - Removes all tags.");
 				sender.sendMessage("/event players list - List of tagged players.");
 				return;
@@ -1131,6 +1164,16 @@ public abstract class GugaCommands
 						i++;
 					}
 					sender.sendMessage("Player(s) added.");
+				}
+				else if (args[1].equalsIgnoreCase("remove"))
+				{
+					if (GugaEvent.ContainsPlayer(args[2]))
+					{
+						GugaEvent.RemovePlayer(args[2]);
+						sender.sendMessage("Player removed from the list.");
+					}
+					else
+						sender.sendMessage("Player not found.");
 				}
 				return;
 			}

@@ -11,7 +11,6 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class GugaEvent 
@@ -88,6 +87,12 @@ public abstract class GugaEvent
 	{
 		return GugaEvent.spawners.keySet();
 	}
+	public static void RemoveSpawnerFromGroup(String groupName, int index)
+	{
+		ArrayList<GugaSpawner> list = GugaEvent.GetSpawnersOfGroup(groupName);
+		if (index < list.size())
+			list.remove(index);
+	}
 	public static void AddItemToPlayers(int itemID, int amount)
 	{
 		Iterator<String> i = GugaEvent.players.iterator();
@@ -146,10 +151,13 @@ public abstract class GugaEvent
 		{
 			String pName = i.next();
 			Player p = GugaEvent.plugin.getServer().getPlayer(pName);
-			if (p != null)
+			if (p != null )
 			{
-				GugaEvent.CreateInvBackup(pName, p.getInventory());
-				p.getInventory().clear();
+				if (InventoryBackup.CreateBackup(pName, p.getInventory().getArmorContents(), p.getInventory().getContents()))
+				{
+					p.getInventory().clear();
+					p.getInventory().setArmorContents(null);
+				}
 			}
 		}
 	}
@@ -159,22 +167,29 @@ public abstract class GugaEvent
 	}
 	public static void ReturnInventories(boolean clear)
 	{
-		Iterator<String> i = GugaEvent.inventoryCache.keySet().iterator();
-		ArrayList<String> tempPlayers = new ArrayList<String>();
-		while (i.hasNext())
-		{
-			String name = i.next();
-			tempPlayers.add(name);
-		}
-		i = tempPlayers.iterator();
+		Iterator<InventoryBackup> i = InventoryBackup.GetBackups().iterator();
+		ArrayList<InventoryBackup> temp = new ArrayList<InventoryBackup>();
 		while(i.hasNext())
 		{
-			String pName = i.next();
-			if (GugaEvent.plugin.getServer().getPlayer(pName) != null)
+			InventoryBackup backUp = i.next();
+			Player p;
+			if ((p = GugaEvent.plugin.getServer().getPlayer(backUp.GetOwner())) != null)
 			{
-				GugaEvent.ReturnBackup(pName, clear);
+				temp.add(backUp);
+				if (clear)
+					p.getInventory().clear();
+				ItemStack[] items = backUp.GetInventory();
+				int i2 = 0;
+				while (i2 < items.length)
+				{
+					if (items[i2] != null)
+						p.getInventory().addItem(items[i2]);
+					i2++;
+				}
+				p.getInventory().setArmorContents(backUp.GetArmor());
 			}
 		}
+		InventoryBackup.RemoveBackups(temp);
 	}
 	public static void AddPlayer(String pName)
 	{
@@ -184,6 +199,10 @@ public abstract class GugaEvent
 	public static void ClearPlayers()
 	{
 		GugaEvent.players.clear();
+	}
+	public static void RemovePlayer(String pName)
+	{
+		GugaEvent.players.remove(pName);
 	}
 	public static ArrayList<String> GetItemCountStats(int id)
 	{
@@ -231,36 +250,6 @@ public abstract class GugaEvent
 	{
 		GugaEvent.teleportCache.put(pName, loc);
 	}
-	private static void CreateInvBackup(String pName, Inventory inv)
-	{
-		ItemStack[] items = inv.getContents();
-		int i = 0;
-		ArrayList<ItemStack> itemsList = new ArrayList<ItemStack>();
-		while (i < items.length)
-		{
-			if (items[i] != null)
-				itemsList.add(items[i]);
-			i++;
-		}
-		GugaEvent.inventoryCache.put(pName, itemsList);
-	}
-	private static void ReturnBackup(String pName, boolean clear)
-	{
-		Player p = GugaEvent.plugin.getServer().getPlayer(pName);
-		if (p == null)
-			return;
-		ArrayList<ItemStack> items = GugaEvent.inventoryCache.get(pName);
-		if (items == null)
-			return;
-		Iterator<ItemStack> i = items.iterator();
-		if (clear)
-			p.getInventory().clear();
-		while (i.hasNext())
-		{
-			ItemStack item = i.next();
-			p.getInventory().addItem(item);
-		}
-	}
 	private static int GetItemCountById(String pName, int id)
 	{
 		Player p = GugaEvent.plugin.getServer().getPlayer(pName);
@@ -285,8 +274,8 @@ public abstract class GugaEvent
 	public static boolean godMode = false;
 	public static boolean acceptInv = false;
 	private static HashMap<String, Location> teleportCache = new HashMap<String, Location>();
-	private static HashMap<String, ArrayList<ItemStack>> inventoryCache = new HashMap<String, ArrayList<ItemStack>>();
-	//private static ArrayList<GugaSpawner> spawnerList = new ArrayList<GugaSpawner>();
+	//private static HashMap<String, ArrayList<ItemStack>> inventoryCache = new HashMap<String, ArrayList<ItemStack>>();
+	//private static HashMap<String, ItemStack[]> armorCache = new HashMap<String, ItemStack[]>();
 	private static HashMap<String, ArrayList<GugaSpawner>> spawners = new HashMap<String, ArrayList<GugaSpawner>>();
 	private static Guga_SERVER_MOD plugin;
 }
