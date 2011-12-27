@@ -1,6 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import org.bukkit.entity.Player;
@@ -52,8 +53,16 @@ public class InventoryBackup
 	public static void RemoveBackup(String pName)
 	{
 		InventoryBackup inv = GetInventoryBackup(pName);
-		if (inv != null)
-			list.remove(inv);	
+		if (inv == null)
+			return;
+		try
+		{
+			list.remove(inv);
+		}
+		catch (ConcurrentModificationException e)
+		{
+			RemoveBackup(pName);
+		}
 	}
 	public static void RemoveBackup(InventoryBackup backUp)
 	{

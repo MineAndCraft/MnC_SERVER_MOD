@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -39,12 +41,16 @@ public class GugaArena
 			GugaProfession prof;
 			if ((prof = plugin.professions.get(killer.getName())) != null)
 			{
-				prof.GainExperience(200);
+				prof.GainExperience(100);
 			}
-			//killer.getWorld().dropItem(killer.getLocation(), new ItemStack(262,20));
-			//plugin.getServer().broadcastMessage(killer.getName() + " rozsekal " + victim.getName() + " v Arene!");
-			killCache = victim;
-			ClearCache();
+			//killCache = victim;
+			//ClearCache();
+			Integer multiKill = multiKillCounter.get(killer.getName());
+			if (multiKill == null)
+				multiKillCounter.put(killer.getName(), 1);
+			else
+				multiKillCounter.put(killer.getName(), multiKill.intValue() + 1);
+			multiKillCounter.put(victim.getName(), 0);
 			DisableLeave(killer,60);
 			IncreasePvpStats(killer);
 			SavePvpStats();
@@ -117,6 +123,7 @@ public class GugaArena
 		SaveArena();
 		sender.sendMessage("Arena Spawn has been set.");
 	}
+	@SuppressWarnings("unused")
 	private void ClearCache()
 	{
 		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
@@ -170,9 +177,26 @@ public class GugaArena
 		{
 			kills++;
 		}
+		Integer multiKill;
+		if ( (multiKill = multiKillCounter.get(pName)) != null)
+		{
+			if (multiKill.intValue() > 3)
+			{
+				plugin.getServer().broadcastMessage(pName + " ma " + multiKill + " killu v rade!");
+				kills++;
+			}
+		}
 		ArenaTier tier = ArenaTier.GetTier(kills);
 		if (ArenaTier.GetTier(kills - 1) != tier)
+		{
+			if (tier == ArenaTier.TIER19)
+			{
+				WinRound(p);
+				return;
+			}
 			plugin.getServer().broadcastMessage(p.getName() + " byl povysen na rank " + tier.toString() + "");
+			GiveItems(p);
+		}
 		pvpStats.put(pName, kills);
 	}
 	public void ShowPvpStats(Player sender)
@@ -451,7 +475,10 @@ public class GugaArena
 	{
 		PlayerInventory inv = p.getInventory();
 		if (inv.getContents().length > 0)
+		{
 			inv.clear();
+			inv.setArmorContents(null);
+		}
 		Integer kills;
 		if ((kills = pvpStats.get(p.getName())) == null)
 			kills = 0;
@@ -468,22 +495,52 @@ public class GugaArena
 		
 		int i = 0;
 		int[][] inventory = tier.GetItems();
-		while (i < (inventory.length))
+		while (i < (inventory[0].length))
 		{
 			inv.addItem(new ItemStack(inventory[0][i], inventory[1][i]));
 			i++;
 		}
 	}
+	public void WinRound(Player winner)
+	{
+		plugin.getServer().broadcastMessage(ChatColor.BLUE + winner.getName() + " JE VITEZ TOHOTO KOLA V ARENE A VYHRAVA 50 KREDITU!");
+		plugin.getServer().broadcastMessage(ChatColor.BLUE + " DALSI KOLO ZACINA PRAVE TED!");
+		plugin.FindPlayerCurrency(winner.getName()).AddCurrency(50);
+		winner.sendMessage("Ziskal jste +50 kreditu!");
+		ClearStats();
+	}
+	public void ClearStats()
+	{
+		this.pvpStats.clear();
+		Iterator<Player> i = this.plugin.getServer().getWorld("arena").getPlayers().iterator();
+		while (i.hasNext())
+		{
+			GiveItems(i.next());
+		}
+	}
 	public enum ArenaTier
 	{
 		NOVACEK		(0, new int[][]{{268, 297}, {5, 10}}, new int[]{0, 0, 0, 0}), 
-		BOJOVNIK	(5, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 0}), 
-		TIER3		(10, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 301}), 
-		TIER4		(20, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 300, 301}), 
-		TIER5		(30, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 299, 300, 301}),
-		TIER6		(40, new int[][]{{268, 297, 261, 262}, {5, 10, 1, 2}}, new int[]{298, 299, 300, 301}),
-		TIER7		(50, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 5}}, new int[]{298, 299, 300, 301}),
-		TIER8		(60, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 10}}, new int[]{314, 299, 300, 301});
+		BOJOVNIK	(1, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 0}), 
+		TIER3		(3, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 301}), 
+		TIER4		(6, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 300, 301}), 
+		TIER5		(9, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 299, 300, 301}),
+		TIER6		(12, new int[][]{{268, 297, 261, 262}, {5, 10, 1, 2}}, new int[]{298, 299, 300, 301}),
+		TIER7		(15, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 5}}, new int[]{298, 299, 300, 301}),
+		TIER8		(18, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 10}}, new int[]{314, 299, 300, 301}),
+		TIER9		(21, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 15}}, new int[]{314, 299, 300, 317}),
+		TIER10		(24, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 20}}, new int[]{314, 299, 316, 317}),
+		TIER11		(27, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 25}}, new int[]{314, 315, 316, 317}),
+		TIER12		(30, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{314, 315, 316, 317}),
+		TIER13		(35, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 316, 317}),
+		TIER14		(40, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 316, 305}),
+		TIER15		(45, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 304, 305}),
+		TIER16		(50, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 303, 304, 305}),
+		TIER17		(60, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 303, 304, 305}),
+		TIER18		(70, new int[][]{{277, 297}, {5, 10}}, new int[]{0, 303, 304, 305}),
+		TIER19		(75, new int[][]{{267}, {1}}, new int[]{0, 0, 0, 0});
+	//	TIER20		(160, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{306, 303, 308, 309}),
+	//	TIER21		(180, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{306, 307, 308, 309});
 		
 		private ArenaTier(int killsRequired, int[][] items, int[] armor)
 		{
@@ -522,7 +579,7 @@ public class GugaArena
 	private Player killCache;
 	
 	private HashMap<String,Integer> pvpStats = new HashMap<String,Integer>();
-	
+	private HashMap<String, Integer> multiKillCounter = new HashMap<String, Integer>();
 	private HashMap<String,Location> baseLocation = new HashMap<String,Location>();
 	private ArrayList<String> cannotLeave = new ArrayList<String>();
 	private Location arenaSpawn;

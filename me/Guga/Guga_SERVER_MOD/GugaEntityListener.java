@@ -3,6 +3,7 @@ package me.Guga.Guga_SERVER_MOD;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -18,6 +19,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaEntityListener extends EntityListener
@@ -125,8 +127,10 @@ public class GugaEntityListener extends EntityListener
 				if ((event.getDamager() instanceof Player) && (event.getEntity() instanceof Player))
 				{
 					Player damager = (Player)event.getDamager();
+					e.getDrops().clear();
 					Player target = (Player)event.getEntity();
 					plugin.arena.ArenaKill(damager, target);
+					((PlayerDeathEvent)e).setDeathMessage(ChatColor.AQUA + damager.getName() + " zabil " + target.getName() + " v Arene!");
 				}
 			}
 			return;

@@ -840,6 +840,11 @@ public abstract class GugaCommands
 			sender.sendMessage("/arena leave - Vrati hrace do normalniho sveta");
 			sender.sendMessage("/arena stats - Zobrazi zebricek nejlepsich hracu");
 			sender.sendMessage("/arena info - Info about arena and ranks");
+			if (GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				sender.sendMessage("/arena setspawn - Nastavi arena spawn na aktualni pozici.");
+				sender.sendMessage("/arena clear - Vymaze stats vsech hracu.");
+			}
 		}
 		else if (args.length == 1)
 		{
@@ -854,6 +859,10 @@ public abstract class GugaCommands
 				{
 					sender.sendMessage("V arene jiz jste!");
 				}
+			}
+			else if (subCommand.matches("clear"))
+			{
+				plugin.arena.ClearStats();
 			}
 			else if (subCommand.matches("leave"))
 			{

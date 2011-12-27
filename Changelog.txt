@@ -1,3 +1,30 @@
+2.2.5:
+	- Multi-kill bonuses and messages added.
+	- Cache arena-kill protection removed.
+	- Kills needed for some tiers decreased.
+
+2.2.4:
+	- Arena Tier count reduced to 19.
+	- Arena now has GunGame-style rewarding system.
+	- First player, that reaches tier 19 recieves 50 credits.
+	- Stats reset when someone reaches Tier 19.
+	
+2.2.3:
+	- gm commands help in /arena added.
+	- Few arena tiers have been added.
+	- Required kills in arena tiers updated.
+	- Arena kill message customized.
+	- /arena clear command for gms added.
+	
+2.2.2:
+	- Possible fix for rare concurrency read exception.
+	- More tiers added.
+	
+2.2.1:
+	- Arena items are now given properly.
+	- Items dropping in arena disabled.
+	- Items now are also given upon rank increase.
+	
 2.2.0:
 	- New InventoryBackup class added.
 	- Event inventory saving has been rewritten.
