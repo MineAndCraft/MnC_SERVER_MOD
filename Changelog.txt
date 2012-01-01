@@ -1,7 +1,26 @@
+2.2.8:
+	- Added check for players with no name.
+	
+2.2.7:
+	- Explosions are now disabled in regions.
+	- Kill message with +points on kill in arena added.
+	- Fixed bug with player not winning arena, if reaching rank 19 with more than 1 points.
+	- Players now get more points for killing players with higher rank.
+	- Killing player on killing spree now reward players with +1 points.
+	
+2.2.6:
+	- Arena kill message disabled.
+	- Arena now support multiple spawn points.
+	- Spawn points changes every round.
+	- /gm arena command added.
+	- setspawn and removespawn commands in /arena command have been removed.
+	- arena broadcast messages now have [ARENA] tag and dark green color.
+	
 2.2.5:
 	- Multi-kill bonuses and messages added.
 	- Cache arena-kill protection removed.
 	- Kills needed for some tiers decreased.
+	- XP gained from killing players in arena reduced to 100.
 
 2.2.4:
 	- Arena Tier count reduced to 19.

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 
 import org.bukkit.ChatColor;
@@ -840,11 +841,6 @@ public abstract class GugaCommands
 			sender.sendMessage("/arena leave - Vrati hrace do normalniho sveta");
 			sender.sendMessage("/arena stats - Zobrazi zebricek nejlepsich hracu");
 			sender.sendMessage("/arena info - Info about arena and ranks");
-			if (GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/arena setspawn - Nastavi arena spawn na aktualni pozici.");
-				sender.sendMessage("/arena clear - Vymaze stats vsech hracu.");
-			}
 		}
 		else if (args.length == 1)
 		{
@@ -860,21 +856,9 @@ public abstract class GugaCommands
 					sender.sendMessage("V arene jiz jste!");
 				}
 			}
-			else if (subCommand.matches("clear"))
-			{
-				plugin.arena.ClearStats();
-			}
 			else if (subCommand.matches("leave"))
 			{
 				plugin.arena.PlayerLeave(sender);
-			}
-			else if (subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				plugin.arena.SetSpawn(sender);
-			}
-			else if (subCommand.matches("removespawn") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				plugin.arena.RemoveSpawn(sender);
 			}
 			else if (subCommand.matches("stats"))
 			{
@@ -1215,6 +1199,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 				sender.sendMessage("/gm places - Places sub-menu.");
 				sender.sendMessage("/gm regions - Regions sub-menu.");
+				sender.sendMessage("/gm arena - Arenas sub-menu.");
 			}
 			sender.sendMessage("/gm ban - Bans sub-menu.");
 			sender.sendMessage("/gm log - Shows a log records for target block.");
@@ -1227,6 +1212,13 @@ public abstract class GugaCommands
 			if (subCommand.matches("log"))
 			{
 				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
+			}
+			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				sender.sendMessage("/gm arena add <name> - Adds new arena spawn at your location.");
+				sender.sendMessage("/gm arena remove <name> - Removes specified arena.");
+				sender.sendMessage("/gm arena list - List of all arenas.");
+				sender.sendMessage("/gm arena next - Changes actual arena to next one.");
 			}
 			else if (subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
@@ -1286,6 +1278,23 @@ public abstract class GugaCommands
 				else
 				{
 					sender.sendMessage("This player is not online!");
+				}
+			}
+			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if (arg1.equalsIgnoreCase("list"))
+				{
+					Iterator<ArenaSpawn> i = plugin.arena.GetArenaList().iterator();
+					sender.sendMessage("LIST OF ARENAS:");
+					while (i.hasNext())
+					{
+						sender.sendMessage(i.next().GetName());
+					}
+				}
+				else if (arg1.equalsIgnoreCase("next"))
+				{
+					plugin.arena.RotateArena();
+					sender.sendMessage("Actual Arena changed.");
 				}
 			}
 			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
@@ -1443,6 +1452,32 @@ public abstract class GugaCommands
 					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
 				}
 			}
+			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if (args.length == 3)
+				{
+					if (args[1].equalsIgnoreCase("add"))
+					{
+						if (plugin.arena.IsArena(sender.getLocation()))
+						{
+							plugin.arena.AddArena(args[2], sender.getLocation());
+							sender.sendMessage("Arena spawn succesfuly added.");
+						}
+						else
+							sender.sendMessage("You must be in arena world!");
+					}
+					else if (args[1].equalsIgnoreCase("remove"))
+					{
+						if (plugin.arena.ContainsArena(args[2]))
+						{
+							plugin.arena.RemoveArena(args[2]);
+							sender.sendMessage("Arena succesfuly removed.");
+						}
+						else
+							sender.sendMessage("This arena doesnt exist!");
+					}
+				}
+			}	
 			else if (subCommand.matches("ban"))
 			{
 				if (args.length == 3)

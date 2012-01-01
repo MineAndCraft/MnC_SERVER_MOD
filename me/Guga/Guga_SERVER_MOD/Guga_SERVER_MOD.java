@@ -33,6 +33,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
 		arena.SavePvpStats();
+		arena.SaveArenas();
 	}
 	public void onEnable() 
 	{
@@ -71,12 +72,12 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			//getServer().createWorld("arena", Environment.NORMAL);
 			getServer().createWorld(WorldCreator.name("arena").environment(Environment.NORMAL));
 		}
-		arena.LoadArena();
+		arena.LoadArenas();
 		arena.LoadPvpStats();
-		getServer().getWorld(arena.GetWorldName()).setPVP(true);
+		getServer().getWorld("arena").setPVP(true);
 		getServer().getWorld("world").setPVP(false);
 		getServer().getWorld("world_nether").setPVP(false);
-		getServer().getWorld(arena.GetWorldName()).setSpawnFlags(false, false);
+		getServer().getWorld("arena").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
@@ -481,7 +482,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.2.5";
+	public static final String version = "2.2.8";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

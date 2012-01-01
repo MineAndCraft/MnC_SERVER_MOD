@@ -35,6 +35,11 @@ public class GugaPlayerListener extends PlayerListener
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
 			return;
 		}
+		if (p.getName().matches(""))
+		{
+			p.kickPlayer("Prosim zvolte si jmeno!");
+			return;
+		}
 		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
 			GugaBanHandler.AddBan(p.getName(), 0);
 		

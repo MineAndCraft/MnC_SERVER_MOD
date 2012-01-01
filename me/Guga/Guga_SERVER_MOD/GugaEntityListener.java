@@ -2,8 +2,6 @@ package me.Guga.Guga_SERVER_MOD;
 
 import java.util.Iterator;
 import java.util.List;
-
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -130,7 +128,8 @@ public class GugaEntityListener extends EntityListener
 					e.getDrops().clear();
 					Player target = (Player)event.getEntity();
 					plugin.arena.ArenaKill(damager, target);
-					((PlayerDeathEvent)e).setDeathMessage(ChatColor.AQUA + damager.getName() + " zabil " + target.getName() + " v Arene!");
+					//((PlayerDeathEvent)e).setDeathMessage(ChatColor.AQUA + damager.getName() + " zabil " + target.getName() + " v Arene!");
+					((PlayerDeathEvent)e).setDeathMessage(null);
 				}
 			}
 			return;
@@ -217,6 +216,11 @@ public class GugaEntityListener extends EntityListener
 			plugin.log.info("ENTITY_EXPLODE_EVENT: entity=" + e.getEntity().toString());
 		}
 		if (plugin.arena.IsArena(e.getLocation()))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		if (GugaRegionHandler.GetRegionByCoords(e.getLocation().getBlockX(), e.getLocation().getBlockZ()) != null)
 		{
 			e.setCancelled(true);
 			return;

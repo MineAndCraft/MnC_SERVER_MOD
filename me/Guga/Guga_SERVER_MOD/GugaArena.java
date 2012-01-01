@@ -26,14 +26,9 @@ public class GugaArena
 	GugaArena(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
-		worldName = "arena";
+		this.spawnIndex = 0;
 	}
-	GugaArena(Guga_SERVER_MOD gugaSM, Location spawn)
-	{
-		arenaSpawn = spawn;
-		plugin = gugaSM;
-		worldName = arenaSpawn.getWorld().getName();
-	}
+	
 	public void ArenaKill(Player killer, Player victim)
 	{
 		if (victim != killCache)
@@ -43,16 +38,14 @@ public class GugaArena
 			{
 				prof.GainExperience(100);
 			}
-			//killCache = victim;
-			//ClearCache();
 			Integer multiKill = multiKillCounter.get(killer.getName());
 			if (multiKill == null)
 				multiKillCounter.put(killer.getName(), 1);
 			else
 				multiKillCounter.put(killer.getName(), multiKill.intValue() + 1);
-			multiKillCounter.put(victim.getName(), 0);
 			DisableLeave(killer,60);
-			IncreasePvpStats(killer);
+			IncreasePvpStats(killer, victim);
+			multiKillCounter.put(victim.getName(), 0);
 			SavePvpStats();
 		}
 	}
@@ -62,16 +55,16 @@ public class GugaArena
 		{
 			baseLocation.put(p.getName(), p.getLocation());
 		}
-		p.getServer().broadcastMessage(p.getName() + " vstoupil do Areny!");
+		p.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " +p.getName() + " vstoupil do Areny!");
 		InventoryBackup.InventoryClearWrapped(p);
 		GiveItems(p);
-		if (arenaSpawn != null)
+		if (this.actualSpawn != null)
 		{
-			p.teleport(arenaSpawn);
+			p.teleport(actualSpawn.GetLocation());
 		}
 		else
 		{
-			p.teleport(plugin.getServer().getWorld(worldName).getSpawnLocation());
+			p.teleport(plugin.getServer().getWorld("arena").getSpawnLocation());
 		}
 		DisableLeave(p, 60);
 	}
@@ -96,42 +89,14 @@ public class GugaArena
 		{
 			p.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
 		}
-		p.getServer().broadcastMessage(p.getName() + " opustil Arenu");
+		p.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " +p.getName() + " opustil Arenu");
 		InventoryBackup.InventoryReturnWrapped(p, true);
 	}
 	public boolean IsArena(Location loc)
 	{
-		if (loc.getWorld().getName().matches(worldName))
-		{
+		if (loc.getWorld().getName().matches("arena"))
 			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	public void RemoveSpawn(Player sender)
-	{
-		arenaSpawn = null;
-		SaveArena();
-		sender.sendMessage("Arena Spawn has been removed.");
-	}
-	public void SetSpawn(Player sender)
-	{
-		arenaSpawn = sender.getLocation();
-		worldName = arenaSpawn.getWorld().getName();
-		SaveArena();
-		sender.sendMessage("Arena Spawn has been set.");
-	}
-	@SuppressWarnings("unused")
-	private void ClearCache()
-	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
-			public void run()
-			{
-				killCache = null;
-			}
-		}, 60);
+		return false;
 	}
 	private void DisableLeave(final Player p, int seconds)
 	{
@@ -143,10 +108,6 @@ public class GugaArena
 				cannotLeave.remove(p.getName());
 			}
 		}, serverTicks);
-	}
-	public String GetWorldName()
-	{
-		return worldName;
 	}
 	public Location GetPlayerBaseLocation(Player p)
 	{
@@ -165,38 +126,60 @@ public class GugaArena
 	{
 		return this.pvpStats.get(p.getName());
 	}
-	public void IncreasePvpStats(Player p)
+	public void IncreasePvpStats(Player p, Player victim)
 	{
 		String pName = p.getName();
 		Integer kills = pvpStats.get(pName);
+		int oldKills;
 		if (kills == null)
 		{
 			kills = 1;
+			oldKills = 0;
 		}
 		else
 		{
+			oldKills = kills.intValue();
 			kills++;
+		}
+		Integer victimKills;
+		if (( victimKills = pvpStats.get(victim.getName())) != null)
+		{
+			int victimTier = ArenaTier.GetTier(victimKills).intValue();
+			int killerTier = ArenaTier.GetTier(kills).intValue();
+			if (victimTier > killerTier)
+			{
+				kills += (victimTier - killerTier);
+			}
 		}
 		Integer multiKill;
 		if ( (multiKill = multiKillCounter.get(pName)) != null)
 		{
 			if (multiKill.intValue() > 3)
 			{
-				plugin.getServer().broadcastMessage(pName + " ma " + multiKill + " killu v rade!");
+				plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " +pName + " je na killing spree! Ma " + multiKill + " killu v rade!");
+				kills++;
+			}
+		}
+		if ((multiKill = multiKillCounter.get(victim.getName())) != null)
+		{
+			if (multiKill.intValue() >= 3 )
+			{
+				plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + pName + " prerusil killing spree hrace " + victim.getName() + "!");
 				kills++;
 			}
 		}
 		ArenaTier tier = ArenaTier.GetTier(kills);
-		if (ArenaTier.GetTier(kills - 1) != tier)
+		if (ArenaTier.GetTier(oldKills) != tier || tier == ArenaTier.RANK19)
 		{
-			if (tier == ArenaTier.TIER19)
+			if (tier == ArenaTier.RANK19)
 			{
 				WinRound(p);
 				return;
 			}
-			plugin.getServer().broadcastMessage(p.getName() + " byl povysen na rank " + tier.toString() + "");
+			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + p.getName() + " byl povysen na " + tier.toString());
 			GiveItems(p);
 		}
+		p.sendMessage(ChatColor.DARK_GREEN + "[ARENA]: " + "Zabil jsi " + victim.getName() + "!   +" + (kills.intValue() - oldKills) + " bodu");
 		pvpStats.put(pName, kills);
 	}
 	public void ShowPvpStats(Player sender)
@@ -250,100 +233,37 @@ public class GugaArena
 			i++;
 		}
 	}
-	public void SaveArena()
+	public void SaveArenas()
 	{
 		plugin.log.info("Saving Arena Data...");
-		File arena = new File(arenaFile);
-		if (!arena.exists())
+		GugaFile file = new GugaFile(GugaArena.arenaFile, GugaFile.WRITE_MODE);
+		file.Open();
+		Iterator<ArenaSpawn> i = this.spawnList.iterator();
+		while (i.hasNext())
 		{
-			try 
-			{
-				arena.createNewFile();
-				
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
+			ArenaSpawn spawn = i.next();
+			Location loc = spawn.GetLocation();
+			String line = spawn.GetName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ();
+			file.WriteLine(line);
 		}
-		try 
-		{
-			FileWriter fStream = new FileWriter(arena, false);
-			BufferedWriter bWriter;
-			bWriter = new BufferedWriter(fStream);
-			String line;
-			if (arenaSpawn != null)
-			{
-				line = worldName+";" + arenaSpawn.getX() + ";" + arenaSpawn.getY() + ";" + arenaSpawn.getZ();
-			}
-			else 
-			{
-				line = "";
-			}
-			bWriter.write(line);
-			bWriter.newLine();
-			bWriter.close();
-			fStream.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		file.Close();
 	}
-	public boolean LoadArena()
+	public void LoadArenas()
 	{
 		plugin.log.info("Loading Arena Data...");
-		File arena = new File(arenaFile);
-		if (!arena.exists())
+		GugaFile file = new GugaFile(GugaArena.arenaFile, GugaFile.READ_MODE);
+		file.Open();
+		String line;
+		while ((line = file.ReadLine()) != null)
 		{
-			try 
-			{
-				arena.createNewFile();
-				return false;
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-				return false;
-			}
+			String[] split = line.split(";");
+			Location loc = new Location(this.plugin.getServer().getWorld("arena"), Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]));
+			this.spawnList.add(new ArenaSpawn(split[0], loc));
 		}
-		else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(arena);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				String []splittedLine;
-				double x = 0;
-				double y = 0;
-				double z = 0;
-				try {
-					while ((line = bReader.readLine()) != null)
-					{
-						splittedLine = line.split(";");
-						worldName = splittedLine[0];
-						x = Double.parseDouble(splittedLine[1]);
-						y = Double.parseDouble(splittedLine[2]);
-						z = Double.parseDouble(splittedLine[3]);
-						arenaSpawn = new Location(plugin.getServer().getWorld(worldName),x,y,z);
-					}
-					bReader.close();
-					inStream.close();
-					fRead.close();
-					return true;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-			} 
-			catch (FileNotFoundException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return false;
+		file.Close();
+		if (spawnList.size() == 0)
+			this.spawnList.add(new ArenaSpawn("default", this.plugin.getServer().getWorld("arena").getSpawnLocation()));
+		this.actualSpawn = this.spawnList.get(0);
 	}
 	public void SavePvpStats()
 	{
@@ -503,11 +423,13 @@ public class GugaArena
 	}
 	public void WinRound(Player winner)
 	{
-		plugin.getServer().broadcastMessage(ChatColor.BLUE + winner.getName() + " JE VITEZ TOHOTO KOLA V ARENE A VYHRAVA 50 KREDITU!");
-		plugin.getServer().broadcastMessage(ChatColor.BLUE + " DALSI KOLO ZACINA PRAVE TED!");
+		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + ChatColor.GOLD + winner.getName() + ChatColor.DARK_GREEN + " VYHRAVA TOTO KOLO A ZISKAVA 50 KREDITU!");
+		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: ZACINA NOVE KOLO V ARENE!");
 		plugin.FindPlayerCurrency(winner.getName()).AddCurrency(50);
 		winner.sendMessage("Ziskal jste +50 kreditu!");
 		ClearStats();
+		this.RotateArena();
+		
 	}
 	public void ClearStats()
 	{
@@ -518,27 +440,77 @@ public class GugaArena
 			GiveItems(i.next());
 		}
 	}
+	public void AddArena(String name, Location loc)
+	{
+		if (this.ContainsArena(name) || !this.IsArena(loc))
+			return;
+		this.spawnList.add(new ArenaSpawn(name, loc));
+		this.SaveArenas();
+	}
+	public ArrayList<ArenaSpawn> GetArenaList()
+	{
+		return this.spawnList;
+	}
+	public void RemoveArena(String name)
+	{
+		Iterator<ArenaSpawn> i = this.spawnList.iterator();
+		ArenaSpawn rem = null;
+		while (i.hasNext())
+		{
+			ArenaSpawn spawn = i.next();
+			if (spawn.GetName().equalsIgnoreCase(name))
+			{
+				rem = spawn;
+				break;
+			}
+		}
+		if (rem != null)
+			this.spawnList.remove(rem);
+		this.SaveArenas();
+	}
+	public void RotateArena()
+	{
+		this.spawnIndex++;
+		if ( !(this.spawnIndex < this.spawnList.size()) )
+			this.spawnIndex = 0;
+		this.actualSpawn = this.spawnList.get(this.spawnIndex);
+		Iterator<Player> i = this.plugin.getServer().getWorld("arena").getPlayers().iterator();
+		while (i.hasNext())
+		{
+			i.next().teleport(this.actualSpawn.GetLocation());
+		}
+	}
+	public boolean ContainsArena(String name)
+	{
+		Iterator<ArenaSpawn> i = this.spawnList.iterator();
+		while (i.hasNext())
+		{
+			if (i.next().GetName().equalsIgnoreCase(name))
+				return true;
+		}
+		return false;
+	}
 	public enum ArenaTier
 	{
-		NOVACEK		(0, new int[][]{{268, 297}, {5, 10}}, new int[]{0, 0, 0, 0}), 
-		BOJOVNIK	(1, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 0}), 
-		TIER3		(3, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 301}), 
-		TIER4		(6, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 300, 301}), 
-		TIER5		(9, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 299, 300, 301}),
-		TIER6		(12, new int[][]{{268, 297, 261, 262}, {5, 10, 1, 2}}, new int[]{298, 299, 300, 301}),
-		TIER7		(15, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 5}}, new int[]{298, 299, 300, 301}),
-		TIER8		(18, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 10}}, new int[]{314, 299, 300, 301}),
-		TIER9		(21, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 15}}, new int[]{314, 299, 300, 317}),
-		TIER10		(24, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 20}}, new int[]{314, 299, 316, 317}),
-		TIER11		(27, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 25}}, new int[]{314, 315, 316, 317}),
-		TIER12		(30, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{314, 315, 316, 317}),
-		TIER13		(35, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 316, 317}),
-		TIER14		(40, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 316, 305}),
-		TIER15		(45, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 304, 305}),
-		TIER16		(50, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 303, 304, 305}),
-		TIER17		(60, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 303, 304, 305}),
-		TIER18		(70, new int[][]{{277, 297}, {5, 10}}, new int[]{0, 303, 304, 305}),
-		TIER19		(75, new int[][]{{267}, {1}}, new int[]{0, 0, 0, 0});
+		RANK1		(0, new int[][]{{268, 297}, {5, 10}}, new int[]{0, 0, 0, 0}), 
+		RANK2	(1, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 0}), 
+		RANK3		(3, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 0, 301}), 
+		RANK4		(6, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 0, 300, 301}), 
+		RANK5		(9, new int[][]{{268, 297}, {5, 10}}, new int[]{298, 299, 300, 301}),
+		RANK6		(12, new int[][]{{268, 297, 261, 262}, {5, 10, 1, 2}}, new int[]{298, 299, 300, 301}),
+		RANK7		(15, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 5}}, new int[]{298, 299, 300, 301}),
+		RANK8		(18, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 10}}, new int[]{314, 299, 300, 301}),
+		RANK9		(21, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 15}}, new int[]{314, 299, 300, 317}),
+		RANK10		(24, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 20}}, new int[]{314, 299, 316, 317}),
+		RANK11		(27, new int[][]{{272, 297, 261, 262}, {5, 10, 1, 25}}, new int[]{314, 315, 316, 317}),
+		RANK12		(30, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{314, 315, 316, 317}),
+		RANK13		(35, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 316, 317}),
+		RANK14		(40, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 316, 305}),
+		RANK15		(45, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 315, 304, 305}),
+		RANK16		(50, new int[][]{{283, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 303, 304, 305}),
+		RANK17		(60, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{302, 303, 304, 305}),
+		RANK18		(70, new int[][]{{277, 297}, {5, 10}}, new int[]{0, 303, 304, 305}),
+		RANK19		(75, new int[][]{{267}, {1}}, new int[]{0, 0, 0, 0});
 	//	TIER20		(160, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{306, 303, 308, 309}),
 	//	TIER21		(180, new int[][]{{267, 297, 261, 262}, {5, 10, 1, 50}}, new int[]{306, 307, 308, 309});
 		
@@ -572,6 +544,18 @@ public class GugaArena
 			}
 			return null;
 		}
+		public int intValue()
+		{
+			int i = 0;
+			ArenaTier[] vals = ArenaTier.values();
+			while (i < vals.length)
+			{
+				if (vals[i] == this)
+					return i;
+				i++;
+			}
+			return 0;
+		}
 		private int killsRequired;
 		private int[][] items; 
 		private int[] armor;
@@ -582,9 +566,28 @@ public class GugaArena
 	private HashMap<String, Integer> multiKillCounter = new HashMap<String, Integer>();
 	private HashMap<String,Location> baseLocation = new HashMap<String,Location>();
 	private ArrayList<String> cannotLeave = new ArrayList<String>();
-	private Location arenaSpawn;
-	private String worldName;
+	private int spawnIndex;
+	private ArenaSpawn actualSpawn;
+	private ArrayList<ArenaSpawn> spawnList = new ArrayList<ArenaSpawn>();
 	private Guga_SERVER_MOD plugin;
 	private static final String arenaFile = "plugins/Arenas.dat";
 	private static final String statsFile = "plugins/ArenaStats.dat";
+	public class ArenaSpawn
+	{
+		public ArenaSpawn(String name, Location location)
+		{
+			this.location = location;
+			this.name = name;
+		}
+		public Location GetLocation()
+		{
+			return this.location;
+		}
+		public String GetName()
+		{
+			return this.name;
+		}
+		private Location location;
+		private String name;
+	}
 }
