@@ -613,25 +613,28 @@ public abstract class GugaCommands
 		if (args.length == 0)
 		{
 			sender.sendMessage("PLACES MENU:");
-			sender.sendMessage("/places list  -  Seznam vsech moznych mist.");
+			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
 			sender.sendMessage("/places port <jmeno>  -  Teleportuje hrace na dane misto.");
 		}
-		else if (args.length == 1)
+		else if (args.length == 2)
 		{
 			String subCommand = args[0];
 			if (subCommand.matches("list"))
 			{
-				sender.sendMessage("SEZNAM MIST:");
-				Iterator<GugaPlace> i;
+				if (Integer.parseInt(args[1]) < 1)
+					return;
+				GugaDataPager<GugaPlace> pager;
 				if (GameMasterHandler.IsAtleastGM(sender.getName()))
 				{
-					i = GugaPort.GetAllPlaces().iterator();
-
+					pager = new GugaDataPager<GugaPlace>(GugaPort.GetAllPlaces(), 15);
 				}
 				else
 				{
-					i = GugaPort.GetPlacesForPlayer(sender.getName()).iterator();
+					pager = new GugaDataPager<GugaPlace>(GugaPort.GetPlacesForPlayer(sender.getName()),  15); 
 				}
+				Iterator<GugaPlace> i = pager.GetPage(Integer.parseInt(args[1])).iterator();
+				sender.sendMessage("SEZNAM PRISTUPNYCH MIST:");
+				sender.sendMessage("STRANA " + args[1] + "/" + pager.GetPagesCount());
 				while (i.hasNext())
 				{
 					GugaPlace e = i.next();
@@ -645,10 +648,6 @@ public abstract class GugaCommands
 					}
 				}
 			}
-		}
-		else if (args.length == 2)
-		{
-			String subCommand = args[0];
 			String name = args[1];
 			if (subCommand.matches("port"))
 			{
@@ -1252,7 +1251,7 @@ public abstract class GugaCommands
 			}
 			else if(subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
-				sender.sendMessage("/gm places list  - Show list of all places.");	
+				sender.sendMessage("/gm places list <page>  - Show list of all places.");	
 				sender.sendMessage("/gm places add <name> <owner> - Adds actual position to places (owner all = public).");	
 				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");	
 			}
@@ -1307,19 +1306,6 @@ public abstract class GugaCommands
 					String[] owners = region.GetOwners();
 					int[] coords = region.GetCoords();
 					sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
-				}
-			}
-			else if (subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (arg1.matches("list"))
-				{
-					sender.sendMessage("LIST OF PLACES:");
-					Iterator<GugaPlace> i = GugaPort.GetAllPlaces().iterator();
-					while (i.hasNext())
-					{
-						GugaPlace e = i.next();
-						sender.sendMessage(" - " + e.GetName() + "(" + e.GetOwner() + ")");
-					}
 				}
 			}
 			else if(subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
@@ -1525,6 +1511,20 @@ public abstract class GugaCommands
 						else
 						{
 							sender.sendMessage("This place doesnt exist!");
+						}
+					}
+					if (arg1.matches("list"))
+					{
+						if (Integer.parseInt(args[2]) < 1)
+							return;
+						GugaDataPager<GugaPlace> pager = new GugaDataPager<GugaPlace>(GugaPort.GetAllPlaces(), 15);
+						sender.sendMessage("LIST OF PLACES:");
+						sender.sendMessage("PAGE " + args[2] + "/" + pager.GetPagesCount());
+						Iterator<GugaPlace> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
+						while (i.hasNext())
+						{
+							GugaPlace e = i.next();
+							sender.sendMessage(" - " + e.GetName() + "(" + e.GetOwner() + ")");
 						}
 					}
 				}

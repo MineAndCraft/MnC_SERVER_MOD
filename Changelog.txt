@@ -1,3 +1,10 @@
+2.2.10:
+	- IP is now added to player ban list after ban check instead of before.
+
+2.2.9:
+	- Places lists are now split in pages.
+	- Arena promote messages are now displayed only to players that are being promoted.
+	
 2.2.8:
 	- Added check for players with no name.
 	

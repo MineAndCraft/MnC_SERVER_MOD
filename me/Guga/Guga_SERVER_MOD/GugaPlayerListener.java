@@ -43,7 +43,6 @@ public class GugaPlayerListener extends PlayerListener
 		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
 			GugaBanHandler.AddBan(p.getName(), 0);
 		
-		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
 		if (GugaBanHandler.IsBanned(p.getName()))
 		{
 			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
@@ -52,6 +51,8 @@ public class GugaPlayerListener extends PlayerListener
 			p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 			return;
 		}
+		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
+		
 		GugaAuctionHandler.CheckPayments(p);
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)

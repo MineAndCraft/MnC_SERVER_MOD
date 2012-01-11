@@ -176,7 +176,8 @@ public class GugaArena
 				WinRound(p);
 				return;
 			}
-			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + p.getName() + " byl povysen na " + tier.toString());
+			//plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + p.getName() + " byl povysen na " + tier.toString());
+			p.sendMessage(ChatColor.DARK_GREEN + "[ARENA]: Byl jste povysen na " + tier.toString());
 			GiveItems(p);
 		}
 		p.sendMessage(ChatColor.DARK_GREEN + "[ARENA]: " + "Zabil jsi " + victim.getName() + "!   +" + (kills.intValue() - oldKills) + " bodu");
