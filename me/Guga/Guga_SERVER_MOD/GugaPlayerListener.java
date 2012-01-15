@@ -35,6 +35,11 @@ public class GugaPlayerListener extends PlayerListener
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
 			return;
 		}
+		if (!CanUseName(p.getName()))
+		{
+			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
+			return;
+		}
 		if (p.getName().matches(""))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno!");
@@ -410,6 +415,55 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
 		}
+	}
+	private boolean CanUseName(String name)
+	{
+		char[] pName = name.toCharArray();
+		int i = 0;
+		while (i < pName.length)
+		{
+			boolean allowed = false;
+			if ( ((char)39) == pName[i])
+				allowed = true;
+			else if ( ((char)45) == pName[i])
+				allowed = true;
+			else if ( ((char)46) == pName[i])
+				allowed = true;
+			else if ( ((char)95) == pName[i])
+				allowed = true;
+			
+			int i2 = 48;
+			while (i2 <= 57)
+			{
+				if ( ((char)i2) == pName[i] )
+					allowed = true;
+				if (allowed)
+					break;
+				i2++;
+			}
+			i2 = 65;
+			while (i2 <= 90)
+			{
+				if ( ((char)i2) == pName[i] )
+					allowed = true;
+				if (allowed)
+					break;
+				i2++;
+			}
+			i2 = 97;
+			while (i2 <= 122)
+			{
+				if ( ((char)i2) == pName[i] )
+					allowed = true;
+				if (allowed)
+					break;
+				i2++;
+			}
+			if (!allowed)
+				return false;
+			i++;
+		}
+		return true;
 	}
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] gmCommands = {"/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time"};

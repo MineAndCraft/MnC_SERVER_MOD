@@ -43,7 +43,7 @@ public class GugaBlockListener extends BlockListener
 			e.setCancelled(true);
 			return;
 		}
-		if (!GugaRegionHandler.CanInteract(p.getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		if (!GugaRegionHandler.CanInteract(p, e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 			{
@@ -257,7 +257,7 @@ public class GugaBlockListener extends BlockListener
 				return;
 			}
 		}
-		if (!GugaRegionHandler.CanInteract(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		if (!GugaRegionHandler.CanInteract(e.getPlayer(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
 			{

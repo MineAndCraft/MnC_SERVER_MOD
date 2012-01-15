@@ -1,3 +1,32 @@
+2.2.16:
+	- Added "." to allowed characters list.
+
+2.2.15:
+	- Added new Player name check upon login.
+	- Players now can connect if their name only contains 0-9, a-z, A-Z, -, _ and '.
+
+2.2.14:
+	- Wood in vip item list changed to Wooden planks.
+	- New Shop transaction logged added.
+	- All transactions are now being logged.
+	- Grass block price in shop increased to 10 credits.
+	- Enchanted items in shop now have gold color instead of Dark blue.
+
+2.2.13:
+	- Fixed bug in falling-under-world protection.
+	- /vip item list command added.
+	- Wood added to vip item list.
+	- New bunch of items added to shop.
+
+2.2.12:
+	- Shop error messages translated to czech.
+	- Spawn eggs added to shop item list.
+	- /shop buy now requires item name instead of id.
+
+2.2.11:
+	- Region checks are now only done in world.
+	- Plugin updated for Bukkit 1136 and CraftBukkit 1714.
+
 2.2.10:
 	- IP is now added to player ban list after ban check instead of before.
 

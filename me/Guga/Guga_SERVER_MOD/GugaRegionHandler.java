@@ -3,6 +3,8 @@ package me.Guga.Guga_SERVER_MOD;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.bukkit.entity.Player;
+
 public abstract class GugaRegionHandler 
 {
 	public static void SetPlugin(Guga_SERVER_MOD plugin)
@@ -14,16 +16,18 @@ public abstract class GugaRegionHandler
 		GugaRegionHandler.regions.add(new GugaRegion(name, owners, x1, x2, z1, z2));
 		GugaRegionHandler.SaveRegions();
 	}
-	public static boolean CanInteract(String pName, int x, int z)
+	public static boolean CanInteract(Player p, int x, int z)
 	{
 		GugaRegion region = GugaRegionHandler.GetRegionByCoords(x, z);
+		if (!p.getWorld().getName().equalsIgnoreCase("world"))
+			return true;
 		if (region != null)
 		{
 			String[] owners = region.GetOwners();
 			int i = 0;
 			while (i < owners.length)
 			{
-				if (owners[i].equalsIgnoreCase(pName))
+				if (owners[i].equalsIgnoreCase(p.getName()))
 				{
 					return true;
 				}

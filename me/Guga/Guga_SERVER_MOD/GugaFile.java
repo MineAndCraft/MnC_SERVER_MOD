@@ -34,13 +34,11 @@ public class GugaFile
 			}
 		}
 		if (this.openMode == GugaFile.READ_MODE)
-		{
 			this.OpenReadMode();
-		}
 		else if (this.openMode == GugaFile.WRITE_MODE)
-		{
 			this.OpenWriteMode();
-		}
+		else if (this.openMode == GugaFile.APPEND_MODE)
+			this.OpenAppendMode();
 	}
 	public String ReadLine()
 	{
@@ -88,6 +86,17 @@ public class GugaFile
 				e.printStackTrace();
 			}
 		}
+		else if (this.openMode == GugaFile.APPEND_MODE)
+		{
+			try 
+			{
+				this.bWriter.close();
+				this.fWriter.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	private void OpenReadMode()
 	{
@@ -115,6 +124,16 @@ public class GugaFile
 			e.printStackTrace();
 		}
 	}
+	private void OpenAppendMode()
+	{
+		try {
+			this.fWriter= new FileWriter(this.file, true);
+			this.bWriter = new BufferedWriter(this.fWriter);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private File file;
 	
@@ -130,4 +149,5 @@ public class GugaFile
 	
 	public static int READ_MODE = 0;
 	public static int WRITE_MODE = 1;
+	public static int APPEND_MODE = 2;
 }

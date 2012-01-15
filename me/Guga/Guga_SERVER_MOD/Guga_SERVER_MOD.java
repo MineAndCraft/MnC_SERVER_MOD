@@ -452,7 +452,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public Location GetAvailablePortLocation(Location loc)
 	{
-		Location tpLoc = getServer().getWorld("").getHighestBlockAt(loc).getLocation();
+		Location tpLoc = loc.getWorld().getHighestBlockAt(loc).getLocation();
 		boolean canTeleport = false;
 		int i = loc.getBlockY();
 		while (!canTeleport)
@@ -482,7 +482,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.2.10";
+	public static final String version = "2.2.16";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

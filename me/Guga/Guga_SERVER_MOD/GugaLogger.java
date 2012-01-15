@@ -10,9 +10,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.Map.Entry;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -27,6 +29,22 @@ public class GugaLogger
 		logBlockBreak = true;
 		logBlockPlace = true;
 		logBlockIgnite = true;
+	}
+	public void PrintShopData(final Player sender, final int page)
+	{
+		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
+			public void run()
+			{
+				GugaDataPager<String> pager = new GugaDataPager<String>(GetShopTransactionData(), 15);
+				sender.sendMessage("LIST OF MOST BUYED ITEMS:");
+				sender.sendMessage("PAGE " + page + "/" + pager.GetPagesCount());
+				Iterator<String> i = pager.GetPage(page).iterator();
+				while (i.hasNext())
+				{
+					sender.sendMessage(i.next());
+				}
+			}
+		});
 	}
 	public void PrintBlockData(final Player sender, final Block block)
 	{
@@ -114,6 +132,44 @@ public class GugaLogger
 		}
 		return dataBuffer;
 	}
+	public ArrayList<String> GetShopTransactionData()
+	{
+		GugaFile file = new GugaFile(this.shopTransactionFile, GugaFile.READ_MODE);
+		file.Open();
+		String line;
+		HashMap<String, Integer> dataMap = new HashMap<String, Integer>();
+		while ( (line = file.ReadLine()) != null)
+		{
+			String[] split = line.split(";");
+			Integer count;
+			if ( (count = dataMap.get(split[2])) == null)
+				count = 0;
+			dataMap.put(split[2], count.intValue() + Integer.parseInt(split[3]));
+		}
+		Integer[] vals = new Integer[dataMap.size()];
+		dataMap.values().toArray(vals);
+		Arrays.sort(vals);
+		//Iterator<Entry<String, Integer>> i = dataMap.entrySet().iterator();
+		ArrayList<String> returnArray = new ArrayList<String>();
+		int i = vals.length - 1;
+		while (i >= 0)
+		{
+			Iterator<Entry<String, Integer>> i2 = dataMap.entrySet().iterator();
+			while (i2.hasNext())
+			{
+				Entry<String, Integer> entry = i2.next();
+				if (entry.getValue().intValue() == vals[i])
+				{
+					returnArray.add(entry.getKey() + ";" + entry.getValue());
+					dataMap.remove(entry.getKey());
+					break;
+				}
+			}
+			i--;
+		}
+		file.Close();
+		return returnArray;
+	}
 	public ArrayList<String> GetBlockPlaceData(Block block)
 	{
 		ArrayList<String> dataBuffer = new ArrayList<String>();
@@ -169,6 +225,19 @@ public class GugaLogger
 			}
 		}
 		return dataBuffer;
+	}
+	public void LogShopTransaction(final Prices item, final int amount, final String pName)
+	{
+		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			public void run()
+			{
+				GugaFile file = new GugaFile(shopTransactionFile, GugaFile.APPEND_MODE);
+				file.Open();
+				String line = new Date() + ";" + pName + ";" + item.toString() + ";" + amount;
+				file.WriteLine(line);
+				file.Close();
+			}
+		});
 	}
 	public void LogBlockBreak(final BlockBreakEvent e, final int typeID)
 	{
@@ -324,5 +393,6 @@ public class GugaLogger
 	private String blockBreakFile = "plugins/BlockBreakLog.log";
 	private String blockIgniteFile = "plugins/BlockIgniteLog.log";
 	private String blockPlaceFile = "plugins/BlockPlaceLog.log";
+	private String shopTransactionFile = "plugins/ShopTransaction.log";
 	private Guga_SERVER_MOD plugin;
 }

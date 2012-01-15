@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
+import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency.VipItems;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -215,10 +216,10 @@ public abstract class GugaCommands
 		{
 			sender.sendMessage("Shop Menu:");
 			sender.sendMessage("/shop info  -  Info o Obchodu.");
-			sender.sendMessage("/shop buy <itemID> <pocet>  -  Koupi dany pocet itemu.");
-			sender.sendMessage("/shop buy <itemID>  -  Koupi dany item (1).");
+			sender.sendMessage("/shop buy <nazev> <pocet>  -  Koupi dany pocet itemu.");
+			sender.sendMessage("/shop buy <nazev>  -  Koupi dany item (1).");
 			sender.sendMessage("/shop balance  -  Zobrazi vase kredity.");
-			sender.sendMessage("/shop items  -  Seznam itemu, ktere se daji koupit.");
+			sender.sendMessage("/shop items <strana>  -  Seznam itemu, ktere se daji koupit.");
 		}
 		else if (args.length == 1)
 		{
@@ -232,13 +233,6 @@ public abstract class GugaCommands
 				sender.sendMessage("Vas ucet:");
 				sender.sendMessage("Kredity: " + p.GetCurrency());
 			}
-			else if(subCommand.matches("items"))
-			{
-				for (Prices i : Prices.values())
-				{
-				 sender.sendMessage(i.toString() +"-    id: " + i.GetItemID()+ "   cena: "+ i.GetItemPrice());
-				}
-			}
 		}
 		else if (args.length == 2)
 		{
@@ -247,7 +241,27 @@ public abstract class GugaCommands
 			
 			if (subCommand.matches("buy"))
 			{
-				p.BuyItem(Integer.parseInt(arg1), 1);
+				p.BuyItem(arg1, 1);
+			}
+			else if(subCommand.matches("items"))
+			{
+				ArrayList<Prices> prices = new ArrayList<Prices>();
+				for (Prices i : Prices.values())
+				{
+					prices.add(i);
+				}
+				GugaDataPager<Prices> pager = new GugaDataPager<Prices>(prices, 15);
+				Iterator<Prices> i = pager.GetPage(Integer.parseInt(args[1])).iterator();
+				sender.sendMessage("SEZNAM ITEMU:");
+				sender.sendMessage("STRANA " + args[1] + "/" + pager.GetPagesCount());
+				while (i.hasNext())
+				{
+					Prices item = i.next();
+					if (item == Prices.KRUMPAC_EFFICIENCY_V)
+						sender.sendMessage(ChatColor.GOLD + item.toString() +" -    cena: "+ item.GetItemPrice() + " Diamantovy krumpac s Efficiency V + Unbreaking III");
+					else
+						sender.sendMessage(item.toString() +" -    cena: "+ item.GetItemPrice());
+				}
 			}
 		}
 		else if (args.length == 3)
@@ -257,7 +271,7 @@ public abstract class GugaCommands
 			String arg2 = args[2]; // amount
 			if (subCommand.matches("buy"))
 			{
-				p.BuyItem(Integer.parseInt(arg1), Integer.parseInt(arg2));
+				p.BuyItem(arg1, Integer.parseInt(arg2));
 			}
 			
 		}
@@ -312,13 +326,14 @@ public abstract class GugaCommands
 			else if (subCommand.matches("time"))
 			{
 				sender.sendMessage("Time Menu:");
-				sender.sendMessage("/vip time set <hodnota>  -  Nastavi cas na 0-24000");
+				sender.sendMessage("/vip time set <hodnota>  -  Nastavi cas na 0-24000.");
 				sender.sendMessage("/vip time reset  -  Zmeni cas zpet na serverovy cas.");
 			}
 			else if (subCommand.matches("item"))
 			{
 				sender.sendMessage("Item Menu:");
-				sender.sendMessage("/vip item add <itemID>  -  Prida stack daneho itemu");
+				sender.sendMessage("/vip item add <itemID>  -  Prida stack daneho itemu.");
+				sender.sendMessage("/vip item list - Vypise vsechny dostupne itemy a jejich ID.");
 			}
 		}
 		else if (args.length == 2)
@@ -372,6 +387,17 @@ public abstract class GugaCommands
 					sender.teleport(tpLoc);
 				}
 			}
+			else if (subCommand.matches("item"))
+			{
+				if (args[1].equalsIgnoreCase("list"))
+				{
+					sender.sendMessage("SEZNAM ITEMU: (Nazev - ID)");
+					for (VipItems i : VipItems.values())
+					{
+						sender.sendMessage(i.toString() + " - " + i.GetID());
+					}
+				}
+			}
 			else if (subCommand.matches("time"))
 			{
 				if (arg1.matches("reset"))
@@ -405,7 +431,7 @@ public abstract class GugaCommands
 				if (arg1.matches("add"))
 				{
 					int itemID = Integer.parseInt(arg2);
-					if (itemID == 4 || itemID == 12 || itemID == 1 || itemID == 3 || itemID == 24)
+					if (VipItems.IsVipItem(itemID))
 					{
 						ItemStack item = new ItemStack(itemID, 64);
 						PlayerInventory pInventory = sender.getInventory();
@@ -1437,6 +1463,11 @@ public abstract class GugaCommands
 					GugaAnnouncement.AddAnnouncement(msg);
 					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
 				}
+			}
+			else if (subCommand.matches("log") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if (args[1].equalsIgnoreCase("shop"))
+					plugin.logger.PrintShopData(sender, Integer.parseInt(args[2]));
 			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
 			{

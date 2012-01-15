@@ -1,10 +1,9 @@
 package me.Guga.Guga_SERVER_MOD;
-
-
 import java.util.Date;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -54,6 +53,28 @@ public class GugaVirtualCurrency
 	{
 		currency = curr;
 	}
+	public enum VipItems
+	{
+		SAND(12), COBBLESTONE(4), WOODEN_PLANKS(5), STONE(1), DIRT(3), SANDSTONE(24);
+		private VipItems(int id)
+		{
+			this.id = id;
+		}
+		public int GetID()
+		{
+			return this.id;
+		}
+		public static boolean IsVipItem(int itemID)
+		{
+			for (VipItems i : VipItems.values())
+			{
+				if (i.GetID() == itemID)
+					return true;
+			}
+			return false;
+		}
+		private int id;
+	}
 	public Location GetLastTeleportLoc()
 	{
 		return lastTeleportLoc;
@@ -81,31 +102,40 @@ public class GugaVirtualCurrency
 			p.setDisplayName(p.getName());
 		}
 	}
-	public void BuyItem(int itemID, int amount)
+	public void BuyItem(String itemName, int amount)
 	{
 		Player p = plugin.getServer().getPlayer(playerName);
 		if (amount < 0)
 		{
-			p.sendMessage("Amount has to be > 0!");
+			p.sendMessage("Pocet musi byt vyssi nez 0!");
 			return;
 		}
-		int totalPrice = GetTotalPrice(itemID, amount);
-		if (totalPrice == -1)
+		Prices item = null;
+		for (Prices i : Prices.values())
 		{
-			p.sendMessage("Item Not Found");
+			if (i.toString().equalsIgnoreCase(itemName))
+			{
+				item = i;
+				break;
+			}
+		}
+		if (item == null)
+		{
+			p.sendMessage("Item nenalezen");
 			return;
 		}
-		else if (totalPrice > 0)
+		int totalPrice = GetTotalPrice(item, amount);
+		if (totalPrice > 0)
 		{
 			if (CanBuyItem(totalPrice))
 			{
-				Purchase(itemID, totalPrice, amount);
-				p.sendMessage("Buying " + amount + "x " + GetItem(itemID).toString() + " for " + totalPrice);
-				p.sendMessage("Your credits left: " + currency);
+				Purchase(item, totalPrice, amount);
+				p.sendMessage("Koupil jste " + amount + "x " + item.toString() + " za " + totalPrice + " kreditu.");
+				p.sendMessage("Zbyva kreditu: " + currency);
 			}
 			else
 			{
-				p.sendMessage("You dont have enough money to buy this!");
+				p.sendMessage("Nemate dostatecne mnozstvi kreditu!");
 			}
 		}
 	}
@@ -116,17 +146,6 @@ public class GugaVirtualCurrency
 		else
 			vipActive = false;
 	}
-	private Prices GetItem(int itemID)
-	{
-		for (Prices i : Prices.values())
-		{
-			if (i.GetItemID() == itemID)
-			{
-				return i;
-			}
-		}
-		return null;
-	}
 	private boolean CanBuyItem(int price)
 	{
 		if (currency >= price)
@@ -135,19 +154,61 @@ public class GugaVirtualCurrency
 		}
 		return false;
 	}
-	private int GetTotalPrice(int itemID, int amount)
+	private int GetTotalPrice(Prices item, int amount)
 	{
-		Prices item;
-		if ((item = GetItem(itemID)) != null)
-		{
-			return item.GetItemPrice() * amount;
-		}
-		return -1;
+		return item.GetItemPrice() * amount;
 	}
-	private void Purchase(int itemID, int price, int amount)
+	private void Purchase(Prices item, int price, int amount)
 	{
 		Player p = plugin.getServer().getPlayer(playerName);
-		ItemStack order = new ItemStack(itemID, amount);
+		if (p == null)
+			return;
+		ItemStack order = null;
+		if (item.toString().contains("EGG_"))
+		{
+			if (item == Prices.EGG_CAVE_SPIDER)
+				order = new ItemStack(item.GetItemID(), amount, (short) 59);
+			else if (item == Prices.EGG_CHICKEN)
+				order = new ItemStack(item.GetItemID(), amount, (short) 93);
+			else if (item == Prices.EGG_COW)
+				order = new ItemStack(item.GetItemID(), amount, (short) 92);
+			else if (item == Prices.EGG_ENDERMAN)
+				order = new ItemStack(item.GetItemID(), amount, (short) 58);
+			else if (item == Prices.EGG_MAGMA_SLIME)
+				order = new ItemStack(item.GetItemID(), amount, (short) 62);
+			else if (item == Prices.EGG_MOOSHROOM)
+				order = new ItemStack(item.GetItemID(), amount, (short) 96);
+			else if (item == Prices.EGG_PIG)
+				order = new ItemStack(item.GetItemID(), amount, (short) 90);
+			else if (item == Prices.EGG_PIGMAN)
+				order = new ItemStack(item.GetItemID(), amount, (short) 57);
+			else if (item == Prices.EGG_SHEEP)
+				order = new ItemStack(item.GetItemID(), amount, (short) 91);
+			/*else if (item == Prices.EGG_SILVERFISH)
+				order = new ItemStack(item.GetItemID(), amount, (short) 60);*/
+			else if (item == Prices.EGG_SKELETON)
+				order = new ItemStack(item.GetItemID(), amount, (short) 51);
+			else if (item == Prices.EGG_SLIME)
+				order = new ItemStack(item.GetItemID(), amount, (short) 55);
+			else if (item == Prices.EGG_SPIDER)
+				order = new ItemStack(item.GetItemID(), amount, (short) 52);
+			else if (item == Prices.EGG_VILLAGER)
+				order = new ItemStack(item.GetItemID(), amount, (short) 120);
+			else if (item == Prices.EGG_WOLF)
+				order = new ItemStack(item.GetItemID(), amount, (short) 95);
+			else if (item == Prices.EGG_ZOMBIE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 54);
+		}
+		else if (item == Prices.KRUMPAC_EFFICIENCY_V)
+		{
+			order = new ItemStack(item.GetItemID(), amount);
+			order.addEnchantment(Enchantment.DIG_SPEED, 5);
+			order.addEnchantment(Enchantment.DURABILITY, 3);
+		}
+		else
+			order = new ItemStack(item.GetItemID(), amount);
+		if (item != null)
+			plugin.logger.LogShopTransaction(item, amount, this.playerName);
 		PlayerInventory pInventory = p.getInventory();
 		pInventory.addItem(order);
 		currency -= price;
