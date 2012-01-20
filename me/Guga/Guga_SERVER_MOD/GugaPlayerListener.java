@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -415,6 +416,12 @@ public class GugaPlayerListener extends PlayerListener
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
 		}
+	}
+	public void onPlayerDropItem(PlayerDropItemEvent e)
+	{
+		if (!GugaPlayerListener.plugin.acc.UserIsLogged(e.getPlayer()))
+			e.setCancelled(true);
+		
 	}
 	private boolean CanUseName(String name)
 	{

@@ -28,9 +28,9 @@ public abstract class GugaRegionHandler
 			while (i < owners.length)
 			{
 				if (owners[i].equalsIgnoreCase(p.getName()))
-				{
 					return true;
-				}
+				else if (owners[i].equalsIgnoreCase("all"))
+					return true;
 				i++;
 			}
 			return false;
