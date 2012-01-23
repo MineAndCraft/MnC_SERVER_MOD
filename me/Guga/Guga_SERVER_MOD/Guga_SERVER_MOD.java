@@ -306,9 +306,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 }
 		 }
 		 //*****************************************/status*****************************************
-		 else if(cmd.getName().equalsIgnoreCase("status") && (sender instanceof Player))
+		 else if(cmd.getName().equalsIgnoreCase("y") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandStatus((Player)sender,args);
+			 GugaCommands.CommandConfirm((Player)sender,args);
 		 }
 		 //*****************************************/register*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("register") && (sender instanceof Player))
@@ -483,7 +483,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.2.17";
+	public static final String version = "2.3.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

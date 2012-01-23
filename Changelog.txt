@@ -1,3 +1,9 @@
+2.3.0:
+	- Possible fix for ConcurrentModificationException.
+	- Players now have to accept teleport, before vip can teleport on them.
+	- New /y command added.
+	- Plugin updated for CraftBukkit 1798.
+	
 2.2.17:
 	- Players that are not logged in now cannot drop items from inventory.
 	- Any player now can build/destroy in region with owner set to "all".
@@ -51,10 +57,10 @@
 2.2.6:
 	- Arena kill message disabled.
 	- Arena now support multiple spawn points.
-	- Spawn points changes every round.
+	- Spawn points change every round.
 	- /gm arena command added.
 	- setspawn and removespawn commands in /arena command have been removed.
-	- arena broadcast messages now have [ARENA] tag and dark green color.
+	- arena broadcast messages now have [ARENA] prefix and dark green color.
 	
 2.2.5:
 	- Multi-kill bonuses and messages added.

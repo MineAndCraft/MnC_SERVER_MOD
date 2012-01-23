@@ -435,10 +435,14 @@ public class GugaArena
 	public void ClearStats()
 	{
 		this.pvpStats.clear();
-		Iterator<Player> i = this.plugin.getServer().getWorld("arena").getPlayers().iterator();
-		while (i.hasNext())
+		Player[] p = new Player[this.plugin.getServer().getWorld("arena").getPlayers().size()];
+		this.plugin.getServer().getWorld("arena").getPlayers().toArray(p);
+		int i = 0;
+		while (i < p.length)
 		{
-			GiveItems(i.next());
+			if (p[i] != null)
+				GiveItems(p[i]);
+			i++;
 		}
 	}
 	public void AddArena(String name, Location loc)
@@ -475,10 +479,14 @@ public class GugaArena
 		if ( !(this.spawnIndex < this.spawnList.size()) )
 			this.spawnIndex = 0;
 		this.actualSpawn = this.spawnList.get(this.spawnIndex);
-		Iterator<Player> i = this.plugin.getServer().getWorld("arena").getPlayers().iterator();
-		while (i.hasNext())
+		Player[] p = new Player[this.plugin.getServer().getWorld("arena").getPlayers().size()];
+		this.plugin.getServer().getWorld("arena").getPlayers().toArray(p);
+		int i = 0;
+		while (i < p.length)
 		{
-			i.next().teleport(this.actualSpawn.GetLocation());
+			if (p != null)
+				p[i].teleport(this.actualSpawn.GetLocation());
+			i++;
 		}
 	}
 	public boolean ContainsArena(String name)

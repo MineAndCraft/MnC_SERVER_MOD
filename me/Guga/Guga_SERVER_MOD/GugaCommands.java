@@ -170,16 +170,17 @@ public abstract class GugaCommands
 		}
 		
 	}
-	public static void CommandStatus(Player sender, String args[])
+	public static void CommandConfirm(Player sender, String args[])
 	{
-		if (args.length >= 1)
+		Player p = vipTeleports.get(sender);
+		if (p != null)
 		{
-			plugin.acc.SetStatus(sender,args);
+			p.teleport(sender);
+			vipTeleports.remove(sender);
+			sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Teleport prijmut!");
 		}
 		else
-		{
-			sender.sendMessage("Please enter your new status");
-		}
+			sender.sendMessage("Nemate zadny pozadavek na teleport!");
 	}
 	public static void CommandUnlock(Player sender)
 	{
@@ -421,9 +422,18 @@ public abstract class GugaCommands
 			{
 				if (arg1.matches("player"))
 				{
-					vip.SetLastTeleportLoc(sender.getLocation());
+					/*vip.SetLastTeleportLoc(sender.getLocation());
 					Player p = plugin.getServer().getPlayer(arg2);
-					sender.teleport(p);
+					sender.teleport(p);*/
+					Player p = plugin.getServer().getPlayer(arg2);
+					if (p == null)
+					{
+						sender.sendMessage("Tento hrac neni online!");
+						return;
+					}
+					plugin.getServer().getPlayer(arg2).sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijmuti napiste prikaz /y");
+					vipTeleports.put(p, sender);
+					sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Pozadavek odeslan");
 				}
 			}
 			else if (subCommand.matches("item"))
@@ -1854,6 +1864,7 @@ public abstract class GugaCommands
 		}
 		return false;
 	}
+	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
