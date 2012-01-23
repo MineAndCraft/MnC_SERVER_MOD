@@ -175,6 +175,18 @@ public abstract class GugaCommands
 		Player p = vipTeleports.get(sender);
 		if (p != null)
 		{
+			if (GugaEvent.ContainsPlayer(p.getName()))
+			{
+				sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac se nemuze teleportovat v prubehu Eventu!");
+				p.sendMessage(ChatColor.GREEN + "[TELEPORT]: Nemuzete se teleportovat v prubehu Eventu!");
+				return;
+			}
+			if (plugin.arena.IsArena(p.getLocation()))
+			{
+				sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac nemuze pouzit teleport v Arene!");
+				p.sendMessage(ChatColor.GREEN + "[TELEPORT]: Nemuzete pouzit teleport v Arene!");
+				return;
+			}
 			p.teleport(sender);
 			vipTeleports.remove(sender);
 			sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Teleport prijmut!");
@@ -868,6 +880,11 @@ public abstract class GugaCommands
 	}
 	public static void CommandArena(Player sender, String args[])
 	{
+		if (!plugin.acc.UserIsLogged(sender))
+		{
+			sender.sendMessage("K pouziti tohoto prikazu je treba se prihlasit!");
+			return;
+		}
 		if (args.length == 0)
 		{
 			sender.sendMessage("ARENA MENU:");
@@ -1271,7 +1288,7 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
 				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
-				sender.sendMessage("/gm ban list  -  Shows all banned players.");
+				sender.sendMessage("/gm ban list <page>  -  Shows all banned players.");
 			}
 			else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
@@ -1409,20 +1426,6 @@ public abstract class GugaCommands
 			{
 				ToggleInvisibility(sender, arg1);
 			}
-			else if (subCommand.matches("ban"))
-			{
-				if (arg1.matches("list"))
-				{
-					Iterator<GugaBan> i = GugaBanHandler.GetBanList().iterator();
-					sender.sendMessage("List of bans: ");
-					while (i.hasNext())
-					{
-						GugaBan ban = i.next();
-						if (new Date(ban.GetExpiration()).after(new Date()))
-							plugin.log.info(ban.GetPlayerName() + "  -  " + new Date(ban.GetExpiration()).toString());
-					}
-				}
-			}
 			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (arg1.matches("stop"))
@@ -1514,7 +1517,20 @@ public abstract class GugaCommands
 					if (arg1.matches("remove"))
 					{
 						GugaBanHandler.RemoveBan(arg2);
-						sender.sendMessage("Ban succefuly removed!");
+						sender.sendMessage("Player unbanned!");
+					}
+					else if (arg1.equalsIgnoreCase("list"))
+					{
+						GugaDataPager<GugaBan> pager = new GugaDataPager<GugaBan>(GugaBanHandler.GetBannedPlayers(), 15);
+						Iterator<GugaBan> i = pager.GetPage(Integer.parseInt(arg2)).iterator();
+						sender.sendMessage("LIST OF BANNED PLAYERS:");
+						sender.sendMessage("PAGE " + arg2 + "/" + pager.GetPagesCount());
+						while (i.hasNext())
+						{
+							GugaBan ban = i.next();
+							int hours = ((int)new Date(ban.GetExpiration()).getTime() - (int)new Date().getTime()) / (60 * 60 * 1000);
+							sender.sendMessage(ban.GetPlayerName() + "  -  " + hours + " hours");
+						}
 					}
 				}
 				else if (args.length == 4)
@@ -1531,7 +1547,7 @@ public abstract class GugaCommands
 						Player p = plugin.getServer().getPlayer(arg2);
 						if (p != null)
 							p.kickPlayer("Vas ucet byl zabanovan na " + arg3 + " hodiny.");
-						sender.sendMessage("Ban succesfuly added!");
+						sender.sendMessage("Player banned!");
 					}
 				}
 			}

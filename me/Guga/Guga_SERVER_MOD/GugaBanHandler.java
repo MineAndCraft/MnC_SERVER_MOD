@@ -96,6 +96,20 @@ public abstract class GugaBanHandler
 	{
 		return bans;
 	}
+	public static ArrayList<GugaBan> GetBannedPlayers()
+	{
+		Iterator<GugaBan> i = bans.iterator();
+		ArrayList<GugaBan> banned = new ArrayList<GugaBan>();
+		while (i.hasNext())
+		{
+			GugaBan ban = i.next();
+			Date date = new Date(ban.GetExpiration());
+			Date now = new Date();
+			if (date.after(now))
+				banned.add(ban);
+		}
+		return banned;
+	}
 	public static boolean IsBanned(String playerName)
 	{
 		Iterator<GugaBan> i = bans.iterator();

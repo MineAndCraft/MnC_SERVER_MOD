@@ -435,13 +435,12 @@ public class GugaArena
 	public void ClearStats()
 	{
 		this.pvpStats.clear();
-		Player[] p = new Player[this.plugin.getServer().getWorld("arena").getPlayers().size()];
-		this.plugin.getServer().getWorld("arena").getPlayers().toArray(p);
+		Object[] p = this.plugin.getServer().getWorld("arena").getPlayers().toArray();
 		int i = 0;
 		while (i < p.length)
 		{
 			if (p[i] != null)
-				GiveItems(p[i]);
+				GiveItems((Player)p[i]);
 			i++;
 		}
 	}
@@ -479,13 +478,12 @@ public class GugaArena
 		if ( !(this.spawnIndex < this.spawnList.size()) )
 			this.spawnIndex = 0;
 		this.actualSpawn = this.spawnList.get(this.spawnIndex);
-		Player[] p = new Player[this.plugin.getServer().getWorld("arena").getPlayers().size()];
-		this.plugin.getServer().getWorld("arena").getPlayers().toArray(p);
+		Object[] p = this.plugin.getServer().getWorld("arena").getPlayers().toArray();
 		int i = 0;
 		while (i < p.length)
 		{
 			if (p != null)
-				p[i].teleport(this.actualSpawn.GetLocation());
+				((Player)p[i]).teleport(this.actualSpawn.GetLocation());
 			i++;
 		}
 	}

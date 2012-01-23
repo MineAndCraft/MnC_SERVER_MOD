@@ -1,3 +1,13 @@
+2.3.2:
+	- Added new GetBannedPlayers() to ban handler class.
+	- /gm ban list now works properly.
+	- Messages on ban/unban changed.
+	
+2.3.1:
+	- ConcurrentModificationException fix improved.
+	- Players now cannot use /arena command while not logged in.
+	- Players cannot accept VIP teleport while on event or in arena.
+
 2.3.0:
 	- Possible fix for ConcurrentModificationException.
 	- Players now have to accept teleport, before vip can teleport on them.
