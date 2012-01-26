@@ -1310,7 +1310,7 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
-				sender.sendMessage("/gm regions list  - Show list of all places.");	
+				sender.sendMessage("/gm regions list <page>  - Show list of all places.");	
 				sender.sendMessage("/gm regions add <name> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
 				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
 				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
@@ -1347,18 +1347,6 @@ public abstract class GugaCommands
 				{
 					plugin.arena.RotateArena();
 					sender.sendMessage("Actual Arena changed.");
-				}
-			}
-			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("LIST OF REGIONS:");
-				Iterator<GugaRegion> i = GugaRegionHandler.GetAllRegions().iterator();
-				while (i.hasNext())
-				{
-					GugaRegion region = i.next();
-					String[] owners = region.GetOwners();
-					int[] coords = region.GetCoords();
-					sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
 				}
 			}
 			else if(subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
@@ -1528,7 +1516,7 @@ public abstract class GugaCommands
 						while (i.hasNext())
 						{
 							GugaBan ban = i.next();
-							int hours = ((int)new Date(ban.GetExpiration()).getTime() - (int)new Date().getTime()) / (60 * 60 * 1000);
+							long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
 							sender.sendMessage(ban.GetPlayerName() + "  -  " + hours + " hours");
 						}
 					}
@@ -1618,6 +1606,20 @@ public abstract class GugaCommands
 						}
 						GugaRegionHandler.RemoveRegion(region);
 						sender.sendMessage("Region successfully removed!");
+					}
+					else if (subCmd.equalsIgnoreCase("list"))
+					{
+						GugaDataPager<GugaRegion> pager = new GugaDataPager<GugaRegion>(GugaRegionHandler.GetAllRegions(), 15);
+						sender.sendMessage("LIST OF REGIONS:");
+						sender.sendMessage("PAGE " + args[2] + pager.GetPagesCount());
+						Iterator<GugaRegion> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
+						while (i.hasNext())
+						{
+							GugaRegion region = i.next();
+							String[] owners = region.GetOwners();
+							int[] coords = region.GetCoords();
+							sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
+						}
 					}
 				}
 				else if (args.length == 4)

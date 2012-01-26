@@ -1,7 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
 public abstract class GugaBanHandler 
@@ -103,9 +102,7 @@ public abstract class GugaBanHandler
 		while (i.hasNext())
 		{
 			GugaBan ban = i.next();
-			Date date = new Date(ban.GetExpiration());
-			Date now = new Date();
-			if (date.after(now))
+			if (ban.GetExpiration() > System.currentTimeMillis())
 				banned.add(ban);
 		}
 		return banned;
@@ -118,9 +115,7 @@ public abstract class GugaBanHandler
 			GugaBan ban = i.next();
 			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
 			{
-				Date date = new Date(ban.GetExpiration());
-				Date now = new Date();
-				if (date.after(now))
+				if (ban.GetExpiration() > System.currentTimeMillis())
 					return true;
 			}
 			int i2 = 0;
@@ -128,7 +123,7 @@ public abstract class GugaBanHandler
 			String addr = plugin.getServer().getPlayer(playerName).getAddress().getAddress().toString();
 			while (i2 < addrs.length)
 			{
-				if (new Date(ban.GetExpiration()).after(new Date()))
+				if (ban.GetExpiration() > System.currentTimeMillis())
 				{
 					if (addrs[i2].matches(addr))
 						return true;

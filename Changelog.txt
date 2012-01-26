@@ -1,3 +1,7 @@
+2.3.3:
+	- Fixed ban length output datatypes - now showing proper values.
+	- Regions are now split in pages.
+
 2.3.2:
 	- Added new GetBannedPlayers() to ban handler class.
 	- /gm ban list now works properly.

@@ -52,8 +52,7 @@ public class GugaPlayerListener extends PlayerListener
 		if (GugaBanHandler.IsBanned(p.getName()))
 		{
 			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-			Date d = new Date(ban.GetExpiration());
-			int hours = ((int)d.getTime() - (int)new Date().getTime()) / (60 * 60 * 1000);
+			long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
 			p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 			return;
 		}
