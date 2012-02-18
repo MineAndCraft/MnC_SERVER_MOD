@@ -9,21 +9,24 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GugaBlockListener extends BlockListener
+public class GugaBlockListener implements Listener
 {
 	GugaBlockListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBreak(BlockBreakEvent e)
 	{
 		if (plugin.debug == true)
@@ -242,6 +245,7 @@ public class GugaBlockListener extends BlockListener
 			plugin.log.info("BLOCK_BREAK_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e)
 	{
 		if (plugin.debug)
@@ -330,6 +334,7 @@ public class GugaBlockListener extends BlockListener
 		}
 		return false;
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockIgnite(BlockIgniteEvent e)
 	{
 		if(e.getCause() == IgniteCause.FLINT_AND_STEEL)
@@ -337,6 +342,7 @@ public class GugaBlockListener extends BlockListener
 			plugin.logger.LogBlockIgnite(e);
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBurn(BlockBurnEvent e)
 	{
 		Block block = e.getBlock();
@@ -359,6 +365,7 @@ public class GugaBlockListener extends BlockListener
 			return;
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockRedstoneChange(BlockRedstoneEvent e)
 	{
 		Block block = e.getBlock();

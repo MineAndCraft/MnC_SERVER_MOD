@@ -173,7 +173,8 @@ public abstract class GugaCommands
 	public static void CommandConfirm(Player sender, String args[])
 	{
 		Player p = vipTeleports.get(sender);
-		if (p != null)
+		GugaVirtualCurrency vip = plugin.FindPlayerCurrency(p.getName());
+		if (p != null && vip != null)
 		{
 			if (GugaEvent.ContainsPlayer(p.getName()))
 			{
@@ -187,8 +188,10 @@ public abstract class GugaCommands
 				p.sendMessage(ChatColor.GREEN + "[TELEPORT]: Nemuzete pouzit teleport v Arene!");
 				return;
 			}
+			vip.SetLastTeleportLoc(p.getLocation());
 			p.teleport(sender);
 			vipTeleports.remove(sender);
+			
 			sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Teleport prijmut!");
 		}
 		else
@@ -743,17 +746,11 @@ public abstract class GugaCommands
 				}
 				else if (args.length == 2)
 				{
-					
 					int page = Integer.parseInt(args[1]);
-					ArrayList<GugaAuction> list = GugaAuctionHandler.GetAuctionPage(page);
-					if (list.size() == 0)
-					{
-						sender.sendMessage("Tato strana neexistuje!");
-						return;
-					}
+					GugaDataPager<GugaAuction> pager = new GugaDataPager<GugaAuction>(GugaAuctionHandler.GetAllAuctions(), 15);
 					sender.sendMessage("ID ; itemID ; pocet ; cena ; vlastnik");
-					Iterator<GugaAuction> i = list.iterator();
-					int i2 = GugaAuctionHandler.ITEMS_PER_PAGE * (page - 1);
+					Iterator<GugaAuction> i = pager.GetPage(page).iterator();
+					int i2 = 15 * (page - 1);
 					while (i.hasNext())
 					{
 						GugaAuction auction = i.next();
@@ -957,8 +954,14 @@ public abstract class GugaCommands
 				{
 					if (GugaEvent.acceptInv)
 					{
-						GugaEvent.AddPlayer(sender.getName().toLowerCase());
-						sender.sendMessage("Byl jste uspesne prihlasen k eventu");
+						if (GugaEvent.players.size() < GugaEvent.playersCap)
+						{
+							GugaEvent.AddPlayer(sender.getName().toLowerCase());
+							sender.sendMessage("Byl jste uspesne prihlasen k eventu");
+						}
+						else
+							sender.sendMessage("Neni mozne se pripojit - Event je plny!");
+								
 					}
 					else
 						sender.sendMessage("Nyni se nemuzete prihlasit k zadnemu eventu!");
@@ -1176,7 +1179,8 @@ public abstract class GugaCommands
 				sender.sendMessage("/event players add <name1,name2,name3> - Tags specified players for event.");
 				sender.sendMessage("/event players remove <name> - Removes specified player from the list.");
 				sender.sendMessage("/event players clear - Removes all tags.");
-				sender.sendMessage("/event players list - List of tagged players.");
+				sender.sendMessage("/event players list <page> - List of tagged players.");
+				sender.sendMessage("/event players cap <value> [" + GugaEvent.playersCap + "] - Sets a new cap.");
 				return;
 			}
 			else if (args.length == 2) 
@@ -1185,15 +1189,6 @@ public abstract class GugaCommands
 				{
 					GugaEvent.ClearPlayers();
 					sender.sendMessage("Player list cleared.");
-				}
-				else if (args[1].equalsIgnoreCase("list"))
-				{
-					Iterator<String> i = GugaEvent.GetPlayers().iterator();
-					sender.sendMessage("PLAYER LIST:");
-					while (i.hasNext())
-					{
-						sender.sendMessage(i.next());
-					}
 				}
 				return;
 			}
@@ -1205,10 +1200,29 @@ public abstract class GugaCommands
 					int i = 0;
 					while (i < names.length)
 					{
-						GugaEvent.AddPlayer(names[i]);
+						if (GugaEvent.players.size() < GugaEvent.playersCap)
+							GugaEvent.AddPlayer(names[i]);
+						else
+							break;
 						i++;
 					}
-					sender.sendMessage("Player(s) added.");
+					sender.sendMessage(i + " Player(s) added.");
+				}
+				else if (args[1].equalsIgnoreCase("cap"))
+				{
+					GugaEvent.playersCap = Integer.parseInt(args[2]);
+					sender.sendMessage("New cap has been set.");
+				}
+				else if (args[1].equalsIgnoreCase("list"))
+				{
+					GugaDataPager<String> pager = new GugaDataPager<String>(GugaEvent.GetPlayers(), 15);
+					Iterator<String> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
+					sender.sendMessage("PLAYER LIST:");
+					sender.sendMessage("PAGE " + args[2] + "/" + pager.GetPagesCount());
+					while (i.hasNext())
+					{
+						sender.sendMessage(i.next());
+					}
 				}
 				else if (args[1].equalsIgnoreCase("remove"))
 				{
@@ -1410,7 +1424,7 @@ public abstract class GugaCommands
 					sender.sendMessage("Immortality for " + arg1 + " has been turned on");
 				}
 			}
-			else if (subCommand.matches("invis") && GameMasterHandler.IsAdmin(sender.getName()))
+			else if (subCommand.matches("invis") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				ToggleInvisibility(sender, arg1);
 			}

@@ -273,6 +273,7 @@ public abstract class GugaEvent
 	public static ArrayList<String> players = new ArrayList<String>();
 	public static boolean godMode = false;
 	public static boolean acceptInv = false;
+	public static int playersCap = 20;
 	private static HashMap<String, Location> teleportCache = new HashMap<String, Location>();
 	//private static HashMap<String, ArrayList<ItemStack>> inventoryCache = new HashMap<String, ArrayList<ItemStack>>();
 	//private static HashMap<String, ItemStack[]> armorCache = new HashMap<String, ItemStack[]>();

@@ -1,3 +1,26 @@
+2.4.2:
+	- GugaFile class is now using native c++ methods.
+	- All log File I/O methods are now using GugaFile class.
+
+2.4.1:
+	- /gm invis command is now available for GMs.
+	- New GugaNativeBridge class added for accessing Native libraries.
+	- Logging class is now using Native method for writing in files.
+	
+2.4.0:
+	- Events updated for new bukkit system.
+	- Socket server is no longer sending any messages to server console.
+	- /vip tp back is now working again.
+	- Plugin updated for Bukkit 1322 and CraftBukkit 1940.
+
+2.3.5:
+	- Socket server now doesnt send passwords of Admins and GMs.
+	- Auction house is now using GugaDataPager and shows 15 items per page.
+
+2.3.4:
+	- /event players list is now split in pages.
+	- Players that can join event can now be limited with cap.
+	
 2.3.3:
 	- Fixed ban length output datatypes - now showing proper values.
 	- Regions are now split in pages.

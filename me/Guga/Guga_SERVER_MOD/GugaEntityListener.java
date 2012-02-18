@@ -10,22 +10,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GugaEntityListener extends EntityListener
+public class GugaEntityListener implements Listener
 {
 	GugaEntityListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityRegainHealth(EntityRegainHealthEvent e)
 	{
 		if (plugin.debug)
@@ -40,6 +43,7 @@ public class GugaEntityListener extends EntityListener
 			}
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(EntityDamageEvent e)
 	{
 		if (plugin.debug)
@@ -111,6 +115,7 @@ public class GugaEntityListener extends EntityListener
 			}
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e)
 	{
 		/*if (e.getDroppedExp() > 0)
@@ -209,6 +214,7 @@ public class GugaEntityListener extends EntityListener
 			}
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityExplode(EntityExplodeEvent e)
 	{
 		if (plugin.debug)

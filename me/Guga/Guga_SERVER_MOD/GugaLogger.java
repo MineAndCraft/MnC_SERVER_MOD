@@ -1,14 +1,5 @@
 package me.Guga.Guga_SERVER_MOD;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+
 
 public class GugaLogger 
 {	
@@ -82,7 +74,28 @@ public class GugaLogger
 		int blockX = block.getX();
 		int blockY = block.getY();
 		int blockZ = block.getZ();
-		File file = new File(blockBreakFile);
+		
+		GugaFile file = new GugaFile(blockBreakFile, GugaFile.READ_MODE);
+		file.Open();
+		String line;
+		String[] splittedLine;
+		int x;
+		int y;
+		int z;
+		while ((line = file.ReadLine()) != null)
+		{
+			splittedLine = line.split(";");
+			x = Integer.parseInt(splittedLine[3]);
+			y = Integer.parseInt(splittedLine[4]);
+			z = Integer.parseInt(splittedLine[5]);
+			if ( (x == blockX) && (y == blockY) && (z == blockZ) )
+			{
+				dataBuffer.add(line);
+			}
+		}
+		file.Close();
+		return dataBuffer;
+		/*File file = new File(blockBreakFile);
 		if (!file.exists())
 		{
 			try 
@@ -130,7 +143,7 @@ public class GugaLogger
 				e.printStackTrace();
 			}
 		}
-		return dataBuffer;
+		return dataBuffer;*/
 	}
 	public ArrayList<String> GetShopTransactionData()
 	{
@@ -176,7 +189,27 @@ public class GugaLogger
 		int blockX = block.getX();
 		int blockY = block.getY();
 		int blockZ = block.getZ();
-		File file = new File(blockPlaceFile);
+		String line;
+		String []splittedLine;
+		int x;
+		int y;
+		int z;
+		GugaFile file = new GugaFile(blockPlaceFile, GugaFile.READ_MODE);
+		file.Open();
+		while ((line = file.ReadLine()) != null)
+		{
+			splittedLine = line.split(";");
+			x = Integer.parseInt(splittedLine[3]);
+			y = Integer.parseInt(splittedLine[4]);
+			z = Integer.parseInt(splittedLine[5]);
+			if ( (x == blockX) && (y == blockY) && (z == blockZ) )
+			{
+				dataBuffer.add(line);
+			}
+		}
+		file.Close();
+		return dataBuffer;
+		/*File file = new File(blockPlaceFile);
 		if (!file.exists())
 		{
 			try 
@@ -224,16 +257,20 @@ public class GugaLogger
 				e.printStackTrace();
 			}
 		}
-		return dataBuffer;
+		return dataBuffer;*/
 	}
 	public void LogShopTransaction(final Prices item, final int amount, final String pName)
 	{
 		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 			public void run()
 			{
+				//GugaFile file = new GugaFile(shopTransactionFile, GugaFile.APPEND_MODE);
+				//file.Open();
+				String line = new Date() + ";" + pName + ";" + item.toString() + ";" + amount;
+				//file.WriteLine(line);
+				//file.Close();
 				GugaFile file = new GugaFile(shopTransactionFile, GugaFile.APPEND_MODE);
 				file.Open();
-				String line = new Date() + ";" + pName + ";" + item.toString() + ";" + amount;
 				file.WriteLine(line);
 				file.Close();
 			}
@@ -246,7 +283,19 @@ public class GugaLogger
 			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 				public void run()
 				{
-					File blockBreak = new File(blockBreakFile);
+					String line;
+					//int typeID = e.getBlock().getTypeId();
+					int x = e.getBlock().getX();
+					int y = e.getBlock().getY();
+					int z = e.getBlock().getZ();
+					String pName = e.getPlayer().getName();
+					Date now = new Date();
+					line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
+					GugaFile file = new GugaFile(blockBreakFile, GugaFile.APPEND_MODE);
+					file.Open();
+					file.WriteLine(line);
+					file.Close();
+					/*File blockBreak = new File(blockBreakFile);
 					if (!blockBreak.exists())
 					{
 						try 
@@ -278,7 +327,7 @@ public class GugaLogger
 						fStream.close();
 					} catch (IOException ex) {
 						ex.printStackTrace();
-					}
+					}*/
 				}
 			}
 			
@@ -292,7 +341,19 @@ public class GugaLogger
 			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 				public void run()
 				{
-					File blockPlace = new File(blockPlaceFile);
+					String line;
+					int typeID = e.getBlock().getTypeId();
+					int x = e.getBlock().getX();
+					int y = e.getBlock().getY();
+					int z = e.getBlock().getZ();
+					String pName = e.getPlayer().getName();
+					Date now = new Date();
+					line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
+					GugaFile file = new GugaFile(blockPlaceFile, GugaFile.APPEND_MODE);
+					file.Open();
+					file.WriteLine(line);
+					file.Close();
+					/*File blockPlace = new File(blockPlaceFile);
 					if (!blockPlace.exists())
 					{
 						try 
@@ -324,7 +385,7 @@ public class GugaLogger
 						fStream.close();
 					} catch (IOException ex) {
 						ex.printStackTrace();
-					}
+					}*/
 				}
 			}
 			
@@ -338,7 +399,28 @@ public class GugaLogger
 			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 				public void run()
 				{
-					File blockIgnite = new File(blockIgniteFile);
+					String line;
+					int typeID = e.getBlock().getTypeId();
+					int x = e.getBlock().getX();
+					int y = e.getBlock().getY();
+					int z = e.getBlock().getZ();
+					String pName;
+					
+					if (e.getPlayer() == null)
+					{
+						pName = "null";
+					}
+					else
+					{
+						pName = e.getPlayer().getName();
+					}
+					Date now = new Date();
+					line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
+					GugaFile file = new GugaFile(blockIgniteFile, GugaFile.APPEND_MODE);
+					file.Open();
+					file.WriteLine(line);
+					file.Close();
+					/*File blockIgnite = new File(blockIgniteFile);
 					if (!blockIgnite.exists())
 					{
 						try 
@@ -379,7 +461,7 @@ public class GugaLogger
 						fStream.close();
 					} catch (IOException ex) {
 						ex.printStackTrace();
-					}
+					}*/
 				}
 			}
 			

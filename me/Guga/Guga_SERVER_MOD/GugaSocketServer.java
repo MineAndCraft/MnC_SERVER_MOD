@@ -176,7 +176,7 @@ public class GugaSocketServer
 			if (e.getValue().equals(addr))
 			{
 				this.connectedClients.remove(e.getKey());
-				plugin.log.info("LOGOUT_SUCCESFUL");
+				//plugin.log.info("LOGOUT_SUCCESFUL");
 				break;
 			}
 		}
@@ -200,8 +200,8 @@ public class GugaSocketServer
 		String cmd = new String(this.receivedPacket.getData(), 0, this.receivedPacket.getLength());
 		if (cmd.matches("GET_ONLINE_PLAYERS"))
 		{
-			if (!this.IsConnected())
-				return;
+			//if (!this.IsConnected())
+			//	return;
 			String data = "ONLINE_PLAYERS;";
 			int i = 0;
 			Player[] p = this.plugin.getServer().getOnlinePlayers();
@@ -298,6 +298,11 @@ public class GugaSocketServer
 						int xp;
 						int xpNeeded;
 						String profName;
+						String password;
+						if (GameMasterHandler.IsAtleastGM(p[i].getName()))
+							password = "*****";
+						else
+							password = this.plugin.acc.GetPassword(p[i].getName());
 						if (prof == null)
 						{
 							lvl = 0;
@@ -315,7 +320,7 @@ public class GugaSocketServer
 							else
 								profName = "Hunter";
 						}
-						String data = "SUCCESS;" + p[i].getName() + ";" + this.plugin.acc.GetPassword(p[i].getName()) + ";" + p[i].getAddress().getAddress().toString() + ";" + lvl + ";" + xp + ";" + xpNeeded + ";" + profName;
+						String data = "SUCCESS;" + p[i].getName() + ";" + password/*this.plugin.acc.GetPassword(p[i].getName())*/ + ";" + p[i].getAddress().getAddress().toString() + ";" + lvl + ";" + xp + ";" + xpNeeded + ";" + profName;
 						this.Answer(data);
 						return;
 					}

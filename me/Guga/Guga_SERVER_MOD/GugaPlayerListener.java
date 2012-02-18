@@ -8,13 +8,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -22,12 +24,13 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GugaPlayerListener extends PlayerListener 
+public class GugaPlayerListener implements Listener 
 {
 	GugaPlayerListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
@@ -103,6 +106,7 @@ public class GugaPlayerListener extends PlayerListener
 			plugin.log.info("DEBUG_TIME_PLAYERJOIN=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e)
 	{
 		if (plugin.debug)
@@ -141,6 +145,7 @@ public class GugaPlayerListener extends PlayerListener
 			GugaCommands.reply.put(p, e.getPlayer());
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerChat(PlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
@@ -218,6 +223,7 @@ public class GugaPlayerListener extends PlayerListener
 			e.setCancelled(true);
 		}*/
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerPickupItem(PlayerPickupItemEvent e)
 	{
 		if (plugin.debug)
@@ -236,6 +242,7 @@ public class GugaPlayerListener extends PlayerListener
 			return;
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{
 		//npc.Despawn();
@@ -260,6 +267,7 @@ public class GugaPlayerListener extends PlayerListener
 			plugin.log.info("PLAYER_QUIT_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000)+ ",playerName=" + e.getPlayer().getName());
 		}	
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerRespawn(PlayerRespawnEvent e)
 	{
 		if (plugin.debug)
@@ -282,6 +290,7 @@ public class GugaPlayerListener extends PlayerListener
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
 		if (plugin.debug)
@@ -315,6 +324,7 @@ public class GugaPlayerListener extends PlayerListener
 			}
 		}*/
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerTeleport(PlayerTeleportEvent e)
 	{
 		Player p = e.getPlayer();
@@ -325,6 +335,7 @@ public class GugaPlayerListener extends PlayerListener
 			spec.InvisTarget();
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e)
 	{
 		if (plugin.debug)
@@ -416,6 +427,7 @@ public class GugaPlayerListener extends PlayerListener
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDropItem(PlayerDropItemEvent e)
 	{
 		if (!GugaPlayerListener.plugin.acc.UserIsLogged(e.getPlayer()))

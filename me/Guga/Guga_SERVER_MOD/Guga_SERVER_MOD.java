@@ -17,7 +17,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import Native.*;
 public class Guga_SERVER_MOD extends JavaPlugin
 {	
 	public void onDisable() 
@@ -37,8 +37,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public void onEnable() 
 	{
+		GugaNativeBridge.LoadLibrary("/usr/minecraft_server_test/GugaNativeBridge.so");
 		PluginManager pManager = this.getServer().getPluginManager();
-		pManager.registerEvent(Event.Type.PLAYER_JOIN, pListener, Event.Priority.Normal, this);
+		/*pManager.registerEvent(Event.Type.PLAYER_JOIN, pListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_CHAT, pListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_QUIT, pListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Event.Priority.High, this);
@@ -57,7 +58,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvent(Event.Type.BLOCK_BURN, bListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_TELEPORT, pListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.ENTITY_DEATH, enListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_DROP_ITEM, pListener, Event.Priority.Normal, this);
+		pManager.registerEvent(Event.Type.PLAYER_DROP_ITEM, pListener, Event.Priority.Normal, this);*/
+		pManager.registerEvents(pListener, this);
+		pManager.registerEvents(bListener, this);
+		pManager.registerEvents(enListener, this);
 		
 		GugaPort.SetPlugin(this);
 		GugaCommands.SetPlugin(this);
@@ -67,7 +71,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GameMasterHandler.SetPlugin(this);
 		GugaBanHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
-		
+
 		if (getServer().getWorld("arena") == null)
 		{
 			//getServer().createWorld("arena", Environment.NORMAL);
@@ -483,7 +487,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.3.3";
+	public static final String version = "2.4.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
