@@ -44,10 +44,36 @@ public class GugaLogger
 			public void run()
 			{
 				sender.sendMessage("Searching...");
-				ArrayList<String> blockBreakData;
-				ArrayList<String> blockPlaceData;
-				blockBreakData = GetBlockBreakData(block);
-				blockPlaceData = GetBlockPlaceData(block);
+				final ArrayList<String> blockBreakData = new ArrayList<String>();
+				final ArrayList<String> blockPlaceData = new ArrayList<String>();
+				Thread breakThread = new Thread(new Runnable() {
+					
+					@Override
+					public void run() 
+					{
+						GetBlockBreakData(block, blockBreakData);
+					}
+				});
+				Thread placeThread = new Thread(new Runnable() {
+					
+					@Override
+					public void run() 
+					{
+						GetBlockPlaceData(block, blockPlaceData);
+					}
+				});
+				breakThread.start();
+				placeThread.start();
+				while (breakThread.isAlive() || placeThread.isAlive())
+				{
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				ArrayList<String> cache = new ArrayList<String>();
 				Iterator<String> i = blockPlaceData.iterator();
 				while (i.hasNext())
 				{
@@ -55,6 +81,7 @@ public class GugaLogger
 					String splitted[] = e.split(";");
 					String msg = "BLOCK_PLACE: name=" + splitted[1] + "  id=" + splitted[2] + " time=" + splitted[0].substring(0, 20);
 					sender.sendMessage(msg);
+					cache.add(msg);
 				}
 				i = blockBreakData.iterator();
 				while (i.hasNext())
@@ -63,14 +90,16 @@ public class GugaLogger
 					String splitted[] = e.split(";");
 					String msg = "BLOCK_BREAK: name=" + splitted[1] + "  id=" + splitted[2] + " time=" + splitted[0].substring(0, 20);
 					sender.sendMessage(msg);
+					cache.add(msg);
 				}
 				sender.sendMessage("Search Completed.");
+				blockCache.put(sender, cache);
 			}
 		});
 	}
-	public ArrayList<String> GetBlockBreakData(Block block)
+	public ArrayList<String> GetBlockBreakData(Block block, ArrayList<String> dataBuffer)
 	{
-		ArrayList<String> dataBuffer = new ArrayList<String>();
+		//ArrayList<String> dataBuffer = new ArrayList<String>();
 		int blockX = block.getX();
 		int blockY = block.getY();
 		int blockZ = block.getZ();
@@ -183,9 +212,9 @@ public class GugaLogger
 		file.Close();
 		return returnArray;
 	}
-	public ArrayList<String> GetBlockPlaceData(Block block)
+	public ArrayList<String> GetBlockPlaceData(Block block, ArrayList<String> dataBuffer)
 	{
-		ArrayList<String> dataBuffer = new ArrayList<String>();
+		//ArrayList<String> dataBuffer = new ArrayList<String>();
 		int blockX = block.getX();
 		int blockY = block.getY();
 		int blockZ = block.getZ();
@@ -476,5 +505,6 @@ public class GugaLogger
 	private String blockIgniteFile = "plugins/BlockIgniteLog.log";
 	private String blockPlaceFile = "plugins/BlockPlaceLog.log";
 	private String shopTransactionFile = "plugins/ShopTransaction.log";
+	public HashMap<Player, ArrayList<String>> blockCache = new HashMap<Player, ArrayList<String>>();
 	private Guga_SERVER_MOD plugin;
 }

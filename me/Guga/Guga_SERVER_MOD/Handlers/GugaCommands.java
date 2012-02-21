@@ -1,4 +1,4 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Handlers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,6 +7,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
+import me.Guga.Guga_SERVER_MOD.GugaAuction;
+import me.Guga.Guga_SERVER_MOD.GugaBan;
+import me.Guga.Guga_SERVER_MOD.GugaDataPager;
+import me.Guga.Guga_SERVER_MOD.GugaEvent;
+import me.Guga.Guga_SERVER_MOD.GugaHunter;
+import me.Guga.Guga_SERVER_MOD.GugaInvisibility;
+import me.Guga.Guga_SERVER_MOD.GugaMiner;
+import me.Guga.Guga_SERVER_MOD.GugaPlace;
+import me.Guga.Guga_SERVER_MOD.GugaPort;
+import me.Guga.Guga_SERVER_MOD.GugaProfession;
+import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.GugaSpawner;
+import me.Guga.Guga_SERVER_MOD.GugaSpectator;
+import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Prices;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency.VipItems;
@@ -1345,6 +1362,21 @@ public abstract class GugaCommands
 				{
 					sender.sendMessage("This player is not online!");
 				}
+			}
+			else if (subCommand.matches("log"))
+			{
+				ArrayList<String> data = plugin.logger.blockCache.get(sender);
+				if (data.size() == 0)
+				{
+					sender.sendMessage("You have no data saved! Use /gm log first");
+					return;
+				}
+				GugaDataPager<String> pager = new GugaDataPager<String>(data, 15);
+				Iterator<String> i = pager.GetPage(Integer.parseInt(arg1)).iterator();
+				sender.sendMessage("LIST OF BLOCK DATA:");
+				sender.sendMessage("PAGE " + Integer.parseInt(arg1) + "/" + pager.GetPagesCount());
+				while (i.hasNext())
+					sender.sendMessage(i.next());
 			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
 			{

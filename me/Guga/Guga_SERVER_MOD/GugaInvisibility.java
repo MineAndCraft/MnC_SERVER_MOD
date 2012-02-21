@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class GugaInvisibility 
 {
-	GugaInvisibility(Player p, int range, Guga_SERVER_MOD gugaSM)
+	public GugaInvisibility(Player p, int range, Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 		this.range = range;

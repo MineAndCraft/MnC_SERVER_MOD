@@ -9,7 +9,7 @@ public class GugaHunter extends GugaProfession
 		dmgIncrease = 0;
 		hpRegen = 0;
 	}
-	GugaHunter(String pName, int exp, Guga_SERVER_MOD gugaSM)
+	public GugaHunter(String pName, int exp, Guga_SERVER_MOD gugaSM)
 	{
 		super(pName,exp,gugaSM);
 		regenTaskId = 0;

@@ -2,7 +2,7 @@ package me.Guga.Guga_SERVER_MOD;
 
 public class GugaAuction 
 {
-	GugaAuction(int itemID, int amount, int price, String owner)
+	public GugaAuction(int itemID, int amount, int price, String owner)
 	{
 		this.itemID = itemID;
 		this.amount = amount;

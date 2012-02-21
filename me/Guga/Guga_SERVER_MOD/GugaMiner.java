@@ -10,7 +10,7 @@ public class GugaMiner extends GugaProfession
 	{
 		
 	}
-	GugaMiner(String pName, int exp, Guga_SERVER_MOD gugaSM)
+	public GugaMiner(String pName, int exp, Guga_SERVER_MOD gugaSM)
 	{
 		super(pName,exp,gugaSM);
 		UpdateSkills();

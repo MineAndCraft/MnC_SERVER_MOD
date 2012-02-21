@@ -1,13 +1,5 @@
 package me.Guga.Guga_SERVER_MOD;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -74,7 +66,24 @@ public class GugaChests
 	public void LoadChests()
 	{
 		plugin.log.info("Loading Chest Data...");
-		File chests = new File(chestsFile);
+		GugaFile file = new GugaFile(chestsFile, GugaFile.READ_MODE);
+		file.Open();
+		String line;
+		int i = 0;
+		double locX;
+		double locY;
+		double locZ;
+		while ((line = file.ReadLine()) != null)
+		{
+			locX = Double.parseDouble(line.split(";")[0]);
+			locY = Double.parseDouble(line.split(";")[1]);
+			locZ = Double.parseDouble(line.split(";")[2]);
+			location[i] = new Location(plugin.getServer().getWorld("world"),locX, locY, locZ);
+			owner[i] = line.split(";")[3];
+			i++;
+		}
+		file.Close();
+		/*File chests = new File(chestsFile);
 		if (!chests.exists())
 		{
 			try 
@@ -115,7 +124,7 @@ public class GugaChests
 			{
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	public boolean LocationEquals(Location loc1, Location loc2)
 	{
@@ -134,7 +143,22 @@ public class GugaChests
 	public void SaveChests()
 	{
 		plugin.log.info("Saving Chest Data...");
-		File chests = new File(chestsFile);
+		GugaFile file = new GugaFile(chestsFile, GugaFile.WRITE_MODE);
+		file.Open();
+		int i = 0;
+		while (location[i] != null)
+		{
+			String x = Integer.toString(location[i].getBlockX());
+			String y = Integer.toString(location[i].getBlockY());
+			String z = Integer.toString(location[i].getBlockZ());
+			
+			String line;
+			line = x+";"+y+";"+z+";"+owner[i];
+			file.WriteLine(line);
+			i++;
+		}
+		file.Close();
+		/*File chests = new File(chestsFile);
 		if (!chests.exists())
 		{
 			try 
@@ -169,7 +193,7 @@ public class GugaChests
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
 	}
 	
 	private String owner[] = new String[10000];

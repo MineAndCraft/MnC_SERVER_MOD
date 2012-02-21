@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class GugaSpectator 
 {
-	GugaSpectator(Guga_SERVER_MOD gugaSM, Player tarPlayer, Player specPlayer)
+	public GugaSpectator(Guga_SERVER_MOD gugaSM, Player tarPlayer, Player specPlayer)
 	{
 		plugin = gugaSM;
 		target = tarPlayer;

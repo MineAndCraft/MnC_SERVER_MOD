@@ -169,5 +169,5 @@ public abstract class GugaPort
 	}
 	private static String placesFile = "plugins/Places.dat";
 	private static ArrayList<GugaPlace> places = new ArrayList<GugaPlace>();
-	private static Guga_SERVER_MOD plugin;
+	public static Guga_SERVER_MOD plugin;
 }

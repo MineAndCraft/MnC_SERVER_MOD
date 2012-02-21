@@ -1,10 +1,16 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Listeners;
 
 import java.util.ArrayList;
 
 
 
+import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
+import me.Guga.Guga_SERVER_MOD.GugaProfession;
+import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -22,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class GugaBlockListener implements Listener
 {
-	GugaBlockListener(Guga_SERVER_MOD gugaSM)
+	public GugaBlockListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}

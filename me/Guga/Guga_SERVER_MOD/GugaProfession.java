@@ -9,14 +9,14 @@ import org.bukkit.entity.Player;
 
 public class GugaProfession 
 {
-	GugaProfession()
+	public GugaProfession()
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;
 		lvlCap = 1000;
 		xpCap = 4000;
 	}
-	GugaProfession(String pName, int exp, Guga_SERVER_MOD gugaSM)
+	public GugaProfession(String pName, int exp, Guga_SERVER_MOD gugaSM)
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;

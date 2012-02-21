@@ -1,3 +1,13 @@
+2.4.4:
+	- Block log data are now split in pages and can be read from cache.
+	- /gm log <page> command added.
+	- All handlers moved to Handlers folder.
+	- All Listeners moved to Listeners folder.
+	
+2.4.3:
+	- GugaFile class temporarily reverted to Java I/O methods.
+	- Block log reading is now split in 2 threads, one for each file.
+
 2.4.2:
 	- GugaFile class is now using native c++ methods.
 	- All log File I/O methods are now using GugaFile class.

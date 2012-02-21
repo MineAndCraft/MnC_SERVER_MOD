@@ -15,7 +15,7 @@ public class GugaVirtualCurrency
 		playerName = pName;
 		plugin = gugaSM;
 	}
-	GugaVirtualCurrency(Guga_SERVER_MOD gugaSM, String pName, int curr, Date exprDate)
+	public GugaVirtualCurrency(Guga_SERVER_MOD gugaSM, String pName, int curr, Date exprDate)
 	{
 		playerName = pName;
 		currency = curr;

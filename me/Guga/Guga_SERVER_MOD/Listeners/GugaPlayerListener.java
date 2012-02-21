@@ -1,8 +1,20 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Listeners;
 import java.util.Date;
 
 
+import me.Guga.Guga_SERVER_MOD.GameMaster;
+import me.Guga.Guga_SERVER_MOD.GugaBan;
+import me.Guga.Guga_SERVER_MOD.GugaHunter;
+import me.Guga.Guga_SERVER_MOD.GugaProfession;
+import me.Guga.Guga_SERVER_MOD.GugaSpectator;
+import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -26,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class GugaPlayerListener implements Listener 
 {
-	GugaPlayerListener(Guga_SERVER_MOD gugaSM)
+	public GugaPlayerListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}

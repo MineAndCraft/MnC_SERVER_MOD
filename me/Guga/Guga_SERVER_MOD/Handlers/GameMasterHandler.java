@@ -1,8 +1,11 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Handlers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import me.Guga.Guga_SERVER_MOD.GameMaster;
+import me.Guga.Guga_SERVER_MOD.GugaFile;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 
 public abstract class GameMasterHandler 

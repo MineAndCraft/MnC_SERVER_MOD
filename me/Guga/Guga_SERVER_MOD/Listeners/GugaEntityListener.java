@@ -1,7 +1,14 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Listeners;
 
 import java.util.Iterator;
 import java.util.List;
+
+import me.Guga.Guga_SERVER_MOD.GugaEvent;
+import me.Guga.Guga_SERVER_MOD.GugaProfession;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -24,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class GugaEntityListener implements Listener
 {
-	GugaEntityListener(Guga_SERVER_MOD gugaSM)
+	public GugaEntityListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}

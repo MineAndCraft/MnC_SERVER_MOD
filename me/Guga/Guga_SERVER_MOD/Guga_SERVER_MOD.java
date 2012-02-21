@@ -5,6 +5,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
+
+import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.GugaPlayerListener;
+
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
@@ -17,7 +27,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import Native.*;
+//import Native.*;
 public class Guga_SERVER_MOD extends JavaPlugin
 {	
 	public void onDisable() 
@@ -37,7 +47,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public void onEnable() 
 	{
-		GugaNativeBridge.LoadLibrary("/usr/minecraft_server_test/GugaNativeBridge.so");
+		//GugaNativeBridge.LoadLibrary("/usr/minecraft_server_test/GugaNativeBridge.so");
+		//GugaNativeBridge.LoadLibrary("c:/Scripts/C++/NativeBridge/Debug/NativeBridge.dll");
+		
 		PluginManager pManager = this.getServer().getPluginManager();
 		/*pManager.registerEvent(Event.Type.PLAYER_JOIN, pListener, Event.Priority.Normal, this);
 		pManager.registerEvent(Event.Type.PLAYER_CHAT, pListener, Event.Priority.Normal, this);
@@ -487,7 +499,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.4.1";
+	public static final String version = "2.4.4";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
