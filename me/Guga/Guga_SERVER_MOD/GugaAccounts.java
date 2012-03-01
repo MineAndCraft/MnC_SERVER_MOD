@@ -131,7 +131,17 @@ public class GugaAccounts
 	{
 		int i = 0;
 		String pName = p.getName();
-		
+		if (password.length() <= 1)
+		{
+			p.sendMessage("Vase heslo je prilis kratke! - Heslo musi mit alespon 2 znaky.");
+			return;
+		}
+		if (password.contains(" "))
+		{
+			p.sendMessage("Vase heslo nesmi obsahovat mezery!");
+			return;
+		}
+			
 		while (accNames[i] != null)
 		{
 			i++;

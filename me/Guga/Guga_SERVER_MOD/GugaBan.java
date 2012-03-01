@@ -43,8 +43,6 @@ public class GugaBan
 	}
 	public void AddIpAddress(String addr)
 	{
-		if (!addr.contains("/"))
-			return;
 		int i = 0;
 		while (i < this.ipAddresses.length)
 		{

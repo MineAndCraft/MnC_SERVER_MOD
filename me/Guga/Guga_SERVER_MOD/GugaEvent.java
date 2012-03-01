@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Location;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,7 +35,7 @@ public abstract class GugaEvent
 	}
 	public static void AddSpawnerToGroup(String groupName, Location loc, int interval, int typeID)
 	{
-		CreatureType[] vals = CreatureType.values();
+		EntityType[] vals = EntityType.values();
 		ArrayList<GugaSpawner> list = GugaEvent.spawners.get(groupName);
 		if (list == null)
 		{

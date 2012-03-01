@@ -99,7 +99,6 @@ public class GugaLogger
 	}
 	public ArrayList<String> GetBlockBreakData(Block block, ArrayList<String> dataBuffer)
 	{
-		//ArrayList<String> dataBuffer = new ArrayList<String>();
 		int blockX = block.getX();
 		int blockY = block.getY();
 		int blockZ = block.getZ();
@@ -124,55 +123,6 @@ public class GugaLogger
 		}
 		file.Close();
 		return dataBuffer;
-		/*File file = new File(blockBreakFile);
-		if (!file.exists())
-		{
-			try 
-			{
-				file.createNewFile();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(file);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				String []splittedLine;
-				int x;
-				int y;
-				int z;
-				try {
-					while ((line = bReader.readLine()) != null)
-					{
-						splittedLine = line.split(";");
-						x = Integer.parseInt(splittedLine[3]);
-						y = Integer.parseInt(splittedLine[4]);
-						z = Integer.parseInt(splittedLine[5]);
-						if ( (x == blockX) && (y == blockY) && (z == blockZ) )
-						{
-							dataBuffer.add(line);
-						}
-					}
-					bReader.close();
-					inStream.close();
-					fRead.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}			
-			} 
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		return dataBuffer;*/
 	}
 	public ArrayList<String> GetShopTransactionData()
 	{
@@ -191,7 +141,6 @@ public class GugaLogger
 		Integer[] vals = new Integer[dataMap.size()];
 		dataMap.values().toArray(vals);
 		Arrays.sort(vals);
-		//Iterator<Entry<String, Integer>> i = dataMap.entrySet().iterator();
 		ArrayList<String> returnArray = new ArrayList<String>();
 		int i = vals.length - 1;
 		while (i >= 0)
@@ -214,7 +163,6 @@ public class GugaLogger
 	}
 	public ArrayList<String> GetBlockPlaceData(Block block, ArrayList<String> dataBuffer)
 	{
-		//ArrayList<String> dataBuffer = new ArrayList<String>();
 		int blockX = block.getX();
 		int blockY = block.getY();
 		int blockZ = block.getZ();
@@ -238,66 +186,13 @@ public class GugaLogger
 		}
 		file.Close();
 		return dataBuffer;
-		/*File file = new File(blockPlaceFile);
-		if (!file.exists())
-		{
-			try 
-			{
-				file.createNewFile();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(file);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				String []splittedLine;
-				int x;
-				int y;
-				int z;
-				try {
-					while ((line = bReader.readLine()) != null)
-					{
-						splittedLine = line.split(";");
-						x = Integer.parseInt(splittedLine[3]);
-						y = Integer.parseInt(splittedLine[4]);
-						z = Integer.parseInt(splittedLine[5]);
-						if ( (x == blockX) && (y == blockY) && (z == blockZ) )
-						{
-							dataBuffer.add(line);
-						}
-					}
-					bReader.close();
-					inStream.close();
-					fRead.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}			
-			} 
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		return dataBuffer;*/
 	}
 	public void LogShopTransaction(final Prices item, final int amount, final String pName)
 	{
 		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 			public void run()
 			{
-				//GugaFile file = new GugaFile(shopTransactionFile, GugaFile.APPEND_MODE);
-				//file.Open();
 				String line = new Date() + ";" + pName + ";" + item.toString() + ";" + amount;
-				//file.WriteLine(line);
-				//file.Close();
 				GugaFile file = new GugaFile(shopTransactionFile, GugaFile.APPEND_MODE);
 				file.Open();
 				file.WriteLine(line);
@@ -309,59 +204,61 @@ public class GugaLogger
 	{
 		if (logBlockBreak)
 		{
-			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
-				public void run()
+			String line;
+			int x = e.getBlock().getX();
+			int y = e.getBlock().getY();
+			int z = e.getBlock().getZ();
+			String pName = e.getPlayer().getName();
+			Date now = new Date();
+			line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
+			if (blockBreakSwitch)
+			{
+				blockBreakArray1.add(line);
+				if (blockBreakArray1.size() >= ARRAY_MAX_SIZE)
 				{
-					String line;
-					//int typeID = e.getBlock().getTypeId();
-					int x = e.getBlock().getX();
-					int y = e.getBlock().getY();
-					int z = e.getBlock().getZ();
-					String pName = e.getPlayer().getName();
-					Date now = new Date();
-					line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
-					GugaFile file = new GugaFile(blockBreakFile, GugaFile.APPEND_MODE);
-					file.Open();
-					file.WriteLine(line);
-					file.Close();
-					/*File blockBreak = new File(blockBreakFile);
-					if (!blockBreak.exists())
-					{
-						try 
+					blockBreakSwitch = !blockBreakSwitch;
+					Thread t = new Thread(new Runnable() {
+						
+						@Override
+						public void run() 
 						{
-							blockBreak.createNewFile();
-							
-						} 
-						catch (IOException ex) 
-						{
-							ex.printStackTrace();
+							plugin.log.info("ARRAY BREAK 1 FULL, SAVING!");
+							SaveDataFromCache(blockBreakArray1, blockBreakFile);
+							blockBreakArray1.clear();
 						}
-					}
-					try 
-					{
-						FileWriter fStream = new FileWriter(blockBreak, true);
-						BufferedWriter bWriter;
-						bWriter = new BufferedWriter(fStream);
-						String line;
-						//int typeID = e.getBlock().getTypeId();
-						int x = e.getBlock().getX();
-						int y = e.getBlock().getY();
-						int z = e.getBlock().getZ();
-						String pName = e.getPlayer().getName();
-						Date now = new Date();
-						line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
-						bWriter.write(line);
-						bWriter.newLine();
-						bWriter.close();
-						fStream.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}*/
+					});
+					t.start();
 				}
 			}
-			
-			);	
+			else
+			{
+				blockBreakArray2.add(line);
+				if (blockBreakArray2.size() >= ARRAY_MAX_SIZE)
+				{
+					blockBreakSwitch = !blockBreakSwitch;
+					Thread t = new Thread(new Runnable() {
+						
+						@Override
+						public void run() 
+						{
+							plugin.log.info("ARRAY BREAK 2 FULL, SAVING!");
+							SaveDataFromCache(blockBreakArray2, blockBreakFile);
+							blockBreakArray2.clear();
+						}
+					});
+					t.start();
+				}
+			}
 		}
+	}
+	private void SaveDataFromCache(ArrayList<String> array, String filePath)
+	{
+		GugaFile file = new GugaFile(filePath, GugaFile.APPEND_MODE);
+		file.Open();
+		Iterator<String> i = array.iterator();
+		while (i.hasNext())
+			file.WriteLine(i.next());
+		file.Close();
 	}
 	public void LogBlockPlace(final BlockPlaceEvent e)
 	{
@@ -378,43 +275,44 @@ public class GugaLogger
 					String pName = e.getPlayer().getName();
 					Date now = new Date();
 					line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
-					GugaFile file = new GugaFile(blockPlaceFile, GugaFile.APPEND_MODE);
-					file.Open();
-					file.WriteLine(line);
-					file.Close();
-					/*File blockPlace = new File(blockPlaceFile);
-					if (!blockPlace.exists())
+					if (blockPlaceSwitch)
 					{
-						try 
+						blockPlaceArray1.add(line);
+						if (blockPlaceArray1.size() >= ARRAY_MAX_SIZE)
 						{
-							blockPlace.createNewFile();
-							
-						} 
-						catch (IOException ex) 
-						{
-							ex.printStackTrace();
+							blockPlaceSwitch = !blockPlaceSwitch;
+							Thread t = new Thread(new Runnable() {
+								
+								@Override
+								public void run() 
+								{
+									plugin.log.info("ARRAY PLACE 1 FULL, SAVING!");
+									SaveDataFromCache(blockPlaceArray1, blockPlaceFile);
+									blockPlaceArray1.clear();
+								}
+							});
+							t.start();
 						}
 					}
-					try 
+					else
 					{
-						FileWriter fStream = new FileWriter(blockPlace, true);
-						BufferedWriter bWriter;
-						bWriter = new BufferedWriter(fStream);
-						String line;
-						int typeID = e.getBlock().getTypeId();
-						int x = e.getBlock().getX();
-						int y = e.getBlock().getY();
-						int z = e.getBlock().getZ();
-						String pName = e.getPlayer().getName();
-						Date now = new Date();
-						line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
-						bWriter.write(line);
-						bWriter.newLine();
-						bWriter.close();
-						fStream.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}*/
+						blockPlaceArray2.add(line);
+						if (blockPlaceArray2.size() >= ARRAY_MAX_SIZE)
+						{
+							blockPlaceSwitch = !blockPlaceSwitch;
+							Thread t = new Thread(new Runnable() {
+								
+								@Override
+								public void run() 
+								{
+									plugin.log.info("ARRAY PLACE 2 FULL, SAVING!");
+									SaveDataFromCache(blockPlaceArray2, blockPlaceFile);
+									blockPlaceArray2.clear();
+								}
+							});
+							t.start();
+						}
+					}
 				}
 			}
 			
@@ -449,48 +347,6 @@ public class GugaLogger
 					file.Open();
 					file.WriteLine(line);
 					file.Close();
-					/*File blockIgnite = new File(blockIgniteFile);
-					if (!blockIgnite.exists())
-					{
-						try 
-						{
-							blockIgnite.createNewFile();
-							
-						} 
-						catch (IOException ex) 
-						{
-							ex.printStackTrace();
-						}
-					}
-					try 
-					{
-						FileWriter fStream = new FileWriter(blockIgnite, true);
-						BufferedWriter bWriter;
-						bWriter = new BufferedWriter(fStream);
-						String line;
-						int typeID = e.getBlock().getTypeId();
-						int x = e.getBlock().getX();
-						int y = e.getBlock().getY();
-						int z = e.getBlock().getZ();
-						String pName;
-						
-						if (e.getPlayer() == null)
-						{
-							pName = "null";
-						}
-						else
-						{
-							pName = e.getPlayer().getName();
-						}
-						Date now = new Date();
-						line = now + ";" + pName + ";" + typeID + ";" + x + ";" + y + ";" + z;
-						bWriter.write(line);
-						bWriter.newLine();
-						bWriter.close();
-						fStream.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}*/
 				}
 			}
 			
@@ -498,9 +354,23 @@ public class GugaLogger
 		}
 	}
 	
+	private ArrayList<String> blockBreakArray1 = new ArrayList<String>();
+	private ArrayList<String> blockBreakArray2 = new ArrayList<String>();
+	private boolean blockBreakSwitch = true;
+	
+	
+	private ArrayList<String> blockPlaceArray1 = new ArrayList<String>();
+	private ArrayList<String> blockPlaceArray2 = new ArrayList<String>();
+	private boolean blockPlaceSwitch = true;
+	
+	
+	private final int ARRAY_MAX_SIZE = 1000;
+	
 	private boolean logBlockBreak;
 	private boolean logBlockPlace;
 	private boolean logBlockIgnite;
+	
+	
 	private String blockBreakFile = "plugins/BlockBreakLog.log";
 	private String blockIgniteFile = "plugins/BlockIgniteLog.log";
 	private String blockPlaceFile = "plugins/BlockPlaceLog.log";

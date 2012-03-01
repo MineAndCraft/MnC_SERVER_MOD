@@ -3,6 +3,8 @@ package me.Guga.Guga_SERVER_MOD.Handlers;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.bukkit.entity.Player;
+
 import me.Guga.Guga_SERVER_MOD.GugaBan;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
@@ -124,7 +126,11 @@ public abstract class GugaBanHandler
 			}
 			int i2 = 0;
 			String[] addrs = ban.GetIpAddresses();
-			String addr = plugin.getServer().getPlayer(playerName).getAddress().getAddress().toString();
+			//String addr = plugin.getServer().getPlayer(playerName).getAddress().getAddress().toString();
+			Player p = plugin.getServer().getPlayer(playerName);
+			if (p == null)
+				return false;
+			String addr = GugaMCClientHandler.GetPlayerMacAddr(p);
 			while (i2 < addrs.length)
 			{
 				if (ban.GetExpiration() > System.currentTimeMillis())

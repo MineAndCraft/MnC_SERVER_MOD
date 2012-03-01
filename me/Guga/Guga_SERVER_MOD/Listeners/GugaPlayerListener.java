@@ -15,6 +15,8 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -46,6 +48,37 @@ public class GugaPlayerListener implements Listener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		Thread t = new Thread( new Runnable() {
+			@Override
+			public void run() 
+			{
+				try {
+					Thread.sleep(4000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (!p.isOnline())
+					return;
+				if (!GugaMCClientHandler.HasClient(p))
+				{
+					p.kickPlayer("Ke hrani na nasem serveru potrebujete naseho Klienta!\nKe hrani na nasem serveru potrebujete naseho Klienta!\nKe hrani na nasem serveru potrebujete naseho Klienta!\n");
+					return;
+				}
+				if (GugaBanHandler.GetGugaBan(p.getName()) == null)
+					GugaBanHandler.AddBan(p.getName(), 0);
+				
+				if (GugaBanHandler.IsBanned(p.getName()))
+				{
+					GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+					long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
+					p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
+					return;
+				}
+				GugaBanHandler.UpdateBanAddr(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p));
+			}
+		});
+		t.start();
 		if (p.getName().contains(" "))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
@@ -61,17 +94,6 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
 		}
-		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
-			GugaBanHandler.AddBan(p.getName(), 0);
-		
-		if (GugaBanHandler.IsBanned(p.getName()))
-		{
-			GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-			long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-			p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
-			return;
-		}
-		GugaBanHandler.UpdateBanAddr(p.getName(), p.getAddress().getAddress().toString());
 		
 		GugaAuctionHandler.CheckPayments(p);
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
@@ -257,9 +279,10 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{
-		//npc.Despawn();
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
+		GugaMCClientHandler.UnregisterUser(p);
+		
 		if (plugin.config.accountsModule)
 		{
 			plugin.acc.loggedUsers.remove(p.getName());
@@ -305,36 +328,21 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
-		if (plugin.debug)
+		/*if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_MOVE_EVENT: playerName=" + e.getPlayer().getName());
-		}
+		}*/
 		Player p = e.getPlayer();
 		//String pName = p.getName().toLowerCase();
-		GugaSpectator spec;
+		/*GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{
 			spec.Teleport();
-		}
-		if (p.getLocation().getBlockY() < 0)
-			p.teleport(plugin.GetAvailablePortLocation(p.getLocation()));
-		/*if (GugaCommands.speed.contains(pName))
-		{
-			Location dest = e.getTo();
-			Location loc = e.getFrom();
-			if ( (loc.getX() != dest.getX()) && (loc.getY() == dest.getY())&& (loc.getZ() != dest.getZ()) )
-			{
-				if (loc.getBlock().getRelative(BlockFace.DOWN).getTypeId() != 0)
-				{
-					double distance = loc.distance(dest);
-					if ((distance > 0.2) && (distance < 0.3))
-					{
-						Vector velocity = dest.toVector().subtract(loc.toVector()).multiply(3);
-						p.setVelocity(velocity);
-					}
-				}
-			}
 		}*/
+		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
+			GugaWorldSizeHandler.MoveBack(p);
+		else if (p.getLocation().getBlockY() < 0)
+			p.teleport(plugin.GetAvailablePortLocation(p.getLocation()));
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerTeleport(PlayerTeleportEvent e)
@@ -496,9 +504,8 @@ public class GugaPlayerListener implements Listener
 		return true;
 	}
 	public String[] vipCommands = { "/tp", "/time" };
-	public String[] gmCommands = {"/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time"};
+	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time"};
 	public boolean canSpeedUp = true;
-	//private GugaNPC npc;
 	
 	public static Guga_SERVER_MOD plugin;
 	}

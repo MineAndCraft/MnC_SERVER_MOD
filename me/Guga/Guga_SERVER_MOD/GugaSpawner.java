@@ -1,7 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import org.bukkit.Location;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 
 public class GugaSpawner 
 {
@@ -16,7 +16,7 @@ public class GugaSpawner
 		this.spawnType = null;
 		this.StartThread();
 	}
-	public GugaSpawner(Guga_SERVER_MOD plugin, Location loc, int interval, int cap, CreatureType spawnType)
+	public GugaSpawner(Guga_SERVER_MOD plugin, Location loc, int interval, int cap, EntityType spawnType)
 	{
 		this.isRunning = true;
 		this.canSpawn = false;
@@ -76,7 +76,7 @@ public class GugaSpawner
 	}
 	private Guga_SERVER_MOD plugin;
 	private Location location;
-	private CreatureType spawnType;
+	private EntityType spawnType;
 	private int interval;
 	private int cap;
 	private int spawnedCount;

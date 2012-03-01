@@ -10,11 +10,14 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.GugaMessageListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaPlayerListener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
@@ -47,34 +50,15 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public void onEnable() 
 	{
-		//GugaNativeBridge.LoadLibrary("/usr/minecraft_server_test/GugaNativeBridge.so");
-		//GugaNativeBridge.LoadLibrary("c:/Scripts/C++/NativeBridge/Debug/NativeBridge.dll");
-		
 		PluginManager pManager = this.getServer().getPluginManager();
-		/*pManager.registerEvent(Event.Type.PLAYER_JOIN, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_CHAT, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_QUIT, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Event.Priority.High, this);
-		pManager.registerEvent(Event.Type.ENTITY_DAMAGE, enListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.BLOCK_BREAK, bListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.BLOCK_DAMAGE, bListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.REDSTONE_CHANGE, bListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_PICKUP_ITEM, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.BLOCK_PLACE, bListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_MOVE, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.ENTITY_EXPLODE, enListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_RESPAWN, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.ENTITY_REGAIN_HEALTH, enListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.BLOCK_IGNITE, bListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.BLOCK_BURN, bListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_TELEPORT, pListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.ENTITY_DEATH, enListener, Event.Priority.Normal, this);
-		pManager.registerEvent(Event.Type.PLAYER_DROP_ITEM, pListener, Event.Priority.Normal, this);*/
 		pManager.registerEvents(pListener, this);
 		pManager.registerEvents(bListener, this);
 		pManager.registerEvents(enListener, this);
 		
+		
+		GugaMCClientHandler.SetPlugin(this);
+		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "Guga");
+		Bukkit.getMessenger().registerIncomingPluginChannel(this, "Guga", msgListener);
 		GugaPort.SetPlugin(this);
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
@@ -110,6 +94,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		
 		this.socketServer = new GugaSocketServer(12451, this);
 		this.socketServer.ListenStart();
+		GugaMCClientHandler.CopySkinsFromPool(GugaMCClientHandler.GetPlayersWithSkin());
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by Guga 2011.");
 	}
@@ -210,7 +195,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	{
 		if (sender instanceof Player)
 		{
-			log.info(((Player)sender).getName() + " used  /" + cmd.getName() + " Command.");
+			String line = ((Player)sender).getName() + " used  /" + cmd.getName();
+			int i = 0;
+			while (i < args.length)
+				line += " " + args[i++];
+			log.info(line);
 		}
 		//*****************************************/who*****************************************
 		 if(cmd.getName().equalsIgnoreCase("who") && (sender instanceof Player))
@@ -225,25 +214,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("socket"))
 		 {
-			 	/*Connection c;
-				Statement s;
-				try {
-					c = DriverManager.getConnection("jdbc:mysql://mineandcraft.cz:3306/minecraft", "minecraft", "kutilma130");
-					s = c.createStatement();
-					//ResultSet r =/s.executeUpdate("INSERT INTO banned (`name`, `ip`, `expiration`) VALUES ('nigger', '127.0.0.1', '"+new Date().getTime()+"');");
-					ResultSet r = s.executeQuery("SELECT * FROM banned");
-					if (r.next())
-					{
-						this.log.info(r.getString(3));
-					}
-					Calendar c = Calendar.getInstance();
-					c.setTime(new Date());
-					c.add(Calendar.HOUR, 11);
-					c.getT
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
+			 	GugaCommands.TestCommand(args);
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
@@ -492,6 +463,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		}
 		return tpLoc;
 	}
+	
+	
+	
 	public HashMap<String,GugaProfession> professions = new HashMap<String,GugaProfession>();
 	
 	// ************* chances *************
@@ -499,7 +473,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "2.4.4";
+	public static final String version = "3.0.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
@@ -511,6 +485,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
 	public final GugaEntityListener enListener = new GugaEntityListener(this);
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
+	public final GugaMessageListener msgListener = new GugaMessageListener(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
 	public GugaChests chests;
 	public final GugaLogger logger = new GugaLogger(this);

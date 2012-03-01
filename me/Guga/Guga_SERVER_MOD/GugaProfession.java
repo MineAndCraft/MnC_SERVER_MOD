@@ -2,10 +2,6 @@ package me.Guga.Guga_SERVER_MOD;
 
 import java.util.Random;
 
-import org.bukkit.entity.Player;
-
-
-
 
 public class GugaProfession 
 {
@@ -172,15 +168,6 @@ public class GugaProfession
 	public String GetProfession()
 	{
 		return "Profession";
-	}
-@SuppressWarnings({ "unused", "deprecation" })
-private void MapXpBar()
-	{
-		int inc = thisLevel / 100;
-		if (inc == 0)
-			inc = 1;
-		Player p = plugin.getServer().getPlayer(playerName);
-		p.setExperience((thisLevel-(xpNeeded - xp))/inc);
 	}
 	protected int xp;
 	protected int xpNeeded;

@@ -1,3 +1,29 @@
+3.0.0:
+	- Plugin updated for Minecraft 1.2.
+	- Plugin updated for Bukkit x and CraftBukkit y.
+	- BlockBreak/Place logs are now cached and are saved every 1000 records.
+	- New GugaMCClientHandler class added.
+	- Banning system is now based on players MAC address instead of IP.
+	- GMs now can set players speed using /gm speed command.
+	- GMs now can set players flying mode using /gm fly command.
+	- Password now has to be atleast 2 chars long and cannot contain space.
+	- New PluginMessageListener added.
+	- Server is now using Plugin messages for communication wiht client.
+	- Server now requires players to have specific MineAndCraft client.
+	- VIP players now can have their own skins.
+	- Legendary players and GM team now have cape.
+	- Player now has to be logged on in order to use /event command.
+	- Commands are now logged with args.
+	- GMs now can only use /dynmap commands after they log in.
+	- New Binary mode added to GugaFile class.
+	- New CopyFileTo method added to GugaFile class.
+	- All I/O methods in GugaFile class now have a file status check.
+	- new File() in GugaFile moved to constructor.
+	- filePath removed from private members of GugaFile.
+	- MapXPBar method removed from GugaProfessions class.
+	- All methods accessing CreatureType now access EntityType instead because of deprecation.
+	- Plugin now copies active skins from SkinPool folder to actual folder where clients have access.
+
 2.4.4:
 	- Block log data are now split in pages and can be read from cache.
 	- /gm log <page> command added.

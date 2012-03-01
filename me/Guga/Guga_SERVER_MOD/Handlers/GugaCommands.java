@@ -34,16 +34,24 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
 public abstract class GugaCommands 
 {
 	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
+	}
+	public static void TestCommand(String[] args)
+	{
+		Player p = plugin.getServer().getPlayer(args[0]);
+		if (p == null)
+			return;
+		String str = "HELLO NIGGER";
+		p.sendPluginMessage(plugin, "Guga", str.getBytes());
+		
 	}
 	public static void CommandWho(Player sender)
 	{
@@ -875,6 +883,11 @@ public abstract class GugaCommands
 	}
 	public static void CommandRegister(Player sender, String args[])
 	{
+		if (!GugaMCClientHandler.HasClient(sender))
+		{
+			sender.sendMessage(ChatColor.DARK_BLUE + "Ke hrani na nasem serveru potrebujete naseho klienta!");
+			return;
+		}
 		if(plugin.acc.UserIsRegistered(sender))
 		{
 			sender.sendMessage("Tento ucet je jiz zaregistrovan!");
@@ -963,6 +976,11 @@ public abstract class GugaCommands
 	}
 	public static void CommandEvent(Player sender, String args[])
 	{
+		if (!plugin.acc.UserIsLogged(sender))
+		{
+			sender.sendMessage("Nejprve se musite prihlasit!");
+			return;
+		}
 		if (!GameMasterHandler.IsAtleastGM(sender.getName()))
 		{
 			if (args.length > 0)
@@ -1135,7 +1153,7 @@ public abstract class GugaCommands
 				else if (args[1].equalsIgnoreCase("ids"))
 				{
 					int i = 0;
-					for (CreatureType type : CreatureType.values())
+					for (EntityType type : EntityType.values())
 					{
 						sender.sendMessage(i + type.getName());
 						i++;
@@ -1288,6 +1306,8 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm log - Shows a log records for target block.");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
+			sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
+			sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
 		}
 		else if (args.length == 1)
 		{
@@ -1363,6 +1383,27 @@ public abstract class GugaCommands
 					sender.sendMessage("This player is not online!");
 				}
 			}
+			else if (subCommand.matches("fly"))
+			{
+				Player target = plugin.getServer().getPlayer(arg1);
+				if (target == null)
+				{
+					sender.sendMessage("Hrac neni online!");
+					return;
+				}
+				if (flyMode.contains(arg1))
+				{
+					flyMode.remove(arg1);
+					GugaMCClientHandler.SendMessage(target, "SET_FLY;false");
+					sender.sendMessage("Fly mode succesfuly turned off.");
+				}
+				else
+				{
+					flyMode.add(arg1);
+					GugaMCClientHandler.SendMessage(target, "SET_FLY;true");
+					sender.sendMessage("Fly mode succesfuly turned on.");
+				}
+			}
 			else if (subCommand.matches("log"))
 			{
 				ArrayList<String> data = plugin.logger.blockCache.get(sender);
@@ -1371,7 +1412,7 @@ public abstract class GugaCommands
 					sender.sendMessage("You have no data saved! Use /gm log first");
 					return;
 				}
-				GugaDataPager<String> pager = new GugaDataPager<String>(data, 15);
+				GugaDataPager<String> pager = new GugaDataPager<String>(data, 6);
 				Iterator<String> i = pager.GetPage(Integer.parseInt(arg1)).iterator();
 				sender.sendMessage("LIST OF BLOCK DATA:");
 				sender.sendMessage("PAGE " + Integer.parseInt(arg1) + "/" + pager.GetPagesCount());
@@ -1509,6 +1550,20 @@ public abstract class GugaCommands
 					}
 					GugaAnnouncement.AddAnnouncement(msg);
 					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
+				}
+			}
+			else if (subCommand.matches("speed"))
+			{
+				if (args.length == 3)
+				{
+					Player target = plugin.getServer().getPlayer(args[1]);
+					if (target == null)
+					{
+						sender.sendMessage("Player is not online");
+						return;
+					}
+					GugaMCClientHandler.SendMessage(target, "SET_SPEED;" + args[2]);
+					sender.sendMessage("Speed has been succesfuly set.");
 				}
 			}
 			else if (subCommand.matches("log") && GameMasterHandler.IsAdmin(sender.getName()))
@@ -1832,6 +1887,11 @@ public abstract class GugaCommands
 	}
 	public static void CommandLogin(Player sender, String args[])
 	{
+		if (!GugaMCClientHandler.HasClient(sender))
+		{
+			sender.sendMessage(ChatColor.DARK_BLUE + "Ke hrani na nasem serveru potrebujete naseho klienta!");
+			return;
+		}
 		 String pass = args[0];
 		 if (plugin.acc.UserIsRegistered(sender))
 		 {
@@ -1931,6 +1991,7 @@ public abstract class GugaCommands
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
+	public static ArrayList<String> flyMode = new ArrayList<String>();
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
 	private static Guga_SERVER_MOD plugin;

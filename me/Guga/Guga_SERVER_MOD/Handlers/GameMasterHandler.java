@@ -30,6 +30,18 @@ public abstract class GameMasterHandler
 		}
 		return null;
 	}
+	public static ArrayList<String> GetNamesByRank(Rank req)
+	{
+		ArrayList<String> names = new ArrayList<String>();
+		Iterator<GameMaster> i = gameMasters.iterator();
+		while (i.hasNext())
+		{
+			GameMaster gm = i.next();
+			if (gm.GetRank().IsRanked(req))
+				names.add(gm.GetName());
+		}
+		return names;
+	}
 	public static boolean IsAtleastRank(String name, Rank req)
 	{
 		GameMaster gm;
