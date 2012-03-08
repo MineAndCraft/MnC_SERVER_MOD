@@ -1308,6 +1308,8 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 			sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
 			sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
+			sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
+			sender.sendMessage("/gm reloadskins - Reloads a skins data.");
 		}
 		else if (args.length == 1)
 		{
@@ -1315,6 +1317,11 @@ public abstract class GugaCommands
 			if (subCommand.matches("log"))
 			{
 				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
+			}
+			else if (subCommand.matches("reloadskins"))
+			{
+				GugaMCClientHandler.ReloadSkins();
+				sender.sendMessage("Skins succesfuly reloaded");
 			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
@@ -1570,6 +1577,16 @@ public abstract class GugaCommands
 			{
 				if (args[1].equalsIgnoreCase("shop"))
 					plugin.logger.PrintShopData(sender, Integer.parseInt(args[2]));
+			}
+			else if (subCommand.matches("cmd"))
+			{
+				String cmd = args[1];
+				int i = 2;
+				while (i < args.length)
+				{
+					cmd += " " + args[i++];
+				}
+				BukkitCommandParser.ParseCommand(sender, cmd);
 			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
 			{

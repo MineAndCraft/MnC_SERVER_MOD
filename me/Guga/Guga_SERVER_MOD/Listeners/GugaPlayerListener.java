@@ -62,9 +62,11 @@ public class GugaPlayerListener implements Listener
 					return;
 				if (!GugaMCClientHandler.HasClient(p))
 				{
-					p.kickPlayer("Ke hrani na nasem serveru potrebujete naseho Klienta!\nKe hrani na nasem serveru potrebujete naseho Klienta!\nKe hrani na nasem serveru potrebujete naseho Klienta!\n");
+					p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz");
 					return;
 				}
+				if (GugaBanHandler.IsWhiteListed(p))
+					return;
 				if (GugaBanHandler.GetGugaBan(p.getName()) == null)
 					GugaBanHandler.AddBan(p.getName(), 0);
 				
@@ -75,7 +77,7 @@ public class GugaPlayerListener implements Listener
 					p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 					return;
 				}
-				GugaBanHandler.UpdateBanAddr(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p));
+				GugaBanHandler.UpdateBanAddr(p.getName());
 			}
 		});
 		t.start();
@@ -83,6 +85,14 @@ public class GugaPlayerListener implements Listener
 		{
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
 			return;
+		}
+		if (p.getName().startsWith("ADMIN'") || p.getName().startsWith("GM'"))
+		{
+			if (!GameMasterHandler.GetNamesByRank(Rank.GAMEMASTER).contains(p.getName()))
+			{
+				p.kickPlayer("Na serveru neni zadny GM/ADMIN s timto jmenem!");
+				return;
+			}
 		}
 		if (!CanUseName(p.getName()))
 		{

@@ -42,19 +42,38 @@ public abstract class GugaBanHandler
 		}
 		SaveBans();
 	}
-	public static void UpdateBanAddr(String playerName, String ip)
+	public static void UpdateBanAddr(String playerName)
 	{
+		Player p = plugin.getServer().getPlayer(playerName);
+		if (p == null)
+			return;
+		String addr = null;
+		if (mode == CheckMode.IP_ADDRESSES)
+			addr = p.getAddress().getAddress().toString();
+		else if (mode == CheckMode.MAC_ADDRESSES)
+			addr = GugaMCClientHandler.GetPlayerMacAddr(p);
+		if (addr.matches("WHITELISTED"))
+			return;
 		Iterator<GugaBan> i = bans.iterator();
 		while (i.hasNext())
 		{
 			GugaBan ban = i.next();
 			if (ban.GetPlayerName().equalsIgnoreCase(playerName))
 			{
-				ban.AddIpAddress(ip);
+				ban.AddIpAddress(addr);
 				SaveBans();
 				return;
 			}
 		}
+	}
+	public static boolean IsWhiteListed(Player p)
+	{
+		String status = GugaMCClientHandler.GetPlayerMacAddr(p);
+		if (status == null)
+			return false;
+		if (status.matches("WHITELISTED"))
+			return true;
+		return false;
 	}
 	public static void UpdateBanExpiration(String playerName, long expiration)
 	{
@@ -101,6 +120,10 @@ public abstract class GugaBanHandler
 	{
 		return bans;
 	}
+	public static CheckMode GetMode()
+	{
+		return mode;
+	}
 	public static ArrayList<GugaBan> GetBannedPlayers()
 	{
 		Iterator<GugaBan> i = bans.iterator();
@@ -126,11 +149,14 @@ public abstract class GugaBanHandler
 			}
 			int i2 = 0;
 			String[] addrs = ban.GetIpAddresses();
-			//String addr = plugin.getServer().getPlayer(playerName).getAddress().getAddress().toString();
 			Player p = plugin.getServer().getPlayer(playerName);
 			if (p == null)
 				return false;
-			String addr = GugaMCClientHandler.GetPlayerMacAddr(p);
+			String addr = null;
+			if (mode == CheckMode.MAC_ADDRESSES)
+				addr = GugaMCClientHandler.GetPlayerMacAddr(p);
+			else if (mode == CheckMode.IP_ADDRESSES)
+				addr = plugin.getServer().getPlayer(playerName).getAddress().getAddress().toString();
 			while (i2 < addrs.length)
 			{
 				if (ban.GetExpiration() > System.currentTimeMillis())
@@ -178,8 +204,11 @@ public abstract class GugaBanHandler
 		}
 		file.Close();
 	}
+	public enum CheckMode{MAC_ADDRESSES, IP_ADDRESSES};
 	
+	public static CheckMode mode = CheckMode.MAC_ADDRESSES;
 	private static Guga_SERVER_MOD plugin;
 	private static ArrayList<GugaBan> bans = new ArrayList<GugaBan>();
+	
 	private static String bansFile = "plugins/Bans.dat";
 }

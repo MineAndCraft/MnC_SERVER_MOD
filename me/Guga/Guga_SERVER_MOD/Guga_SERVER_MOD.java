@@ -47,9 +47,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.SaveBans();
 		arena.SavePvpStats();
 		arena.SaveArenas();
+		logger.SaveWrapperBreak();
+		logger.SaveWrapperPlace();
 	}
 	public void onEnable() 
-	{
+	{	
 		PluginManager pManager = this.getServer().getPluginManager();
 		pManager.registerEvents(pListener, this);
 		pManager.registerEvents(bListener, this);
@@ -91,10 +93,12 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
+		GugaMCClientHandler.LoadMACWhiteList();
+		GugaMCClientHandler.LoadMinecraftOwners();
 		
 		this.socketServer = new GugaSocketServer(12451, this);
 		this.socketServer.ListenStart();
-		GugaMCClientHandler.CopySkinsFromPool(GugaMCClientHandler.GetPlayersWithSkin());
+		GugaMCClientHandler.ReloadSkins();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by Guga 2011.");
 	}
@@ -473,7 +477,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
-	public static final String version = "3.0.0";
+	
+	public static final String version = "3.0.5";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

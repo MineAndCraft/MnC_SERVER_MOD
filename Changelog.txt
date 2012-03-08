@@ -1,15 +1,37 @@
+3.0.5:
+	- Whitelisted players now skip banning phase properly.
+	
+3.0.4:
+	- 2 wrapped methods for Saving BreakBlock/Place data added.
+	- Log data is now also being saved on server shutdown.
+
+3.0.3:
+	- /gm reloadskins command actually added this time.
+
+3.0.2:
+	- Added check for duplicate values in List of players with skin.
+	- Added new /gm reloadskins command for reloading skins data.
+	- Possible fix for ConcurrentModification error in arena.
+	- Plugin updated for Bukkit 1378 and CraftBukkit 2034.
+	- Server now requires client version 0.0.2.
+
+3.0.1:
+	- Players now dont need to send MAC if they are whitelisted.
+	- Players in mcOwners.dat are now also included in list of players with skin.
+	- Server now also requires certain client version.
+	
 3.0.0:
-	- Plugin updated for Minecraft 1.2.
-	- Plugin updated for Bukkit x and CraftBukkit y.
-	- BlockBreak/Place logs are now cached and are saved every 1000 records.
+	- Plugin updated for Minecraft 1.2.3.
+	- Plugin updated for Bukkit 1377 and CraftBukkit 2032.
+	- BlockBreak/Place logs are now cached and are saved only every 1000 entries.
 	- New GugaMCClientHandler class added.
-	- Banning system is now based on players MAC address instead of IP.
+	- Banning system can now log MAC addresses instead of IPs.
 	- GMs now can set players speed using /gm speed command.
 	- GMs now can set players flying mode using /gm fly command.
 	- Password now has to be atleast 2 chars long and cannot contain space.
 	- New PluginMessageListener added.
 	- Server is now using Plugin messages for communication wiht client.
-	- Server now requires players to have specific MineAndCraft client.
+	- Server now can require players to have specific MineAndCraft client.
 	- VIP players now can have their own skins.
 	- Legendary players and GM team now have cape.
 	- Player now has to be logged on in order to use /event command.
@@ -23,6 +45,8 @@
 	- MapXPBar method removed from GugaProfessions class.
 	- All methods accessing CreatureType now access EntityType instead because of deprecation.
 	- Plugin now copies active skins from SkinPool folder to actual folder where clients have access.
+	- Added new /gm cmd command to make GMs able to use some Bukkit commands.
+	- Alot of old and unused code removed.
 
 2.4.4:
 	- Block log data are now split in pages and can be read from cache.

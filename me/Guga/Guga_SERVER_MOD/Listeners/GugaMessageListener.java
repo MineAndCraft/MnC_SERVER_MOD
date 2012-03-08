@@ -1,4 +1,5 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 
@@ -16,15 +17,36 @@ public class GugaMessageListener implements PluginMessageListener
 	{
 		String msg = new String(message);
 		String[] split = null;
-		//plugin.log.info("MSG RECEIVED, DATA:" + msg);
 		if (msg != null)
 			split = msg.split(";");
 		if (split[0].matches("GUGA_REGISTER"))
 		{
+			if (split.length != 3)
+			{
+				player.kickPlayer("Prosim stahnete si nejnovejsi verzi Klienta.");
+				return;
+			}
+			if (!split[2].matches(GugaMCClientHandler.requiredClientVersion))
+			{
+				player.kickPlayer("Prosim aktualizujte si naseho Klienta.");
+				return;
+			}
 			if (player != null)
 			{
+				String mac = split[1];
+				if (mac.matches("WHITELIST_REQUEST"))
+				{
+					if (GugaMCClientHandler.IsWhiteListed(player))
+						mac = "WHITELISTED";
+					else
+					{
+						player.kickPlayer("Nepodarilo se pripojit - Chyba 001");
+						return;
+					}
+				}
 				GugaMCClientHandler.RegisterUser(player, split[1]);
-				//SendSkinsToClient(player);
+				if (GugaCommands.flyMode.contains(player.getName().toLowerCase()) || GugaCommands.flyMode.contains(player.getName()))
+					GugaMCClientHandler.SendMessage(player, "SET_FLY;true");
 			}
 		}
 	}

@@ -61,7 +61,6 @@ public class GugaChests
 			i++;
 		}
 		return "notFound";
-		
 	}
 	public void LoadChests()
 	{
@@ -83,48 +82,6 @@ public class GugaChests
 			i++;
 		}
 		file.Close();
-		/*File chests = new File(chestsFile);
-		if (!chests.exists())
-		{
-			try 
-			{
-				chests.createNewFile();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-    	else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(chests);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				int i = 0;
-				double locX;
-				double locY;
-				double locZ;
-				while ((line = bReader.readLine()) != null)
-				{
-					locX = Double.parseDouble(line.split(";")[0]);
-					locY = Double.parseDouble(line.split(";")[1]);
-					locZ = Double.parseDouble(line.split(";")[2]);
-					location[i] = new Location(plugin.getServer().getWorld("world"),locX, locY, locZ);
-					owner[i] = line.split(";")[3];
-					i++;
-				}
-				bReader.close();
-				inStream.close();
-				fRead.close();
-			}
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}*/
 	}
 	public boolean LocationEquals(Location loc1, Location loc2)
 	{
@@ -158,42 +115,6 @@ public class GugaChests
 			i++;
 		}
 		file.Close();
-		/*File chests = new File(chestsFile);
-		if (!chests.exists())
-		{
-			try 
-			{
-				chests.createNewFile();
-				
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-			try {
-				int i = 0;
-				FileWriter fStream = new FileWriter(chests, false);
-				BufferedWriter bWriter;
-				bWriter = new BufferedWriter(fStream);
-				while (location[i] != null)
-				{
-					String x = Integer.toString(location[i].getBlockX());
-					String y = Integer.toString(location[i].getBlockY());
-					String z = Integer.toString(location[i].getBlockZ());
-					
-					String line;
-					line = x+";"+y+";"+z+";"+owner[i];
-					bWriter.write(line);
-					bWriter.newLine();
-					i++;
-				}
-					bWriter.close();
-					fStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
 	}
 	
 	private String owner[] = new String[10000];

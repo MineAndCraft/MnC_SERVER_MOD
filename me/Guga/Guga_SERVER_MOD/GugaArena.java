@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
@@ -98,14 +100,15 @@ public class GugaArena
 			return true;
 		return false;
 	}
-	private void DisableLeave(final Player p, int seconds)
+	private void DisableLeave(Player p, int seconds)
 	{
+		final String pName = p.getName();
 		int serverTicks = seconds*20;
-		cannotLeave.add(p.getName());
+		cannotLeave.add(pName);
 		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
-				cannotLeave.remove(p.getName());
+				cannotLeave.remove(pName);
 			}
 		}, serverTicks);
 	}
@@ -572,7 +575,7 @@ public class GugaArena
 	private HashMap<String,Integer> pvpStats = new HashMap<String,Integer>();
 	private HashMap<String, Integer> multiKillCounter = new HashMap<String, Integer>();
 	private HashMap<String,Location> baseLocation = new HashMap<String,Location>();
-	private ArrayList<String> cannotLeave = new ArrayList<String>();
+	private List<String> cannotLeave = Collections.synchronizedList(new ArrayList<String>());
 	private int spawnIndex;
 	private ArenaSpawn actualSpawn;
 	private ArrayList<ArenaSpawn> spawnList = new ArrayList<ArenaSpawn>();

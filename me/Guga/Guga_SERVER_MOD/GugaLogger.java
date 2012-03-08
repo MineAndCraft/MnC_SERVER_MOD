@@ -216,18 +216,7 @@ public class GugaLogger
 				blockBreakArray1.add(line);
 				if (blockBreakArray1.size() >= ARRAY_MAX_SIZE)
 				{
-					blockBreakSwitch = !blockBreakSwitch;
-					Thread t = new Thread(new Runnable() {
-						
-						@Override
-						public void run() 
-						{
-							plugin.log.info("ARRAY BREAK 1 FULL, SAVING!");
-							SaveDataFromCache(blockBreakArray1, blockBreakFile);
-							blockBreakArray1.clear();
-						}
-					});
-					t.start();
+					SaveWrapperBreak();
 				}
 			}
 			else
@@ -235,21 +224,58 @@ public class GugaLogger
 				blockBreakArray2.add(line);
 				if (blockBreakArray2.size() >= ARRAY_MAX_SIZE)
 				{
-					blockBreakSwitch = !blockBreakSwitch;
-					Thread t = new Thread(new Runnable() {
-						
-						@Override
-						public void run() 
-						{
-							plugin.log.info("ARRAY BREAK 2 FULL, SAVING!");
-							SaveDataFromCache(blockBreakArray2, blockBreakFile);
-							blockBreakArray2.clear();
-						}
-					});
-					t.start();
+					SaveWrapperBreak();
 				}
 			}
 		}
+	}
+	public void SaveWrapperBreak()
+	{
+		final boolean oldState = blockBreakSwitch;
+		blockBreakSwitch = !blockBreakSwitch;
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() 
+			{
+				plugin.log.info("Saving BlockBreak Log Data...");
+				if (oldState)
+				{
+					SaveDataFromCache(blockBreakArray1, blockBreakFile);
+					blockBreakArray1.clear();
+				}
+				else
+				{
+					SaveDataFromCache(blockBreakArray2, blockBreakFile);
+					blockBreakArray2.clear();
+				}
+			}
+		});
+		t.start();
+	}
+	public void SaveWrapperPlace()
+	{
+		final boolean oldState = blockPlaceSwitch;
+		blockPlaceSwitch = !blockPlaceSwitch;
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() 
+			{
+				plugin.log.info("Saving BlockPlace Log Data...");
+				if (oldState)
+				{
+					SaveDataFromCache(blockPlaceArray1, blockPlaceFile);
+					blockPlaceArray1.clear();
+				}
+				else
+				{
+					SaveDataFromCache(blockPlaceArray2, blockPlaceFile);
+					blockPlaceArray2.clear();
+				}
+			}
+		});
+		t.start();
 	}
 	private void SaveDataFromCache(ArrayList<String> array, String filePath)
 	{
@@ -280,18 +306,7 @@ public class GugaLogger
 						blockPlaceArray1.add(line);
 						if (blockPlaceArray1.size() >= ARRAY_MAX_SIZE)
 						{
-							blockPlaceSwitch = !blockPlaceSwitch;
-							Thread t = new Thread(new Runnable() {
-								
-								@Override
-								public void run() 
-								{
-									plugin.log.info("ARRAY PLACE 1 FULL, SAVING!");
-									SaveDataFromCache(blockPlaceArray1, blockPlaceFile);
-									blockPlaceArray1.clear();
-								}
-							});
-							t.start();
+							SaveWrapperPlace();
 						}
 					}
 					else
@@ -299,18 +314,7 @@ public class GugaLogger
 						blockPlaceArray2.add(line);
 						if (blockPlaceArray2.size() >= ARRAY_MAX_SIZE)
 						{
-							blockPlaceSwitch = !blockPlaceSwitch;
-							Thread t = new Thread(new Runnable() {
-								
-								@Override
-								public void run() 
-								{
-									plugin.log.info("ARRAY PLACE 2 FULL, SAVING!");
-									SaveDataFromCache(blockPlaceArray2, blockPlaceFile);
-									blockPlaceArray2.clear();
-								}
-							});
-							t.start();
+							SaveWrapperPlace();
 						}
 					}
 				}
