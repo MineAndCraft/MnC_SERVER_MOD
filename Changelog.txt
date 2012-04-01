@@ -1,6 +1,5 @@
 3.0.5:
 	- Whitelisted players now skip banning phase properly.
-TEST
 	
 3.0.4:
 	- 2 wrapped methods for Saving BreakBlock/Place data added.
