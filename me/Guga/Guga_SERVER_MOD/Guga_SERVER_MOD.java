@@ -10,6 +10,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaIPHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
@@ -45,11 +46,13 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
+		GugaIPHandler.SaveBans();
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		logger.SaveWrapperBreak();
 		logger.SaveWrapperPlace();
 	}
+
 	public void onEnable() 
 	{	
 		PluginManager pManager = this.getServer().getPluginManager();
@@ -68,6 +71,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
 		GugaBanHandler.SetPlugin(this);
+		GugaIPHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
@@ -89,12 +93,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
 		GugaBanHandler.LoadBans();
+		GugaIPHandler.LoadBans();
 		chests = new GugaChests(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
 		GugaMCClientHandler.LoadMACWhiteList();
 		GugaMCClientHandler.LoadMinecraftOwners();
+		GugaPlayerListener.LoadCreativePlayers();
 		
 		this.socketServer = new GugaSocketServer(12451, this);
 		this.socketServer.ListenStart();
@@ -442,6 +448,65 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			i++;
 		}
 	}
+	
+	public void GenerateBlockType2(Player p, int typeID1, int typeID2, int x, int y, int z)
+	{
+		Location baseLoc = p.getTargetBlock(null, 50).getLocation();
+		int xBase = baseLoc.getBlockX();
+		int yBase = baseLoc.getBlockY();
+		int zBase = baseLoc.getBlockZ();
+		int x2 = x;
+		int y2 = y;
+		int z2 = z;
+		Block block;
+		int i = 0;
+		if ( y < 0)
+		{
+			y2 = 0;
+			i += y + 1;
+		}
+		else
+		{
+			y2 = y-1;
+		}
+		while (i <= y2)
+		{
+			int i2 = 0;
+			if (z <0 )
+			{
+				z2 = 0;
+				i2 += z + 1;
+			}
+			else
+			{
+				z2 = z-1;
+			}
+			while (i2<=z2)
+			{
+				int i3 = 0;
+				if (x<0)
+				{
+					x2 = 0;
+					i3 += x + 1;
+				}
+				else
+				{
+					x2 = x-1;
+				}
+				while (i3<=x2)
+				{
+					if (p.getWorld().getBlockTypeIdAt(xBase+i3, yBase+i, zBase+i2)==typeID1)
+					{
+						block = p.getWorld().getBlockAt(xBase+i3, yBase+i, zBase+i2);
+						block.setTypeId(typeID2);
+					}
+					i3++;
+				}
+				i2++;
+			}
+			i++;
+		}
+	}
 	public Location GetAvailablePortLocation(Location loc)
 	{
 		Location tpLoc = loc.getWorld().getHighestBlockAt(loc).getLocation();
@@ -478,7 +543,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.0.5";
+	public static final String version = "3.0.8";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

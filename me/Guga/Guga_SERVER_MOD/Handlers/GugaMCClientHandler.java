@@ -142,7 +142,7 @@ public abstract class GugaMCClientHandler
 	private static HashMap<Player, String> connectedClients = new HashMap<Player, String>();
 	public static boolean needClient = true;
 	
-	public static String requiredClientVersion = "0.0.2";
+	public static String requiredClientVersion = "0.0.3";
 	private static String messageChannel = "Guga";
 	
 	private static String skinPoolPath = "/usr/SkinPool/";

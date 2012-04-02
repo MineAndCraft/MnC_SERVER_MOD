@@ -427,10 +427,10 @@ public class GugaArena
 	}
 	public void WinRound(Player winner)
 	{
-		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + ChatColor.GOLD + winner.getName() + ChatColor.DARK_GREEN + " VYHRAVA TOTO KOLO A ZISKAVA 50 KREDITU!");
+		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + ChatColor.GOLD + winner.getName() + ChatColor.DARK_GREEN + " VYHRAVA TOTO KOLO A ZISKAVA 10 KREDITU!");
 		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: ZACINA NOVE KOLO V ARENE!");
-		plugin.FindPlayerCurrency(winner.getName()).AddCurrency(50);
-		winner.sendMessage("Ziskal jste +50 kreditu!");
+		plugin.FindPlayerCurrency(winner.getName()).AddCurrency(10);
+		winner.sendMessage("Ziskal jste +10 kreditu!");
 		ClearStats();
 		this.RotateArena();
 		

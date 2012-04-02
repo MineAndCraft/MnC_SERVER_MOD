@@ -1,9 +1,12 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
+import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaSpectator;
@@ -14,11 +17,13 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaIPHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -77,7 +82,13 @@ public class GugaPlayerListener implements Listener
 					p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 					return;
 				}
-				GugaBanHandler.UpdateBanAddr(p.getName());
+				GugaIPHandler.UpdateBanAddr(p.getName());
+				
+				if (GugaIPHandler.IsWhiteListed(p))
+					return;
+				if (GugaIPHandler.GetGugaBan(p.getName()) == null)
+					GugaIPHandler.AddBan(p.getName(), 0);
+				GugaIPHandler.UpdateBanAddr(p.getName());
 			}
 		});
 		t.start();
@@ -127,6 +138,20 @@ public class GugaPlayerListener implements Listener
 		p.sendMessage("Vitejte na serveru MineAndCraft!.");
 		p.sendMessage("Pro zobrazeni prikazu napiste /help.");
 		p.sendMessage("******************************");
+		if(!(GameMasterHandler.IsAtleastGM(p.getName())))
+		{
+			if(GugaPlayerListener.IsCreativePlayer(p))
+			{
+				p.sendMessage("******************************");
+				p.sendMessage("Jste creative user");
+				p.sendMessage("******************************");
+			}
+			else
+			{
+				if (p.getGameMode().equals(GameMode.CREATIVE))
+					p.setGameMode(GameMode.SURVIVAL);
+			}
+		}
 		if (plugin.config.accountsModule)
 		{
 			if (plugin.acc.UserIsRegistered(p))
@@ -201,15 +226,20 @@ public class GugaPlayerListener implements Listener
 		GameMaster gm;
 		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
 		{
+			String []name=p.getName().split("'");
 			if (plugin.acc.UserIsLogged(p))
 			{
 				if (gm.GetRank() == Rank.ADMIN)
 				{
-					e.setMessage(ChatColor.BLUE + e.getMessage());
+					{
+						p.setDisplayName(ChatColor.RED + "ADMIN'" + ChatColor.WHITE + name[1]);
+						e.setMessage(ChatColor.AQUA + e.getMessage());
+					}
 				}
 				else if (gm.GetRank() == Rank.GAMEMASTER)
 				{
-					e.setMessage(ChatColor.BLUE + e.getMessage());
+					p.setDisplayName(ChatColor.RED + "GM'" + ChatColor.WHITE + name[1]);
+					e.setMessage(ChatColor.GREEN + e.getMessage());
 				}
 			}
 			else
@@ -513,9 +543,35 @@ public class GugaPlayerListener implements Listener
 		}
 		return true;
 	}
+	public static void LoadCreativePlayers()
+	{
+		GugaFile file = new GugaFile(creativePlayersPath, GugaFile.READ_MODE);
+		if (creativePlayers.size() > 0)
+			creativePlayers.clear();
+		file.Open();
+		String line = null;
+		while ((line = file.ReadLine()) != null)
+		{
+			creativePlayers.add(line);
+		}
+		file.Close();
+	}
+	public static boolean IsCreativePlayer(Player p)
+	{
+		String pName = p.getName();
+		Iterator<String> i = creativePlayers.iterator();
+		
+		while (i.hasNext())
+		{
+			if (pName.equalsIgnoreCase(i.next()))				
+				return true;
+		}
+		return false;
+	}
+	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
-	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time"};
+	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop","/gamemode", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time","/a","/toggledownfall","/xp","/mcc","/dmap"};
 	public boolean canSpeedUp = true;
-	
+	private static String creativePlayersPath = "plugins/creativePlayers.dat";
 	public static Guga_SERVER_MOD plugin;
 	}
