@@ -21,7 +21,8 @@ public enum Prices
 	EGG_SPIDER(383, 25),
 	EGG_CAVE_SPIDER(383, 25),
 	EGG_MAGMA_SLIME(383, 10),
-	EGG_MOOSHROOM(383, 10);
+	EGG_MOOSHROOM(383, 10),
+	EGG_OCELOT(383,40);
 	
 	private Prices(int id, int price)
 	{

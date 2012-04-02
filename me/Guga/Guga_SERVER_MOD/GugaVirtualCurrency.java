@@ -95,7 +95,7 @@ public class GugaVirtualCurrency
 		
 		if (IsVip())
 		{
-			p.setDisplayName(ChatColor.AQUA + "VIP'" + ChatColor.WHITE + p.getName());
+			p.setDisplayName(ChatColor.RED + "VIP'" + ChatColor.WHITE + p.getName());
 		}
 		else
 		{
@@ -198,6 +198,8 @@ public class GugaVirtualCurrency
 				order = new ItemStack(item.GetItemID(), amount, (short) 95);
 			else if (item == Prices.EGG_ZOMBIE)
 				order = new ItemStack(item.GetItemID(), amount, (short) 54);
+			else if (item==Prices.EGG_OCELOT)
+				order = new ItemStack(item.GetItemID(), amount, (short) 98);		
 		}
 		else if (item == Prices.KRUMPAC_EFFICIENCY_V)
 		{

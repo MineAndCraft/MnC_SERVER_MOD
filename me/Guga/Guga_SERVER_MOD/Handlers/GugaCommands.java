@@ -1390,6 +1390,7 @@ public abstract class GugaCommands
 					sender.sendMessage("This player is not online!");
 				}
 			}
+			
 			else if (subCommand.matches("fly"))
 			{
 				Player target = plugin.getServer().getPlayer(arg1);
@@ -1657,6 +1658,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
+			
 			else if (subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
@@ -1853,6 +1855,18 @@ public abstract class GugaCommands
 					int y = Integer.parseInt(args[3]);
 					int z = Integer.parseInt(args[4]);
 					plugin.GenerateBlockType(sender, typeID, x, y, z);
+				}
+			}
+			else if (subCommand.matches("genblock2")&& GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if (args.length == 6)
+				{
+					int typeID1 = Integer.parseInt(args[1]);
+					int typeID2 = Integer.parseInt(args[2]);
+					int x = Integer.parseInt(args[3]);
+					int y = Integer.parseInt(args[4]);
+					int z = Integer.parseInt(args[5]);
+					plugin.GenerateBlockType2(sender, typeID1, typeID2, x, y, z);
 				}
 			}
 			else if (subCommand.matches("setvip") && GameMasterHandler.IsAdmin(sender.getName()))
