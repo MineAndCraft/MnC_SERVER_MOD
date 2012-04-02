@@ -1,6 +1,15 @@
+3.0.8
+	- new chat colors for ADMINs/GMs/VIPs
+	- IP logger added
+3.0.7
+	- non-ADMIN users with creative must be whitelisted - check before login added (if player is not whitelisted plugin set his gamemode to survival)
+	- OPs can't use some bukkit, MCMMO and dynmap commands before login.
+3.0.6
+	- Ocelot egg added to shop.
+	- Arena bonus was reduced from 50 credits to 10.
+	- Compatibility with new Client (v.0.0.3).
 3.0.5:
 	- Whitelisted players now skip banning phase properly.
-TEST2
 	
 3.0.4:
 	- 2 wrapped methods for Saving BreakBlock/Place data added.
