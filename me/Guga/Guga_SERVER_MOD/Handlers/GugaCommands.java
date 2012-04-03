@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaAuction;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
@@ -27,6 +28,7 @@ import me.Guga.Guga_SERVER_MOD.Prices;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency.VipItems;
+import me.Guga.Guga_SERVER_MOD.GugaMute;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -1275,7 +1277,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandGM(Player sender, String args[])
 	{
-		if (!GameMasterHandler.IsAtleastGM(sender.getName()))
+		if (!(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.WEBMASTER)))
 			return;
 		if (!plugin.acc.UserIsLogged(sender))
 		{
@@ -1296,20 +1298,23 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm announce  - Announcements sub-menu.");
 				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
 				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
-				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 				sender.sendMessage("/gm places - Places sub-menu.");
 				sender.sendMessage("/gm regions - Regions sub-menu.");
 				sender.sendMessage("/gm arena - Arenas sub-menu.");
 			}
-			sender.sendMessage("/gm ban - Bans sub-menu.");
+			else if(GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm ban - Bans sub-menu.");
+				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
+				sender.sendMessage("/gm reloadskins - Reloads a skins data.");
+				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
+			}
 			sender.sendMessage("/gm log - Shows a log records for target block.");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
-			sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
 			sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
 			sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
-			sender.sendMessage("/gm reloadskins - Reloads a skins data.");
 		}
 		else if (args.length == 1)
 		{
@@ -1318,7 +1323,7 @@ public abstract class GugaCommands
 			{
 				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
 			}
-			else if (subCommand.matches("reloadskins"))
+			else if (subCommand.matches("reloadskins")&&GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				GugaMCClientHandler.ReloadSkins();
 				sender.sendMessage("Skins succesfuly reloaded");
@@ -1342,7 +1347,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
 				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
 			}
-			else if (subCommand.matches("ban"))
+			else if (subCommand.matches("ban")&&GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
 				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
@@ -1390,8 +1395,20 @@ public abstract class GugaCommands
 					sender.sendMessage("This player is not online!");
 				}
 			}
-			
-			else if (subCommand.matches("fly"))
+			else if(subCommand.matches("mute"))
+			{
+				if(arg1.matches("all"))
+				{
+					boolean status = GugaMute.toggleChatMute();
+					if(status==true)
+						sender.sendMessage("Mute for all players is on.");
+					else
+						sender.sendMessage("Mute for all players is off.");
+				}
+				else if(arg1.matches("player"))
+					sender.sendMessage("For ceratain player");
+			}
+			else if (subCommand.matches("fly")&&GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				Player target = plugin.getServer().getPlayer(arg1);
 				if (target == null)
@@ -1492,7 +1509,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("godmode"))
+			else if (subCommand.matches("godmode")&&GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				if (godMode.contains(arg1.toLowerCase()))
 				{
@@ -1615,7 +1632,7 @@ public abstract class GugaCommands
 					}
 				}
 			}	
-			else if (subCommand.matches("ban"))
+			else if (subCommand.matches("ban")&&GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				if (args.length == 3)
 				{

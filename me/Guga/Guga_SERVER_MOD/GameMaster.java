@@ -35,7 +35,7 @@ public class GameMaster
 	}
 	public static enum Rank
 	{
-		ADMIN(0, "ADMIN"), GAMEMASTER(1, "GAMEMASTER"), BUILDER(2, "BUILDER"), EVENTER(3, "EVENTER");
+		ADMIN(0, "ADMIN"), GAMEMASTER(1, "GAMEMASTER"), WEBMASTER(2, "WEBMASTER"),BUILDER(3, "BUILDER"), EVENTER(4, "EVENTER");
 		private Rank(int val, String rankName)
 		{
 			this.val = val;
