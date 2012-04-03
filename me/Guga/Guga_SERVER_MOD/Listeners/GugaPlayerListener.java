@@ -241,6 +241,11 @@ public class GugaPlayerListener implements Listener
 					p.setDisplayName(ChatColor.RED + "GM'" + ChatColor.WHITE + name[1]);
 					e.setMessage(ChatColor.GREEN + e.getMessage());
 				}
+				else if(gm.GetRank()==Rank.WEBMASTER)
+				{
+					p.setDisplayName(ChatColor.RED + "WEB'" + ChatColor.WHITE + p.getName());
+					e.setMessage(ChatColor.GOLD + e.getMessage());
+				}
 			}
 			else
 			{
