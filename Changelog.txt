@@ -1,3 +1,6 @@
+3.0.9
+	- WEBMASTER rank ADDED
+	- GugaMute class with skeleton for future Mute commands/mute command is already in GugaCommands but it doesn't run (test only)
 3.0.8
 	- new chat colors for ADMINs/GMs/VIPs
 	- IP logger added
