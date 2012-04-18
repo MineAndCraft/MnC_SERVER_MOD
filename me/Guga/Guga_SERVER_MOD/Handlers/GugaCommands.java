@@ -16,6 +16,7 @@ import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
 import me.Guga.Guga_SERVER_MOD.GugaInvisibility;
 import me.Guga.Guga_SERVER_MOD.GugaMiner;
+import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.GugaPlace;
 import me.Guga.Guga_SERVER_MOD.GugaPort;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
@@ -165,6 +166,7 @@ public abstract class GugaCommands
 		sender.sendMessage(" /shop  -  Menu Obchodu.");
 		sender.sendMessage(" /vip  -  VIP menu.");
 		sender.sendMessage(" /places - Menu mist, kam se da teleportovat.");
+		sender.sendMessage(" /party - Prikazy pro party");
 		sender.sendMessage(" /ah - Menu Aukce.");
 		sender.sendMessage(" /r <message>  -  Odpoved na whisper.");
 		if (GameMasterHandler.IsAdmin(sender.getName()))
@@ -745,27 +747,15 @@ public abstract class GugaCommands
 			String name = args[1];
 			if (subCommand.matches("port"))
 			{
-				if (plugin.arena.IsArena(sender.getLocation()))
-				{
-					sender.sendMessage("V arene nemuzete pouzit prikaz /places!");
-					return;
-				}
-				if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
-				{
-					sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /places!");
-					return;
-				}
-				GugaPlace place;
-				if ( (place = GugaPort.GetPlaceByName(name)) != null)
-				{
-					if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place) || GameMasterHandler.IsAtleastGM(sender.getName()))
-					{
-						place.Teleport(sender);
-						return;
-					}
-				}
-				sender.sendMessage("Toto misto neexistuje!");
+				Teleport(sender,name);
 			}
+		}
+	}
+	public static void CommandPP(Player sender, String args[])
+	{
+		if(args.length==1)
+		{
+			Teleport(sender,args[0]);
 		}
 	}
 	public static void CommandAH(Player sender, String args[])
@@ -1046,6 +1036,54 @@ public abstract class GugaCommands
 				Integer kills = plugin.arena.GetPlayerStats(sender);
 				sender.sendMessage("Vas rank: " +ArenaTier.GetTier(kills).toString());
 				sender.sendMessage("Pocet killu: " +kills);
+			}
+		}
+	}
+	public static void CommandParty(Player sender, String args[])
+	{
+		if(args.length==0)
+		{
+			sender.sendMessage(" /party <jmeno> - vytvori a prihlasi Vas do party");
+			sender.sendMessage(" /party q - opustite party");
+			sender.sendMessage(" /invite <jmeno hrace> - pozve hrace do Vasi party");
+			sender.sendMessage(" /invite - prijme pozvani do party");
+			sender.sendMessage(" /p - posle zpravu do party chatu");
+		}
+		else if(args.length==1)
+		{	
+			if(args[0].matches("q"))
+			{
+				GugaParty.removePlayer(sender);
+			}
+			else
+			{
+				GugaParty.addParty(sender, args[0]);
+			}
+		}
+	}
+	public static void CommandInvite(Player sender, String args[])
+	{
+		if(args.length==0)
+		{
+			GugaParty.inviteAccepted(sender);
+		}
+		else if(args.length==1)
+		{
+			GugaParty.invitePlayer(sender, args[0]);
+		}
+	}
+	public static void CommandSendPartyMsg(Player sender, String args[])
+	{
+		if(args.length!=0)
+		{
+			if(args.length!=0)
+			{
+				String text="";
+				for(int i=0;i<args.length;i++)
+				{
+					text=text+args[i];
+				}
+				GugaParty.sendMessage(sender, text);
 			}
 		}
 	}
@@ -1527,16 +1565,22 @@ public abstract class GugaCommands
 					sender.sendMessage("Hrac neni online!");
 					return;
 				}
-				if (flyMode.contains(arg1))
+				if (target.getAllowFlight())
 				{
-					flyMode.remove(arg1);
-					GugaMCClientHandler.SendMessage(target, "SET_FLY;false");
+					/*flyMode.remove(arg1);
+					GugaMCClientHandler.SendMessage(target, "SET_FLY;false");*/
+					target.setAllowFlight(true);
+					target.setFlying(true);
+					target.sendMessage("Fly mode byl vypnut!");
 					sender.sendMessage("Fly mode succesfuly turned off.");
 				}
 				else
 				{
-					flyMode.add(arg1);
-					GugaMCClientHandler.SendMessage(target, "SET_FLY;true");
+					/*flyMode.add(arg1);
+					GugaMCClientHandler.SendMessage(target, "SET_FLY;true");*/
+					target.setAllowFlight(true);
+					target.setFlying(true);
+					target.sendMessage("Fly mode byl zapnut!");
 					sender.sendMessage("Fly mode succesfuly turned on.");
 				}
 			}
@@ -2167,6 +2211,29 @@ public abstract class GugaCommands
 			invis.put(p, inv);
 			sender.sendMessage("Invisibility for " + pName + " has been turned on");
 		}
+	}
+	private static void Teleport(Player sender,String name)
+	{
+		if (plugin.arena.IsArena(sender.getLocation()))
+		{
+			sender.sendMessage("V arene nemuzete pouzit prikaz /places!");
+			return;
+		}
+		if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
+		{
+			sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /places!");
+			return;
+		}
+		GugaPlace place;
+		if ( (place = GugaPort.GetPlaceByName(name)) != null)
+		{
+			if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place) || GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				place.Teleport(sender);
+				return;
+			}
+		}
+		sender.sendMessage("Toto misto neexistuje!");
 	}
 	private static boolean RemoveSpectation(Player spectator)
 	{

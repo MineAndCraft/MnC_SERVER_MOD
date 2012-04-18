@@ -73,6 +73,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.SetPlugin(this);
 		GugaIPHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
+		GugaParty.SetPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
 		{
@@ -265,6 +266,22 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandVIP((Player)sender, args);
 			 return true;
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("pp")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandPP((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("invite")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandInvite((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("p")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandSendPartyMsg((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("party")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandParty((Player)sender, args);
 		 }
 		//*****************************************module*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
@@ -554,7 +571,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.1.1";
+	public static final String version = "3.2.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

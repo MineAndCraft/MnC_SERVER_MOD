@@ -83,7 +83,7 @@ public class GugaPlayerListener implements Listener
 					p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 					return;
 				}
-				GugaIPHandler.UpdateBanAddr(p.getName());
+				GugaBanHandler.UpdateBanAddr(p.getName());
 				
 				if (GugaIPHandler.IsWhiteListed(p))
 					return;
