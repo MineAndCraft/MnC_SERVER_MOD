@@ -8,13 +8,14 @@ import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
+import me.Guga.Guga_SERVER_MOD.GugaMute;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
-import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
+import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaIPHandler;
@@ -82,7 +83,7 @@ public class GugaPlayerListener implements Listener
 					p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
 					return;
 				}
-				GugaIPHandler.UpdateBanAddr(p.getName());
+				GugaBanHandler.UpdateBanAddr(p.getName());
 				
 				if (GugaIPHandler.IsWhiteListed(p))
 					return;
@@ -129,6 +130,10 @@ public class GugaPlayerListener implements Listener
 		{
 			curr.UpdateDisplayName();
 		}
+		if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.WEBMASTER))
+		{
+			GameMaster.setOpName(p);
+		}
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
@@ -136,7 +141,7 @@ public class GugaPlayerListener implements Listener
 		long timeStart = System.nanoTime();
 		p.sendMessage("******************************");
 		p.sendMessage("Vitejte na serveru MineAndCraft!.");
-		p.sendMessage("Pro zobrazeni prikazu napiste /help.");
+		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.GOLD +"/help.");
 		p.sendMessage("******************************");
 		if(!(GameMasterHandler.IsAtleastGM(p.getName())))
 		{
@@ -156,13 +161,13 @@ public class GugaPlayerListener implements Listener
 		{
 			if (plugin.acc.UserIsRegistered(p))
 			{
-				p.sendMessage("NEJSTE PRIHLASENY! Prosim prihlaste se pomoci /login heslo.");
+				p.sendMessage("NEJSTE PRIHLASENY! Prosim prihlaste se pomoci " + ChatColor.GOLD + "/login" + " heslo.");
 				p.sendMessage("");
 				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
 			}
 			else
 			{
-				p.sendMessage("NEJSTE ZAREGISTROVANY! Prosim zaregistrujte se pomoci /register heslo.");
+				p.sendMessage("NEJSTE ZAREGISTROVANY! Prosim zaregistrujte se pomoci " +ChatColor.GOLD +"/register" + " heslo.");
 				p.sendMessage("");
 				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
 			}
@@ -226,31 +231,41 @@ public class GugaPlayerListener implements Listener
 		GameMaster gm;
 		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
 		{
-			String []name=p.getName().split("'");
 			if (plugin.acc.UserIsLogged(p))
 			{
 				if (gm.GetRank() == Rank.ADMIN)
 				{
-					{
-						p.setDisplayName(ChatColor.RED + "ADMIN'" + ChatColor.WHITE + name[1]);
-						e.setMessage(ChatColor.AQUA + e.getMessage());
-					}
+					e.setMessage(ChatColor.AQUA + e.getMessage());
+					return;
 				}
 				else if (gm.GetRank() == Rank.GAMEMASTER)
 				{
-					p.setDisplayName(ChatColor.RED + "GM'" + ChatColor.WHITE + name[1]);
 					e.setMessage(ChatColor.GREEN + e.getMessage());
+					return;
 				}
 				else if(gm.GetRank()==Rank.WEBMASTER)
 				{
-					p.setDisplayName(ChatColor.RED + "WEB'" + ChatColor.WHITE + p.getName());
 					e.setMessage(ChatColor.GOLD + e.getMessage());
+					return;
 				}
 			}
 			else
 			{
 				e.setCancelled(true);
+				return;
 			}
+		}
+		if(GugaMute.statusChatMute())
+		{
+			p.sendMessage(ChatColor.RED+"Chat je nyni dostupny pouze pro ADMINy/GM");
+			e.setCancelled(true);
+			return;
+		}
+		else if(GugaMute.getPlayerStatus(p.getName()))
+		{
+			p.sendMessage(ChatColor.RED+"Jste ztlumen! Nemuzete psat.");
+			e.setCancelled(true);
+			return;
 		}
 		if (plugin.FindPlayerCurrency(p.getName()).IsVip())
 		{
@@ -263,6 +278,25 @@ public class GugaPlayerListener implements Listener
 				e.setCancelled(true);
 			}
 		}
+		if((!(plugin.acc.UserIsLogged(p))||!(plugin.acc.UserIsRegistered(p))))
+		{
+			if(e.getMessage().startsWith("login"))
+			{
+				p.sendMessage(ChatColor.RED+"Pred login musite napsat /");
+				e.setCancelled(true);
+			}
+			else if(e.getMessage().startsWith("register"))
+			{
+				p.sendMessage(ChatColor.RED+"Pred register musite napsat /");
+				e.setCancelled(true);
+			}
+		}
+		else if(e.getMessage().startsWith("password"))
+		{
+			p.sendMessage(ChatColor.RED+"Pred password musite napsat /");
+			e.setCancelled(true);
+		}
+	}
 		/*else if(e.getMessage().contains(".Ownage"))
 		{
 			String msg = e.getMessage();
@@ -301,7 +335,7 @@ public class GugaPlayerListener implements Listener
 			e.getPlayer().getWorld().spawnCreature(finalLoc,CreatureType.CREEPER);
 			e.setCancelled(true);
 		}*/
-	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerPickupItem(PlayerPickupItemEvent e)
 	{

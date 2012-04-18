@@ -96,6 +96,7 @@ public class GugaVirtualCurrency
 		if (IsVip())
 		{
 			p.setDisplayName(ChatColor.RED + "VIP'" + ChatColor.WHITE + p.getName());
+			p.setPlayerListName(ChatColor.GOLD+p.getName());
 		}
 		else
 		{

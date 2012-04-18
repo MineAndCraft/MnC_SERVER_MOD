@@ -1,5 +1,10 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 public class GameMaster 
 {
 	public GameMaster(String name, Rank rank)
@@ -32,6 +37,29 @@ public class GameMaster
 		if (this.rank.IsRanked(Rank.ADMIN))
 			return true;
 		return false;
+	}
+	public static void setOpName(Player p)
+	{
+		GameMaster gm;
+		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
+		{
+			String []name=p.getName().split("'");
+			if (gm.GetRank() == Rank.ADMIN)
+			{
+				{
+						p.setDisplayName(ChatColor.RED + "ADMIN'" + ChatColor.WHITE + name[1]);
+				}
+			}
+			else if (gm.GetRank() == Rank.GAMEMASTER)
+			{
+				p.setDisplayName(ChatColor.RED + "GM'" + ChatColor.WHITE + name[1]);
+			}
+			else if(gm.GetRank()==Rank.WEBMASTER)
+			{
+				p.setDisplayName(ChatColor.RED + "WEB'" + ChatColor.WHITE + p.getName());
+			}
+		}
+		p.setPlayerListName(ChatColor.AQUA+p.getName());
 	}
 	public static enum Rank
 	{

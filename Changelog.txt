@@ -1,5 +1,19 @@
+3.1.1
+	- bug fixes:
+		- /gm mute runs correctly
+		- eventworld can be edited by EVENTERs and higher ranks
+	- added method to GameMaster file for set player's display name and name in a list of players - setOpName(Player p)
+	- small improvements in message after login (new colors for better clarity
+3.1.0
+	- new Event world added
+	- command /gm log saveall - save all unsaved logs (place/brake-log)
+	- sizes of arrays for placeLog/brakeLog were reduced to 100 logs
+	- /gm mute all - toggle chat mute
+	- /gm mute player <name> <time>, /gm mute remove <name>
+	- ADMINs/GMs/VIPs get colors to "Players list"
+	- no more lost accounts by wrong white commands (/login,/register,/password)
 3.0.9
-	- WEBMASTER rank ADDED
+	- WEBMASTER rank added
 	- GugaMute class with skeleton for future Mute commands/mute command is already in GugaCommands but it doesn't run (test only)
 3.0.8
 	- new chat colors for ADMINs/GMs/VIPs
@@ -59,7 +73,7 @@
 	- All methods accessing CreatureType now access EntityType instead because of deprecation.
 	- Plugin now copies active skins from SkinPool folder to actual folder where clients have access.
 	- Added new /gm cmd command to make GMs able to use some Bukkit commands.
-	- Alot of old and unused code removed.
+	- A lot of old and unused code removed.
 
 2.4.4:
 	- Block log data are now split in pages and can be read from cache.
