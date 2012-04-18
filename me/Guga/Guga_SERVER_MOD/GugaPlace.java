@@ -25,7 +25,7 @@ public class GugaPlace
 	}
 	public void Teleport(Player p)
 	{
-		p.teleport(location);
+		p.teleport(location);		
 	}
 	public Location GetLocation()
 	{

@@ -73,11 +73,16 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.SetPlugin(this);
 		GugaIPHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
+		GugaParty.SetPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
 		{
 			//getServer().createWorld("arena", Environment.NORMAL);
 			getServer().createWorld(WorldCreator.name("arena").environment(Environment.NORMAL));
+		}
+		if(getServer().getWorld("world_event")==null)
+		{
+			getServer().createWorld(WorldCreator.name("world_event").environment(Environment.NORMAL));
 		}
 		arena.LoadArenas();
 		arena.LoadPvpStats();
@@ -85,6 +90,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getServer().getWorld("world").setPVP(false);
 		getServer().getWorld("world_nether").setPVP(false);
 		getServer().getWorld("arena").setSpawnFlags(false, false);
+		getServer().getWorld("world_event").setPVP(false);
+		getServer().getWorld("world_event").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
@@ -241,6 +248,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandArena((Player) sender, args);
 			 return true;
 		 }
+		 else if (cmd.getName().equalsIgnoreCase("eventworld") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandEventWorld((Player) sender, args);
+			 return true;
+		 }
 		 else if(cmd.getName().equalsIgnoreCase("debug") && (sender instanceof ConsoleCommandSender))
 		 {
 			 GugaCommands.CommandDebug();
@@ -254,6 +266,22 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandVIP((Player)sender, args);
 			 return true;
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("pp")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandPP((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("invite")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandInvite((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("p")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandSendPartyMsg((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("party")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandParty((Player)sender, args);
 		 }
 		//*****************************************module*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
@@ -543,7 +571,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.0.9";
+	public static final String version = "3.2.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
@@ -560,6 +588,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public GugaChests chests;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
+	public GugaEventWorld EventWorld = new GugaEventWorld(this);
 	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();
 	public HashMap <Player,GugaAccounts> accounts = new HashMap<Player, GugaAccounts>();
 }

@@ -64,7 +64,7 @@ public class GugaProfession
 			}
 		}
 		thisLevel = xpNeeded - xpNeededOld;
-		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " has reached a level " + level + "!");
+		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " prekrocil/a level " + level + "!");
 		//if (level <= 20)
 		//{
 			UpdateSkills();

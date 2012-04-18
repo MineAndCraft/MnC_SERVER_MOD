@@ -368,7 +368,7 @@ public class GugaLogger
 	private boolean blockPlaceSwitch = true;
 	
 	
-	private final int ARRAY_MAX_SIZE = 1000;
+	private final int ARRAY_MAX_SIZE = 100;
 	
 	private boolean logBlockBreak;
 	private boolean logBlockPlace;

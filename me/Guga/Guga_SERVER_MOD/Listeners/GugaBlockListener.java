@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
+import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
@@ -49,6 +50,16 @@ public class GugaBlockListener implements Listener
 				return;
 			}
 			p.sendMessage("V arene nemuzes kopat!");
+			e.setCancelled(true);
+			return;
+		}
+		if(plugin.EventWorld.IsEventWorld(p.getLocation())&& GugaEventWorld.regionStatus())
+		{
+			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
+			{
+				return;
+			}
+			p.sendMessage("V EventWorldu nemuzes kopat!");
 			e.setCancelled(true);
 			return;
 		}
@@ -262,6 +273,14 @@ public class GugaBlockListener implements Listener
 		if (plugin.arena.IsArena(e.getBlock().getLocation()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
+			{
+				e.setCancelled(true);
+				return;
+			}
+		}
+		if (plugin.arena.IsArena(e.getBlock().getLocation()))
+		{
+			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.EVENTER))
 			{
 				e.setCancelled(true);
 				return;
