@@ -13,6 +13,7 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -49,7 +50,7 @@ public class GugaBlockListener implements Listener
 			{
 				return;
 			}
-			p.sendMessage("V arene nemuzes kopat!");
+			p.sendMessage(ChatColor.BLUE+"[ARENA]: "+ChatColor.WHITE+"V arene nemuzes kopat!");
 			e.setCancelled(true);
 			return;
 		}
@@ -59,7 +60,7 @@ public class GugaBlockListener implements Listener
 			{
 				return;
 			}
-			p.sendMessage("V EventWorldu nemuzes kopat!");
+			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes kopat!");
 			e.setCancelled(true);
 			return;
 		}
@@ -69,7 +70,7 @@ public class GugaBlockListener implements Listener
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
-				p.sendMessage("Tady nemuzes kopat! Nazev pozemku: " + region.GetName());
+				p.sendMessage(ChatColor.BLUE+"[REGIONS]: "+"Tady nemuzes kopat! Nazev pozemku: " + region.GetName());
 				return;
 			}
 		}
@@ -122,7 +123,7 @@ public class GugaBlockListener implements Listener
 			}
 			if (!canBreak)
 			{
-				p.sendMessage("Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
+				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
 				e.setCancelled(true);
 				return;
 			}
@@ -159,7 +160,7 @@ public class GugaBlockListener implements Listener
 				}
 				if (!canBreak)
 				{
-					p.sendMessage("Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
+					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
 					e.setCancelled(true);
 					return;
 				}
@@ -180,11 +181,11 @@ public class GugaBlockListener implements Listener
 				e.setCancelled(true);
 				if (chestOwner.matches(p.getName()))
 				{
-					p.sendMessage("Nemuzete rozbit zamcenou truhlu! Nejdrive ji odemknete.");
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! Nejdrive ji odemknete.");
 				}
 				else
 				{
-					p.sendMessage("Nemuzete rozbit zamcenou truhlu! " + chestOwner + " je vlastnikem teto truhly.");
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! " + chestOwner + " je vlastnikem teto truhly.");
 				}
 			}
 		}
@@ -200,19 +201,19 @@ public class GugaBlockListener implements Listener
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
 					prof.GainExperience(50);
-					p.sendMessage("Nasel jste diamant!");
+					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste diamant!");
 				}
 				else if (bonus == GugaBonusDrop.GOLD)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
 					prof.GainExperience(40);
-					p.sendMessage("Nasel jste zlato!");
+					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zlato!");
 				}
 				else if (bonus == GugaBonusDrop.IRON)
 				{
 					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
 					prof.GainExperience(30);
-					p.sendMessage("Nasel jste zelezo!");
+					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zelezo!");
 				}
 			}
 			/*else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
@@ -278,7 +279,7 @@ public class GugaBlockListener implements Listener
 				return;
 			}
 		}
-		if (plugin.arena.IsArena(e.getBlock().getLocation()))
+		if (plugin.EventWorld.IsEventWorld(e.getBlock().getLocation()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.EVENTER))
 			{
@@ -292,21 +293,107 @@ public class GugaBlockListener implements Listener
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
-				e.getPlayer().sendMessage("Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
+				e.getPlayer().sendMessage(ChatColor.BLUE+"[REGIONS]: "+ChatColor.WHITE+"Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
 			}
 		}
 		//54
+		Player p=e.getPlayer();
 		Block block = e.getBlockPlaced();
 		if (block.getTypeId() == 54)
 		{
-			Block relBlock = block.getRelative(BlockFace.WEST);
+			if(plugin.chests.GetChestOwner(block).equalsIgnoreCase("notFound"))
+			{
+				Block W=block.getRelative(BlockFace.WEST);
+				Block E=block.getRelative(BlockFace.EAST);
+				Block N=block.getRelative(BlockFace.NORTH);
+				Block S=block.getRelative(BlockFace.SOUTH);
+				if(W.getTypeId()==54)
+				{
+					if((plugin.chests.GetChestOwner(W).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(W).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
+				}
+				else if(E.getTypeId()==54)
+				{
+					if((plugin.chests.GetChestOwner(E).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(E).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
+
+				}
+				else if(N.getTypeId()==54)
+				{
+					if((plugin.chests.GetChestOwner(N).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(N).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
+				}
+				else if(S.getTypeId()==54)
+				{
+					if((plugin.chests.GetChestOwner(S).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(S).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
+				}
+				else
+				{
+					plugin.chests.LockChest(block,e.getPlayer().getName());
+					p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase truhla byla zamcena.");
+					return;
+				}
+			}
+		}
+			//***********************************************************************************************
+			/*Block relBlock = block.getRelative(BlockFace.WEST);
 			if (relBlock.getTypeId() == 54)
 			{
 				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
-					e.setCancelled(true);
-					return;
+					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
 				}
 			}
 			relBlock = block.getRelative(BlockFace.EAST);
@@ -314,9 +401,18 @@ public class GugaBlockListener implements Listener
 			{
 				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
-					e.setCancelled(true);
-					return;
+					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
 				}
 			}
 			relBlock = block.getRelative(BlockFace.SOUTH);
@@ -324,9 +420,18 @@ public class GugaBlockListener implements Listener
 			{
 				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
-					e.setCancelled(true);
-					return;
+					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
 				}
 			}
 			relBlock = block.getRelative(BlockFace.NORTH);
@@ -334,12 +439,21 @@ public class GugaBlockListener implements Listener
 			{
 				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
-					e.setCancelled(true);
-					return;
+					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					{
+						plugin.chests.LockChest(block,e.getPlayer().getName());
+						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
+						return;
+					}
+					else
+					{
+						e.getPlayer().sendMessage("Nemuzete postavit truhlu vedle zamcene truhly!");
+						e.setCancelled(true);
+						return;
+					}
 				}
 			}
-		}
+		}*/
 		/*int typeId = e.getBlock().getTypeId();
 		if ((typeId == 14) || (typeId == 15) || (typeId == 56))
 		{

@@ -187,16 +187,16 @@ public abstract class GugaCommands
 			if (plugin.chests.GetChestOwner(chest).matches("notFound"))
 			{
 				plugin.chests.LockChest(chest,sender.getName());
-				sender.sendMessage("Vase truhla byla zamcena.");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase truhla byla zamcena.");
 			}
 			else
 			{
-				sender.sendMessage("Truhlu jiz nekdo zamkl!");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Truhlu jiz nekdo zamkl!");
 			}
 		}	
 		else
 		{
-			sender.sendMessage("Tento blok neni truhla!");
+			sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Tento blok neni truhla!");
 		}
 		
 	}
@@ -254,7 +254,7 @@ public abstract class GugaCommands
 	{
 		if (!plugin.acc.UserIsLogged(sender))
 		{
-			sender.sendMessage("You need to login first!");
+			sender.sendMessage("Nejdrive se prihlaste!");
 			return;
 		}
 		if (plugin.arena.IsArena(sender.getLocation()))
@@ -1456,7 +1456,7 @@ public abstract class GugaCommands
 			String subCommand = args[0];
 			if (subCommand.matches("log"))
 			{
-				plugin.logger.PrintBlockData(sender, sender.getTargetBlock(null, 20));
+				plugin.logger.PrintLogData(sender, sender.getTargetBlock(null, 20));
 			}
 			else if (subCommand.matches("reloadskins")&&GameMasterHandler.IsAtleastGM(sender.getName()))
 			{

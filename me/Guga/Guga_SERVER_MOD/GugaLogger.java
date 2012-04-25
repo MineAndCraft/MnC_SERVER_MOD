@@ -1,5 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -97,6 +99,64 @@ public class GugaLogger
 			}
 		});
 	}
+	
+	public void PrintLogData(final Player sender, final Block block)
+	{
+		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
+			public void run()
+			{
+				sender.sendMessage("Searching...");
+				final ArrayList<String> blockBreakData = new ArrayList<String>();
+				final ArrayList<String> blockPlaceData = new ArrayList<String>();
+				GetLogData(block, blockBreakData, "plugins/BlockBreakLog.log");
+				GetLogData(block, blockPlaceData, "plugins/BlockPlaceLog.log");
+				ArrayList<String> cache = new ArrayList<String>();
+				Iterator<String> i = blockPlaceData.iterator();
+				while (i.hasNext())
+				{
+					String e = i.next();
+					String splitted[] = e.split(";");
+					String msg = "BLOCK_PLACE: name=" + splitted[1] + "  id=" + splitted[2] + " time=" + splitted[0].substring(0, 20);
+					sender.sendMessage(msg);
+					cache.add(msg);
+				}
+				i = blockBreakData.iterator();
+				while (i.hasNext())
+				{
+					String e = i.next();
+					String splitted[] = e.split(";");
+					String msg = "BLOCK_BREAK: name=" + splitted[1] + "  id=" + splitted[2] + " time=" + splitted[0].substring(0, 20);
+					sender.sendMessage(msg);
+					cache.add(msg);
+				}
+				sender.sendMessage("Search Completed.");
+				blockCache.put(sender, cache);
+			}
+		});
+	}
+	
+	public ArrayList<String> GetLogData(Block block, ArrayList<String> dataBuffer, String filename)
+	{
+	try{
+		int blockX = block.getX();
+		int blockY = block.getY();
+		int blockZ = block.getZ();
+  
+		String line;
+		Process p = Runtime.getRuntime().exec("perl plugins/searchlog.pl "+Integer.toString(blockX)+","+Integer.toString(blockY)+","+Integer.toString(blockZ)+" "+filename);
+		BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		while ((line = input.readLine()) != null) {
+			dataBuffer.add(line);
+		}
+		input.close();
+		p.waitFor();
+		}catch(Exception e)
+		{
+		e.printStackTrace();
+		}
+		return dataBuffer;
+	}
+	
 	public ArrayList<String> GetBlockBreakData(Block block, ArrayList<String> dataBuffer)
 	{
 		int blockX = block.getX();

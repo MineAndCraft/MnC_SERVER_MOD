@@ -486,7 +486,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		int x2 = x;
 		int y2 = y;
 		int z2 = z;
-		Block block;
 		int i = 0;
 		if ( y < 0)
 		{
@@ -525,8 +524,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				{
 					if (p.getWorld().getBlockTypeIdAt(xBase+i3, yBase+i, zBase+i2)==typeID1)
 					{
-						block = p.getWorld().getBlockAt(xBase+i3, yBase+i, zBase+i2);
-						block.setTypeId(typeID2);
+						p.getWorld().getBlockAt(xBase+i3, yBase+i, zBase+i2).setTypeId(typeID2,true);
 					}
 					i3++;
 				}
@@ -571,7 +569,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.2.0";
+	public static final String version = "3.3.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

@@ -26,5 +26,5 @@ public abstract class BukkitCommandParser
 		}
 		return false;
 	}
-	private static String[] availableCommands = {"time", "give", "tp"};
+	private static String[] availableCommands = {"time", "give", "tp", "toggledownfall", "kick"};
 }

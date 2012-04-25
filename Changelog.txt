@@ -1,14 +1,36 @@
+3.3.1
+Author:Rikub
+	- max level increased to 10000
+3.3.0
+Author:rikub/stanley
+	- turboLog by stanley (4,5* faster)
+	- new plugin messages (from regions, chest and so on)
+3.2.2
+Author:rikub
+	- new AUTOLOCK system for chests
+	-  bug fixes
+		- EventWorld bug
+		- MCClient whitelist bug
+3.2.1
+Author:rikub
+	- flying is now working properly
+		- by bukkit functions
+	- pp alias for places port
+	- GM cmd support /kick command
 3.2.0
+Author:rikub
 	- critical bug fix
 		- Banning works again
 	- party commands added
 3.1.1
+Author:rikub
 	- bug fixes:
 		- /gm mute runs correctly
 		- eventworld can be edited by EVENTERs and higher ranks
 	- added method to GameMaster file for set player's display name and name in a list of players - setOpName(Player p)
 	- small improvements in message after login (new colors for better clarity
 3.1.0
+Author:rikub
 	- new Event world added
 	- command /gm log saveall - save all unsaved logs (place/brake-log)
 	- sizes of arrays for placeLog/brakeLog were reduced to 100 logs
@@ -17,20 +39,29 @@
 	- ADMINs/GMs/VIPs get colors to "Players list"
 	- no more lost accounts by wrong white commands (/login,/register,/password)
 3.0.9
+Author:rikub
 	- WEBMASTER rank added
 	- GugaMute class with skeleton for future Mute commands/mute command is already in GugaCommands but it doesn't run (test only)
 3.0.8
+Author:rikub
 	- new chat colors for ADMINs/GMs/VIPs
 	- IP logger added
 3.0.7
+Author:rikub
 	- non-ADMIN users with creative must be whitelisted - check before login added (if player is not whitelisted plugin set his gamemode to survival)
 	- OPs can't use some bukkit, MCMMO and dynmap commands before login.
 3.0.6
+Author:rikub
 	- Ocelot egg added to shop.
 	- Arena bonus was reduced from 50 credits to 10.
 	- Compatibility with new Client (v.0.0.3).
-3.0.5:
+3.0.5
+Author:rikub
 	- Whitelisted players now skip banning phase properly.
+	
+Rikub joined developing of plugin
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Changes by author of plugin Guga
 	
 3.0.4:
 	- 2 wrapped methods for Saving BreakBlock/Place data added.
