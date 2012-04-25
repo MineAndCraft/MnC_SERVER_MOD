@@ -54,6 +54,7 @@ public class GugaPlayerListener implements Listener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
+		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
 		Thread t = new Thread( new Runnable() {
 			@Override
 			public void run() 
@@ -71,11 +72,11 @@ public class GugaPlayerListener implements Listener
 					p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz");
 					return;
 				}
-				if (GugaBanHandler.IsWhiteListed(p))
+				if (GugaMCClientHandler.IsWhiteListed(p))
 					return;
 				if (GugaBanHandler.GetGugaBan(p.getName()) == null)
 					GugaBanHandler.AddBan(p.getName(), 0);
-				
+
 				if (GugaBanHandler.IsBanned(p.getName()))
 				{
 					GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
@@ -84,12 +85,13 @@ public class GugaPlayerListener implements Listener
 					return;
 				}
 				GugaBanHandler.UpdateBanAddr(p.getName());
-				
+
 				if (GugaIPHandler.IsWhiteListed(p))
 					return;
 				if (GugaIPHandler.GetGugaBan(p.getName()) == null)
 					GugaIPHandler.AddBan(p.getName(), 0);
 				GugaIPHandler.UpdateBanAddr(p.getName());
+				plugin.log.info("Player "+p.getName()+" logged with MAC: " + GugaMCClientHandler.GetPlayerMacAddr(p));
 			}
 		});
 		t.start();
@@ -116,7 +118,7 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
 		}
-		
+
 		GugaAuctionHandler.CheckPayments(p);
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
@@ -358,6 +360,7 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{
+		e.setQuitMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
 		GugaMCClientHandler.UnregisterUser(p);
