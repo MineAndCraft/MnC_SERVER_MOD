@@ -22,7 +22,11 @@ public enum Prices
 	EGG_CAVE_SPIDER(383, 25),
 	EGG_MAGMA_SLIME(383, 10),
 	EGG_MOOSHROOM(383, 10),
-	EGG_OCELOT(383,40);
+	EGG_OCELOT(383,40),
+	FLY_2H(3000,350),
+	FLY_4H(3001,500),
+	FLY_8H(3002,750),
+	FLY_24H(3003,950);
 	
 	private Prices(int id, int price)
 	{

@@ -9,16 +9,18 @@ public class GugaProfession
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;
-		lvlCap = 1000;
+		lvlCap = 10000;
 		xpCap = 4000;
+		skillCap=1000;
 	}
 	public GugaProfession(String pName, int exp, Guga_SERVER_MOD gugaSM)
 	{
 		xpIncrement = 2;
 		xpNeeded = 500;
-		lvlCap = 1000;
+		lvlCap = 10000;
 		xpCap = 4000;
 		thisLevel = 500;
+		skillCap=1000;
 		plugin = gugaSM;
 		playerName = pName;
 		level = 1;
@@ -72,9 +74,21 @@ public class GugaProfession
 	}
 	public void UpdateSkills()
 	{
-		int newIron = level/10;
-		int newGold = level/20;
-		int newDiamond = level/50;
+		int newIron;
+		int newGold;
+		int newDiamond;
+		if (level > skillCap)
+		{
+			newIron = skillCap/10;
+			newGold = skillCap/20;
+			newDiamond = skillCap/50;
+		}
+		else
+		{
+			newIron = level/10;
+			newGold = level/20;
+			newDiamond = level/50;
+		}
 		
 		ironChance = newIron;
 		goldChance = newGold;
@@ -173,6 +187,7 @@ public class GugaProfession
 	protected int xpNeeded;
 	protected int xpIncrement;
 	protected int xpCap;
+	protected int skillCap;
 	
 	protected int thisLevel;
 	

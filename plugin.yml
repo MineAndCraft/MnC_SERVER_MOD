@@ -1,0 +1,54 @@
+name: Guga_SERVER_MOD
+main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
+version: 3.3.1
+commands:
+    who:
+        description: Gets Names of Online players
+    help:
+        description: Prints all possible commands
+    login:
+        description: Logs a player
+    register:
+        description: Register a player
+    password:
+        description: Changes password
+    lock:
+        description: Locks targeted chest 
+    unlock:
+        description: Unlocks targeted chest 
+    module:
+        description: Toggles on/off a specified module
+    y:
+        description: Confirms an action
+    rpg:
+        description: RPG menu
+    arena:
+        description: Arena menu
+    gm:
+        description: GM Commands menu
+    debug:
+        description: Toggle debug
+    shop:
+        description: Shop Menu
+    vip:
+        description: Vip Menu
+    places:
+        description: Places Menu
+    ah:
+        description: Auction House menu
+    r:
+        description: Replies to a whisper
+    socket:
+        description: Replies to a whisper
+    event:
+        description: Event menu
+    eventworld:
+        description: EventWorld menu
+    pp:
+        description: Alias for places port
+    p:
+        description: Send a party message
+    party:
+        description: For Create and left party
+    invite:
+        description: Invite player to the party
