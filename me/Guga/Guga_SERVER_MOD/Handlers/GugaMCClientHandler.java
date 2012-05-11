@@ -23,7 +23,7 @@ public abstract class GugaMCClientHandler
 		if (connectedClients.get(p) == null)
 		{
 			connectedClients.put(p, macAddr);
-			p.sendMessage(ChatColor.BLUE + "Vas klient byl uspesne overen");
+			p.sendMessage(ChatColor.BLUE + "Vas klient byl uspesne overen!");
 		}
 	}
 	public static void UnregisterUser(Player p)
@@ -142,7 +142,7 @@ public abstract class GugaMCClientHandler
 	private static HashMap<Player, String> connectedClients = new HashMap<Player, String>();
 	public static boolean needClient = true;
 	
-	public static String requiredClientVersion = "0.0.3";
+	public static String requiredClientVersion = "0.0.4";
 	private static String messageChannel = "Guga";
 	
 	private static String skinPoolPath = "/usr/SkinPool/";

@@ -3,6 +3,10 @@ package me.Guga.Guga_SERVER_MOD.Handlers;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
@@ -18,6 +22,28 @@ public abstract class GameMasterHandler
 	{
 		Rank r = Rank.GetRankByName(rank);
 		GameMasterHandler.gameMasters.add(new GameMaster(name, r));
+	}
+	public static void AddGMIng(String name, String rank)
+	{
+		Player p = plugin.getServer().getPlayer(name);
+		Rank r = Rank.GetRankByName(rank);
+		if(r==Rank.ADMIN)
+		{
+			p.setOp(true);
+		}
+		GameMasterHandler.gameMasters.add(new GameMaster(name, r));
+		p.setGameMode(GameMode.CREATIVE);
+		setGMName(p);
+		SaveGMs();
+	}
+	public static void RemoveGMIng(String name)
+	{
+		Player p = plugin.getServer().getPlayer(name);
+		GameMasterHandler.gameMasters.remove(GameMasterHandler.GetGMByName(name));
+		p.setDisplayName(name);
+		p.setPlayerListName(name);
+		p.setGameMode(GameMode.SURVIVAL);
+		SaveGMs();
 	}
 	public static GameMaster GetGMByName(String name)
 	{
@@ -99,7 +125,29 @@ public abstract class GameMasterHandler
 		}
 		file.Close();
 	}
-	private static ArrayList<GameMaster> gameMasters = new ArrayList<GameMaster>();
+	public static void setGMName(Player p)
+	{
+		GameMaster gm;
+		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
+		{
+			if (gm.GetRank() == Rank.ADMIN)
+			{
+				p.setDisplayName(ChatColor.RED + "ADMIN'" + ChatColor.WHITE + p.getName());
+				p.setPlayerListName(ChatColor.AQUA+p.getName());
+			}
+			else if (gm.GetRank() == Rank.GAMEMASTER)
+			{
+				p.setDisplayName(ChatColor.RED + "GM'" + ChatColor.WHITE + p.getName());
+				p.setPlayerListName(ChatColor.GREEN+p.getName());
+			}
+			else if(gm.GetRank()==Rank.BUILDER)
+			{
+				p.setDisplayName(ChatColor.RED + "BUILDER'" + ChatColor.WHITE + p.getName());
+				p.setPlayerListName(ChatColor.GOLD+p.getName());
+			}
+		}
+	}
+	public static ArrayList<GameMaster> gameMasters = new ArrayList<GameMaster>();
 	private static Guga_SERVER_MOD plugin;
 	private static String gmFile = "plugins/GameMasters.dat";
 }

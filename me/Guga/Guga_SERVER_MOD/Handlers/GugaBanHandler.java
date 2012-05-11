@@ -52,8 +52,6 @@ public abstract class GugaBanHandler
 			addr = p.getAddress().getAddress().toString();
 		else if (mode == CheckMode.MAC_ADDRESSES)
 			addr = GugaMCClientHandler.GetPlayerMacAddr(p);
-		if (addr.matches("WHITELISTED"))
-			return;
 		Iterator<GugaBan> i = bans.iterator();
 		while (i.hasNext())
 		{
@@ -66,7 +64,7 @@ public abstract class GugaBanHandler
 			}
 		}
 	}
-	public static boolean IsWhiteListed(Player p)
+	/*public static boolean IsWhiteListed(Player p)
 	{
 		String status = GugaMCClientHandler.GetPlayerMacAddr(p);
 		if (status == null)
@@ -74,7 +72,7 @@ public abstract class GugaBanHandler
 		if (status.matches("WHITELISTED"))
 			return true;
 		return false;
-	}
+	}*/
 	public static void UpdateBanExpiration(String playerName, long expiration)
 	{
 		Iterator<GugaBan> i = bans.iterator();
@@ -204,11 +202,38 @@ public abstract class GugaBanHandler
 		}
 		file.Close();
 	}
+	public static void LoadIpWhiteList()
+	{
+		GugaFile file = new GugaFile(whitelistedPlayersPath, GugaFile.READ_MODE);
+		if (whitelistedPlayers.size() > 0)
+			whitelistedPlayers.clear();
+		file.Open();
+		String line = null;
+		while ((line = file.ReadLine()) != null)
+		{
+			whitelistedPlayers.add(line);
+		}
+		file.Close();
+	}
+	public static boolean IsIpWhitelisted(Player p)
+	{
+		String pName = p.getName();
+		Iterator<String> i = whitelistedPlayers.iterator();
+		
+		while (i.hasNext())
+		{
+			if (pName.equalsIgnoreCase(i.next()))				
+				return true;
+		}
+		return false;
+	}
 	public enum CheckMode{MAC_ADDRESSES, IP_ADDRESSES};
 	
 	public static CheckMode mode = CheckMode.MAC_ADDRESSES;
 	private static Guga_SERVER_MOD plugin;
 	private static ArrayList<GugaBan> bans = new ArrayList<GugaBan>();
+	private static ArrayList<String> whitelistedPlayers = new ArrayList<String>();
 	
+	private static String whitelistedPlayersPath="plugins/whiteListIP.dat";
 	private static String bansFile = "plugins/Bans.dat";
 }
