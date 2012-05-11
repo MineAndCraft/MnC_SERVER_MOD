@@ -1,6 +1,6 @@
 name: Guga_SERVER_MOD
 main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
-version: 3.3.1
+version: 3.4.4
 commands:
     who:
         description: Gets Names of Online players
@@ -8,6 +8,8 @@ commands:
         description: Prints all possible commands
     login:
         description: Logs a player
+    locker:
+        description: Info about how to lock or unlock chest
     register:
         description: Register a player
     password:
