@@ -95,11 +95,11 @@ public class GugaAccounts
 				pl.teleport(playerStart.get(pName));
 				if (UserIsRegistered(pl))
 				{
-					pl.sendMessage("Prosim prihlaste se!");
+					pl.sendMessage("Nejste prihlaseni! Pro prihlaseni napiste /login VaseHeslo");
 				}
 				else
 				{
-					pl.sendMessage("Prosim zaregistrujte se!");
+					pl.sendMessage("Nejste registrovani! Pro zaregistrovani napiste /register VaseHeslo");
 				}
 			}
 		}, 80, 80);

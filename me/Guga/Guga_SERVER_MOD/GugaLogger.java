@@ -260,6 +260,19 @@ public class GugaLogger
 			}
 		});
 	}
+	public void LogPlayerJoins(final String pName,final String MacAddr, final String IpAddr)
+	{
+		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			public void run()
+			{
+				String line = new Date() + ";" + pName + ";" + MacAddr + ";" + IpAddr;
+				GugaFile file = new GugaFile(playerJoinsFile, GugaFile.APPEND_MODE);
+				file.Open();
+				file.WriteLine(line);
+				file.Close();
+			}
+		});
+	}
 	public void LogBlockBreak(final BlockBreakEvent e, final int typeID)
 	{
 		if (logBlockBreak)
@@ -439,6 +452,7 @@ public class GugaLogger
 	private String blockIgniteFile = "plugins/BlockIgniteLog.log";
 	private String blockPlaceFile = "plugins/BlockPlaceLog.log";
 	private String shopTransactionFile = "plugins/ShopTransaction.log";
+	private String playerJoinsFile = "plugins/PlayerJoinLog.log";
 	public HashMap<Player, ArrayList<String>> blockCache = new HashMap<Player, ArrayList<String>>();
 	private Guga_SERVER_MOD plugin;
 }

@@ -3,25 +3,25 @@ package me.Guga.Guga_SERVER_MOD;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-public class GugaChests 
+public class GugaFurnances 
 {
-	GugaChests(Guga_SERVER_MOD gugaSM)
+	GugaFurnances(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
-		LoadChests();
+		LoadFurnances();
 	}
-	public void LockBlock(Block chest,String chestOwner)
+	public void LockBlock(Block furnance,String chestOwner)
 	{
 		int i = 0;
 		while (location[i] != null)
 		{
 			i++;
 		}
-		location[i] = chest.getLocation();
+		location[i] = furnance.getLocation();
 		owner[i] = chestOwner;
-		SaveChests();
+		SaveFurnances();
 	}
-	public void UnlockBlock(Block chest,String chestOwner)
+	public void UnlockBlock(Block furnance,String chestOwner)
 	{
 		Location bufferLoc[] = new Location[10000];
 		String bufferOwn[] = new String[10000];
@@ -29,7 +29,7 @@ public class GugaChests
 		int i2 = 0;
 		while (location[i2] != null)
 		{
-			if (LocationEquals(location[i],chest.getLocation()))
+			if (LocationEquals(location[i],furnance.getLocation()))
 			{
 				i2++;
 			}
@@ -47,7 +47,7 @@ public class GugaChests
 			owner[i] = bufferOwn[i];
 			i++;
 		}
-		SaveChests();
+		SaveFurnances();
 	}
 	public String GetBlockOwner(Block chest)
 	{
@@ -62,9 +62,9 @@ public class GugaChests
 		}
 		return "notFound";
 	}
-	public void LoadChests()
+	public void LoadFurnances()
 	{
-		plugin.log.info("Loading Chests Data...");
+		plugin.log.info("Loading Furnances Data...");
 		GugaFile file = new GugaFile(LockerFile, GugaFile.READ_MODE);
 		file.Open();
 		String line;
@@ -97,9 +97,9 @@ public class GugaChests
 		}
 		return false;
 	}
-	public void SaveChests()
+	public void SaveFurnances()
 	{
-		plugin.log.info("Saving Chests Data...");
+		plugin.log.info("Saving Furnances Data...");
 		GugaFile file = new GugaFile(LockerFile, GugaFile.WRITE_MODE);
 		file.Open();
 		int i = 0;
@@ -119,6 +119,6 @@ public class GugaChests
 	
 	public String owner[] = new String[10000];
 	public Location[] location = new Location[10000];
-	private String LockerFile = "plugins/Chests.dat";
+	private String LockerFile = "plugins/Furnances.dat";
 	public static Guga_SERVER_MOD plugin;
 }

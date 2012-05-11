@@ -18,7 +18,6 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaIPHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
@@ -42,6 +41,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaPlayerListener implements Listener 
@@ -54,7 +54,10 @@ public class GugaPlayerListener implements Listener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
-		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
+		if(plugin.acc.UserIsRegistered(p))
+			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
+		else
+			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + " pripojil/a.");
 		Thread t = new Thread( new Runnable() {
 			@Override
 			public void run() 
@@ -64,33 +67,29 @@ public class GugaPlayerListener implements Listener
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+			}
 				if (!p.isOnline())
 					return;
 				if (!GugaMCClientHandler.HasClient(p))
 				{
-					p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz");
+					p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
 					return;
 				}
 				if (GugaMCClientHandler.IsWhiteListed(p))
 					return;
 				if (GugaBanHandler.GetGugaBan(p.getName()) == null)
 					GugaBanHandler.AddBan(p.getName(), 0);
-
-				if (GugaBanHandler.IsBanned(p.getName()))
+				if (!GugaBanHandler.IsIpWhitelisted(p))
 				{
-					GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-					long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-					p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + hours + " hodin(y)");
-					return;
+					if (GugaBanHandler.IsBanned(p.getName()))
+					{
+						GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+						long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
+						p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
+						return;
+					}
 				}
-				GugaBanHandler.UpdateBanAddr(p.getName());
-
-				if (GugaIPHandler.IsWhiteListed(p))
-					return;
-				if (GugaIPHandler.GetGugaBan(p.getName()) == null)
-					GugaIPHandler.AddBan(p.getName(), 0);
-				GugaIPHandler.UpdateBanAddr(p.getName());
+				plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
 				plugin.log.info("Player "+p.getName()+" logged with MAC: " + GugaMCClientHandler.GetPlayerMacAddr(p));
 			}
 		});
@@ -132,9 +131,9 @@ public class GugaPlayerListener implements Listener
 		{
 			curr.UpdateDisplayName();
 		}
-		if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.WEBMASTER))
+		if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
-			GameMaster.setOpName(p);
+			GameMasterHandler.setGMName(p);
 		}
 		if (plugin.debug)
 		{
@@ -145,7 +144,7 @@ public class GugaPlayerListener implements Listener
 		p.sendMessage("Vitejte na serveru MineAndCraft!.");
 		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.GOLD +"/help.");
 		p.sendMessage("******************************");
-		if(!(GameMasterHandler.IsAtleastGM(p.getName())))
+		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
 		{
 			if(GugaPlayerListener.IsCreativePlayer(p))
 			{
@@ -158,6 +157,11 @@ public class GugaPlayerListener implements Listener
 				if (p.getGameMode().equals(GameMode.CREATIVE))
 					p.setGameMode(GameMode.SURVIVAL);
 			}
+		}
+		if(GugaCommands.fly.contains(p.getName().toLowerCase()))
+		{
+			p.setAllowFlight(true);
+			p.setFlying(true);
 		}
 		if (plugin.config.accountsModule)
 		{
@@ -230,25 +234,33 @@ public class GugaPlayerListener implements Listener
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
 		}
+		if (!plugin.acc.UserIsLogged(p))
+		{
+			e.setCancelled(true);
+			return;   //tihihiih
+		}
 		GameMaster gm;
 		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
 		{
 			if (plugin.acc.UserIsLogged(p))
 			{
-				if (gm.GetRank() == Rank.ADMIN)
+				if(!GugaCommands.GMsOffState.contains(p))
 				{
-					e.setMessage(ChatColor.AQUA + e.getMessage());
-					return;
-				}
-				else if (gm.GetRank() == Rank.GAMEMASTER)
-				{
-					e.setMessage(ChatColor.GREEN + e.getMessage());
-					return;
-				}
-				else if(gm.GetRank()==Rank.WEBMASTER)
-				{
-					e.setMessage(ChatColor.GOLD + e.getMessage());
-					return;
+					if (gm.GetRank() == Rank.ADMIN)
+					{
+						e.setMessage(ChatColor.AQUA + e.getMessage());
+						return;
+					}
+					else if (gm.GetRank() == Rank.GAMEMASTER)
+					{
+						e.setMessage(ChatColor.GREEN + e.getMessage());
+						return;
+					}
+					else if(gm.GetRank()==Rank.BUILDER)
+					{
+						e.setMessage(ChatColor.GOLD + e.getMessage());
+						return;
+					}
 				}
 			}
 			else
@@ -356,6 +368,11 @@ public class GugaPlayerListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
+	}
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerKick(PlayerKickEvent e)
+	{
+		e.setLeaveMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent e)
@@ -499,18 +516,44 @@ public class GugaPlayerListener implements Listener
 			{
 				// *********************************CHEST OPENING*********************************
 				
-				String chestOwner;
-				if (targetBlock.getTypeId() == 54)
+				String blockOwner;
+				if (targetBlock.getTypeId() == ID_CHEST)
 				{
-					chestOwner = plugin.chests.GetChestOwner(targetBlock);
-					if(chestOwner.matches(p.getName()) || chestOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
+					blockOwner = plugin.chests.GetBlockOwner(targetBlock);
+					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
 					{
 						return;
 					}
 					else
 					{
 						e.setCancelled(true);
-						p.sendMessage("Tato truhla je zamcena!");
+						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tato truhla je zamcena!");
+					}
+				}
+				else if(targetBlock.getTypeId() == ID_DISPENSER)
+				{
+					blockOwner = plugin.dispensers.GetBlockOwner(targetBlock);
+					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
+					{
+						return;
+					}
+					else
+					{
+						e.setCancelled(true);
+						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento davkovac je zamcen!");
+					}
+				}
+				else if(targetBlock.getTypeId() == ID_FURNANCE)
+				{
+					blockOwner = plugin.furnances.GetBlockOwner(targetBlock);
+					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
+					{
+						return;
+					}
+					else
+					{
+						e.setCancelled(true);
+						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tato pec je zamcena!");
 					}
 				}
 			}
@@ -610,6 +653,9 @@ public class GugaPlayerListener implements Listener
 		}
 		return false;
 	}
+	private int ID_CHEST=54;
+	private int ID_DISPENSER=23;
+	private int ID_FURNANCE=61;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop","/gamemode", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time","/a","/toggledownfall","/xp","/mcc","/dmap"};

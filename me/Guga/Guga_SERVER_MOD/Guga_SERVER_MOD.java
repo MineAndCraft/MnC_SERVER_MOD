@@ -10,7 +10,6 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaIPHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
@@ -46,7 +45,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
-		GugaIPHandler.SaveBans();
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		logger.SaveWrapperBreak();
@@ -71,7 +69,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
 		GugaBanHandler.SetPlugin(this);
-		GugaIPHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
 
@@ -100,14 +97,16 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
 		GugaBanHandler.LoadBans();
-		GugaIPHandler.LoadBans();
 		chests = new GugaChests(this);
+		furnances = new GugaFurnances(this);
+		dispensers =new GugaDispensers(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
 		GugaMCClientHandler.LoadMACWhiteList();
 		GugaMCClientHandler.LoadMinecraftOwners();
 		GugaPlayerListener.LoadCreativePlayers();
+		GugaBanHandler.LoadIpWhiteList();
 		
 		this.socketServer = new GugaSocketServer(12451, this);
 		this.socketServer.ListenStart();
@@ -282,6 +281,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if ((cmd.getName().equalsIgnoreCase("party")) && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandParty((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("locker")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandLocker((Player)sender);
 		 }
 		//*****************************************module*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
@@ -569,7 +572,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.3.1";
+	public static final String version = "3.4.4";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
@@ -584,6 +587,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaMessageListener msgListener = new GugaMessageListener(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
 	public GugaChests chests;
+	public GugaFurnances furnances;
+	public GugaDispensers dispensers;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public GugaEventWorld EventWorld = new GugaEventWorld(this);

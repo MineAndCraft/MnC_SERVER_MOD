@@ -169,9 +169,9 @@ public class GugaBlockListener implements Listener
 		//*************************************************************************
 		String chestOwner;
 		int blockType = targetBlock.getTypeId();
-		if (blockType == 54)
+		if (blockType == ID_CHEST)
 		{
-			chestOwner = plugin.chests.GetChestOwner(targetBlock);
+			chestOwner = plugin.chests.GetBlockOwner(targetBlock);
 			if(chestOwner.matches("notFound"))
 			{
 				
@@ -189,6 +189,46 @@ public class GugaBlockListener implements Listener
 				}
 			}
 		}
+		else if(blockType==ID_DISPENSER)
+		{
+			chestOwner = plugin.dispensers.GetBlockOwner(targetBlock);
+			if(chestOwner.matches("notFound"))
+			{
+				
+			}
+			else
+			{
+				e.setCancelled(true);
+				if (chestOwner.matches(p.getName()))
+				{
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamceny davkovac! Nejdrive jej odemknete.");
+				}
+				else
+				{
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamceny davkovac! " + chestOwner + " je vlastnikem tohoto davkovace.");
+				}
+			}
+		}
+		else if(blockType==ID_FURNANCE)
+		{
+			chestOwner = plugin.furnances.GetBlockOwner(targetBlock);
+			if(chestOwner.matches("notFound"))
+			{
+				
+			}
+			else
+			{
+				e.setCancelled(true);
+				if (chestOwner.matches(p.getName()))
+				{
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou pec! Nejdrive ji odemknete.");
+				}
+				else
+				{
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou pec! " + chestOwner + " je vlastnikem teto pece.");
+					}
+				}
+			}
 			int typeId = targetBlock.getTypeId();
 			if (!IsInstaBreakBlock(typeId))
 			{
@@ -296,23 +336,23 @@ public class GugaBlockListener implements Listener
 				e.getPlayer().sendMessage(ChatColor.BLUE+"[REGIONS]: "+ChatColor.WHITE+"Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
 			}
 		}
-		//54
+		//ID_CHEST
 		Player p=e.getPlayer();
 		Block block = e.getBlockPlaced();
-		if (block.getTypeId() == 54)
+		if (block.getTypeId() == ID_CHEST)
 		{
-			if(plugin.chests.GetChestOwner(block).equalsIgnoreCase("notFound"))
+			if(plugin.chests.GetBlockOwner(block).equalsIgnoreCase("notFound"))
 			{
 				Block W=block.getRelative(BlockFace.WEST);
 				Block E=block.getRelative(BlockFace.EAST);
 				Block N=block.getRelative(BlockFace.NORTH);
 				Block S=block.getRelative(BlockFace.SOUTH);
-				if(W.getTypeId()==54)
+				if(W.getTypeId()==ID_CHEST)
 				{
-					if((plugin.chests.GetChestOwner(W).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(W).equalsIgnoreCase(p.getName()))
+					if((plugin.chests.GetBlockOwner(W).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(W).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
 						return;
 					}
 					else
@@ -322,12 +362,12 @@ public class GugaBlockListener implements Listener
 						return;
 					}
 				}
-				else if(E.getTypeId()==54)
+				else if(E.getTypeId()==ID_CHEST)
 				{
-					if((plugin.chests.GetChestOwner(E).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(E).equalsIgnoreCase(p.getName()))
+					if((plugin.chests.GetBlockOwner(E).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(E).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
 						return;
 					}
 					else
@@ -338,12 +378,12 @@ public class GugaBlockListener implements Listener
 					}
 
 				}
-				else if(N.getTypeId()==54)
+				else if(N.getTypeId()==ID_CHEST)
 				{
-					if((plugin.chests.GetChestOwner(N).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(N).equalsIgnoreCase(p.getName()))
+					if((plugin.chests.GetBlockOwner(N).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(N).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
 						return;
 					}
 					else
@@ -353,12 +393,12 @@ public class GugaBlockListener implements Listener
 						return;
 					}
 				}
-				else if(S.getTypeId()==54)
+				else if(S.getTypeId()==ID_CHEST)
 				{
-					if((plugin.chests.GetChestOwner(S).equalsIgnoreCase("notFound"))||plugin.chests.GetChestOwner(S).equalsIgnoreCase(p.getName()))
+					if((plugin.chests.GetBlockOwner(S).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(S).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
+						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
 						return;
 					}
 					else
@@ -370,21 +410,37 @@ public class GugaBlockListener implements Listener
 				}
 				else
 				{
-					plugin.chests.LockChest(block,e.getPlayer().getName());
-					p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase truhla byla zamcena.");
+					plugin.chests.LockBlock(block,e.getPlayer().getName());
+					p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase truhla byla zamcena. Vice: /locker");
 					return;
 				}
 			}
 		}
+		else if(block.getTypeId()==ID_DISPENSER)
+		{
+			if(plugin.dispensers.GetBlockOwner(block).equalsIgnoreCase("notFound"))
+			{
+				plugin.dispensers.LockBlock(block,e.getPlayer().getName());
+				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen. Vice: /locker");
+			}
+		}
+		else if(block.getTypeId()==ID_FURNANCE)
+		{
+			if(plugin.furnances.GetBlockOwner(block).equalsIgnoreCase("notFound"))
+			{
+				plugin.furnances.LockBlock(block,e.getPlayer().getName());
+				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase pec byla zamcena. Vice: /locker");
+			}
+		}
 			//***********************************************************************************************
 			/*Block relBlock = block.getRelative(BlockFace.WEST);
-			if (relBlock.getTypeId() == 54)
+			if (relBlock.getTypeId() == ID_CHEST)
 			{
-				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				if (!plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					if(plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
 						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
 						return;
 					}
@@ -397,13 +453,13 @@ public class GugaBlockListener implements Listener
 				}
 			}
 			relBlock = block.getRelative(BlockFace.EAST);
-			if (relBlock.getTypeId() == 54)
+			if (relBlock.getTypeId() == ID_CHEST)
 			{
-				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				if (!plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					if(plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
 						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
 						return;
 					}
@@ -416,13 +472,13 @@ public class GugaBlockListener implements Listener
 				}
 			}
 			relBlock = block.getRelative(BlockFace.SOUTH);
-			if (relBlock.getTypeId() == 54)
+			if (relBlock.getTypeId() == ID_CHEST)
 			{
-				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				if (!plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					if(plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
 						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
 						return;
 					}
@@ -435,13 +491,13 @@ public class GugaBlockListener implements Listener
 				}
 			}
 			relBlock = block.getRelative(BlockFace.NORTH);
-			if (relBlock.getTypeId() == 54)
+			if (relBlock.getTypeId() == ID_CHEST)
 			{
-				if (!plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase("notFound"))
+				if (!plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase("notFound"))
 				{
-					if(plugin.chests.GetChestOwner(relBlock).equalsIgnoreCase(p.getName()))
+					if(plugin.chests.GetBlockOwner(relBlock).equalsIgnoreCase(p.getName()))
 					{
-						plugin.chests.LockChest(block,e.getPlayer().getName());
+						plugin.chests.LockBlock(block,e.getPlayer().getName());
 						e.getPlayer().sendMessage("Vase truhla byla zamcena.");
 						return;
 					}
@@ -514,6 +570,9 @@ public class GugaBlockListener implements Listener
 			plugin.log.info("REDSTONE_CHANGE_EVENT: typeID=" + blockID + ",blockData=" + block.getData() + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
 		}
 	}
+	private int ID_CHEST=54;
+	private int ID_DISPENSER=23;
+	private int ID_FURNANCE=61;
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
 	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};
 	public ArrayList<Block> dropsCache = new ArrayList<Block>();

@@ -27,6 +27,7 @@ public class GugaMute
 	}
 	public static void addPlayer(String name,int time)
 	{
+		name=name.toLowerCase();
 		long x=System.currentTimeMillis()+(time * 60000); //60s*1000mls xD
 		if(mutes.containsKey(name))
 		{
@@ -40,10 +41,11 @@ public class GugaMute
 	}
 	public static void removePlayer(String name)
 	{
-		mutes.remove(name);
+		mutes.remove(name.toLowerCase());
 	}
 	public static boolean getPlayerStatus(String name)
 	{
+		name=name.toLowerCase();
 		Long timeOfEnd=mutes.get(name);
 		if(!(mutes.isEmpty()))
 		{
