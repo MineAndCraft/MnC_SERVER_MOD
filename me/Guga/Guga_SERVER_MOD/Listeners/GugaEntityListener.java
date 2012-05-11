@@ -7,7 +7,6 @@ import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
@@ -228,18 +227,18 @@ public class GugaEntityListener implements Listener
 		{
 			plugin.log.info("ENTITY_EXPLODE_EVENT: entity=" + e.getEntity().toString());
 		}
+		if(e.getEntity() instanceof Creeper)
+		{
+			e.setCancelled(true);
+			return;
+		}
 		if (plugin.arena.IsArena(e.getLocation()))
 		{
 			e.setCancelled(true);
 			return;
 		}
-		if (GugaRegionHandler.GetRegionByCoords(e.getLocation().getBlockX(), e.getLocation().getBlockZ()) != null)
-		{
-			e.setCancelled(true);
-			return;
-		}
 		List<Block> blockList = e.blockList();
-		
+
 		Iterator<Block> iter = e.blockList().iterator();
 		boolean foundChest = false;
 		while (iter.hasNext())

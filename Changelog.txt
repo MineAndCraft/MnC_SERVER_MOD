@@ -1,10 +1,32 @@
+3.4.4
+Author:Rikub
+	- Anti creeper
+3.4.3
+Author:Guga
+	- New login messages
+	- Players cannot write to chat before login
+3.4.2
+	- All ranks could be added in-game
+	- ADMIN/GM prefixes added
+3.4.1
+Author:Rikub
+	- Some ranks could be added in-game.
+3.4.0
+Author:Rikub
+	- Locking for furnances and dispensers added.
+	- MAC banning was changed to IP banning.
+	- PlayerJoin log added.
+	- new command - /locker (shows information about locking/unlocking things).
+	- bug fixes
+		- Player doesn't lose flying after relog.
+		- UpdateBanAdrr starts after player register/login.
 3.3.1
 Author:Rikub
-	- max level increased to 10000
+	- max level increased to 10000.
 3.3.0
 Author:rikub/stanley
-	- turboLog by stanley (4,5* faster)
-	- new plugin messages (from regions, chest and so on)
+	- turboLog by stanley (4,5* faster).
+	- new plugin messages (from regions, chest and so on).
 3.2.2
 Author:rikub
 	- new AUTOLOCK system for chests
@@ -58,11 +80,11 @@ Author:rikub
 3.0.5
 Author:rikub
 	- Whitelisted players now skip banning phase properly.
-	
+
 Rikub joined developing of plugin
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 Changes by author of plugin Guga
-	
+
 3.0.4:
 	- 2 wrapped methods for Saving BreakBlock/Place data added.
 	- Log data is now also being saved on server shutdown.
@@ -81,7 +103,7 @@ Changes by author of plugin Guga
 	- Players now dont need to send MAC if they are whitelisted.
 	- Players in mcOwners.dat are now also included in list of players with skin.
 	- Server now also requires certain client version.
-	
+
 3.0.0:
 	- Plugin updated for Minecraft 1.2.3.
 	- Plugin updated for Bukkit 1377 and CraftBukkit 2032.
@@ -115,7 +137,7 @@ Changes by author of plugin Guga
 	- /gm log <page> command added.
 	- All handlers moved to Handlers folder.
 	- All Listeners moved to Listeners folder.
-	
+
 2.4.3:
 	- GugaFile class temporarily reverted to Java I/O methods.
 	- Block log reading is now split in 2 threads, one for each file.
@@ -128,7 +150,7 @@ Changes by author of plugin Guga
 	- /gm invis command is now available for GMs.
 	- New GugaNativeBridge class added for accessing Native libraries.
 	- Logging class is now using Native method for writing in files.
-	
+
 2.4.0:
 	- Events updated for new bukkit system.
 	- Socket server is no longer sending any messages to server console.
@@ -142,7 +164,7 @@ Changes by author of plugin Guga
 2.3.4:
 	- /event players list is now split in pages.
 	- Players that can join event can now be limited with cap.
-	
+
 2.3.3:
 	- Fixed ban length output datatypes - now showing proper values.
 	- Regions are now split in pages.
@@ -151,7 +173,7 @@ Changes by author of plugin Guga
 	- Added new GetBannedPlayers() to ban handler class.
 	- /gm ban list now works properly.
 	- Messages on ban/unban changed.
-	
+
 2.3.1:
 	- ConcurrentModificationException fix improved.
 	- Players now cannot use /arena command while not logged in.
@@ -162,7 +184,7 @@ Changes by author of plugin Guga
 	- Players now have to accept teleport, before vip can teleport on them.
 	- New /y command added.
 	- Plugin updated for CraftBukkit 1798.
-	
+
 2.2.17:
 	- Players that are not logged in now cannot drop items from inventory.
 	- Any player now can build/destroy in region with owner set to "all".
@@ -202,17 +224,17 @@ Changes by author of plugin Guga
 2.2.9:
 	- Places lists are now split in pages.
 	- Arena promote messages are now displayed only to players that are being promoted.
-	
+
 2.2.8:
 	- Added check for players with no name.
-	
+
 2.2.7:
 	- Explosions are now disabled in regions.
 	- Kill message with +points on kill in arena added.
 	- Fixed bug with player not winning arena, if reaching rank 19 with more than 1 points.
 	- Players now get more points for killing players with higher rank.
 	- Killing player on killing spree now reward players with +1 points.
-	
+
 2.2.6:
 	- Arena kill message disabled.
 	- Arena now support multiple spawn points.
@@ -220,7 +242,7 @@ Changes by author of plugin Guga
 	- /gm arena command added.
 	- setspawn and removespawn commands in /arena command have been removed.
 	- arena broadcast messages now have [ARENA] prefix and dark green color.
-	
+
 2.2.5:
 	- Multi-kill bonuses and messages added.
 	- Cache arena-kill protection removed.
@@ -232,23 +254,23 @@ Changes by author of plugin Guga
 	- Arena now has GunGame-style rewarding system.
 	- First player, that reaches tier 19 recieves 50 credits.
 	- Stats reset when someone reaches Tier 19.
-	
+
 2.2.3:
 	- gm commands help in /arena added.
 	- Few arena tiers have been added.
 	- Required kills in arena tiers updated.
 	- Arena kill message customized.
 	- /arena clear command for gms added.
-	
+
 2.2.2:
 	- Possible fix for rare concurrency read exception.
 	- More tiers added.
-	
+
 2.2.1:
 	- Arena items are now given properly.
 	- Items dropping in arena disabled.
 	- Items now are also given upon rank increase.
-	
+
 2.2.0:
 	- New InventoryBackup class added.
 	- Event inventory saving has been rewritten.
@@ -261,11 +283,11 @@ Changes by author of plugin Guga
 	- /arena info command added.
 	- On kill arena message removed.
 	- Players in arena no longer drop arrows.
-	
+
 2.1.7:
 	- Rank Moderator changed on Builder.
 	- Required rank to build in arena and in regions is now a builder instead of GM.
-	
+
 2.1.6:
 	- /event players remove command added.
 	- Clearing inventory of tagged players now also removes players armor.
@@ -275,7 +297,7 @@ Changes by author of plugin Guga
 	- /event join command added.
 	- Players now can join event with a command.
 	- /event stats command added.
-	
+
 2.1.4:
 	- /event godmode command added.
 	- /event spawners greatly improved.
@@ -285,31 +307,31 @@ Changes by author of plugin Guga
 	- /event spawners command added.
 	- GMs now can create spawners, that spawn mobs in given interval
 	- Socket server log messages removed from console.
-				
+
 2.1.2:
 	- /event tpback command added.
-	
+
 2.1.1:
 	- Set plugin added to plugin startup.
 	- /event command added to help.
 	- Some messages added to event commands.
 	- /event players list command added.
-	
+
 2.1.0:
 	- New class for Event managing added.
 	- GMs now can tag players for event, teleport them to his position or clear / give back their inventory contents.
 	- Plugin updated for Bukkit 1079 and CraftBukkit 1611.
-	
+
 2.0.5:
 	- Implemented a possible fix for falling under a world bug.
-	
+
 2.0.4:
 	- Offline check for ban message.
 
 2.0.3:
 	- Fixed a little bug in gm commands.
 	- When player is banned, he also gets kicked now.
-	
+
 2.0.2:
 	- Some gm commands are now available for GAMEMASTER rank ingame too.
 
@@ -333,10 +355,10 @@ Changes by author of plugin Guga
 	- /who now only shows level, not profession name.
 	- Experince on bonus drop slightly increased.
 	- Plugin updated for Bukkit 1034 and Craftbukkit 1492.
-	
+
 1.9.7:
 	- Added null check on ban record when player joins.
-	
+
 1.9.6:
 	- Simple debug tools for ban system added.
 	- Experience now drop again.
@@ -345,19 +367,19 @@ Changes by author of plugin Guga
 
 1.9.5:
 	- Fix attempt #2.
-	
+
 1.9.4:
 	- Fix attempt for login bug.
-	
+
 1.9.3:
 	- Updated for Bukkit 1.0.0 and CraftBukkit 1.0.0
-	
+
 1.9.2:
 	- Fixed a dupe bug in Bans data file.
-	
+
 1.9.1:
 	- IP logging in ban file now should work properly
-	
+
 1.9.0:
 	- New banning system added.
 	- /gm ban command added.
@@ -365,7 +387,7 @@ Changes by author of plugin Guga
 	- New GugaBanHandler class added.
 	- Bonus drop for miners from iron, gold and diamond has been removed.
 	- Block cache checking for iron gold and diamond has been removed.
-	
+
 1.8.5:
 	- /vip tp bed command now should work properly.
 	- /gm credits balance command added.
@@ -374,7 +396,7 @@ Changes by author of plugin Guga
 	- XP Bar mapping works properly.
 	- Level cap increased to 1000.
 	- Socket server is now protected from crashing.
-	
+
 1.8.3:
 	- /gm log now works properly for gms too.
 	- minor stability improvements to socket server.
@@ -389,7 +411,7 @@ Changes by author of plugin Guga
 	- New GM system is now properly supported in Block events.
 	- Fixed bug in socket LOGIN command, that returned both, SUCCESS and FAIL messages.
 	- Added FAIL answer to all socket Commands.
-	
+
 1.8.0:
 	- New GameMaster class added;
 	- New GameMasterHandler class added;
@@ -399,7 +421,7 @@ Changes by author of plugin Guga
 	- Moderator and Eventer are unused for now.
 	- Socket Server added;
 	- Socket server manages connection from Remote server controller application.
-	
+
 1.7.2:
 	- Player now can see message when his auction is sold.
 	- Command /ah my now shows auction ID properly.
@@ -429,7 +451,7 @@ Changes by author of plugin Guga
 	- New GugaRegionHandler class added.
 	- New /gm regions command added.
 	- Players now can buy Regions.
-	
+
 1.5.9:
 	- Plugin updated for Bukkit 875 and Craftbukkit 1240.
 	- Credits now can be added to offline players aswell.
@@ -443,12 +465,12 @@ Changes by author of plugin Guga
 
 1.5.7:
 	- Fixed bug with professions not increasing level properly.
-	
+
 1.5.6:
 	- Level cap raised to 100.
 	- Skills improving capped on level 20.
 	- XP Bar is now mapping xp properly.
-	
+
 1.5.5:
 	- Experience orbs have been disabled.
 	- Experience bar is now showing Profession experience.
@@ -464,16 +486,16 @@ Changes by author of plugin Guga
 1.5.3:
 	- /gm places remove command is now working properly again.
 	- Players now can use /r in order to reply on a whisper.
-	
+
 1.5.2:
 	- Places now can be public and private.
 	- Private places are usable only for their owners.
 	- GM log searching now prints additional messages.
-		
+
 1.5.1:
 	- Fixed bug with BlockBreak log not showing item id correctly.
 	- GM Announce interval decreased from 5 minutes to 2 minutes.
-	
+
 1.5.0:
 	- New GugaPort class added.
 	- New GugaPlace class added.
@@ -483,7 +505,7 @@ Changes by author of plugin Guga
 	- GM /speed command now increases mining speed, instead of movement speed.
 	- Redstone dust has been added to /shop item list.
 	- Plugin updated for Bukkit 841 and CraftBukkit 1149.
-	
+
 1.4.4:
 	- Initial entity destroy on spectation start delayed by 10 server ticks.
 	- New GM Command that prints logs ingame.
@@ -498,7 +520,7 @@ Changes by author of plugin Guga
 
 1.4.1:
 	- Plugin updated for Bukkit 834 and CraftBukkit 1118.
-	
+
 1.4.0:
 	- Plugin updated for Minecraft 1.8.
 	- Arena Stats sorting order has been inverted.
@@ -512,7 +534,7 @@ Changes by author of plugin Guga
 	- Chest class performance improved and simplified code abit.
 	- Chests are now saved in Location array instead of x, y, z coords.
 	- Plugin updated for Bukkit 833 and CraftBukkit 1113.
-		
+
 1.3.21:
 	- Accounts buffer size increased from 500 to 10000
 
@@ -532,7 +554,7 @@ Changes by author of plugin Guga
 1.3.17:
 	- GMs now have blue chat color.
 	- Spectator mode updated <still in testing phase>.
-	
+
 1.3.16:
 	- Spectator Mode added.
 	- Invisibility check now also fires on PlayerTeleport event.
@@ -554,12 +576,12 @@ Changes by author of plugin Guga
 	- Login system is no longer case-sensitive.
 	- Chest buffer size increased from 500 to 10000.
 	- Plugin updated for Bukkit build 804.
-	
+
 1.3.10:
 	- Wooden Planks can now longer burn.
 	- All ignite attempts are now logged.
 	- GMs can now open and unlock any chest regardless on  who is the chest owner.
-	
+
 1.3.9:
 	- Prices of all items in shop reduced.
 	- Obsidian added to shop item list.
@@ -574,12 +596,12 @@ Changes by author of plugin Guga
 1.3.7:
 	- onRedstoneChange event also prints coordinates in debug mode.
 	- New GM command for teleportation added.
-	
+
 1.3.6:
 	- Player is now unable to leave arena for 1 minute instead of 10 seconds after entering.
 	- New Logging system added.
 	- Server now logs all Block Break and Block Place events.
-	
+
 1.3.5:
 	- All commands moved in new class.
 	- GM Command for immortality added.
@@ -590,12 +612,12 @@ Changes by author of plugin Guga
 	- VIP Command added to help.
 	- VIP display name is now updated when status changes, not just on PlayerJoin.
 	- Default commands are no longer usable for VIP.
-	
+
 1.3.3:
 	- VIP members now also have "VIP'" infront of their name in chat.
 	- New /VIP command added.
 	- VIP can now also teleport to their bed, world spawn, and places they teleported from.
-	
+
 1.3.2:
 	- VIP players now also have gold name in chat, not just the message.
 	- Changed time now also can be reset back to normal with /time reset.
@@ -603,7 +625,7 @@ Changes by author of plugin Guga
 1.3.1:
 	- VIP Commands can now be only used after Player logs in.
 	- Players with VIP status now can use give command for cobblestone, sand and stone.
-	
+
 1.3.0
 	- Player now can become VIP.
 	- Players with VIP status now can use teleport command to teleport themselves.
@@ -615,7 +637,7 @@ Changes by author of plugin Guga
 	- Diamond shop price reduced by 50.
 	- Gold ingot shop price reduced by 50.
 	- GM Command for Block Arrays Generation added.
-	
+
 1.2.1:
 	- Currency Data for a new player are created when player logs in, not when uses /shop command.
 	- Currency Data are now also saved whenever player leaves the server.
@@ -637,7 +659,7 @@ Changes by author of plugin Guga
 1.1.7:
 	- Console Debug Info completed for all events.
 	- New Debug command added.
-	
+
 1.1.6:
 	- Hunters now dont need to relog to start regenerating Hp after they choose their profession.
 	- Server Announcement interval increased on 5 minutes.
@@ -659,7 +681,7 @@ Changes by author of plugin Guga
 1.1.2:
 	- Server announcement is now disabled by default.
 	- Server announcement now can be changed with /gm announce command.
-	
+
 1.1.1:
 	- Plugin now also displays its version when loaded.
 	- Griefing system now works properly.
@@ -673,10 +695,10 @@ Changes by author of plugin Guga
 1.0.7:
 	- Command for changing World Spawn added.
 	- Server Message Added.
-	
+
 1.0.6:
 	- Chests can no longer explode.
-	
+
 1.0.5:
 	- GM Login Error Message is now only shown to GM accounts.
 	- XP Gain from Spiders increased.
@@ -686,11 +708,11 @@ Changes by author of plugin Guga
 	- Player can now only use /arena leave in arena.
 	- Arena stats now work properly.
 	- Arena stats are a little bit more informative
-	
+
 1.0.4:
 	- Fixed HP Regen bug in arena world.
 	- GM Commands can now only be used after GM Logs in.
-	
+
 1.0.3:
 	- Player can no longer leave for a certain amount of times after he joins arena or kills a player.
 	- Who command now also displays a world that player is currently in.

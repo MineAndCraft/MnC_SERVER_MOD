@@ -101,6 +101,7 @@ public class GugaVirtualCurrency
 		else
 		{
 			p.setDisplayName(p.getName());
+			p.setPlayerListName(p.getName());
 		}
 	}
 	public void BuyItem(String itemName, int amount)

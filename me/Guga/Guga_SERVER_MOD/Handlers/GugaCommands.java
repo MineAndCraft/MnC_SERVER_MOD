@@ -154,8 +154,8 @@ public abstract class GugaCommands
 		sender.sendMessage("GUGA MINECRAFT SERVER MOD "+Guga_SERVER_MOD.version);
 		sender.sendMessage("******************************");
 		sender.sendMessage("Seznam prikazu:");
-		sender.sendMessage(" /lock  -  Zamkne truhlu.");
-		sender.sendMessage(" /unlock  -  Odemkne truhlu.");
+		sender.sendMessage(" /lock  -  Zamkne block (info v /locker).");
+		sender.sendMessage(" /unlock  -  Odemkne block (info v /locker).");
 		sender.sendMessage(" /who  -  Seznam online hracu.");
 		sender.sendMessage(" /login <heslo>  -  Prihlasi zaregistrovaneho hrace.");
 		sender.sendMessage(" /register <pass>  -  Zaregistruje noveho hrace.");
@@ -178,15 +178,26 @@ public abstract class GugaCommands
 		sender.sendMessage("Created by Guga 2011");
 		sender.sendMessage("******************************");
 	}
+	public static void CommandLocker(Player sender)
+	{
+		sender.sendMessage(ChatColor.BLUE+"***********");
+		sender.sendMessage(ChatColor.BLUE+"LOCKER");
+		sender.sendMessage(ChatColor.BLUE+"***********");
+		sender.sendMessage("Zamcit muzete bednu, davkovac a pec!");
+		sender.sendMessage("Blocky se zamykaji automaticky pri polozeni!");
+		sender.sendMessage("PRIKAZY:");
+		sender.sendMessage( "/lock - zamce block");
+		sender.sendMessage( "/unlock - odemce block");
+	}
 	public static void CommandLock(Player sender)
 	{
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
-		if (blockType == 54)
+		if (blockType == ID_CHEST)
 		{
-			if (plugin.chests.GetChestOwner(chest).matches("notFound"))
+			if (plugin.chests.GetBlockOwner(chest).matches("notFound"))
 			{
-				plugin.chests.LockChest(chest,sender.getName());
+				plugin.chests.LockBlock(chest,sender.getName());
 				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase truhla byla zamcena.");
 			}
 			else
@@ -194,11 +205,34 @@ public abstract class GugaCommands
 				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Truhlu jiz nekdo zamkl!");
 			}
 		}	
+		else if(blockType == ID_DISPENSER)
+		{
+			if (plugin.dispensers.GetBlockOwner(chest).matches("notFound"))
+			{
+				plugin.dispensers.LockBlock(chest,sender.getName());
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vas davkovac byl zamcen.");
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Davkovac jiz nekdo zamkl!");
+			}
+		}
+		else if(blockType == ID_FURNANCE)
+		{
+			if (plugin.furnances.GetBlockOwner(chest).matches("notFound"))
+			{
+				plugin.furnances.LockBlock(chest,sender.getName());
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase pec byla zamcena.");
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Pec jiz nekdo zamkl!");
+			}
+		}
 		else
 		{
-			sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Tento blok neni truhla!");
+			sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Tento block nelze zamcit!");
 		}
-		
 	}
 	public static void CommandConfirm(Player sender, String args[])
 	{
@@ -232,21 +266,45 @@ public abstract class GugaCommands
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
 
-		if (blockType == 54)
+		if (blockType == ID_CHEST)
 		{
-			if ( (plugin.chests.GetChestOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
+			if ( (plugin.chests.GetBlockOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
 			{
-				plugin.chests.UnlockChest(chest,sender.getName());
-				sender.sendMessage("Vase truhla byla odemcena.");
+				plugin.chests.UnlockBlock(chest,sender.getName());
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vase truhla byla odemcena.");
 			}
 			else
 			{
-				sender.sendMessage("Tuto truhlu nemuzete odemknout!");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tuto truhlu nemuzete odemknout!");
 			}
-		}	
+		}
+		else if(blockType==ID_DISPENSER)
+		{
+			if ( (plugin.dispensers.GetBlockOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
+			{
+				plugin.dispensers.UnlockBlock(chest,sender.getName());
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas davkovac byl odemcen.");
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tento davkovac nemuzete odemknout!");
+			}
+		}
+		else if(blockType==ID_FURNANCE)
+		{
+			if ( (plugin.furnances.GetBlockOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
+			{
+				plugin.furnances.UnlockBlock(chest,sender.getName());
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vase pec byla odemcena.");
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tuto pec nemuzete odemknout!");
+			}
+		}
 		else
 		{
-			sender.sendMessage("Tento blok neni truhla!");
+			sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tento block nelze odemcit!");
 		}
 		
 	}
@@ -896,9 +954,9 @@ public abstract class GugaCommands
 	}
 	public static void CommandRegister(Player sender, String args[])
 	{
-		if (!GugaMCClientHandler.HasClient(sender))
+		if(!GugaMCClientHandler.HasClient(sender))
 		{
-			sender.sendMessage(ChatColor.DARK_BLUE + "Ke hrani na nasem serveru potrebujete naseho klienta!");
+			sender.sendMessage("Nemate client");
 			return;
 		}
 		if(plugin.acc.UserIsRegistered(sender))
@@ -911,6 +969,7 @@ public abstract class GugaCommands
 			{
 				String pass = args[0];
 				plugin.acc.RegisterUser(sender, pass);
+				GugaBanHandler.UpdateBanAddr(sender.getName());
 			}
 			else
 			{
@@ -936,7 +995,10 @@ public abstract class GugaCommands
 				sender.sendMessage("/eventworld togglemobs - Toggle mobs on/off");
 				sender.sendMessage("/eventworld togglepvp - Toggle PvP on/off");
 				sender.sendMessage("/eventworld toggleregion - Toggle regin on/off");
-				sender.sendMessage("/eventworld setspawn - Sets a EventWorld spawn to GM's position");
+				if(GameMasterHandler.IsAdmin(sender.getName()))
+				{
+					sender.sendMessage("/eventworld setspawn - Sets a EventWorld spawn to GM's position");
+				}
 			}
 		}
 		else if (args.length == 1)
@@ -1081,7 +1143,10 @@ public abstract class GugaCommands
 				String text="";
 				for(int i=0;i<args.length;i++)
 				{
-					text=text+args[i];
+					if(i==0)
+						text=text+args[i];
+					else
+						text=text+" "+args[i];
 				}
 				GugaParty.sendMessage(sender, text);
 			}
@@ -1411,7 +1476,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandGM(Player sender, String args[])
 	{
-		if (!(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.WEBMASTER)))
+		if (!(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER)))
 			return;
 		if (!plugin.acc.UserIsLogged(sender))
 		{
@@ -1431,11 +1496,13 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
 				sender.sendMessage("/gm announce  - Announcements sub-menu.");
 				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
+				sender.sendMessage("/ replace <typeID> <typeID2> <reltiveX> <relativeY> <relativeZ> - Replaces a blocks from block you point at.");
 				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
 				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 				sender.sendMessage("/gm places - Places sub-menu.");
 				sender.sendMessage("/gm regions - Regions sub-menu.");
 				sender.sendMessage("/gm arena - Arenas sub-menu.");
+				sender.sendMessage("/gm rank - Ranks sub-menu.");
 			}
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -1443,9 +1510,13 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 				sender.sendMessage("/gm reloadskins - Reloads a skins data.");
 				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
-				sender.sendMessage("/gm mute - Mute sub-menu");
+				sender.sendMessage("/gm mute - Mute sub-menu.");
+				sender.sendMessage("/gm prefix - Prefix sub-menu.");
+				sender.sendMessage("/gm kill <player> - Kills target player.");
+				sender.sendMessage("/gm on - Turn your GM status to on");
+				sender.sendMessage("/gm off - Turn your GM status to off");
 			}
-			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - save unsaved progress");
+			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 			sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
@@ -1458,18 +1529,23 @@ public abstract class GugaCommands
 			{
 				plugin.logger.PrintLogData(sender, sender.getTargetBlock(null, 20));
 			}
-			else if (subCommand.matches("reloadskins")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if(subCommand.matches("rank") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm rank add <player> <rank> - Adds rank (EVENTER/BUILDER) for a certain player.");
+				sender.sendMessage("/gm rank remove <player> - Removes rank for a certain player");
+			}
+			else if (subCommand.matches("reloadskins") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				GugaMCClientHandler.ReloadSkins();
 				sender.sendMessage("Skins succesfuly reloaded");
 			}
-			else if (subCommand.matches("mute")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if (subCommand.matches("mute") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm mute all - Toggle all chat messages on/off");
 				sender.sendMessage("/gm mute add <name> <time> - Mute players chat messages for certain time");
 				sender.sendMessage("/gm mute list - Shows list of muted players");
 			}
-			else if (subCommand.matches("getcords")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if (subCommand.matches("getcords") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				Location l=sender.getCompassTarget();
 				sender.sendMessage(l.toString());
@@ -1525,6 +1601,29 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
 				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
 			}
+			else if (subCommand.matches("prefix") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm prefix add <player> <prefix> - Sets prefix for target player.");
+				sender.sendMessage("/gm prefix remove <player> <prefix> - Removes prefix for target player.");
+			}
+			else if (subCommand.matches("on") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				GMsOffState.remove(sender);
+				GameMasterHandler.setGMName(sender);
+				sender.setGameMode(GameMode.CREATIVE);
+				sender.sendMessage("GM state succesfully turned on!");
+			}
+			else if (subCommand.matches("off") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(!GMsOffState.contains(sender))
+				{
+					GMsOffState.add(sender);
+				}
+				GugaVirtualCurrency currency = plugin.FindPlayerCurrency(sender.getName());
+				currency.UpdateDisplayName();
+				sender.setGameMode(GameMode.SURVIVAL);
+				sender.sendMessage("GM state succesfully turned off!");
+			}
 		}
 		else if (args.length == 2)
 		{
@@ -1569,8 +1668,9 @@ public abstract class GugaCommands
 				{
 					/*flyMode.remove(arg1);
 					GugaMCClientHandler.SendMessage(target, "SET_FLY;false");*/
-					target.setAllowFlight(true);
-					target.setFlying(true);
+					target.setAllowFlight(false);
+					target.setFlying(false);
+					fly.remove(target.getName().toLowerCase());
 					target.sendMessage("Fly mode byl vypnut!");
 					sender.sendMessage("Fly mode succesfuly turned off.");
 				}
@@ -1580,6 +1680,7 @@ public abstract class GugaCommands
 					GugaMCClientHandler.SendMessage(target, "SET_FLY;true");*/
 					target.setAllowFlight(true);
 					target.setFlying(true);
+					fly.add(target.getName().toLowerCase());
 					target.sendMessage("Fly mode byl zapnut!");
 					sender.sendMessage("Fly mode succesfuly turned on.");
 				}
@@ -1608,6 +1709,16 @@ public abstract class GugaCommands
 				sender.sendMessage("PAGE " + Integer.parseInt(arg1) + "/" + pager.GetPagesCount());
 				while (i.hasNext())
 					sender.sendMessage(i.next());
+				}
+			}
+			else if (subCommand.matches("kill") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				Player target = plugin.getServer().getPlayer(args[1]);
+				if(target.isOnline())
+				{
+					target.setHealth(0);
+					target.sendMessage("Byl jste zabit adminem/GM!");
+					sender.sendMessage("Hrac "+target.getName()+" byl zabit!");
 				}
 			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
@@ -1743,7 +1854,7 @@ public abstract class GugaCommands
 					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
 				}
 			}
-			else if (subCommand.matches("mute"))
+			else if (subCommand.matches("mute")&& GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				if(args.length==4)
 				{
@@ -1868,7 +1979,62 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			
+			else if (subCommand.matches("prefix") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(args.length == 4)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					String arg3 = args[3];
+					if(arg1.matches("add"))
+					{
+						Player target = plugin.getServer().getPlayer(arg2);
+						if(target.isOnline())
+						{
+							if(!GameMasterHandler.IsAtleastRank(target.getName(), Rank.EVENTER))
+							{
+								target.setDisplayName(ChatColor.RED + arg3.toUpperCase() + "'" + ChatColor.WHITE + target.getName());
+								sender.sendMessage("Prefix successfully added!");
+							}
+							else
+							{
+								sender.sendMessage("This player cannot be prefixed!");
+							}
+						}
+						else
+						{
+							sender.sendMessage("This player is not online.");
+						}
+					}
+				}
+				else if(args.length == 3)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					if(arg1.matches("remove"))
+					{
+						Player target = plugin.getServer().getPlayer(arg2);
+						if(target.isOnline())
+						{
+							GugaVirtualCurrency curr = plugin.FindPlayerCurrency(target.getName());
+							if(curr.IsVip())
+							{
+								curr.UpdateDisplayName();
+							}
+							else
+							{
+								target.setDisplayName(target.getName());
+								target.setPlayerListName(target.getName());
+								sender.sendMessage("Prefix successfully removed!");
+							}
+						}
+						else
+						{
+							sender.sendMessage("This player is not online.");
+						}
+					}
+				}
+			}
 			else if (subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 3)
@@ -2067,7 +2233,7 @@ public abstract class GugaCommands
 					plugin.GenerateBlockType(sender, typeID, x, y, z);
 				}
 			}
-			else if (subCommand.matches("genblock2")&& GameMasterHandler.IsAdmin(sender.getName()))
+			else if (subCommand.matches("replace")&& GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if (args.length == 6)
 				{
@@ -2099,6 +2265,60 @@ public abstract class GugaCommands
 					sender.sendMessage("Vip Status for " + pName + " is active till " + c.getTime());
 				}
 			}
+			else if (subCommand.matches("rank") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if(args.length == 4)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					String arg3 = args[3];
+					if(arg1.matches("add"))
+					{
+						Player target = plugin.getServer().getPlayer(arg2);
+						if(target != null)
+						{
+							if(arg3.equalsIgnoreCase("eventer")||arg3.equalsIgnoreCase("builder")||arg3.equalsIgnoreCase("admin")||arg3.equalsIgnoreCase("gamemaster"))
+							{
+								if(!GameMasterHandler.gameMasters.contains(GameMasterHandler.GetGMByName(target.getName())))
+								{
+									GameMasterHandler.AddGMIng(target.getName(), arg3.toUpperCase());
+									sender.sendMessage("User was succesfully added to GMs file!");
+								}
+								else
+								{
+									sender.sendMessage("User cannot be removed, because he already exists in GMs file. - Delete him to change rank.");
+								}
+							}
+							else
+							{
+								sender.sendMessage("This rank can't be added.");
+							}
+						}
+						else
+						{
+							sender.sendMessage("This player doesn't exist.");
+						}
+					}
+				}
+				else if(args.length == 3)
+				{
+					String arg1 = args[1];
+					String arg2 = args[2];
+					if(arg1.matches("remove"))
+					{
+						Player target = plugin.getServer().getPlayer(arg2);
+						if(target != null)
+						{
+							GameMasterHandler.RemoveGMIng(arg2);
+							sender.sendMessage("User was succesfully removed from GMs file!");
+						}
+						else
+						{
+							sender.sendMessage("This player doesn't exist.");
+						}
+					}
+				}
+			}
 			else if (subCommand.matches("tp"))
 			{
 				if (args.length == 4)
@@ -2128,9 +2348,9 @@ public abstract class GugaCommands
 	}
 	public static void CommandLogin(Player sender, String args[])
 	{
-		if (!GugaMCClientHandler.HasClient(sender))
+		if(!GugaMCClientHandler.HasClient(sender))
 		{
-			sender.sendMessage(ChatColor.DARK_BLUE + "Ke hrani na nasem serveru potrebujete naseho klienta!");
+			sender.sendMessage("Nemate client");
 			return;
 		}
 		 String pass = args[0];
@@ -2141,6 +2361,8 @@ public abstract class GugaCommands
 				 if (!plugin.acc.LoginUser(sender, pass))
 					 return;
 				 sender.teleport(plugin.acc.playerStart.get(sender.getName()));
+				 if(!GugaBanHandler.IsIpWhitelisted(sender))
+						 GugaBanHandler.UpdateBanAddr(sender.getName());
 				/* GugaProfession prof;
 					if ((prof = plugin.professions.get(sender.getName())) != null)
 					{
@@ -2252,10 +2474,16 @@ public abstract class GugaCommands
 		}
 		return false;
 	}
+	
+	private static int ID_CHEST=54;
+	private static int ID_DISPENSER=23;
+	private static int ID_FURNANCE=61;
+	public static ArrayList<Player> GMsOffState = new ArrayList<Player>();
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static ArrayList<String> flyMode = new ArrayList<String>();
+	public static ArrayList<String> fly = new ArrayList<String>();
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
 	private static Guga_SERVER_MOD plugin;
