@@ -271,8 +271,6 @@ public abstract class GugaEvent
 		return count;
 	}
 	public static ArrayList<String> players = new ArrayList<String>();
-	public static ArrayList<String> redTeam = new ArrayList<String>();
-	public static ArrayList<String> blueTeam = new ArrayList<String>();
 	public static boolean godMode = false;
 	public static boolean acceptInv = false;
 	public static int playersCap = 20;

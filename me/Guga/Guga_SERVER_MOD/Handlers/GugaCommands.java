@@ -23,6 +23,7 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.GugaSpawner;
 import me.Guga.Guga_SERVER_MOD.GugaSpectator;
+import me.Guga.Guga_SERVER_MOD.GugaTeams;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Prices;
@@ -154,25 +155,25 @@ public abstract class GugaCommands
 		sender.sendMessage("GUGA MINECRAFT SERVER MOD "+Guga_SERVER_MOD.version);
 		sender.sendMessage("******************************");
 		sender.sendMessage("Seznam prikazu:");
-		sender.sendMessage(" /lock  -  Zamkne block (info v /locker).");
-		sender.sendMessage(" /unlock  -  Odemkne block (info v /locker).");
-		sender.sendMessage(" /who  -  Seznam online hracu.");
-		sender.sendMessage(" /login <heslo>  -  Prihlasi zaregistrovaneho hrace.");
-		sender.sendMessage(" /register <pass>  -  Zaregistruje noveho hrace.");
-		sender.sendMessage(" /password <stare_heslo> <nove_heslo>  -  Zmeni heslo.");
-		sender.sendMessage(" /rpg  -  Menu Profesi.");
-		sender.sendMessage(" /arena  -  Menu areny.");
-		sender.sendMessage(" /eventworld  -  Menu EventWorldu.");
-		sender.sendMessage(" /shop  -  Menu Obchodu.");
-		sender.sendMessage(" /vip  -  VIP menu.");
-		sender.sendMessage(" /places - Menu mist, kam se da teleportovat.");
-		sender.sendMessage(" /party - Prikazy pro party");
-		sender.sendMessage(" /ah - Menu Aukce.");
-		sender.sendMessage(" /r <message>  -  Odpoved na whisper.");
+		sender.sendMessage(ChatColor.AQUA + " /lock " + ChatColor.WHITE + "- Zamkne block (info v /locker).");
+		sender.sendMessage(ChatColor.AQUA + " /unlock  " + ChatColor.WHITE + "- Odemkne block (info v /locker).");
+		sender.sendMessage(ChatColor.AQUA + " /who  " + ChatColor.WHITE + "-  Seznam online hracu.");
+		sender.sendMessage(ChatColor.AQUA + " /login " + ChatColor.GRAY + "<heslo>  " + ChatColor.WHITE + "-  Prihlasi zaregistrovaneho hrace.");
+		sender.sendMessage(ChatColor.AQUA + " /register " + ChatColor.GRAY + "<pass>  " + ChatColor.WHITE + "-  Zaregistruje noveho hrace.");
+		sender.sendMessage(ChatColor.AQUA + " /password " + ChatColor.GRAY + "<stare_heslo> <nove_heslo>  " + ChatColor.WHITE + "-  Zmeni heslo.");
+		sender.sendMessage(ChatColor.AQUA + " /rpg  " + ChatColor.WHITE + "-  Menu Profesi.");
+		sender.sendMessage(ChatColor.AQUA + " /arena  " + ChatColor.WHITE + "-  Menu areny.");
+		sender.sendMessage(ChatColor.AQUA + " /eventworld  " + ChatColor.WHITE + "-  Menu EventWorldu.");
+		sender.sendMessage(ChatColor.AQUA + " /shop  " + ChatColor.WHITE + "-  Menu Obchodu.");
+		sender.sendMessage(ChatColor.AQUA + " /vip  " + ChatColor.WHITE + "-  VIP menu.");
+		sender.sendMessage(ChatColor.AQUA + " /places " + ChatColor.WHITE + "- Menu mist, kam se da teleportovat.");
+		sender.sendMessage(ChatColor.AQUA + " /party " + ChatColor.WHITE + "- Prikazy pro party");
+		sender.sendMessage(ChatColor.AQUA + " /ah " + ChatColor.WHITE + "- Menu Aukce.");
+		sender.sendMessage(ChatColor.AQUA + " /r " + ChatColor.GRAY + "<message> " + ChatColor.WHITE + "-  Odpoved na whisper.");
 		if (GameMasterHandler.IsAdmin(sender.getName()))
 		{
-			sender.sendMessage(" /gm  -  GameMaster's menu.");
-			sender.sendMessage("/event  -  Event menu.");
+			sender.sendMessage(ChatColor.AQUA + " /gm " + ChatColor.WHITE + "- GameMaster's menu.");
+			sender.sendMessage(ChatColor.AQUA + "/event " + ChatColor.WHITE + "- Event menu.");
 		}
 		sender.sendMessage("******************************");
 		sender.sendMessage("Created by Guga 2011");
@@ -186,8 +187,8 @@ public abstract class GugaCommands
 		sender.sendMessage("Zamcit muzete bednu, davkovac a pec!");
 		sender.sendMessage("Blocky se zamykaji automaticky pri polozeni!");
 		sender.sendMessage("PRIKAZY:");
-		sender.sendMessage( "/lock - zamce block");
-		sender.sendMessage( "/unlock - odemce block");
+		sender.sendMessage(ChatColor.AQUA + "/lock " + ChatColor.WHITE + "- zamce block");
+		sender.sendMessage(ChatColor.AQUA + "/unlock " + ChatColor.WHITE + "- odemce block");
 	}
 	public static void CommandLock(Player sender)
 	{
@@ -388,6 +389,122 @@ public abstract class GugaCommands
 				p.BuyItem(arg1, Integer.parseInt(arg2));
 			}
 			
+		}
+	}
+	public static void CommandFly(Player sender, String args[])
+	{
+		if (!plugin.acc.UserIsLogged(sender))
+		{
+			sender.sendMessage("Nejprve se musite prihlasit!");
+			return;
+		}
+		if (GugaEvent.ContainsPlayer(sender.getName()))
+		{
+			sender.sendMessage("Nemuzete pouzivat FLY prikazy v prubehu eventu!");
+			return;
+		}
+		if (plugin.arena.IsArena(sender.getLocation()))
+		{
+			sender.sendMessage("FLY Prikazy nemuzete pouzivat v arene!");
+			return;
+		}
+		if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
+		{
+			sender.sendMessage("FLY Prikazy nemuzete pouzivat v EventWorldu!");
+			return;
+		}
+		if(args.length == 0)
+		{
+			sender.sendMessage(ChatColor.AQUA+" MENU LETANI:");
+			if(!GugaFlyHandler.isFlying(sender.getName()))
+			{
+				sender.sendMessage(ChatColor.GOLD + " CENIK:");
+				sender.sendMessage(" *Letani na 2 hodiny, CENA: 250 kreditu.");
+				sender.sendMessage(" *Letani na 4 hodiny, CENA: 450 kreditu.");
+				sender.sendMessage(" *Letani na 8 hodin, CENA: 650 kreditu.");
+				sender.sendMessage(" *Letani na 24 hodin, CENA: 950 kreditu.");
+				sender.sendMessage(" /fly activate <pocetHodin> - Aktuvuje letani na urcity pocet hodin.");
+			}
+			else
+			{
+				sender.sendMessage( "/fly on - zapne letani.");
+				sender.sendMessage( "/fly off - vypte letani.");
+			}	
+		}
+		else if((args.length == 1) && (GugaFlyHandler.isFlying(sender.getName())))
+		{
+			if(args[0].equalsIgnoreCase("on"))
+			{
+				sender.setAllowFlight(true);
+				sender.setFlying(true);
+				sender.sendMessage("Letani bylo zapnuto!");
+			}
+			else if(args[0].equalsIgnoreCase("off"))
+			{
+				sender.setAllowFlight(false);
+				sender.setFlying(false);
+				sender.sendMessage("Letani bylo vypnuto!");
+			}
+		}
+		else if((args.length == 2) && (!GugaFlyHandler.isFlying(sender.getName())))
+		{
+			GugaVirtualCurrency c = plugin.FindPlayerCurrency(sender.getName());
+			int currency = c.GetCurrency();
+			if(args[0].equalsIgnoreCase("activate"))
+			{
+				if(args[1].equalsIgnoreCase("2"))
+				{
+					if(currency >= 250)
+					{
+						c.RemoveCurrency(250);
+						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (2*60*60*1000));
+						sender.sendMessage("Letani bylo aktivovano");
+						sender.setAllowFlight(true);
+						sender.setFlying(true);
+					}
+				}
+				else if(args[1].equalsIgnoreCase("4"))
+				{
+					if(currency >= 450)
+					{
+						c.RemoveCurrency(450);
+						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (4*60*60*1000));
+						sender.sendMessage("Letani bylo aktivovano");
+						sender.setAllowFlight(true);
+						sender.setFlying(true);
+					}
+				}
+				else if(args[1].equalsIgnoreCase("8"))
+				{
+					if(currency >= 650)
+					{
+						c.RemoveCurrency(650);
+						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (8*60*60*1000));
+						sender.sendMessage("Letani bylo aktivovano");
+						sender.setAllowFlight(true);
+						sender.setFlying(true);
+					}
+				}
+				else if(args[1].equalsIgnoreCase("24"))
+				{
+					if(currency >= 950)
+					{
+						c.RemoveCurrency(950);
+						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (24*60*60*1000));
+						sender.sendMessage("Letani bylo aktivovano");
+						sender.setAllowFlight(true);
+						sender.setFlying(true);
+					}
+				}
+				else if(args[1].equalsIgnoreCase("test"))
+				{
+					GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (60*1000));
+					sender.sendMessage("Letani bylo aktivovano");
+					sender.setAllowFlight(true);
+					sender.setFlying(true);
+				}
+				GugaFlyHandler.SaveFly();
+			}
 		}
 	}
 	public static void CommandVIP(Player sender, String args[])
@@ -1173,6 +1290,62 @@ public abstract class GugaCommands
 				return;
 			}
 			sender.sendMessage("Nemate komu odpovedet!");
+		}
+	}
+	public static void CommandTeam(Player sender, String args[])
+	{
+		if(!plugin.acc.UserIsLogged(sender))
+		{
+			sender.sendMessage("Nejprve se musite prihlasit!");
+			return;
+		}
+		if(!GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			return;
+		}
+		if(args.length == 0)
+		{
+			sender.sendMessage("/team blue:red add <player1,player2> - Adds player to blue or red team");
+			sender.sendMessage("/team blue:red add itemID, ammount - Adds items to certain team");
+			sender.sendMessage("/team blue:red remove <player> - Removes player from blue or red team");
+			sender.sendMessage("/team clear - Clears all teams");
+		}
+		else if(args.length == 1)
+		{
+			if(args[0].equalsIgnoreCase("clear"))
+			{
+				GugaTeams.deleteTeams();
+				sender.sendMessage("Cleared!");
+			}
+		}
+		else if(args.length == 3)
+		{
+			if(args[0].equalsIgnoreCase("blue") || args[0].equalsIgnoreCase("red"))
+			{
+				if(args[1].equalsIgnoreCase("add"))
+				{
+					GugaTeams.addToTeam(args[2].split(","), args[0]);
+					sender.sendMessage("Player was successfuly added to " + args[0] + " team.");
+				}
+				else if(args[1].equalsIgnoreCase("remove"))
+				{
+					GugaTeams.removePlayer(args[2]);
+					sender.sendMessage("Player was successfully removed");
+				}
+			}
+		}
+		else if(args.length == 4)
+		{
+			if(args[0].equalsIgnoreCase("blue") || args[0].equalsIgnoreCase("red"))
+			{
+				if(args[1].equalsIgnoreCase("add"))
+				{
+					int itemID = Integer.parseInt(args[2]);
+					int ammount = Integer.parseInt(args[3]);
+					GugaTeams.AddItemToPlayers(itemID, ammount,args[0]);
+					sender.sendMessage("Items successfully added!");
+				}
+			}
 		}
 	}
 	public static void CommandEvent(Player sender, String args[])
@@ -2474,7 +2647,6 @@ public abstract class GugaCommands
 		}
 		return false;
 	}
-	
 	private static int ID_CHEST=54;
 	private static int ID_DISPENSER=23;
 	private static int ID_FURNANCE=61;

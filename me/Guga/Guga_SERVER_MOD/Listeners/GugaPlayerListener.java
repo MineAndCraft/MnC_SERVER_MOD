@@ -19,6 +19,7 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
@@ -99,14 +100,6 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
 			return;
 		}
-		if (p.getName().startsWith("ADMIN'") || p.getName().startsWith("GM'"))
-		{
-			if (!GameMasterHandler.GetNamesByRank(Rank.GAMEMASTER).contains(p.getName()))
-			{
-				p.kickPlayer("Na serveru neni zadny GM/ADMIN s timto jmenem!");
-				return;
-			}
-		}
 		if (!CanUseName(p.getName()))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
@@ -116,6 +109,11 @@ public class GugaPlayerListener implements Listener
 		{
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
+		}
+		if(GugaFlyHandler.isFlying(p.getName()))
+		{
+			p.setAllowFlight(true);
+			p.setFlying(true);
 		}
 
 		GugaAuctionHandler.CheckPayments(p);
@@ -133,24 +131,35 @@ public class GugaPlayerListener implements Listener
 		}
 		if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
-			GameMasterHandler.setGMName(p);
+			if(!GugaCommands.GMsOffState.contains(p.getName()))
+			{
+				GameMasterHandler.setGMName(p);
+			}
 		}
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		long timeStart = System.nanoTime();
-		p.sendMessage("******************************");
-		p.sendMessage("Vitejte na serveru MineAndCraft!.");
-		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.GOLD +"/help.");
-		p.sendMessage("******************************");
+		p.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
+		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
+		Player[]players = plugin.getServer().getOnlinePlayers();
+		String toSend = "";
+		int i=0;
+		while(i < players.length)
+		{
+			if(i==0)
+				toSend += players[i].getName();
+			else
+				toSend += ", " + players[i].getName();
+			i++;
+		}
+		p.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
 		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
 		{
 			if(GugaPlayerListener.IsCreativePlayer(p))
 			{
-				p.sendMessage("******************************");
-				p.sendMessage("Jste creative user");
-				p.sendMessage("******************************");
+				p.sendMessage("Jste uzivatel se zaregistorvanym creative modem!");
 			}
 			else
 			{
@@ -163,22 +172,7 @@ public class GugaPlayerListener implements Listener
 			p.setAllowFlight(true);
 			p.setFlying(true);
 		}
-		if (plugin.config.accountsModule)
-		{
-			if (plugin.acc.UserIsRegistered(p))
-			{
-				p.sendMessage("NEJSTE PRIHLASENY! Prosim prihlaste se pomoci " + ChatColor.GOLD + "/login" + " heslo.");
-				p.sendMessage("");
-				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
-			}
-			else
-			{
-				p.sendMessage("NEJSTE ZAREGISTROVANY! Prosim zaregistrujte se pomoci " +ChatColor.GOLD +"/register" + " heslo.");
-				p.sendMessage("");
-				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
-			}
-			p.sendMessage("******************************");
-		}
+		
 		plugin.acc.playerStart.put(p.getName(), p.getLocation());
 		plugin.acc.StartTpTask(p);
 		if (plugin.debug)
@@ -438,6 +432,11 @@ public class GugaPlayerListener implements Listener
 		{
 			spec.Teleport();
 		}*/
+		if(GugaFlyHandler.offFlying(p.getName()))
+		{
+			p.setAllowFlight(false);
+			p.setFlying(false);
+		}
 		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
 			GugaWorldSizeHandler.MoveBack(p);
 		else if (p.getLocation().getBlockY() < 0)

@@ -405,7 +405,7 @@ public class GugaSocketServer
 					this.Answer("FAIL");
 					return;
 				}
-				this.plugin.getServer().broadcastMessage(ChatColor.DARK_PURPLE + args[2]);
+				this.plugin.getServer().broadcastMessage(ChatColor.BLUE + args[2] + ChatColor.YELLOW + " -from server controller");
 				this.Answer("SUCCESS");
 				return;
 			}

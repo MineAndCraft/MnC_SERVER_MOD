@@ -1,6 +1,6 @@
 name: Guga_SERVER_MOD
 main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
-version: 3.4.4
+version: 3.4.5
 commands:
     who:
         description: Gets Names of Online players
@@ -26,6 +26,8 @@ commands:
         description: RPG menu
     arena:
         description: Arena menu
+    fly:
+        description: Fly menu
     gm:
         description: GM Commands menu
     debug:
@@ -44,6 +46,8 @@ commands:
         description: Replies to a whisper
     event:
         description: Event menu
+    team:
+        description: Teams menu
     eventworld:
         description: EventWorld menu
     pp:
