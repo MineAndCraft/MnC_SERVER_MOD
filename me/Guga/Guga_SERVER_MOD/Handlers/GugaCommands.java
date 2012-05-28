@@ -2303,6 +2303,17 @@ public abstract class GugaCommands
 						else
 							sender.sendMessage("Region not found!");
 					}
+					else if (subCmd.matches("add"))
+					{
+						String name = args[2];
+						if (GugaRegionHandler.GetRegionByName(name) != null)
+						{
+							sender.sendMessage("Region with this name already exists!");
+							return;
+						}
+						String[] owners = args[3].split(",");GugaRegionHandler.AddRegion(name, owners, GugaCommands.x1,  GugaCommands.x2,  GugaCommands.z1,  GugaCommands.z2);
+						sender.sendMessage("Region successfully added");
+					}
 				}
 				else if (args.length == 8)
 				{
@@ -2656,6 +2667,10 @@ public abstract class GugaCommands
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static ArrayList<String> flyMode = new ArrayList<String>();
 	public static ArrayList<String> fly = new ArrayList<String>();
+	public static int x1 = 0;
+	public static int x2 = 0;
+	public static int z1 = 0;
+	public static int z2 = 0;
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
 	private static Guga_SERVER_MOD plugin;

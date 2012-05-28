@@ -58,7 +58,7 @@ public class GugaPlayerListener implements Listener
 		if(plugin.acc.UserIsRegistered(p))
 			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
 		else
-			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + " pripojil/a.");
+			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + ChatColor.YELLOW + " pripojil/a.");
 		Thread t = new Thread( new Runnable() {
 			@Override
 			public void run() 
@@ -432,11 +432,11 @@ public class GugaPlayerListener implements Listener
 		{
 			spec.Teleport();
 		}*/
-		if(GugaFlyHandler.offFlying(p.getName()))
+		/*if(GugaFlyHandler.offFlying(p.getName()))
 		{
 			p.setAllowFlight(false);
 			p.setFlying(false);
-		}
+		}*/
 		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
 			GugaWorldSizeHandler.MoveBack(p);
 		else if (p.getLocation().getBlockY() < 0)
@@ -462,13 +462,53 @@ public class GugaPlayerListener implements Listener
 		}
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
+		Block b = e.getClickedBlock();
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
 			e.setCancelled(true);
 			return;
 		}
+		if(e.getAction() == Action.LEFT_CLICK_BLOCK)
+		{
+			if(GameMasterHandler.IsAdmin(p.getName()))
+			{
+				GugaCommands.x1 = b.getX();
+				GugaCommands.z1 = b.getZ();
+				if(p.getItemInHand().getTypeId() == 271)
+				{
+					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
+					int i=0;
+					while(i < OnLinePlayers.length)
+					{
+						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
+						{
+							p.sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets first position to X:" + Integer.toString(GugaCommands.x1) + " Z: " + Integer.toString(GugaCommands.z1));
+						}
+						i++;
+					}
+				}
+			}
+		}
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
+			if(GameMasterHandler.IsAdmin(p.getName()))
+			{
+				if(p.getItemInHand().getTypeId() == 271)
+				{
+					GugaCommands.x2 = b.getX();
+					GugaCommands.z2 = b.getZ();
+					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
+					int i=0;
+					while(i < OnLinePlayers.length)
+					{
+						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
+						{
+							p.sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets second position to X:" + Integer.toString(GugaCommands.x2) + " Z: " + Integer.toString(GugaCommands.z2));
+						}
+						i++;
+					}
+				}
+			}
 			/*GugaSpectator spec;
 			if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 			{
