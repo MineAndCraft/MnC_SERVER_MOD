@@ -1651,6 +1651,50 @@ public abstract class GugaCommands
 	{
 		if (!(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER)))
 			return;
+		Player []players = plugin.getServer().getOnlinePlayers();
+		String command = "/gm ";
+		int r=0;
+		while(r < args.length)
+		{
+			command += args[r] + " ";
+			r++;
+		}
+		if(GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			int i = 0;
+			while(i < players.length)
+			{
+				if(GameMasterHandler.IsAdmin(players[i].getName()) && (sender.getName() != players[i].getName()))
+				{
+					players[i].sendMessage(ChatColor.GRAY+sender.getName() + " used command: " + command);
+				}
+				i++;
+			}
+		}
+		else if(GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			int i = 0;
+			while(i < players.length)
+			{
+				if(GameMasterHandler.IsAtleastGM(players[i].getName()) && (sender.getName() != players[i].getName()))
+				{
+					players[i].sendMessage(ChatColor.GRAY+sender.getName() + " used command: " + command);
+				}
+				i++;
+			}
+		}
+		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER))
+		{
+			int i = 0;
+			while(i < players.length)
+			{
+				if(GameMasterHandler.IsAtleastRank(players[i].getName(), Rank.BUILDER) && (sender.getName() != players[i].getName()))
+				{
+					players[i].sendMessage(ChatColor.GRAY+sender.getName() + " used command: " + command);
+				}
+				i++;
+			}
+		}
 		if (!plugin.acc.UserIsLogged(sender))
 		{
 			sender.sendMessage("Musite byt prihlaseny, aby jste mohl pouzit tento prikaz!");

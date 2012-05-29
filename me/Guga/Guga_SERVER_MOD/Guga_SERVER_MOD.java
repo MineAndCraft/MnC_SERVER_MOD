@@ -334,10 +334,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 {
 				 GugaCommands.CommandGM((Player)sender,args);
 			 }
-			 else if (sender instanceof ConsoleCommandSender)
-			 {
-				 
-			 }
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("rpg"))
 		 {
