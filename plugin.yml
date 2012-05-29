@@ -58,3 +58,5 @@ commands:
         description: For Create and left party
     invite:
         description: Invite player to the party
+    feedback:
+        description: Command for better feedback from players

@@ -343,6 +343,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				 return true;
 			 }
 		 }
+		 else if (cmd.getName().equalsIgnoreCase("feedback") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandFeedback((Player) sender, args);
+			 return true;
+		 }
 		 //*****************************************/status*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("y") && (sender instanceof Player))
 		 {

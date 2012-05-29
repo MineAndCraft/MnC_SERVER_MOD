@@ -13,6 +13,7 @@ import me.Guga.Guga_SERVER_MOD.GugaAuction;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
 import me.Guga.Guga_SERVER_MOD.GugaDataPager;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
+import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
 import me.Guga.Guga_SERVER_MOD.GugaInvisibility;
 import me.Guga.Guga_SERVER_MOD.GugaMiner;
@@ -170,6 +171,7 @@ public abstract class GugaCommands
 		sender.sendMessage(ChatColor.AQUA + " /party " + ChatColor.WHITE + "- Prikazy pro party");
 		sender.sendMessage(ChatColor.AQUA + " /ah " + ChatColor.WHITE + "- Menu Aukce.");
 		sender.sendMessage(ChatColor.AQUA + " /r " + ChatColor.GRAY + "<message> " + ChatColor.WHITE + "-  Odpoved na whisper.");
+		sender.sendMessage(ChatColor.AQUA + " /feedback " + ChatColor.GRAY + "<text> " + ChatColor.WHITE + "-  Odesle zpetny odkaz administratorum serveru. Napr. bugy/napady na vylepseni.");
 		if (GameMasterHandler.IsAdmin(sender.getName()))
 		{
 			sender.sendMessage(ChatColor.AQUA + " /gm " + ChatColor.WHITE + "- GameMaster's menu.");
@@ -1347,6 +1349,29 @@ public abstract class GugaCommands
 				}
 			}
 		}
+	}
+	public static void CommandFeedback(Player sender, String args[])
+	{
+		if (!plugin.acc.UserIsLogged(sender))
+		{
+			sender.sendMessage("Nejprve se musite prihlasit!");
+			return;
+		}
+		if(args.length == 0)
+			return;
+		int i = 0;
+		String feed = "";
+		while (i < args.length)
+		{
+			feed += feed + args[i];
+			i++;
+		}
+		GugaFile file = new GugaFile(FeedbackFile, GugaFile.APPEND_MODE);
+		String line = "Feedback (" + sender.getName() + ") " + feed;
+		file.Open();
+		file.WriteLine(line);
+		file.Close();
+		sender.sendMessage("Zpetna vazba byla odeslana. Dekujeme za Vasi podporu!");
 	}
 	public static void CommandEvent(Player sender, String args[])
 	{
@@ -2717,5 +2742,6 @@ public abstract class GugaCommands
 	public static int z2 = 0;
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
+	public static String FeedbackFile = "plugins/FeedbackFile";
 	private static Guga_SERVER_MOD plugin;
 }
