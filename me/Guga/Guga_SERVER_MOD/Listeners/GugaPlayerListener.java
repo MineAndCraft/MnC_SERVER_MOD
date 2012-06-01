@@ -188,18 +188,21 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("COMMAND_PREPROCESS_EVENT: playerName=" + e.getPlayer().getName() + ",cmd=" + e.getMessage());
 		}
 		int i = 0;
-		while (i<gmCommands.length)
+		//while (i<allowedCommands.length)
 		{
-			if (e.getMessage().contains(gmCommands[i]))
+			if(!plugin.acc.UserIsLogged(e.getPlayer()))
 			{
-				if ( ( !plugin.acc.UserIsLogged(e.getPlayer()) ) && ( GameMasterHandler.IsAtleastGM(e.getPlayer().getName()) ) )
+				if(e.getMessage().contains("/login") || e.getMessage().contains("/register") || e.getMessage().contains("/help"))
 				{
-					e.getPlayer().sendMessage("Nejdrive se musite prihlasit ;).");
+				}
+				else
+				{
+					e.getPlayer().sendMessage("Nejdrive se prihlaste!");
 					e.setCancelled(true);
 					return;
 				}
 			}
-			i++;
+			//i++;
 		}
 		String msg = "";
 		String[] splitted = e.getMessage().split(" ");
@@ -704,7 +707,7 @@ public class GugaPlayerListener implements Listener
 	private int ID_FURNANCE_BURNING=62;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
-	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop","/gamemode", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time","/a","/toggledownfall","/xp","/mcc","/dmap"};
+	public String[] allowedCommands = { "/login", "/register", "/help"};
 	public boolean canSpeedUp = true;
 	private static String creativePlayersPath = "plugins/creativePlayers.dat";
 	public static Guga_SERVER_MOD plugin;
