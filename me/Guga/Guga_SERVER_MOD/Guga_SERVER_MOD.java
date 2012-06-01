@@ -10,6 +10,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
@@ -45,6 +46,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
+		GugaFlyHandler.SaveFly();
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		logger.SaveWrapperBreak();
@@ -71,6 +73,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
+		GugaTeams.SetPlugin(this);
+		GugaFlyHandler.SetPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
 		{
@@ -99,13 +103,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.LoadBans();
 		chests = new GugaChests(this);
 		furnances = new GugaFurnances(this);
-		dispensers =new GugaDispensers(this);
+		dispensers = new GugaDispensers(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
 		GugaMCClientHandler.LoadMACWhiteList();
 		GugaMCClientHandler.LoadMinecraftOwners();
 		GugaPlayerListener.LoadCreativePlayers();
+		GugaFlyHandler.LoadFly();
 		GugaBanHandler.LoadIpWhiteList();
 		
 		this.socketServer = new GugaSocketServer(12451, this);
@@ -228,6 +233,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandEvent((Player)sender, args);
 			 return true;
 		 }
+		 else if (cmd.getName().equalsIgnoreCase("team"))
+		 {
+			 GugaCommands.CommandTeam((Player)sender, args);
+			 return true;
+		 }
 		 else if (cmd.getName().equalsIgnoreCase("socket"))
 		 {
 			 	GugaCommands.TestCommand(args);
@@ -286,6 +296,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandLocker((Player)sender);
 		 }
+		 else if ((cmd.getName().equalsIgnoreCase("fly")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandFly((Player)sender, args);
+		 }
 		//*****************************************module*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
 		 {
@@ -320,10 +334,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 {
 				 GugaCommands.CommandGM((Player)sender,args);
 			 }
-			 else if (sender instanceof ConsoleCommandSender)
-			 {
-				 
-			 }
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("rpg"))
 		 {
@@ -332,6 +342,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				 GugaCommands.CommandRpg((Player)sender,args);
 				 return true;
 			 }
+		 }
+		 else if (cmd.getName().equalsIgnoreCase("feedback") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandFeedback((Player) sender, args);
+			 return true;
 		 }
 		 //*****************************************/status*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("y") && (sender instanceof Player))
@@ -572,7 +587,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.4.4";
+	public static final String version = "3.4.5";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

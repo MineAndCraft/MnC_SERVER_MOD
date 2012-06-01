@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -95,11 +96,11 @@ public class GugaAccounts
 				pl.teleport(playerStart.get(pName));
 				if (UserIsRegistered(pl))
 				{
-					pl.sendMessage("Nejste prihlaseni! Pro prihlaseni napiste /login VaseHeslo");
+					pl.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login VaseHeslo"+ChatColor.WHITE+"!");
 				}
 				else
 				{
-					pl.sendMessage("Nejste registrovani! Pro zaregistrovani napiste /register VaseHeslo");
+					pl.sendMessage("Nejste registrovan! Pro zaregistrovani napiste "+ChatColor.YELLOW+" /register VaseHeslo"+ChatColor.WHITE+"!");
 				}
 			}
 		}, 80, 80);

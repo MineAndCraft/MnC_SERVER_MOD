@@ -1,3 +1,11 @@
+3.4.5
+Author:Rikub
+	- New login messages/login screen
+	- Colorful command list
+	- Players can buy flying mode
+	- GugaTeams added (red/blue team)
+	- If new player joins a game it shows to another players
+	- Plugin updated for CraftBukkit2190 and Bukkit1459
 3.4.4
 Author:Rikub
 	- Anti creeper
