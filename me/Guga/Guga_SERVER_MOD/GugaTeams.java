@@ -1,12 +1,17 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaTeams 
 {
+	public static void SetPlugin(Guga_SERVER_MOD GugaSM)
+	{
+		plugin = GugaSM;
+	}
 	public static void addToTeam(String[]names, String team)
 	{
 		int i=0;
@@ -14,7 +19,7 @@ public class GugaTeams
 		{
 			while(i<names.length)
 			{
-				if(!blueTeamPlayers.contains(names[i]))
+				if(!redTeamPlayers.contains(names[i]) && (!blueTeamPlayers.contains(names[i])))
 				{
 					blueTeamPlayers.add(names[i]);
 				}
@@ -26,7 +31,7 @@ public class GugaTeams
 		{
 			while(i<names.length)
 			{
-				if(!redTeamPlayers.contains(names[i]))
+				if(!redTeamPlayers.contains(names[i]) && (!blueTeamPlayers.contains(names[i])))
 				{
 					redTeamPlayers.add(names[i]);
 				}
@@ -34,12 +39,8 @@ public class GugaTeams
 			}
 		}
 	}
-	public void deleteTeams()
-	{
-		blueTeamPlayers=null;
-		redTeamPlayers=null;
-	}
-	public void removePlayer(String name)
+	
+	public static void removePlayer(String name)
 	{
 		if(blueTeamPlayers.contains(name))
 		{
@@ -50,64 +51,35 @@ public class GugaTeams
 			redTeamPlayers.remove(name);
 		}
 	}
-	public void deleteInventories()
+	
+	public static void AddItemToPlayers(int itemID, int amount, String team)
 	{
-		int i=0;
-		while(i<blueTeamPlayers.size())
-		{
-			Player p = plugin.getServer().getPlayer(blueTeamPlayers.iterator().next());
-			InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents());
-			InventoryBackup.InventoryClearWrapped(p);
-			i++;
-		}
-		while(i<redTeamPlayers.size())
-		{
-			Player p = plugin.getServer().getPlayer(redTeamPlayers.iterator().next());
-			InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents());
-			InventoryBackup.InventoryClearWrapped(p);
-			i++;
-		}
-	}
-	public void backInventories()
-	{
-		int i=0;
-		while(i<blueTeamPlayers.size())
-		{
-			Player p = plugin.getServer().getPlayer(blueTeamPlayers.iterator().next());
-			InventoryBackup.InventoryReturnWrapped(p, true);
-			i++;
-		}
-		while(i<redTeamPlayers.size())
-		{
-			Player p = plugin.getServer().getPlayer(redTeamPlayers.iterator().next());
-			InventoryBackup.InventoryReturnWrapped(p, true);
-			i++;
-		}
-	}
-	public void addItem(String team,int itemID,int ammount)
-	{
-		int i = 0;
 		if(team.equalsIgnoreCase("blue"))
 		{
-			while(i<blueTeamPlayers.size())
+			Iterator<String> i = blueTeamPlayers.iterator();
+			while (i.hasNext())
 			{
-				Player p = plugin.getServer().getPlayer(blueTeamPlayers.iterator().next());
-				p.getInventory().addItem(new ItemStack(itemID, ammount));
+				Player p = plugin.getServer().getPlayer(i.next());
+				if (p != null)
+					p.getInventory().addItem(new ItemStack(itemID, amount));
 			}
 		}
 		else if(team.equalsIgnoreCase("red"))
 		{
-			while(i<redTeamPlayers.size())
+			Iterator<String> i = redTeamPlayers.iterator();
+			while (i.hasNext())
 			{
-				Player p = plugin.getServer().getPlayer(redTeamPlayers.iterator().next());
-				p.getInventory().addItem(new ItemStack(itemID, ammount));
+				Player p = plugin.getServer().getPlayer(i.next());
+				if (p != null)
+					p.getInventory().addItem(new ItemStack(itemID, amount));
 			}
 		}
 	}
-	public void disable()
+	
+	public static void deleteTeams()
 	{
-		backInventories();
-		deleteTeams();
+		blueTeamPlayers.clear();
+		redTeamPlayers.clear();
 	}
 	private static ArrayList<String> blueTeamPlayers = new ArrayList<String>();
 	private static ArrayList<String> redTeamPlayers = new ArrayList<String>();

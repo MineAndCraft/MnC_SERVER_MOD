@@ -19,6 +19,7 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
@@ -57,7 +58,7 @@ public class GugaPlayerListener implements Listener
 		if(plugin.acc.UserIsRegistered(p))
 			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
 		else
-			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + " pripojil/a.");
+			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + ChatColor.YELLOW + " pripojil/a.");
 		Thread t = new Thread( new Runnable() {
 			@Override
 			public void run() 
@@ -99,14 +100,6 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
 			return;
 		}
-		if (p.getName().startsWith("ADMIN'") || p.getName().startsWith("GM'"))
-		{
-			if (!GameMasterHandler.GetNamesByRank(Rank.GAMEMASTER).contains(p.getName()))
-			{
-				p.kickPlayer("Na serveru neni zadny GM/ADMIN s timto jmenem!");
-				return;
-			}
-		}
 		if (!CanUseName(p.getName()))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
@@ -116,6 +109,11 @@ public class GugaPlayerListener implements Listener
 		{
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
+		}
+		if(GugaFlyHandler.isFlying(p.getName()))
+		{
+			p.setAllowFlight(true);
+			p.setFlying(true);
 		}
 
 		GugaAuctionHandler.CheckPayments(p);
@@ -133,24 +131,35 @@ public class GugaPlayerListener implements Listener
 		}
 		if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
-			GameMasterHandler.setGMName(p);
+			if(!GugaCommands.GMsOffState.contains(p.getName()))
+			{
+				GameMasterHandler.setGMName(p);
+			}
 		}
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		long timeStart = System.nanoTime();
-		p.sendMessage("******************************");
-		p.sendMessage("Vitejte na serveru MineAndCraft!.");
-		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.GOLD +"/help.");
-		p.sendMessage("******************************");
+		p.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
+		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
+		Player[]players = plugin.getServer().getOnlinePlayers();
+		String toSend = "";
+		int i=0;
+		while(i < players.length)
+		{
+			if(i==0)
+				toSend += players[i].getName();
+			else
+				toSend += ", " + players[i].getName();
+			i++;
+		}
+		p.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
 		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
 		{
 			if(GugaPlayerListener.IsCreativePlayer(p))
 			{
-				p.sendMessage("******************************");
-				p.sendMessage("Jste creative user");
-				p.sendMessage("******************************");
+				p.sendMessage("Jste uzivatel se zaregistorvanym creative modem!");
 			}
 			else
 			{
@@ -163,22 +172,7 @@ public class GugaPlayerListener implements Listener
 			p.setAllowFlight(true);
 			p.setFlying(true);
 		}
-		if (plugin.config.accountsModule)
-		{
-			if (plugin.acc.UserIsRegistered(p))
-			{
-				p.sendMessage("NEJSTE PRIHLASENY! Prosim prihlaste se pomoci " + ChatColor.GOLD + "/login" + " heslo.");
-				p.sendMessage("");
-				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
-			}
-			else
-			{
-				p.sendMessage("NEJSTE ZAREGISTROVANY! Prosim zaregistrujte se pomoci " +ChatColor.GOLD +"/register" + " heslo.");
-				p.sendMessage("");
-				p.sendMessage("!!Az se prihlasite, budete teleportovan zpet, kde jste zacal.!!");
-			}
-			p.sendMessage("******************************");
-		}
+		
 		plugin.acc.playerStart.put(p.getName(), p.getLocation());
 		plugin.acc.StartTpTask(p);
 		if (plugin.debug)
@@ -194,23 +188,32 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("COMMAND_PREPROCESS_EVENT: playerName=" + e.getPlayer().getName() + ",cmd=" + e.getMessage());
 		}
 		int i = 0;
-		while (i<gmCommands.length)
+		//while (i<allowedCommands.length)
 		{
-			if (e.getMessage().contains(gmCommands[i]))
+			if(!plugin.acc.UserIsLogged(e.getPlayer()))
 			{
-				if ( ( !plugin.acc.UserIsLogged(e.getPlayer()) ) && ( GameMasterHandler.IsAtleastGM(e.getPlayer().getName()) ) )
+				if(e.getMessage().contains("/login") || e.getMessage().contains("/register") || e.getMessage().contains("/help"))
 				{
-					e.getPlayer().sendMessage("Nejdrive se musite prihlasit ;).");
+				}
+				else
+				{
+					e.getPlayer().sendMessage("Nejdrive se prihlaste!");
 					e.setCancelled(true);
 					return;
 				}
 			}
-			i++;
+			//i++;
 		}
 		String msg = "";
 		String[] splitted = e.getMessage().split(" ");
 		if (e.getMessage().contains("/tell"))
 		{
+			if(GugaMute.getPlayerStatus(e.getPlayer().getName()))
+			{
+				e.getPlayer().sendMessage("Jste ztlumen. Nelze pouzit /tell");
+				e.setCancelled(true);
+				return;
+			}
 			String pName = splitted[1];
 			i = 2;
 			while (i < splitted.length)
@@ -438,6 +441,11 @@ public class GugaPlayerListener implements Listener
 		{
 			spec.Teleport();
 		}*/
+		/*if(GugaFlyHandler.offFlying(p.getName()))
+		{
+			p.setAllowFlight(false);
+			p.setFlying(false);
+		}*/
 		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
 			GugaWorldSizeHandler.MoveBack(p);
 		else if (p.getLocation().getBlockY() < 0)
@@ -463,13 +471,53 @@ public class GugaPlayerListener implements Listener
 		}
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
+		Block b = e.getClickedBlock();
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
 			e.setCancelled(true);
 			return;
 		}
+		if(e.getAction() == Action.LEFT_CLICK_BLOCK)
+		{
+			if(GameMasterHandler.IsAdmin(p.getName()))
+			{
+				GugaCommands.x1 = b.getX();
+				GugaCommands.z1 = b.getZ();
+				if(p.getItemInHand().getTypeId() == 271)
+				{
+					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
+					int i=0;
+					while(i < OnLinePlayers.length)
+					{
+						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
+						{
+							p.sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets first position to X:" + Integer.toString(GugaCommands.x1) + " Z: " + Integer.toString(GugaCommands.z1));
+						}
+						i++;
+					}
+				}
+			}
+		}
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
+			if(GameMasterHandler.IsAdmin(p.getName()))
+			{
+				if(p.getItemInHand().getTypeId() == 271)
+				{
+					GugaCommands.x2 = b.getX();
+					GugaCommands.z2 = b.getZ();
+					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
+					int i=0;
+					while(i < OnLinePlayers.length)
+					{
+						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
+						{
+							p.sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets second position to X:" + Integer.toString(GugaCommands.x2) + " Z: " + Integer.toString(GugaCommands.z2));
+						}
+						i++;
+					}
+				}
+			}
 			/*GugaSpectator spec;
 			if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 			{
@@ -543,7 +591,7 @@ public class GugaPlayerListener implements Listener
 						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento davkovac je zamcen!");
 					}
 				}
-				else if(targetBlock.getTypeId() == ID_FURNANCE)
+				else if(targetBlock.getTypeId() == ID_FURNANCE || targetBlock.getTypeId() == ID_FURNANCE_BURNING)
 				{
 					blockOwner = plugin.furnances.GetBlockOwner(targetBlock);
 					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
@@ -656,9 +704,10 @@ public class GugaPlayerListener implements Listener
 	private int ID_CHEST=54;
 	private int ID_DISPENSER=23;
 	private int ID_FURNANCE=61;
+	private int ID_FURNANCE_BURNING=62;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
-	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop","/gamemode", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time","/a","/toggledownfall","/xp","/mcc","/dmap"};
+	public String[] allowedCommands = { "/login", "/register", "/help"};
 	public boolean canSpeedUp = true;
 	private static String creativePlayersPath = "plugins/creativePlayers.dat";
 	public static Guga_SERVER_MOD plugin;

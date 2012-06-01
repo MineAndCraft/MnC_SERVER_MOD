@@ -209,7 +209,7 @@ public class GugaBlockListener implements Listener
 				}
 			}
 		}
-		else if(blockType==ID_FURNANCE)
+		else if(blockType==ID_FURNANCE || blockType==ID_FURNANCE_BURNING)
 		{
 			chestOwner = plugin.furnances.GetBlockOwner(targetBlock);
 			if(chestOwner.matches("notFound"))
@@ -347,55 +347,9 @@ public class GugaBlockListener implements Listener
 				Block E=block.getRelative(BlockFace.EAST);
 				Block N=block.getRelative(BlockFace.NORTH);
 				Block S=block.getRelative(BlockFace.SOUTH);
-				if(W.getTypeId()==ID_CHEST)
+				if(E.getTypeId()==ID_CHEST || N.getTypeId()==ID_CHEST || S.getTypeId()==ID_CHEST || W.getTypeId()==ID_CHEST)
 				{
 					if((plugin.chests.GetBlockOwner(W).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(W).equalsIgnoreCase(p.getName()))
-					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
-						return;
-					}
-					else
-					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
-						e.setCancelled(true);
-						return;
-					}
-				}
-				else if(E.getTypeId()==ID_CHEST)
-				{
-					if((plugin.chests.GetBlockOwner(E).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(E).equalsIgnoreCase(p.getName()))
-					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
-						return;
-					}
-					else
-					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
-						e.setCancelled(true);
-						return;
-					}
-
-				}
-				else if(N.getTypeId()==ID_CHEST)
-				{
-					if((plugin.chests.GetBlockOwner(N).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(N).equalsIgnoreCase(p.getName()))
-					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
-						return;
-					}
-					else
-					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
-						e.setCancelled(true);
-						return;
-					}
-				}
-				else if(S.getTypeId()==ID_CHEST)
-				{
-					if((plugin.chests.GetBlockOwner(S).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(S).equalsIgnoreCase(p.getName()))
 					{
 						plugin.chests.LockBlock(block,e.getPlayer().getName());
 						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena. Vice: /locker");
@@ -424,7 +378,7 @@ public class GugaBlockListener implements Listener
 				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen. Vice: /locker");
 			}
 		}
-		else if(block.getTypeId()==ID_FURNANCE)
+		else if(block.getTypeId()==ID_FURNANCE || block.getTypeId()==ID_FURNANCE_BURNING)
 		{
 			if(plugin.furnances.GetBlockOwner(block).equalsIgnoreCase("notFound"))
 			{
@@ -573,6 +527,7 @@ public class GugaBlockListener implements Listener
 	private int ID_CHEST=54;
 	private int ID_DISPENSER=23;
 	private int ID_FURNANCE=61;
+	private int ID_FURNANCE_BURNING=62;
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
 	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};
 	public ArrayList<Block> dropsCache = new ArrayList<Block>();
