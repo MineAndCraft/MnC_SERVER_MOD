@@ -582,7 +582,7 @@ public class GugaPlayerListener implements Listener
 						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento davkovac je zamcen!");
 					}
 				}
-				else if(targetBlock.getTypeId() == ID_FURNANCE)
+				else if(targetBlock.getTypeId() == ID_FURNANCE || targetBlock.getTypeId() == ID_FURNANCE_BURNING)
 				{
 					blockOwner = plugin.furnances.GetBlockOwner(targetBlock);
 					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
@@ -695,6 +695,7 @@ public class GugaPlayerListener implements Listener
 	private int ID_CHEST=54;
 	private int ID_DISPENSER=23;
 	private int ID_FURNANCE=61;
+	private int ID_FURNANCE_BURNING=62;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] gmCommands = {"/dynmap", "/kick", "/ban", "/pardon", "/ban-ip", "/pardon-ip", "/op", "/deop", "/tp", "/give", "/tell", "/stop","/gamemode", "/save-all", "/save-off", "/save-on", "/list", "/say", "/time","/a","/toggledownfall","/xp","/mcc","/dmap"};

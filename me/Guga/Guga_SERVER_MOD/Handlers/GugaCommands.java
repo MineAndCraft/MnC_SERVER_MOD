@@ -220,7 +220,7 @@ public abstract class GugaCommands
 				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Davkovac jiz nekdo zamkl!");
 			}
 		}
-		else if(blockType == ID_FURNANCE)
+		else if(blockType == ID_FURNANCE || blockType == ID_FURNANCE_BURNING)
 		{
 			if (plugin.furnances.GetBlockOwner(chest).matches("notFound"))
 			{
@@ -2730,6 +2730,7 @@ public abstract class GugaCommands
 	private static int ID_CHEST=54;
 	private static int ID_DISPENSER=23;
 	private static int ID_FURNANCE=61;
+	private static int ID_FURNANCE_BURNING=62;
 	public static ArrayList<Player> GMsOffState = new ArrayList<Player>();
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
