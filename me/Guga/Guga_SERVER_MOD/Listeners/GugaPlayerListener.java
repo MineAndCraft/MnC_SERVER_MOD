@@ -205,6 +205,12 @@ public class GugaPlayerListener implements Listener
 		String[] splitted = e.getMessage().split(" ");
 		if (e.getMessage().contains("/tell"))
 		{
+			if(GugaMute.getPlayerStatus(e.getPlayer().getName()))
+			{
+				e.getPlayer().sendMessage("Jste ztlumen. Nelze pouzit /tell");
+				e.setCancelled(true);
+				return;
+			}
 			String pName = splitted[1];
 			i = 2;
 			while (i < splitted.length)
