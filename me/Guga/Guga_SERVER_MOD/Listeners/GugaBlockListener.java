@@ -41,6 +41,11 @@ public class GugaBlockListener implements Listener
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
 		}
+		if(e.getPlayer().getItemInHand().getTypeId() == 271)
+		{
+			e.setCancelled(true);
+			return;
+		}
 		plugin.logger.LogBlockBreak(e, e.getBlock().getTypeId());
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
