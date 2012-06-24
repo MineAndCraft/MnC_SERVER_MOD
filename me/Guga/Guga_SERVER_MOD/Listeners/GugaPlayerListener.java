@@ -59,7 +59,7 @@ public class GugaPlayerListener implements Listener
 			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
 		else
 			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + ChatColor.YELLOW + " pripojil/a.");
-		Thread t = new Thread( new Runnable() {
+		/*Thread t = new Thread( new Runnable() {
 			@Override
 			public void run() 
 			{
@@ -68,7 +68,7 @@ public class GugaPlayerListener implements Listener
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-			}
+			}*/
 				if (!p.isOnline())
 					return;
 				if (!GugaMCClientHandler.HasClient(p))
@@ -92,9 +92,9 @@ public class GugaPlayerListener implements Listener
 				}
 				plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
 				plugin.log.info("Player "+p.getName()+" logged with MAC: " + GugaMCClientHandler.GetPlayerMacAddr(p));
-			}
-		});
-		t.start();
+			//}
+		//});
+		//t.start();
 		if (p.getName().contains(" "))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
@@ -491,7 +491,7 @@ public class GugaPlayerListener implements Listener
 					{
 						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
 						{
-							p.sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets first position to X:" + Integer.toString(GugaCommands.x1) + " Z: " + Integer.toString(GugaCommands.z1));
+							OnLinePlayers[i].sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets first position to X:" + Integer.toString(GugaCommands.x1) + " Z: " + Integer.toString(GugaCommands.z1));
 						}
 						i++;
 					}

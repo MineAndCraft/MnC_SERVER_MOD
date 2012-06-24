@@ -23,8 +23,8 @@ public class GugaChests
 	}
 	public void UnlockBlock(Block chest,String chestOwner)
 	{
-		Location bufferLoc[] = new Location[10000];
-		String bufferOwn[] = new String[10000];
+		Location bufferLoc[] = new Location[20000];
+		String bufferOwn[] = new String[20000];
 		int i = 0;
 		int i2 = 0;
 		while (location[i2] != null)
@@ -39,8 +39,8 @@ public class GugaChests
 			i2++;
 		}
 		i=0;
-		location = new Location[10000];
-		owner = new String[10000];
+		location = new Location[20000];
+		owner = new String[20000];
 		while (bufferLoc[i] != null)
 		{
 			location[i] = bufferLoc[i];
@@ -117,8 +117,8 @@ public class GugaChests
 		file.Close();
 	}
 	
-	public String owner[] = new String[10000];
-	public Location[] location = new Location[10000];
+	public String owner[] = new String[20000];
+	public Location[] location = new Location[20000];
 	private String LockerFile = "plugins/Chests.dat";
 	public static Guga_SERVER_MOD plugin;
 }

@@ -395,7 +395,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandFly(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		/*if (!plugin.acc.UserIsLogged(sender))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
@@ -507,7 +507,7 @@ public abstract class GugaCommands
 				}
 				GugaFlyHandler.SaveFly();
 			}
-		}
+		}*/
 	}
 	public static void CommandVIP(Player sender, String args[])
 	{
