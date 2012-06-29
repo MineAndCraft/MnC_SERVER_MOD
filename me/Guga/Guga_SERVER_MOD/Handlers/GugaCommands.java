@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaAuction;
@@ -544,7 +545,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/vip tp  -  Teleport podprikaz.");
 			sender.sendMessage("/vip time  -  Podprikaz zmeny casu.");
 			sender.sendMessage("/vip item  -  Podprikaz itemu.");
-			
+			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
 		}
 		else if (args.length == 1)
 		{
@@ -572,6 +573,11 @@ public abstract class GugaCommands
 				sender.sendMessage("Item Menu:");
 				sender.sendMessage("/vip item add <itemID>  -  Prida stack daneho itemu.");
 				sender.sendMessage("/vip item list - Vypise vsechny dostupne itemy a jejich ID.");
+			}
+			else if(subCommand.matches("nohunger"))
+			{
+				sender.setFoodLevel(40);
+				sender.sendMessage("Uspesne jste se najedli");
 			}
 		}
 		else if (args.length == 2)
@@ -1793,6 +1799,11 @@ public abstract class GugaCommands
 				sender.sendMessage(l.toString());
 				
 			}
+			else if (subCommand.matches("spawntest"))
+			{
+				sender.teleport(SpawnsHandler.getRandomSpawn());
+				sender.sendMessage("Done");
+			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				sender.sendMessage("/gm arena add <name> - Adds new arena spawn at your location.");
@@ -1925,6 +1936,21 @@ public abstract class GugaCommands
 					fly.add(target.getName().toLowerCase());
 					target.sendMessage("Fly mode byl zapnut!");
 					sender.sendMessage("Fly mode succesfuly turned on.");
+				}
+			}
+			else if (subCommand.matches("bw"))
+			{
+				if(args[1].matches("join"))
+				{
+					BasicWorld.BasicWorldJoin(sender);
+				}
+				else if(args[1].matches("leave"))					
+				{
+					BasicWorld.BasicWorldLeave(sender);
+				}
+				else if(args[1].matches("enter"))
+				{
+					BasicWorld.BasicWorldEnter(sender);
 				}
 			}
 			else if (subCommand.matches("log"))
@@ -2063,6 +2089,21 @@ public abstract class GugaCommands
 		else if (args.length > 2)
 		{
 			String subCommand = args[0];
+			if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if(args[1].matches("add"))
+				{
+					SpawnsHandler.AddSpawn(args[2], sender.getLocation());
+					SpawnsHandler.SaveSpawns();
+					sender.sendMessage("Done");
+				}
+				else if(args[1].matches("remove"))
+				{
+					SpawnsHandler.RemoveSpawn(args[2]);
+					SpawnsHandler.SaveSpawns();
+					sender.sendMessage("Removed");
+				}
+			}
 			if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				String arg1 = args[1];

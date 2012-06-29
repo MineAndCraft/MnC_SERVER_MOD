@@ -2,6 +2,7 @@ package me.Guga.Guga_SERVER_MOD.Listeners;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 
 
 import me.Guga.Guga_SERVER_MOD.GameMaster;
@@ -59,42 +60,61 @@ public class GugaPlayerListener implements Listener
 			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
 		else
 			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + ChatColor.YELLOW + " pripojil/a.");
-		/*Thread t = new Thread( new Runnable() {
-			@Override
-			public void run() 
+		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
+		int maxP = plugin.getServer().getMaxPlayers();
+		if(plugin.getServer().getOnlinePlayers().length == maxP)
+		{
+			if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER) || curr.IsVip())
 			{
-				try {
-					Thread.sleep(4000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}*/
-				if (!p.isOnline())
-					return;
-				if (!GugaMCClientHandler.HasClient(p))
-				{
-					p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
-					return;
-				}
-				if (GugaMCClientHandler.IsWhiteListed(p))
-					return;
-				if (GugaBanHandler.GetGugaBan(p.getName()) == null)
-					GugaBanHandler.AddBan(p.getName(), 0);
-				if (!GugaBanHandler.IsIpWhitelisted(p))
-				{
-					if (GugaBanHandler.IsBanned(p.getName()))
+				Player[]players = plugin.getServer().getOnlinePlayers();
+				int i = 0;
+				boolean isKicked = false;
+				Random r = new Random();
+				do{
+					int iToKick = r.nextInt(maxP - 1);
+					curr = plugin.FindPlayerCurrency(players[iToKick].getName());
+					if(curr.IsVip() || GameMasterHandler.IsAtleastRank(players[iToKick].getName(), Rank.BUILDER))
 					{
-						GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-						long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-						p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
-						return;
+						isKicked = false;
 					}
+					else
+					{
+						players[iToKick].kickPlayer("Bylo uvolneno misto pro VIP");
+						isKicked = true;
+					}
+					i++;
+				}while(!isKicked || i<maxP);
+				if(!isKicked)
+				{
+					p.kickPlayer("Neni koho vykopnout");
 				}
-				plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
-				plugin.log.info("Player "+p.getName()+" logged with MAC: " + GugaMCClientHandler.GetPlayerMacAddr(p));
-			//}
-		//});
-		//t.start();
+			}
+			else
+			{
+				p.kickPlayer("Server je plny misto je rezervovano");
+			}
+		}
+		if (!p.isOnline())
+			return;
+		if (!GugaMCClientHandler.HasClient(p))
+		{
+			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
+			return;
+		}
+		if (GugaMCClientHandler.IsWhiteListed(p))
+			return;
+		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
+			GugaBanHandler.AddBan(p.getName(), 0);
+		if (!GugaBanHandler.IsIpWhitelisted(p))
+		{
+			if (GugaBanHandler.IsBanned(p.getName()))
+			{
+				GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
+				p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
+				return;
+			   }
+		}
 		if (p.getName().contains(" "))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
@@ -110,6 +130,8 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
 		}
+		
+		plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
 		if(GugaFlyHandler.isFlying(p.getName()))
 		{
 			p.setAllowFlight(true);
@@ -117,7 +139,6 @@ public class GugaPlayerListener implements Listener
 		}
 
 		GugaAuctionHandler.CheckPayments(p);
-		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
 		{
 			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
@@ -125,6 +146,7 @@ public class GugaPlayerListener implements Listener
 		}
 		if (plugin.professions.get(p.getName()) == null)
 			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
+	
 		else if (curr.IsVip())
 		{
 			curr.UpdateDisplayName();
@@ -678,6 +700,7 @@ public class GugaPlayerListener implements Listener
 	}
 	public static void LoadCreativePlayers()
 	{
+		
 		GugaFile file = new GugaFile(creativePlayersPath, GugaFile.READ_MODE);
 		if (creativePlayers.size() > 0)
 			creativePlayers.clear();

@@ -13,6 +13,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaMessageListener;
@@ -47,6 +48,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
 		GugaFlyHandler.SaveFly();
+		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		logger.SaveWrapperBreak();
@@ -75,6 +77,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaParty.SetPlugin(this);
 		GugaTeams.SetPlugin(this);
 		GugaFlyHandler.SetPlugin(this);
+		BasicWorld.SetPlugin(this);
+		SpawnsHandler.SetPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
 		{
@@ -85,14 +89,21 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		{
 			getServer().createWorld(WorldCreator.name("world_event").environment(Environment.NORMAL));
 		}
+		if(getServer().getWorld("world_basic")==null)
+		{
+			getServer().createWorld(WorldCreator.name("world_basic").environment(Environment.NORMAL));
+		}
 		arena.LoadArenas();
 		arena.LoadPvpStats();
 		getServer().getWorld("arena").setPVP(true);
 		getServer().getWorld("world").setPVP(false);
+		getServer().getWorld("world").setSpawnFlags(true, true);
 		getServer().getWorld("world_nether").setPVP(false);
 		getServer().getWorld("arena").setSpawnFlags(false, false);
 		getServer().getWorld("world_event").setPVP(false);
 		getServer().getWorld("world_event").setSpawnFlags(false, false);
+		getServer().getWorld("world_basic").setPVP(false);
+		getServer().getWorld("world_basic").setSpawnFlags(true, true);
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
@@ -112,7 +123,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaPlayerListener.LoadCreativePlayers();
 		GugaFlyHandler.LoadFly();
 		GugaBanHandler.LoadIpWhiteList();
-		
+		SpawnsHandler.LoadSpawns();
 		this.socketServer = new GugaSocketServer(12451, this);
 		this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
@@ -577,8 +588,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		return tpLoc;
 	}
 	
-	
-	
 	public HashMap<String,GugaProfession> professions = new HashMap<String,GugaProfession>();
 	
 	// ************* chances *************
@@ -587,7 +596,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.4.7";
+	public static final String version = "3.4.8";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
