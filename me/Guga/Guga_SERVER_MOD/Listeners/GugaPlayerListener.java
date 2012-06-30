@@ -505,7 +505,7 @@ public class GugaPlayerListener implements Listener
 			{
 				GugaCommands.x1 = b.getX();
 				GugaCommands.z1 = b.getZ();
-				if(p.getItemInHand().getTypeId() == 271)
+				if(p.getItemInHand().getTypeId() == ID_SELECT_ITEM)
 				{
 					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
 					int i=0;
@@ -524,7 +524,7 @@ public class GugaPlayerListener implements Listener
 		{
 			if(GameMasterHandler.IsAdmin(p.getName()))
 			{
-				if(p.getItemInHand().getTypeId() == 271)
+				if(p.getItemInHand().getTypeId() == ID_SELECT_ITEM)
 				{
 					GugaCommands.x2 = b.getX();
 					GugaCommands.z2 = b.getZ();
@@ -534,7 +534,7 @@ public class GugaPlayerListener implements Listener
 					{
 						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
 						{
-							p.sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets second position to X:" + Integer.toString(GugaCommands.x2) + " Z: " + Integer.toString(GugaCommands.z2));
+							OnLinePlayers[i].sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets second position to X:" + Integer.toString(GugaCommands.x2) + " Z: " + Integer.toString(GugaCommands.z2));
 						}
 						i++;
 					}
@@ -728,6 +728,7 @@ public class GugaPlayerListener implements Listener
 	private int ID_DISPENSER=23;
 	private int ID_FURNANCE=61;
 	private int ID_FURNANCE_BURNING=62;
+	private int ID_SELECT_ITEM = 269;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] allowedCommands = { "/login", "/register", "/help"};
