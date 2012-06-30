@@ -41,7 +41,7 @@ public class GugaBlockListener implements Listener
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
 		}
-		if(e.getPlayer().getItemInHand().getTypeId() == 271)
+		if(e.getPlayer().getItemInHand().getTypeId() == ID_SELECT_ITEM && GameMasterHandler.IsAdmin(e.getPlayer().getName()))
 		{
 			e.setCancelled(true);
 			return;
@@ -505,6 +505,7 @@ public class GugaBlockListener implements Listener
 	private int ID_DISPENSER=23;
 	private int ID_FURNANCE=61;
 	private int ID_FURNANCE_BURNING=62;
+	private int ID_SELECT_ITEM = 269;
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
 	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};
 	public ArrayList<Block> dropsCache = new ArrayList<Block>();

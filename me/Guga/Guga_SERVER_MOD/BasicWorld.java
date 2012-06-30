@@ -1,5 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,8 +36,9 @@ public class BasicWorld
 	}
 	public static void BasicWorldLeaveToWorld(Player p)
 	{
-		p.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
-		p.setBedSpawnLocation(plugin.getServer().getWorld("world").getSpawnLocation());
+		Location loc = SpawnsHandler.getRandomSpawn();
+		p.setBedSpawnLocation(loc);
+		p.teleport(loc);
 	}
 	public static void setSpawn(Location l)
 	{
