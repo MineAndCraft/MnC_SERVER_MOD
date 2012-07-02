@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaAuction;
@@ -395,7 +396,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandFly(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		/*if (!plugin.acc.UserIsLogged(sender))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
@@ -507,7 +508,7 @@ public abstract class GugaCommands
 				}
 				GugaFlyHandler.SaveFly();
 			}
-		}
+		}*/
 	}
 	public static void CommandVIP(Player sender, String args[])
 	{
@@ -544,7 +545,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/vip tp  -  Teleport podprikaz.");
 			sender.sendMessage("/vip time  -  Podprikaz zmeny casu.");
 			sender.sendMessage("/vip item  -  Podprikaz itemu.");
-			
+			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
 		}
 		else if (args.length == 1)
 		{
@@ -572,6 +573,11 @@ public abstract class GugaCommands
 				sender.sendMessage("Item Menu:");
 				sender.sendMessage("/vip item add <itemID>  -  Prida stack daneho itemu.");
 				sender.sendMessage("/vip item list - Vypise vsechny dostupne itemy a jejich ID.");
+			}
+			else if(subCommand.matches("nohunger"))
+			{
+				sender.setFoodLevel(40);
+				sender.sendMessage("Uspesne jste se najedli");
 			}
 		}
 		else if (args.length == 2)
@@ -1738,30 +1744,32 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
 				sender.sendMessage("/gm announce  - Announcements sub-menu.");
 				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
-				sender.sendMessage("/ replace <typeID> <typeID2> <reltiveX> <relativeY> <relativeZ> - Replaces a blocks from block you point at.");
+				sender.sendMessage("/gm replace <typeID> <typeID2> <reltiveX> <relativeY> <relativeZ> - Replaces a blocks from block you point at.");
 				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
 				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 				sender.sendMessage("/gm places - Places sub-menu.");
 				sender.sendMessage("/gm regions - Regions sub-menu.");
 				sender.sendMessage("/gm arena - Arenas sub-menu.");
 				sender.sendMessage("/gm rank - Ranks sub-menu.");
+				sender.sendMessage("/gm prefix - Prefix sub-menu.");
+				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
+				sender.sendMessage("/gm spawn - Spawns sub-menu.");
 			}
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm ban - Bans sub-menu.");
 				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 				sender.sendMessage("/gm reloadskins - Reloads a skins data.");
-				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
 				sender.sendMessage("/gm mute - Mute sub-menu.");
-				sender.sendMessage("/gm prefix - Prefix sub-menu.");
 				sender.sendMessage("/gm kill <player> - Kills target player.");
 				sender.sendMessage("/gm on - Turn your GM status to on");
 				sender.sendMessage("/gm off - Turn your GM status to off");
+				sender.sendMessage("/gm bw - BasicWorld sub-menu");
 			}
-			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress");
+			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
-			sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
+			//sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
 			sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
 		}
 		else if (args.length == 1)
@@ -1792,6 +1800,16 @@ public abstract class GugaCommands
 				Location l=sender.getCompassTarget();
 				sender.sendMessage(l.toString());
 				
+			}
+			else if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName())) 
+			{
+				sender.sendMessage("/gm spawn add <spawnName> - Adds spawn to your position.");
+				sender.sendMessage("/gm spawn remove <spawnName> - Removes certain spawn.");
+			}
+			else if (subCommand.matches("bw") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm bw join - Teleports you to BasicWorld");
+				sender.sendMessage("/gm bw leave - Teleports you Spawn of main world");
 			}
 			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
@@ -1898,7 +1916,7 @@ public abstract class GugaCommands
 						sender.sendMessage("Mute for all players is off.");	
 				}
 			}
-			else if (subCommand.matches("fly")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if (subCommand.matches("fly") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				Player target = plugin.getServer().getPlayer(arg1);
 				if (target == null)
@@ -1908,8 +1926,6 @@ public abstract class GugaCommands
 				}
 				if (target.getAllowFlight())
 				{
-					/*flyMode.remove(arg1);
-					GugaMCClientHandler.SendMessage(target, "SET_FLY;false");*/
 					target.setAllowFlight(false);
 					target.setFlying(false);
 					fly.remove(target.getName().toLowerCase());
@@ -1918,13 +1934,22 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					/*flyMode.add(arg1);
-					GugaMCClientHandler.SendMessage(target, "SET_FLY;true");*/
 					target.setAllowFlight(true);
 					target.setFlying(true);
 					fly.add(target.getName().toLowerCase());
 					target.sendMessage("Fly mode byl zapnut!");
 					sender.sendMessage("Fly mode succesfuly turned on.");
+				}
+			}
+			else if (subCommand.matches("bw") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(args[1].matches("join"))
+				{
+					BasicWorld.BasicWorldJoin(sender);
+				}
+				else if(args[1].matches("leave"))					
+				{
+					BasicWorld.BasicWorldLeave(sender);
 				}
 			}
 			else if (subCommand.matches("log"))
@@ -2063,6 +2088,31 @@ public abstract class GugaCommands
 		else if (args.length > 2)
 		{
 			String subCommand = args[0];
+			if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if(args.length == 3)
+				{
+					if(args[1].matches("add"))
+					{
+						SpawnsHandler.AddSpawn(args[2], sender.getLocation());
+						SpawnsHandler.SaveSpawns();
+						sender.sendMessage("Spawn was successfully added!");
+					}
+					else if(args[1].matches("remove"))
+					{
+						if(SpawnsHandler.GetSpawnByName(args[2]) != null)
+						{
+							SpawnsHandler.RemoveSpawn(args[2]);
+							SpawnsHandler.SaveSpawns();
+							sender.sendMessage("Spawn was successfully removed!");
+						}
+						else
+						{
+							sender.sendMessage("This spawn doesn't exist!");
+						}
+					}
+				}
+			}
 			if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				String arg1 = args[1];
@@ -2221,7 +2271,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("prefix") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if (subCommand.matches("prefix") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if(args.length == 4)
 				{
@@ -2735,7 +2785,6 @@ public abstract class GugaCommands
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
-	public static ArrayList<String> flyMode = new ArrayList<String>();
 	public static ArrayList<String> fly = new ArrayList<String>();
 	public static int x1 = 0;
 	public static int x2 = 0;

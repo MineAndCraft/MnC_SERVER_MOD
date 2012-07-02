@@ -1,3 +1,12 @@
+3.4.6
+Author:Rikub
+	- Regions could be create by left/right click on block with wooden axe in hand
+	- If builder/gm/admin use GM command it shows to all people with same or higher rank
+	- Feedback command added
+	- Burning furnance bug fix
+	- Chest code improvments
+	- Mute bug fix (/tell)
+	- Whitelist of commands before login added
 3.4.5
 Author:Rikub
 	- New login messages/login screen

@@ -1,5 +1,4 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 
@@ -45,8 +44,8 @@ public class GugaMessageListener implements PluginMessageListener
 					}
 				}
 				GugaMCClientHandler.RegisterUser(player, split[1]);
-				if (GugaCommands.flyMode.contains(player.getName().toLowerCase()) || GugaCommands.flyMode.contains(player.getName()))
-					GugaMCClientHandler.SendMessage(player, "SET_FLY;true");
+				/*if (GugaCommands.flyMode.contains(player.getName().toLowerCase()) || GugaCommands.flyMode.contains(player.getName()))
+					GugaMCClientHandler.SendMessage(player, "SET_FLY;true");*/
 			}
 		}
 	}

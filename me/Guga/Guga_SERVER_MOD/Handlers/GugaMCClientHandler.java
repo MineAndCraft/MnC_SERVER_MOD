@@ -140,7 +140,7 @@ public abstract class GugaMCClientHandler
 	private static ArrayList<String> whiteList = new ArrayList<String>();
 	private static ArrayList<String> minecraftOwners = new ArrayList<String>();
 	private static HashMap<Player, String> connectedClients = new HashMap<Player, String>();
-	public static boolean needClient = true;
+	public static boolean needClient = false;
 	
 	public static String requiredClientVersion = "0.0.4";
 	private static String messageChannel = "Guga";
