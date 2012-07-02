@@ -11,12 +11,12 @@ public abstract class GugaWorldSizeHandler
 			return true;
 		int x = loc.getBlockX();
 		int z = loc.getBlockZ();
-		
+
 		if (x > worldSize)
 			return false;
 		else if (x < (worldSize * -1))
 			return false;
-		
+
 		if (z > worldSize)
 			return false;
 		else if (z < (worldSize * -1))
@@ -27,19 +27,19 @@ public abstract class GugaWorldSizeHandler
 	{
 		int x = p.getLocation().getBlockX();
 		int z = p.getLocation().getBlockZ();
-		
+
 		boolean xTooFar = false;
 		boolean zTooFar = false;
 		if (x > worldSize)
 			xTooFar = true;
 		else if (x < (worldSize * -1))
 			xTooFar = true;
-		
+
 		if (z > worldSize)
 			zTooFar = true;
 		else if (z < (worldSize * -1))
 			zTooFar = true;
-		
+
 		int xNew = 0;
 		int zNew = 0;
 		if (xTooFar)
@@ -67,6 +67,6 @@ public abstract class GugaWorldSizeHandler
 		p.teleport(p.getWorld().getHighestBlockAt(xNew, zNew).getLocation());
 		p.sendMessage("Dosel jste na konec mapy!");
 	}
-	
-	private static int worldSize = 2000; // world size in blocks - in each direction
+
+	private static int worldSize = 2600; // world size in blocks - in each direction
 }

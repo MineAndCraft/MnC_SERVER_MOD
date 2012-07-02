@@ -229,7 +229,7 @@ public abstract class GugaBanHandler
 	}
 	public enum CheckMode{MAC_ADDRESSES, IP_ADDRESSES};
 	
-	public static CheckMode mode = CheckMode.MAC_ADDRESSES;
+	public static CheckMode mode = CheckMode.IP_ADDRESSES;
 	private static Guga_SERVER_MOD plugin;
 	private static ArrayList<GugaBan> bans = new ArrayList<GugaBan>();
 	private static ArrayList<String> whitelistedPlayers = new ArrayList<String>();
