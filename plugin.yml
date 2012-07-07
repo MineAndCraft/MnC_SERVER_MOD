@@ -1,6 +1,6 @@
 name: Guga_SERVER_MOD
 main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
-version: 3.4.8
+version: 3.5.0
 commands:
     who:
         description: Gets Names of Online players
@@ -48,15 +48,13 @@ commands:
         description: Event menu
     team:
         description: Teams menu
-    eventworld:
+    ew:
         description: EventWorld menu
     pp:
         description: Alias for places port
-    p:
-        description: Send a party message
-    party:
-        description: For Create and left party
-    invite:
-        description: Invite player to the party
     feedback:
         description: Command for better feedback from players
+    world:
+        description: Command teleports player from basicWorld to world
+    home:
+        descpiption: Fuck this

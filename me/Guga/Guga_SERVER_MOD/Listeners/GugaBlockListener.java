@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 
 
+import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
 import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
@@ -95,11 +96,12 @@ public class GugaBlockListener implements Listener
 			return;
 		}
 		GugaProfession prof = plugin.professions.get(p.getName());
-		boolean canBreak = false;
+		int level = prof.GetLevel();
+		//boolean canBreak = false;
 		//*************************GRIEFING PROTECTION*************************
 		Block targetBlock;
 		targetBlock = e.getBlock();
-		if (prof == null)
+		/*if (prof == null)
 		{
 			int i = 0;
 			while (i < allowedBlocksTier1.length)
@@ -135,7 +137,7 @@ public class GugaBlockListener implements Listener
 		}
 		else
 		{
-			int level = prof.GetLevel();
+			level = prof.GetLevel();
 			if (level < 5)
 			{
 				int i = 0;
@@ -169,11 +171,10 @@ public class GugaBlockListener implements Listener
 					e.setCancelled(true);
 					return;
 				}
-			}
-			/*if(level >= 15 || BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
-			{
-				e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/world join");
 			}*/
+		if(level >= 10 && BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
+		{
+			e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/world");
 		}
 		//*************************************************************************
 		String chestOwner;

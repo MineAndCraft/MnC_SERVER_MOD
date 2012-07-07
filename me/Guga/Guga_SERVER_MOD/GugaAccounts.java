@@ -1,314 +1,181 @@
 package me.Guga.Guga_SERVER_MOD;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.DriverManager;
+import java.sql.Connection;
+
+
 
 public class GugaAccounts 
 {
 	GugaAccounts (Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
-		LoadAccounts();
 	}
+	
 	public boolean LoginUser(Player p,String password)
-	{
-		String pName = p.getName();
-		int i = 0;
-		while (accNames[i] != null)
-		{
-			if (pName.equalsIgnoreCase((accNames[i])))
-			{
-				if (password.matches(passwords[i]))
-				{
-					loggedUsers.add(pName);
-					p.sendMessage("Byl jste uspesne prihlasen.");
-					//playerStart.remove(pName);
-					Integer taskId = tpTasks.get(pName);
-					if (taskId != null)
-					{
-						plugin.scheduler.cancelTask(taskId.intValue());
-						tpTasks.remove(pName);
-					}
-					return true;
-				}
-				else
-				{
-					p.sendMessage("Nespravne heslo!");
-					return false;
-				}
-			}
-			i++;
-		}
-		return false;
-	}
-	public String GetPassword(String acc)
-	{
-		int i = 0;
-		while (i < this.accNames.length)
-		{
-			if (this.accNames[i].matches(acc))
-			{
-				return this.passwords[i];
-			}
-			i++;
-		}
-		return null;
-	}
-	public boolean ValidLogin(String acc, String pass)
-	{
-		int i = 0;
-		while (i < this.accNames.length && accNames[i] != null)
-		{
-			if (this.accNames[i].equalsIgnoreCase(acc))
-			{
-				if (this.passwords[i].matches(pass))
-					return true;
-				else
-					return false;
-			}
-			i++;
-		}
-		return false;
-	}
-	public void StartTpTask(Player p)
-	{
-		
-		final String pName = p.getName();
-		final Player pl = p;
-		int taskId = plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable(){
-			public void run()
-			{
-				if (UserIsLogged(pl))
-					return;
-				pl.teleport(playerStart.get(pName));
-				if (UserIsRegistered(pl))
-				{
-					pl.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login VaseHeslo"+ChatColor.WHITE+"!");
-				}
-				else
-				{
-					pl.sendMessage("Nejste registrovan! Pro zaregistrovani napiste "+ChatColor.YELLOW+" /register VaseHeslo"+ChatColor.WHITE+"!");
-				}
-			}
-		}, 80, 80);
-		tpTasks.put(pName,taskId);
-	}
+	 {
+	  boolean logged = false;
+	  try
+	  {
+	   Connection conn = null;
+	   Properties connectionProps = new Properties();
+	      connectionProps.put("user", this.dbUserName);
+	      connectionProps.put("password", this.dbPassword);
+	      conn = DriverManager.getConnection("jdbc:mysql://" +
+	                       this.dbServer +
+	                     ":" + String.valueOf(this.dbPort) + "/",
+	                     connectionProps);
+	      Statement stat = conn.createStatement();
+	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+this.dbName+"`.`users` WHERE username='"+p.getName()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
+	      result.next();
+	      int count = result.getInt(1);
+	      int id = result.getInt(2);
+	      stat.close();
+	      if(count == 1)
+	      {
+	       logged = true;
+	       Statement s = conn.createStatement();
+	       s.executeQuery("UPDATE `users` SET `lastjoin` = NOW() WHERE `id`='"+String.valueOf(id)+"';");
+	       conn.close();
+	      }
+	      conn.close();
+	  }
+	  catch(Exception e)
+	  {
+	   e.printStackTrace();
+	  }
+	  if(logged)
+	  {
+	   loggedUsers.add(p.getName());
+	   return true;
+	  }
+	  return false;
+	 }
+
 	public boolean UserIsLogged(Player p)
 	{
-		if (loggedUsers.contains(p.getName()))
-		{
-			return true;
-		}
-		return false;
+		 return loggedUsers.contains(p.getName());
 	}
+	
+	public boolean UserIsLogged(String playerName)
+	{
+		return loggedUsers.contains(playerName);
+	}
+	
 	public boolean UserIsRegistered(Player p)
 	{
-		int i = 0;
-		String pName = p.getName();
-		while (accNames[i] != null)
+		try
 		{
-			if (pName.equalsIgnoreCase(accNames[i]))
-			{
-				return true;
-			}
-			i++;
+			Connection conn = null;
+			Properties connectionProps = new Properties();
+		    connectionProps.put("user", this.dbUserName);
+		    connectionProps.put("password", this.dbPassword);
+		    conn = DriverManager.getConnection("jdbc:mysql://" +
+		                		   this.dbServer +
+		                   ":" + String.valueOf(this.dbPort) + "/",
+		                   connectionProps);
+		    Statement stat = conn.createStatement();
+		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+this.dbName+"`.`users` WHERE username='"+p.getName()+"' LIMIT 1;");
+		    result.next();
+		    int count = result.getInt(1);
+		    conn.close();
+		    if(count == 1)
+		    	return true;
+		    else
+		    	return false;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 		return false;
 	}
-	public void RegisterUser(Player p,String password)
+	
+	public void StartTpTask()
 	{
-		int i = 0;
-		String pName = p.getName();
-		if (password.length() <= 1)
-		{
-			p.sendMessage("Vase heslo je prilis kratke! - Heslo musi mit alespon 2 znaky.");
+		if(running)
 			return;
-		}
-		if (password.contains(" "))
-		{
-			p.sendMessage("Vase heslo nesmi obsahovat mezery!");
-			return;
-		}
-			
-		while (accNames[i] != null)
-		{
-			i++;
-		}
-		accNames[i] = pName;
-		passwords[i] = password;
-		p.sendMessage("Registrace probehla uspesne.");
-		SaveAccounts();
-		LoginUser(p,password);
-	}
-	public void ChangePassword(Player p, String oldPass, String newPass)
-	{
-		int i = 0;
-		String pName = p.getName();
-		while (accNames[i] != null)
-		{
-			if (accNames[i].equalsIgnoreCase(pName))
+
+		taskId = plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable(){
+		Iterator<String> it;
+		String playerName;
+			public void run()
 			{
-				break;
+				if(tpTask.isEmpty())
+					StopTpTask();
+				
+				it = tpTask.iterator();
+				while(it.hasNext())
+				{
+					playerName = it.next();
+					Player p = plugin.getServer().getPlayer(playerName);
+					if(p==null)
+					{
+						tpTask.remove(playerName);
+						return;
+					}
+					if(UserIsLogged(playerName))
+					{
+						tpTask.remove(playerName);
+						return;
+					}
+					
+					p.teleport(playerStart.get(playerName));
+					if (UserIsRegistered(p))
+					{
+						p.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login VaseHeslo"+ChatColor.WHITE+"!");
+					}
+					else
+					{
+						p.sendMessage(ChatColor.YELLOW + "Registrujte se na webu - odkaz: " + ChatColor.RED + "http://mineandcraft.cz/userfiles/register.php");
+					}
+				}
 			}
-			i++;
-		}
-		if (passwords[i].matches(oldPass))
-		{
-			passwords[i] = newPass;
-			p.sendMessage("Vase heslo bylo uspesne zmeneno.");
-			SaveAccounts();
-		}
-		else
-		{
-			p.sendMessage("Nespravne heslo!");
-		}
+		}, 100, 100);
+		running = true;
 	}
-	public String GetStatus(Player p)
+	
+	private int taskId;
+	private boolean running = false;
+	
+	public void StopTpTask()
 	{
-		String pName = p.getName();
-		String status;
-		
-		if ((status = playerStatus.get(pName)) == null)
-		{
-			status = "Online";
-		}
-		return status;
+		if(!running)
+			return;
+		plugin.scheduler.cancelTask(taskId);
+		running = false;
 	}
-	public void SetStatus(Player p, String status[])
-	{
-		String pName = p.getName();
-		int i = 0;
-		String arg = "";
-		String msg = "";
-		while (i < status.length)
-		{
-			arg = status[i];
-			msg += arg;
-			msg += " ";
-			i++;
-		}
-		playerStatus.put(pName, msg);
-		p.getServer().broadcastMessage(p.getName() + " has set his status to: '" + msg + "'");
-	}
+	
 	public void SetStartLocation(Player p,Location newLoc)
 	{
 		playerStart.put(p.getName(), newLoc);
 	}
-	public void LoadAccounts()
-	{
-		plugin.log.info("Loading Accounts Data...");
-		File accounts = new File(accountsFile);
-		if (!accounts.exists())
-		{
-			try 
-			{
-				accounts.createNewFile();
-				return;
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-				return;
-			}
-		}
-		else
-		{
-			try 
-			{
-				FileInputStream fRead = new FileInputStream(accounts);
-				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
-				String line;
-				try {
-					int i = 0;
-					
-					while ((line = bReader.readLine()) != null)
-					{
-						accNames[i] = line.split(";")[0];
-						passwords[i] = line.split(";")[1];
-						i++;
-					}
-					bReader.close();
-					inStream.close();
-					fRead.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-			} 
-			catch (FileNotFoundException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	public void SaveAccounts()
-	{
-		plugin.log.info("Saving Accounts Data...");
-		File accounts = new File(accountsFile);
-		if (!accounts.exists())
-		{
-			try 
-			{
-				accounts.createNewFile();
-				
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		try 
-		{
-			FileWriter fStream = new FileWriter(accounts, false);
-			BufferedWriter bWriter;
-			bWriter = new BufferedWriter(fStream);
-			String line;
-			int i = 0;
-			while (accNames[i] != null)
-			{
-				line = accNames[i]+";"+passwords[i];
-				bWriter.write(line);
-				bWriter.newLine();
-				i++;
-			}
-			bWriter.close();
-			fStream.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
+	// *********************************START LOCATION*********************************
+	public HashMap<String, Location> playerStart = new HashMap<String, Location>(); // <playerName, location>	
+	public ArrayList<String> tpTask = new ArrayList<String>();  // <pName>
+
 	
 	
 	// *********************************PLAYERS ONLINE*********************************
 	public  ArrayList<String> loggedUsers = new ArrayList<String>();
 	
-	// *********************************STATUSES*********************************
-	public HashMap<String, String> playerStatus = new HashMap<String, String>(); //<playerName, status>
 	
-	// *********************************START LOCATION*********************************
-	public HashMap<String, Location> playerStart = new HashMap<String, Location>(); // <playerName, location>
-	public HashMap<String, Integer> tpTasks = new HashMap<String, Integer>();  // <pName, taskID>
-	
-	// *********************************ACCOUNT DETAILS*********************************
-	public String accNames[] = new String[10000];
-	public String passwords[] = new String[10000];
-	
-	private String accountsFile = "plugins/Accounts.acc";
+	private final String dbServer = "146.255.27.116";
+	private final String dbUserName = "rikub_20715";
+	private final String dbPassword = "0XjR5o445q3g5bX";
+	private final String dbName = "minecraft_users_20715";
+	private final int dbPort = 3306;
 	public static Guga_SERVER_MOD plugin;
 }

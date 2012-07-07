@@ -1,6 +1,8 @@
 package me.Guga.Guga_SERVER_MOD;
 import java.util.Date;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
@@ -95,7 +97,7 @@ public class GugaVirtualCurrency
 		
 		if (IsVip())
 		{
-			p.setDisplayName(ChatColor.RED + "VIP'" + ChatColor.WHITE + p.getName());
+			ChatHandler.SetPrefix(p, "vip");
 			p.setPlayerListName(ChatColor.GOLD+p.getName());
 		}
 		else

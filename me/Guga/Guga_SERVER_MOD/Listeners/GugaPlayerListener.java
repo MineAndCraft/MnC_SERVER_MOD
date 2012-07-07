@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
-
-import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
@@ -17,6 +15,7 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
@@ -44,6 +43,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaPlayerListener implements Listener 
@@ -56,10 +56,7 @@ public class GugaPlayerListener implements Listener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		final Player p = e.getPlayer();
-		if(plugin.acc.UserIsRegistered(p))
-			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
-		else
-			e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se " + ChatColor.RED + "poprve" + ChatColor.YELLOW + " pripojil/a.");
+		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		int maxP = plugin.getServer().getMaxPlayers();
 		if(plugin.getServer().getOnlinePlayers().length == maxP)
@@ -137,7 +134,6 @@ public class GugaPlayerListener implements Listener
 			p.setAllowFlight(true);
 			p.setFlying(true);
 		}
-
 		GugaAuctionHandler.CheckPayments(p);
 		if (curr == null)
 		{
@@ -145,18 +141,8 @@ public class GugaPlayerListener implements Listener
 			plugin.playerCurrency.add(curr);
 		}
 		if (plugin.professions.get(p.getName()) == null)
+		{
 			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
-	
-		else if (curr.IsVip())
-		{
-			curr.UpdateDisplayName();
-		}
-		if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
-		{
-			if(!GugaCommands.GMsOffState.contains(p.getName()))
-			{
-				GameMasterHandler.setGMName(p);
-			}
 		}
 		if (plugin.debug)
 		{
@@ -176,6 +162,7 @@ public class GugaPlayerListener implements Listener
 				toSend += ", " + players[i].getName();
 			i++;
 		}
+		ChatHandler.InitializeDisplayName(p);
 		p.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
 		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
 		{
@@ -194,9 +181,9 @@ public class GugaPlayerListener implements Listener
 			p.setAllowFlight(true);
 			p.setFlying(true);
 		}
-		
 		plugin.acc.playerStart.put(p.getName(), p.getLocation());
-		plugin.acc.StartTpTask(p);
+		plugin.acc.tpTask.add(p.getName());
+		plugin.acc.StartTpTask();
 		if (plugin.debug)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERJOIN=" + ((System.nanoTime() - timeStart)/1000));
@@ -245,7 +232,7 @@ public class GugaPlayerListener implements Listener
 				i++;
 			}
 			Player p = plugin.getServer().getPlayer(pName);
-			plugin.socketServer.SendChatMsg(e.getPlayer().getName() + " -> " + p.getName() + ": " + msg);
+			//plugin.socketServer.SendChatMsg(e.getPlayer().getName() + " -> " + p.getName() + ": " + msg);
 			e.getPlayer().sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
 			GugaCommands.reply.put(p, e.getPlayer());
 		}
@@ -254,7 +241,7 @@ public class GugaPlayerListener implements Listener
 	public void onPlayerChat(PlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
-		plugin.socketServer.SendChatMsg(e.getPlayer().getName() + ": " + e.getMessage());
+		//plugin.socketServer.SendChatMsg(e.getPlayer().getName() + ": " + e.getMessage());
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
@@ -262,9 +249,12 @@ public class GugaPlayerListener implements Listener
 		if (!plugin.acc.UserIsLogged(p))
 		{
 			e.setCancelled(true);
-			return;   //tihihiih
+			return;
 		}
-		GameMaster gm;
+		ChatHandler.SendChatMessage(p, e.getMessage());
+		e.setCancelled(true);
+		return;
+		/*GameMaster gm;
 		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
 		{
 			if (plugin.acc.UserIsLogged(p))
@@ -293,48 +283,7 @@ public class GugaPlayerListener implements Listener
 				e.setCancelled(true);
 				return;
 			}
-		}
-		if(GugaMute.statusChatMute())
-		{
-			p.sendMessage(ChatColor.RED+"Chat je nyni dostupny pouze pro ADMINy/GM");
-			e.setCancelled(true);
-			return;
-		}
-		else if(GugaMute.getPlayerStatus(p.getName()))
-		{
-			p.sendMessage(ChatColor.RED+"Jste ztlumen! Nemuzete psat.");
-			e.setCancelled(true);
-			return;
-		}
-		if (plugin.FindPlayerCurrency(p.getName()).IsVip())
-		{
-			if (plugin.acc.UserIsLogged(p))
-			{
-				e.setMessage(ChatColor.GOLD + e.getMessage());
-			}
-			else
-			{
-				e.setCancelled(true);
-			}
-		}
-		if((!(plugin.acc.UserIsLogged(p))||!(plugin.acc.UserIsRegistered(p))))
-		{
-			if(e.getMessage().startsWith("login"))
-			{
-				p.sendMessage(ChatColor.RED+"Pred login musite napsat /");
-				e.setCancelled(true);
-			}
-			else if(e.getMessage().startsWith("register"))
-			{
-				p.sendMessage(ChatColor.RED+"Pred register musite napsat /");
-				e.setCancelled(true);
-			}
-		}
-		else if(e.getMessage().startsWith("password"))
-		{
-			p.sendMessage(ChatColor.RED+"Pred password musite napsat /");
-			e.setCancelled(true);
-		}
+		}*/
 	}
 		/*else if(e.getMessage().contains(".Ownage"))
 		{
@@ -395,6 +344,11 @@ public class GugaPlayerListener implements Listener
 		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerBedEnter(PlayerBedEnterEvent e)
+	{
+		e.getPlayer().sendMessage(ChatColor.GREEN + "Vas home byl nastaven!");
+	}
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerKick(PlayerKickEvent e)
 	{
 		e.setLeaveMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
@@ -434,6 +388,10 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("PLAYER_RESPAWN_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		Player p = e.getPlayer();
+		if(p.getBedSpawnLocation() != null)
+		{
+			e.setRespawnLocation(p.getBedSpawnLocation());
+		}
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{
@@ -463,11 +421,11 @@ public class GugaPlayerListener implements Listener
 		{
 			spec.Teleport();
 		}*/
-		/*if(GugaFlyHandler.offFlying(p.getName()))
+		if(GugaFlyHandler.offFlying(p.getName()))
 		{
 			p.setAllowFlight(false);
 			p.setFlying(false);
-		}*/
+		}
 		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
 			GugaWorldSizeHandler.MoveBack(p);
 		else if (p.getLocation().getBlockY() < 0)
