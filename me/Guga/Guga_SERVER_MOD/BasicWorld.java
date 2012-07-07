@@ -28,10 +28,10 @@ public class BasicWorld
 	}
 	public static void BasicWorldEnter(Player p)
 	{
-		p.teleport(plugin.getServer().getWorld("world_basic").getSpawnLocation());
 		p.setBedSpawnLocation(plugin.getServer().getWorld("world_basic").getSpawnLocation());
-		p.sendMessage(ChatColor.RED + "Tento svet bude vasim sidlem dokud nedosahnete levelu 15!");
-		p.sendMessage(ChatColor.RED + "Levely ziskate kopanim!");
+		p.teleport(plugin.getServer().getWorld("world_basic").getSpawnLocation());
+		p.sendMessage(ChatColor.GREEN + "Tento svet bude vasim sidlem dokud nedosahnete levelu 10!");
+		p.sendMessage(ChatColor.GREEN + "Levely ziskate kopanim!");
 		p.sendMessage(ChatColor.YELLOW + "Vice na o nasem profesionalnim svete na: mineandcraft.cz");
 	}
 	public static void BasicWorldLeaveToWorld(Player p)

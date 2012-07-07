@@ -24,6 +24,9 @@ public abstract class GugaMCClientHandler
 		{
 			connectedClients.put(p, macAddr);
 			p.sendMessage(ChatColor.BLUE + "Vas klient byl uspesne overen!");
+			GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
+			if((!curr.IsVip()) && (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
+				ChatHandler.SetPrefix(p, "member");
 		}
 	}
 	public static void UnregisterUser(Player p)

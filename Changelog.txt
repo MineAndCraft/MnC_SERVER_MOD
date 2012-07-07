@@ -1,3 +1,31 @@
+3.5.0
+Author:Rikub
+	- Spawn handler added
+		- New connected players will be automatically teleported to random world spawn
+	- GugaIPHandler deleted
+	- ChatHandler added
+		- New chat design
+		- New ranks added
+			- [HRAC] - for players without our client
+			- [CLEN] - for players with our client
+		- Methods which print Success or Fail plugin message
+	- Basic world added, but it is still not used
+	- Command /fly has been enabled (again)
+	- GugaSocketServer removed
+	- New command /gm time <world> <value>
+	- ADMIN item for creating regions changed to wooden shovel (ID: 259)
+	- BugFixes
+		- Chest cannot be places next to already locked chest
+		- Players can use wooden axe again
+	- Free socket for ADMIN/GM/VIP player - random player will be kicked
+	- Eventers can use command /eventworld mode (creative in EW)
+	- /eventworld cmd replaced by /ew
+	:Stanley
+	- Login system now uses MySql database for user accounts
+		- Password must be at least 6 characters long
+	:Guga
+	- Array in GugaChests changed to ArrayList
+	
 3.4.6
 Author:Rikub
 	- Regions could be create by left/right click on block with wooden axe in hand
