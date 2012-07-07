@@ -7,8 +7,11 @@ import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import net.minecraft.server.WorldServer;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
@@ -229,6 +232,15 @@ public class GugaEntityListener implements Listener
 		}
 		if(e.getEntity() instanceof Creeper)
 		{
+			try{
+			Location loc = e.getLocation();
+		    WorldServer localWorldServer = ((CraftWorld)loc.getWorld()).getHandle();
+		    localWorldServer.makeSound(loc.getX(), loc.getY(), loc.getZ(), "random.explode", 4.0F, (1.0F + (localWorldServer.random.nextFloat() - localWorldServer.random.nextFloat()) * 0.2F) * 0.7F);
+		    localWorldServer.a("hugeexplosion", loc.getX(), loc.getY(), loc.getZ(), 0.0D, 0.0D, 0.0D);
+			}catch(Exception ex)
+			{
+				ex.printStackTrace();
+			}
 			e.setCancelled(true);
 			return;
 		}

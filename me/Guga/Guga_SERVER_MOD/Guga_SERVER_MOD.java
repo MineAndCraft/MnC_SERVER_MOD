@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
@@ -77,6 +78,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaParty.SetPlugin(this);
 		GugaTeams.SetPlugin(this);
 		GugaFlyHandler.SetPlugin(this);
+		ChatHandler.SetPlugin(this);
 		BasicWorld.SetPlugin(this);
 		SpawnsHandler.SetPlugin(this);
 
@@ -96,6 +98,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		arena.LoadArenas();
 		arena.LoadPvpStats();
 		getServer().getWorld("arena").setPVP(true);
+		getServer().getWorld("arena").setFullTime(4000);
 		getServer().getWorld("world").setPVP(false);
 		getServer().getWorld("world").setSpawnFlags(true, true);
 		getServer().getWorld("world_nether").setPVP(false);
@@ -124,8 +127,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaFlyHandler.LoadFly();
 		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
-		this.socketServer = new GugaSocketServer(12451, this);
-		this.socketServer.ListenStart();
+		//this.socketServer = new GugaSocketServer(12451, this);
+		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by Guga 2011.");
@@ -268,7 +271,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandArena((Player) sender, args);
 			 return true;
 		 }
-		 else if (cmd.getName().equalsIgnoreCase("eventworld") && (sender instanceof Player))
+		 else if (cmd.getName().equalsIgnoreCase("ew") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandEventWorld((Player) sender, args);
 			 return true;
@@ -310,6 +313,16 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if ((cmd.getName().equalsIgnoreCase("fly")) && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandFly((Player)sender, args);
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("home")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandHome((Player)sender, args);
+			 return true;
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("world")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandWorld((Player)sender);
+			 return true;
 		 }
 		//*****************************************module*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
@@ -365,7 +378,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandConfirm((Player)sender,args);
 		 }
 		 //*****************************************/register*****************************************
-		 else if(cmd.getName().equalsIgnoreCase("register") && (sender instanceof Player))
+		 /*else if(cmd.getName().equalsIgnoreCase("register") && (sender instanceof Player))
 		 {
 			if (config.accountsModule)
 			{
@@ -377,8 +390,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				sender.sendMessage("This is not enabled on this server!");
 				return true;
 			}
-		 }
-		 else if(cmd.getName().equalsIgnoreCase("password") && (sender instanceof Player))
+		 }*/
+		 /*else if(cmd.getName().equalsIgnoreCase("password") && (sender instanceof Player))
 		 {
 			 if (config.accountsModule)
 				{
@@ -390,7 +403,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 					sender.sendMessage("This is not enabled on this server!");
 					return true;
 				}
-		 }
+		 }*/
 		//*****************************************/lock*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
 		 {
@@ -596,14 +609,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.4.8";
+	public static final String version = "3.5.0";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
 	
-	public GugaSocketServer socketServer;
+	//public GugaSocketServer socketServer;
 	public final GugaConfiguration config = new GugaConfiguration(this);
 	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
 	public final GugaEntityListener enListener = new GugaEntityListener(this);

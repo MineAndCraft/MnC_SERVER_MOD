@@ -69,11 +69,11 @@ public class GugaProfession
 		}
 		thisLevel = xpNeeded - xpNeededOld;
 		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " prekrocil/a level " + level + "!");
-		if(level >= 15 && BasicWorld.IsBasicWorld(plugin.getServer().getPlayer(playerName).getLocation()))
+		if(level >= 10 && BasicWorld.IsBasicWorld(plugin.getServer().getPlayer(playerName).getLocation()))
 		{
-			plugin.getServer().getPlayer(playerName).sendMessage("Nyni muzete vstoupit do klasickeho sveta.");
-			plugin.getServer().getPlayer(playerName).sendMessage("Dokazal jste povahu skveleho hrace.");
-			plugin.getServer().getPlayer(playerName).sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/world join");
+			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
+			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
+			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/world");
 		}
 		//if (level <= 20)
 		//{
