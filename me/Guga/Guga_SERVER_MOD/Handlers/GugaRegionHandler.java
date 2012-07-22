@@ -15,16 +15,14 @@ public abstract class GugaRegionHandler
 	{
 		GugaRegionHandler.plugin = plugin;
 	}
-	public static void AddRegion(String name, String[] owners, int x1, int x2, int z1, int z2)
+	public static void AddRegion(String name, String world, String[] owners, int x1, int x2, int z1, int z2)
 	{
-		GugaRegionHandler.regions.add(new GugaRegion(name, owners, x1, x2, z1, z2));
+		GugaRegionHandler.regions.add(new GugaRegion(name, world ,owners, x1, x2, z1, z2));
 		GugaRegionHandler.SaveRegions();
 	}
 	public static boolean CanInteract(Player p, int x, int z)
 	{
-		GugaRegion region = GugaRegionHandler.GetRegionByCoords(x, z);
-		if (!p.getWorld().getName().equalsIgnoreCase("world"))
-			return true;
+		GugaRegion region = GugaRegionHandler.GetRegionByCoords(x, z, p.getWorld().getName());
 		if (region != null)
 		{
 			String[] owners = region.GetOwners();
@@ -70,13 +68,13 @@ public abstract class GugaRegionHandler
 		}
 		return null;
 	}
-	public static GugaRegion GetRegionByCoords(int x, int z)
+	public static GugaRegion GetRegionByCoords(int x, int z, String world)
 	{
 		Iterator<GugaRegion> i = GugaRegionHandler.regions.iterator();
 		while (i.hasNext())
 		{
 			GugaRegion region = i.next();
-			if (region.IsInRegion(x, z))
+			if (region.IsInRegion(x, z, world))
 			{
 				return region;
 			}
@@ -105,6 +103,7 @@ public abstract class GugaRegionHandler
 		file.Open();
 		GugaRegion region;
 		String name;
+		String world;
 		String[] owners;
 		int[] coords;
 		String line;
@@ -113,9 +112,10 @@ public abstract class GugaRegionHandler
 		{
 			region = i.next();
 			name = region.GetName();
+			world = region.GetWorld();
 			owners = region.GetOwners();
 			coords = region.GetCoords();
-			line = name + ";" + GugaRegionHandler.OwnersToLine(owners) + ";" + coords[GugaRegion.X1] + ";" + coords[GugaRegion.X2] + ";" + coords[GugaRegion.Z1] + ";" + coords[GugaRegion.Z2];
+			line = name + ";" + world + ";" + GugaRegionHandler.OwnersToLine(owners) + ";" + coords[GugaRegion.X1] + ";" + coords[GugaRegion.X2] + ";" + coords[GugaRegion.Z1] + ";" + coords[GugaRegion.Z2];
 			file.WriteLine(line);
 		}
 		file.Close();
@@ -127,6 +127,7 @@ public abstract class GugaRegionHandler
 		file.Open();
 		String line;
 		String name;
+		String world;
 		String[] owners;
 		int x1;
 		int x2;
@@ -137,12 +138,13 @@ public abstract class GugaRegionHandler
 		{
 			splittedString = line.split(";");
 			name = splittedString[0];
-			owners = splittedString[1].split(",");
-			x1 = Integer.parseInt(splittedString[2]);
-			x2 = Integer.parseInt(splittedString[3]);
-			z1 = Integer.parseInt(splittedString[4]);
-			z2 = Integer.parseInt(splittedString[5]);
-			GugaRegionHandler.regions.add(new GugaRegion(name, owners, x1, x2, z1, z2));
+			world = splittedString[1];
+			owners = splittedString[2].split(",");
+			x1 = Integer.parseInt(splittedString[3]);
+			x2 = Integer.parseInt(splittedString[4]);
+			z1 = Integer.parseInt(splittedString[5]);
+			z2 = Integer.parseInt(splittedString[6]);
+			GugaRegionHandler.regions.add(new GugaRegion(name, world, owners, x1, x2, z1, z2));
 		}
 		file.Close();
 	}

@@ -213,6 +213,15 @@ public class GugaPlayerListener implements Listener
 			}
 			//i++;
 		}
+		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl"))
+		{
+			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			{
+				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
+				e.setCancelled(true);
+				return;
+			}
+		}
 		String msg = "";
 		String[] splitted = e.getMessage().split(" ");
 		if (e.getMessage().contains("/tell"))

@@ -60,7 +60,7 @@ public class GugaBlockListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		if(plugin.EventWorld.IsEventWorld(p.getLocation())&& GugaEventWorld.regionStatus())
+		if(plugin.EventWorld.IsEventWorld(p.getLocation()) && GugaEventWorld.regionStatus())
 		{
 			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
 			{
@@ -75,11 +75,12 @@ public class GugaBlockListener implements Listener
 			if (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
-				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
+				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 		        p.sendMessage(ChatColor.BLUE+"[REGIONS]: "+ ChatColor.WHITE + "Tady nemuzes kopat! Nazev pozemku: " + region.GetName());
 				return;
 			}
 		}
+		
 		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
 		{
 			e.setCancelled(true);
@@ -174,7 +175,10 @@ public class GugaBlockListener implements Listener
 			}*/
 		if(level >= 10 && BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
 		{
-			e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/world");
+			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			{
+				e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/world");
+			}
 		}
 		//*************************************************************************
 		String chestOwner;
@@ -329,25 +333,27 @@ public class GugaBlockListener implements Listener
 				return;
 			}
 		}
-		if (plugin.EventWorld.IsEventWorld(e.getBlock().getLocation()))
+		Player p = e.getPlayer(); 
+		if(plugin.EventWorld.IsEventWorld(p.getLocation()) && GugaEventWorld.regionStatus())
 		{
-			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.EVENTER))
+			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
 			{
-				e.setCancelled(true);
 				return;
 			}
+			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes pokladat blocky!");
+			e.setCancelled(true);
+			return;
 		}
 		if (!GugaRegionHandler.CanInteract(e.getPlayer(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
-				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ());
+				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 				e.getPlayer().sendMessage(ChatColor.BLUE+"[REGIONS]: "+ChatColor.WHITE+"Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
 			}
 		}
 		//54
-		Player p=e.getPlayer();
 		Block block = e.getBlockPlaced();
 		if (block.getTypeId() == 54)
 		{

@@ -372,6 +372,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandFeedback((Player) sender, args);
 			 return true;
 		 }
+		 else if (cmd.getName().equalsIgnoreCase("web") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandWeb((Player)sender, args);
+			 return true;
+		 }
 		 //*****************************************/status*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("y") && (sender instanceof Player))
 		 {
@@ -609,7 +614,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int DIAMOND = 2;
 	public boolean debug = false;
 	
-	public static final String version = "3.5.0";
+	public static final String version = "3.5.1";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
