@@ -157,13 +157,6 @@ public abstract class GugaPort
 			{
 				// Do nothing
 			}
-			else if (e.GetOwner().equalsIgnoreCase("vip"))
-			{
-				if(!plugin.FindPlayerCurrency(pName).IsVip())
-				{
-					p.remove(e);
-				}
-			}
 			else if (!e.GetOwner().equalsIgnoreCase(pName))
 			{
 				p.remove(e);
