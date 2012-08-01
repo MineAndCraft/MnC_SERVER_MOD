@@ -29,11 +29,39 @@ public class ChatHandler
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName());
 		if(GameMasterHandler.IsAdmin(sender.getName()))
 		{
-			plugin.getServer().broadcastMessage("<" + sender.getDisplayName() + "> " + ChatColor.AQUA + message);
+			if(GugaCommands.disabledGMs.contains(sender.getName()))
+			{
+				if(curr.IsVip())
+				{
+					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
+				}
+				else
+				{
+					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  message);
+				}
+			}
+			else
+			{
+				plugin.getServer().broadcastMessage("<" + sender.getDisplayName() + "> " + ChatColor.AQUA + message);
+			}
 		}
 		else if(GameMasterHandler.IsAtleastGM(sender.getName()))
 		{
-			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GREEN + message);
+			if(GugaCommands.disabledGMs.contains(sender.getName()))
+			{
+				if(curr.IsVip())
+				{
+					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
+				}
+				else
+				{
+					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  message);
+				}
+			}
+			else
+			{
+				plugin.getServer().broadcastMessage("<" + sender.getDisplayName() + "> " + ChatColor.GREEN + message);
+			}
 		}
 		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER))
 		{
@@ -62,13 +90,45 @@ public class ChatHandler
 		
 		if(GameMasterHandler.IsAdmin(p.getName()))
 		{
-			ChatHandler.SetPrefix(p, "admin");
-			p.setPlayerListName(ChatColor.AQUA+p.getName());
+			if(GugaCommands.disabledGMs.contains(p.getName()))
+			{
+				if(curr.IsVip())
+				{
+					ChatHandler.SetPrefix(p, "vip");
+					p.setPlayerListName(ChatColor.GOLD+p.getName());
+				}
+				else
+				{
+					p.setDisplayName(p.getName());
+					p.setPlayerListName(ChatColor.WHITE+p.getName());
+				}
+			}
+			else
+			{
+				ChatHandler.SetPrefix(p, "admin");
+				p.setPlayerListName(ChatColor.AQUA+p.getName());
+			}
 		}
 		else if(GameMasterHandler.IsAtleastGM(p.getName()))
 		{
-			ChatHandler.SetPrefix(p, "gm");
-			p.setPlayerListName(ChatColor.GREEN+p.getName());
+			if(GugaCommands.disabledGMs.contains(p.getName()))
+			{
+				if(curr.IsVip())
+				{
+					ChatHandler.SetPrefix(p, "vip");
+					p.setPlayerListName(ChatColor.GOLD+p.getName());
+				}
+				else
+				{
+					p.setDisplayName(p.getName());
+					p.setPlayerListName(ChatColor.WHITE+p.getName());
+				}
+			}
+			else
+			{
+				ChatHandler.SetPrefix(p, "gm");
+				p.setPlayerListName(ChatColor.GREEN+p.getName());
+			}
 		}
 		else if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{

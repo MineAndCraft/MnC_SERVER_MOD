@@ -11,7 +11,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
+//import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
@@ -48,7 +48,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
-		GugaFlyHandler.SaveFly();
+		//GugaFlyHandler.SaveFly();
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
@@ -77,7 +77,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
 		GugaTeams.SetPlugin(this);
-		GugaFlyHandler.SetPlugin(this);
+		//GugaFlyHandler.SetPlugin(this);
 		ChatHandler.SetPlugin(this);
 		BasicWorld.SetPlugin(this);
 		SpawnsHandler.SetPlugin(this);
@@ -124,7 +124,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaMCClientHandler.LoadMACWhiteList();
 		GugaMCClientHandler.LoadMinecraftOwners();
 		GugaPlayerListener.LoadCreativePlayers();
-		GugaFlyHandler.LoadFly();
+		//GugaFlyHandler.LoadFly();
 		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
 		//this.socketServer = new GugaSocketServer(12451, this);
@@ -372,11 +372,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandFeedback((Player) sender, args);
 			 return true;
 		 }
-		 else if (cmd.getName().equalsIgnoreCase("web") && (sender instanceof Player))
-		 {
-			 GugaCommands.CommandWeb((Player)sender, args);
-			 return true;
-		 }
 		 //*****************************************/status*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("y") && (sender instanceof Player))
 		 {
@@ -613,8 +608,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public int GOLD = 1;
 	public int DIAMOND = 2;
 	public boolean debug = false;
+	public boolean redstoneDebug = false;
 	
-	public static final String version = "3.5.1";
+	public static final String version = "3.5.2";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

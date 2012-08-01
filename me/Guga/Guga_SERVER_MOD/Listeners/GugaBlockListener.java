@@ -507,6 +507,19 @@ public class GugaBlockListener implements Listener
 		{
 			plugin.log.info("REDSTONE_CHANGE_EVENT: typeID=" + blockID + ",blockData=" + block.getData() + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
 		}
+		if (plugin.redstoneDebug)
+		{
+			Player[] p = plugin.getServer().getOnlinePlayers();
+			int i = 0;
+			while(i < p.length)
+			{
+				if(GameMasterHandler.IsAtleastGM(p[i].getName()))
+				{
+					p[i].sendMessage(ChatColor.GRAY + "RS_Event: ID=" + blockID + ",blockData=" + block.getData() + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
+				}
+				i++;
+			}
+		}
 	}
 	private int ID_CHEST=54;
 	private int ID_DISPENSER=23;

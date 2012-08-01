@@ -160,7 +160,6 @@ public abstract class GugaCommands
 		sender.sendMessage("GUGA MINECRAFT SERVER MOD "+Guga_SERVER_MOD.version);
 		sender.sendMessage("******************************");
 		sender.sendMessage("Seznam prikazu:");
-		sender.sendMessage(ChatColor.AQUA + " /web " + ChatColor.RED + "-Zobrazi odkazy na dulezite veci na nasem webu!");
 		sender.sendMessage(ChatColor.AQUA + " /lock " + ChatColor.WHITE + "- Zamkne block (info v /locker).");
 		sender.sendMessage(ChatColor.AQUA + " /unlock  " + ChatColor.WHITE + "- Odemkne block (info v /locker).");
 		sender.sendMessage(ChatColor.AQUA + " /who  " + ChatColor.WHITE + "-  Seznam online hracu.");
@@ -174,7 +173,7 @@ public abstract class GugaCommands
 		sender.sendMessage(ChatColor.AQUA + " /vip  " + ChatColor.WHITE + "-  VIP menu.");
 		sender.sendMessage(ChatColor.AQUA + " /places " + ChatColor.WHITE + "- Menu mist, kam se da teleportovat.");
 		sender.sendMessage(ChatColor.AQUA + " /party " + ChatColor.WHITE + "- Prikazy pro party");
-		sender.sendMessage(ChatColor.AQUA + " /ah " + ChatColor.WHITE + "- Menu Aukce.");
+		//sender.sendMessage(ChatColor.AQUA + " /ah " + ChatColor.WHITE + "- Menu Aukce.");
 		sender.sendMessage(ChatColor.AQUA + " /r " + ChatColor.GRAY + "<message> " + ChatColor.WHITE + "-  Odpoved na whisper.");
 		sender.sendMessage(ChatColor.AQUA + " /feedback " + ChatColor.GRAY + "<text> " + ChatColor.WHITE + "-  Odesle zpetny odkaz administratorum serveru. Napr. bugy/napady na vylepseni.");
 		if (GameMasterHandler.IsAdmin(sender.getName()))
@@ -442,7 +441,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandFly(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		/*if (!plugin.acc.UserIsLogged(sender))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
@@ -547,7 +546,7 @@ public abstract class GugaCommands
 				}
 				GugaFlyHandler.SaveFly();
 			}
-		}
+		}*/
 	}
 	public static void CommandVIP(Player sender, String args[])
 	{
@@ -590,6 +589,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/vip time  -  Podprikaz zmeny casu.");
 			sender.sendMessage("/vip item  -  Podprikaz itemu.");
 			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
+			sender.sendMessage("/vip mob - Zmena vasi entity na jinou");
 		}
 		else if (args.length == 1)
 		{
@@ -624,6 +624,13 @@ public abstract class GugaCommands
 			{
 				sender.setFoodLevel(40);
 				sender.sendMessage("Uspesne jste se najedli");
+			}
+			else if(subCommand.matches("mob"))
+			{
+				sender.sendMessage("VIP MOB MENU:");
+				sender.sendMessage("/vip mob types - Vypise vsechny moby na ktere se muzete zmenit.");
+				sender.sendMessage("/vip mob <jmenoMoba> - Zmeni Vasi entitu na zadanou.");
+				sender.sendMessage("/vip mob restart - Nastavi Vam puvodni tvar!");
 			}
 		}
 		else if (args.length == 2)
@@ -717,6 +724,45 @@ public abstract class GugaCommands
 						sender.sendMessage("Vas cas nepotrebuje restartovat!");
 				}
 			}
+			else if (subCommand.matches("mob"))
+			{
+				if(arg1.matches("types"))
+				{
+					sender.sendMessage("TYPY MOBU:");
+					int i = 0;
+					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
+					while(i<mobs.length)
+					{
+						sender.sendMessage(mobs[i]);
+						i++;
+					}
+				}
+				else if(arg1.matches("restart"))
+				{
+					MobDisguiseHandler.SendCommand(sender, arg1);
+					ChatHandler.SuccessMsg(sender, "Jste opet Vy!");
+				}
+				else
+				{
+					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
+					int i = 0;
+					boolean exists = false;
+					while (i < mobs.length)
+					{
+						if(mobs[i].matches(arg1))
+						{
+							exists = true;
+							MobDisguiseHandler.SendCommand(sender, arg1);
+							ChatHandler.SuccessMsg(sender, "Je z Vas " + arg1 + ".");
+						}
+						i++;
+					}
+					if(!exists)
+					{
+						ChatHandler.FailMsg(sender, "Tento mob neni povolen!");
+					}
+				}
+			}
 		}
 		else if (args.length == 3)
 		{
@@ -734,6 +780,21 @@ public abstract class GugaCommands
 					if (p == null)
 					{
 						sender.sendMessage("Tento hrac neni online!");
+						return;
+					}
+					if (p.getLocation().getWorld().getName().matches("world_basic"))
+					{
+						ChatHandler.FailMsg(sender, "Tento hrac je ve svete pro novacky!");
+						return;
+					}
+					if (p.getLocation().getWorld().getName().matches("arena"))
+					{
+						ChatHandler.FailMsg(sender, "Tento hrac je v arene!");
+						return;
+					}
+					if (p.getLocation().getWorld().getName().matches("world_event"))
+					{
+						ChatHandler.FailMsg(sender, "Tento hrac je v EW!");
 						return;
 					}
 					plugin.getServer().getPlayer(arg2).sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijmuti napiste prikaz /y");
@@ -769,6 +830,45 @@ public abstract class GugaCommands
 					}
 					else 
 						sender.sendMessage("Tato hodnota nelze nastavit!");
+				}
+			}
+			else if (subCommand.matches("mob"))
+			{
+				if(arg1.matches("types"))
+				{
+					sender.sendMessage("TYPY MOBU:");
+					int i = 0;
+					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
+					while(i<mobs.length)
+					{
+						sender.sendMessage(mobs[i]);
+						i++;
+					}
+				}
+				else if(arg1.matches("restart"))
+				{
+					MobDisguiseHandler.SendCommand(sender, arg1);
+					ChatHandler.SuccessMsg(sender, "Jste opet Vy!");
+				}
+				else
+				{
+					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
+					int i = 0;
+					boolean exists = false;
+					while (i < mobs.length)
+					{
+						if(mobs[0].matches(arg1))
+						{
+							exists = true;
+							MobDisguiseHandler.SendCommand(sender, arg1);
+							ChatHandler.SuccessMsg(sender, "Je z Vas " + arg1 + ".");
+						}
+						i++;
+					}
+					if(!exists)
+					{
+						ChatHandler.FailMsg(sender, "Tento mob neni povolen!");
+					}
 				}
 			}
 		}
@@ -1299,22 +1399,20 @@ public abstract class GugaCommands
 					sender.sendMessage("Z EventWorldu se nedostanete do areny!");
 					return;
 				}
-				if(GugaFlyHandler.isFlying(sender.getName()))
+				/*if(GugaFlyHandler.isFlying(sender.getName()))
 				{
 					sender.setFlying(false);
 					sender.setAllowFlight(false);
+				}*/
+				if (!plugin.arena.IsArena(sender.getLocation()))
+				{
+					plugin.arena.PlayerJoin(sender);
 				}
 				else
 				{
-					if (!plugin.arena.IsArena(sender.getLocation()))
-					{
-						plugin.arena.PlayerJoin(sender);
-					}
-					else
-					{
-						sender.sendMessage("V arene jiz jste!");
-					}
+					sender.sendMessage("V arene jiz jste!");
 				}
+			
 			}
 			else if (subCommand.matches("leave"))
 			{
@@ -1871,6 +1969,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm bw - BasicWorld sub-menu");
 				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
+				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
@@ -1884,18 +1983,23 @@ public abstract class GugaCommands
 			{
 				plugin.logger.PrintLogData(sender, sender.getTargetBlock(null, 20));
 			}
+			else if(subCommand.matches("rsdebug") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(plugin.redstoneDebug)
+				{
+					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned off!");
+					plugin.redstoneDebug = false;
+				}
+				else
+				{
+					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned on!");
+					plugin.redstoneDebug = true;
+				}
+			}
 			else if(subCommand.matches("rank") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm rank add <player> <rank> - Adds rank (EVENTER/BUILDER) for a certain player.");
 				sender.sendMessage("/gm rank remove <player> - Removes rank for a certain player");
-			}
-			else if (subCommand.matches("web"))
-			{
-				try
-				{ 
-					Runtime.getRuntime().exec("cmd /c start http://www.mineandcraft.cz"); 
-				} 
-				catch(IOException e1) {System.out.println(e1);} 
 			}
 			else if (subCommand.matches("mute") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -1969,16 +2073,23 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("on") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
-				ChatHandler.InitializeDisplayName(sender);
-				sender.setGameMode(GameMode.CREATIVE);
-				sender.sendMessage("GM state succesfully turned on!");
+				if(disabledGMs.contains(sender.getName()))
+				{
+					disabledGMs.remove(sender.getName());
+					ChatHandler.InitializeDisplayName(sender);
+					sender.setGameMode(GameMode.CREATIVE);
+					sender.sendMessage("GM state succesfully turned on!");
+				}
 			}
 			else if (subCommand.matches("off") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
-				GugaVirtualCurrency currency = plugin.FindPlayerCurrency(sender.getName());
-				currency.UpdateDisplayName();
-				sender.setGameMode(GameMode.SURVIVAL);
-				sender.sendMessage("GM state succesfully turned off!");
+				if(!disabledGMs.contains(sender.getName()))
+				{
+					disabledGMs.add(sender.getName());
+					ChatHandler.InitializeDisplayName(sender);
+					sender.setGameMode(GameMode.SURVIVAL);
+					sender.sendMessage("GM state succesfully turned off!");
+				}
 			}
 		}
 		else if (args.length == 2)
@@ -2742,11 +2853,6 @@ public abstract class GugaCommands
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
 					if(plugin.professions.get(sender.getName()).GetXp() == 0 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
-						try
-						{ 
-							Runtime.getRuntime().exec("cmd /c start http://www.mineandcraft.cz/pravidla"); 
-						} 
-						catch(IOException e1) {System.out.println(e1);} 
 						BasicWorld.BasicWorldEnter(sender);
 						ChatHandler.SuccessMsg(sender, "Vitejte ve svete pro novacky!");
 					}
@@ -2776,53 +2882,6 @@ public abstract class GugaCommands
 		 {
 			 ChatHandler.FailMsg(sender, "Nejdrive se zaregistrujte!");
 		 }
-	}
-	public static void CommandWeb(Player sender, String args[])
-	{
-		if(args.length == 0)
-		{
-			sender.sendMessage(" /web home - Zobrazi home webu");
-			sender.sendMessage(" /web pravidla - Zobrazi pravidla na webu!");
-			sender.sendMessage(" /web start - Zobrazi navod jak zacit s hranim na serveru!");
-			sender.sendMessage(" /web shop - Zobrazi info o shopu na webu!");
-			return;
-		}
-		if(args.length == 1)
-		{
-			try
-			{ 
-				String subCommand = args[0];
-				if(subCommand.matches("pravidla"))
-				{
-					Runtime.getRuntime().exec("cmd /c start http://mineandcraft.cz/pravidla/"); 
-					ChatHandler.SuccessMsg(sender, "Presmerovani se zdarilo!");
-				}
-				else if(subCommand.matches("home"))
-				{
-					Runtime.getRuntime().exec("cmd /c start http://www.mineandcraft.cz"); 
-					ChatHandler.SuccessMsg(sender, "Presmerovani se zdarilo!");
-				}
-				else if(subCommand.matches("start"))
-				{
-					Runtime.getRuntime().exec("cmd /c start http://mineandcraft.cz/navod-na-pripojeni/"); 
-					ChatHandler.SuccessMsg(sender, "Presmerovani se zdarilo!");
-				}
-				else if(subCommand.matches("shop"))
-				{
-					Runtime.getRuntime().exec("cmd /c start http://mineandcraft.cz/in-game-obchod/");
-					ChatHandler.SuccessMsg(sender, "Presmerovani se zdarilo!");
-				}
-			}
-			catch(IOException e1) 
-			{
-				ChatHandler.FailMsg(sender, "Neco se nepovedlo :-( !");
-				System.out.println(e1);
-			} 
-		}
-		else
-		{
-			ChatHandler.FailMsg(sender, "Prikaz /web neprebira tolik argumentu!");
-		}
 	}
 	public static void CommandDebug()
 	{
@@ -2930,6 +2989,7 @@ public abstract class GugaCommands
 	public static int z2 = 0;
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
+	public static ArrayList<String> disabledGMs = new ArrayList<String>();
 	public static String FeedbackFile = "plugins/FeedbackFile.dat";
 	private static Guga_SERVER_MOD plugin;
 
