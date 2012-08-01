@@ -2,19 +2,20 @@ package me.Guga.Guga_SERVER_MOD;
 
 public class GugaRegion 
 {
-	public GugaRegion(String name, String[] owners, int x1, int x2, int z1, int z2)
+	public GugaRegion(String name, String world, String[] owners, int x1, int x2, int z1, int z2)
 	{
 		this.name = name;
 		this.owners = owners;
+		this.world = world;
 		this.x1 = x1;
 		this.x2 = x2;
 		this.z1 = z1;
 		this.z2 = z2;
 		this.SortCoords();
 	}
-	public boolean IsInRegion(int x, int z)
+	public boolean IsInRegion(int x, int z, String world)
 	{
-		if ( ( (x >= this.x1) && (x <= this.x2) ) && ( (z >= this.z1) && (z <= this.z2)) )
+		if ( ( ( (x >= this.x1) && (x <= this.x2) ) && ( (z >= this.z1) && (z <= this.z2)) ) && (world.equalsIgnoreCase(this.world)) )
 		{
 			return true;
 		}
@@ -27,6 +28,10 @@ public class GugaRegion
 	public String[] GetOwners()
 	{
 		return owners;
+	}
+	public String GetWorld()
+	{
+		return this.world;
 	}
 	public int[] GetCoords()
 	{
@@ -63,4 +68,5 @@ public class GugaRegion
 	public static int Z2 = 3;
 	private String name;
 	private String[] owners;
+	private String world;
 }

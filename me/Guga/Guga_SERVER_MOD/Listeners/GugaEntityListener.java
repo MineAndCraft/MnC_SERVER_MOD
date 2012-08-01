@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -131,6 +132,22 @@ public class GugaEntityListener implements Listener
 		{
 			e.setDroppedExp(0);
 		}*/
+		if (e.getEntity() instanceof Player)
+		{
+			Player p = (Player) e.getEntity();
+			if(p.getLocation().getWorld().getName().equalsIgnoreCase("world"))
+			{
+				if(playersDeaths.containsKey(p.getName()))
+				{
+					playersDeaths.remove(p.getName());
+					playersDeaths.put(p.getName(), p.getLocation());
+				}
+				else
+				{
+					playersDeaths.put(p.getName(), p.getLocation());
+				}
+			}
+		}
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))
 		{
 			if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent)
@@ -277,5 +294,6 @@ public class GugaEntityListener implements Listener
 			}
 		}
 	}
+	public static HashMap<String, Location> playersDeaths = new HashMap<String, Location>();
 	public static Guga_SERVER_MOD plugin;
 }

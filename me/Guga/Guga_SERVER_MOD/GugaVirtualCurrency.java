@@ -133,6 +133,7 @@ public class GugaVirtualCurrency
 		{
 			if (CanBuyItem(totalPrice))
 			{
+				amount *= item.GetAmmount();
 				Purchase(item, totalPrice, amount);
 				p.sendMessage("Koupil jste " + amount + "x " + item.toString() + " za " + totalPrice + " kreditu.");
 				p.sendMessage("Zbyva kreditu: " + currency);
@@ -204,6 +205,43 @@ public class GugaVirtualCurrency
 				order = new ItemStack(item.GetItemID(), amount, (short) 54);
 			else if (item==Prices.EGG_OCELOT)
 				order = new ItemStack(item.GetItemID(), amount, (short) 98);		
+		}
+		else if(item.toString().contains("WOOL_"))
+		{
+			if (item == Prices.WOOL_ORANGE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 1);
+			else if (item==Prices.WOOL_MAGENTA)
+				order = new ItemStack(item.GetItemID(), amount, (short) 2);
+			else if (item==Prices.WOOL_LIGHTBLUE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 3);	
+			else if (item==Prices.WOOL_YELLOW)
+				order = new ItemStack(item.GetItemID(), amount, (short) 4);	
+			else if (item==Prices.WOOL_LIME)
+				order = new ItemStack(item.GetItemID(), amount, (short) 5);	
+			else if (item==Prices.WOOL_PINK)
+				order = new ItemStack(item.GetItemID(), amount, (short) 6);	
+			else if (item==Prices.WOOL_GRAY)
+				order = new ItemStack(item.GetItemID(), amount, (short) 7);	
+			else if (item==Prices.WOOL_LIGHTGRAY)
+				order = new ItemStack(item.GetItemID(), amount, (short) 8);	
+			else if (item==Prices.WOOL_CYAN)
+				order = new ItemStack(item.GetItemID(), amount, (short) 9);	
+			else if (item==Prices.WOOL_PURPLE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 10);	
+			else if (item==Prices.WOOL_BLUE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 11);	
+			else if (item==Prices.WOOL_BROWN)
+				order = new ItemStack(item.GetItemID(), amount, (short) 12);	
+			else if (item==Prices.WOOL_GREEN)
+				order = new ItemStack(item.GetItemID(), amount, (short) 13);
+			else if (item==Prices.WOOL_RED)
+				order = new ItemStack(item.GetItemID(), amount, (short) 14);
+			else if (item==Prices.WOOL_BLACK)
+				order = new ItemStack(item.GetItemID(), amount, (short) 15);	
+		}
+		else if (item == Prices.COCOA)
+		{
+			order = new ItemStack(item.GetItemID(), amount, (short) 3);
 		}
 		else if (item == Prices.KRUMPAC_EFFICIENCY_V)
 		{
