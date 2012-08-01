@@ -1,3 +1,13 @@
+3.5.1
+Author:Rikub
+	- VIP places
+	- Regions can be created in all worlds
+	- Many items added into in-game shop
+	- New command /web - direct access to our web-site
+	- New VIP tp commands /vip tp endtrapka, /vip tp death (teleport to death point)
+	- Colors in PlayerList works again
+	- EventWorld block place bug fixed
+	- Command /pl or /plugins cannot be used by normal players
 3.5.0
 Author:Rikub
 	- Spawn handler added
@@ -5,9 +15,6 @@ Author:Rikub
 	- GugaIPHandler deleted
 	- ChatHandler added
 		- New chat design
-		- New ranks added
-			- [HRAC] - for players without our client
-			- [CLEN] - for players with our client
 		- Methods which print Success or Fail plugin message
 	- Basic world added, but it is still not used
 	- Command /fly has been enabled (again)

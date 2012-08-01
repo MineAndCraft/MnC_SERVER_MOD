@@ -3,7 +3,6 @@ package me.Guga.Guga_SERVER_MOD.Handlers;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -33,7 +32,7 @@ public abstract class GameMasterHandler
 		}
 		GameMasterHandler.gameMasters.add(new GameMaster(name, r));
 		p.setGameMode(GameMode.CREATIVE);
-		setGMName(p);
+		ChatHandler.InitializeDisplayName(p);
 		SaveGMs();
 	}
 	public static void RemoveGMIng(String name)
@@ -124,28 +123,6 @@ public abstract class GameMasterHandler
 			file.WriteLine(line);
 		}
 		file.Close();
-	}
-	public static void setGMName(Player p)
-	{
-		GameMaster gm;
-		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
-		{
-			if (gm.GetRank() == Rank.ADMIN)
-			{
-				p.setDisplayName(ChatColor.RED + "ADMIN'" + ChatColor.WHITE + p.getName());
-				p.setPlayerListName(ChatColor.AQUA+p.getName());
-			}
-			else if (gm.GetRank() == Rank.GAMEMASTER)
-			{
-				p.setDisplayName(ChatColor.RED + "GM'" + ChatColor.WHITE + p.getName());
-				p.setPlayerListName(ChatColor.GREEN+p.getName());
-			}
-			else if(gm.GetRank()==Rank.BUILDER)
-			{
-				p.setDisplayName(ChatColor.RED + "BUILDER'" + ChatColor.WHITE + p.getName());
-				p.setPlayerListName(ChatColor.GOLD+p.getName());
-			}
-		}
 	}
 	public static ArrayList<GameMaster> gameMasters = new ArrayList<GameMaster>();
 	private static Guga_SERVER_MOD plugin;

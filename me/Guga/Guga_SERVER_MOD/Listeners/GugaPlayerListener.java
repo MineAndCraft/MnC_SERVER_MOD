@@ -19,7 +19,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
+//import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
@@ -57,7 +57,37 @@ public class GugaPlayerListener implements Listener
 	{
 		final Player p = e.getPlayer();
 		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
+		if (!p.isOnline())
+			return;
+		if (!GugaMCClientHandler.HasClient(p))
+		{
+			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
+			return;
+		}
+		if (GugaMCClientHandler.IsWhiteListed(p))
+			return;
+		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
+			GugaBanHandler.AddBan(p.getName(), 0);
+		if (!GugaBanHandler.IsIpWhitelisted(p))
+		{
+			if (GugaBanHandler.IsBanned(p.getName()))
+			{
+				GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
+				p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
+				return;
+			   }
+		}
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
+		if (curr == null)
+		{
+			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
+			plugin.playerCurrency.add(curr);
+		}
+		if (plugin.professions.get(p.getName()) == null)
+		{
+			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
+		}
 		int maxP = plugin.getServer().getMaxPlayers();
 		if(plugin.getServer().getOnlinePlayers().length == maxP)
 		{
@@ -91,27 +121,6 @@ public class GugaPlayerListener implements Listener
 				p.kickPlayer("Server je plny misto je rezervovano");
 			}
 		}
-		if (!p.isOnline())
-			return;
-		if (!GugaMCClientHandler.HasClient(p))
-		{
-			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
-			return;
-		}
-		if (GugaMCClientHandler.IsWhiteListed(p))
-			return;
-		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
-			GugaBanHandler.AddBan(p.getName(), 0);
-		if (!GugaBanHandler.IsIpWhitelisted(p))
-		{
-			if (GugaBanHandler.IsBanned(p.getName()))
-			{
-				GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-				p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
-				return;
-			   }
-		}
 		if (p.getName().contains(" "))
 		{
 			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
@@ -129,21 +138,7 @@ public class GugaPlayerListener implements Listener
 		}
 		
 		plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
-		if(GugaFlyHandler.isFlying(p.getName()))
-		{
-			p.setAllowFlight(true);
-			p.setFlying(true);
-		}
 		GugaAuctionHandler.CheckPayments(p);
-		if (curr == null)
-		{
-			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
-			plugin.playerCurrency.add(curr);
-		}
-		if (plugin.professions.get(p.getName()) == null)
-		{
-			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
-		}
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
@@ -212,6 +207,33 @@ public class GugaPlayerListener implements Listener
 				}
 			}
 			//i++;
+		}
+		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl"))
+		{
+			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			{
+				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
+				e.setCancelled(true);
+				return;
+			}
+		}
+		if(e.getMessage().startsWith("/md"))
+		{
+			if(!plugin.FindPlayerCurrency(e.getPlayer().getName()).IsVip())
+			{
+				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
+				e.setCancelled(true);
+				return;
+			}
+		}
+		if(e.getMessage().toLowerCase().startsWith("/md p") || e.getMessage().toLowerCase().startsWith("/md stats") || e.getMessage().toLowerCase().startsWith("/md types") || e.getMessage().toLowerCase().startsWith("/md baby"))
+		{
+			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			{
+				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
+				e.setCancelled(true);
+				return;
+			}
 		}
 		String msg = "";
 		String[] splitted = e.getMessage().split(" ");
@@ -421,10 +443,45 @@ public class GugaPlayerListener implements Listener
 		{
 			spec.Teleport();
 		}*/
-		if(GugaFlyHandler.offFlying(p.getName()))
+		/*if(GugaFlyHandler.offFlying(p.getName()))
 		{
 			p.setAllowFlight(false);
 			p.setFlying(false);
+		}*/
+		if(plugin.FindPlayerCurrency(p.getName()).IsVip() && GugaCommands.disabledGMs.contains(p.getName()))
+		{
+			if(p.getItemInHand().getTypeId() == 288)
+			{
+				if(!p.getAllowFlight())
+				{
+					p.setAllowFlight(true);
+				    p.setFlying(true);
+				}
+			}
+			else
+			{
+					p.setAllowFlight(false);
+					p.setFlying(false);
+			}
+		}
+		if(plugin.FindPlayerCurrency(p.getName()).IsVip())
+		{
+			if(!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
+			{
+				if(p.getItemInHand().getTypeId() == 288)
+				{
+					if(!p.getAllowFlight())
+					{
+						p.setAllowFlight(true);
+					    p.setFlying(true);
+					}
+				}
+				else
+				{
+						p.setAllowFlight(false);
+						p.setFlying(false);
+				}
+			}
 		}
 		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
 			GugaWorldSizeHandler.MoveBack(p);

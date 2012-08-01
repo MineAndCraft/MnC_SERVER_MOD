@@ -1,6 +1,6 @@
 name: Guga_SERVER_MOD
 main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
-version: 3.5.0
+version: 3.5.1
 commands:
     who:
         description: Gets Names of Online players
@@ -57,4 +57,6 @@ commands:
     world:
         description: Command teleports player from basicWorld to world
     home:
-        descpiption: Fuck this
+        description: Home command
+    web:
+        description: Opens our web page
