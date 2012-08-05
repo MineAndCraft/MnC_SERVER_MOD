@@ -47,6 +47,7 @@ public class GugaSpawner
 	public void StartThread()
 	{
 		this.spawnThread = new Thread(new Runnable() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run() 
 			{

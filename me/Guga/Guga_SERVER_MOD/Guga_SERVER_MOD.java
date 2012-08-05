@@ -11,6 +11,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.PlacesHandler;
 //import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -81,6 +82,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		ChatHandler.SetPlugin(this);
 		BasicWorld.SetPlugin(this);
 		SpawnsHandler.SetPlugin(this);
+		PlacesHandler.setPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
 		{
@@ -110,7 +112,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
-		GugaPort.LoadPlaces();
+		//GugaPort.LoadPlaces();
 		GugaRegionHandler.LoadRegions();
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
@@ -124,6 +126,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaMCClientHandler.LoadMACWhiteList();
 		GugaMCClientHandler.LoadMinecraftOwners();
 		GugaPlayerListener.LoadCreativePlayers();
+		PlacesHandler.loadPlaces();
 		//GugaFlyHandler.LoadFly();
 		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
@@ -610,7 +613,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "3.5.2";
+	public static final String version = "3.5.3";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 

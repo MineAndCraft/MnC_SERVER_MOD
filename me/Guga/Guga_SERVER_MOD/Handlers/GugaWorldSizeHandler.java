@@ -68,5 +68,5 @@ public abstract class GugaWorldSizeHandler
 		p.sendMessage("Dosel jste na konec mapy!");
 	}
 
-	private static int worldSize = 2600; // world size in blocks - in each direction
+	private static int worldSize = 3500; // world size in blocks - in each direction
 }

@@ -21,6 +21,11 @@ public class GugaAccounts
 	GugaAccounts (Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
+		GugaFile file = new GugaFile("plugins/dbConfig.txt", GugaFile.READ_MODE);
+		file.Open();
+		String[] acc = file.ReadLine().split(";");
+		this.dbUserName = acc[0];
+		this.dbPassword = acc[1];
 	}
 	
 	public boolean LoginUser(Player p,String password)
@@ -173,8 +178,8 @@ public class GugaAccounts
 	
 	
 	private final String dbServer = "146.255.27.116";
-	private final String dbUserName = "rikub_20715";
-	private final String dbPassword = "0XjR5o445q3g5bX";
+	private String dbUserName;
+	private String dbPassword;
 	private final String dbName = "minecraft_users_20715";
 	private final int dbPort = 3306;
 	public static Guga_SERVER_MOD plugin;

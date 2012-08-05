@@ -32,7 +32,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -260,7 +260,7 @@ public class GugaPlayerListener implements Listener
 		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerChat(PlayerChatEvent e)
+	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
 		//plugin.socketServer.SendChatMsg(e.getPlayer().getName() + ": " + e.getMessage());
@@ -402,7 +402,7 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("PLAYER_QUIT_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000)+ ",playerName=" + e.getPlayer().getName());
 		}	
 	}
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent e)
 	{
 		if (plugin.debug)
@@ -410,10 +410,7 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("PLAYER_RESPAWN_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		Player p = e.getPlayer();
-		if(p.getBedSpawnLocation() != null)
-		{
-			e.setRespawnLocation(p.getBedSpawnLocation());
-		}
+		e.setRespawnLocation(new Location(plugin.getServer().getWorld("world"), 80, 128, 80));
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
 		{

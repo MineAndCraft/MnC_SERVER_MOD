@@ -1,6 +1,5 @@
 package me.Guga.Guga_SERVER_MOD.Handlers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,8 +20,6 @@ import me.Guga.Guga_SERVER_MOD.GugaHunter;
 import me.Guga.Guga_SERVER_MOD.GugaInvisibility;
 import me.Guga.Guga_SERVER_MOD.GugaMiner;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
-import me.Guga.Guga_SERVER_MOD.GugaPlace;
-import me.Guga.Guga_SERVER_MOD.GugaPort;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.GugaSpawner;
@@ -30,6 +27,7 @@ import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaTeams;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Places;
 import me.Guga.Guga_SERVER_MOD.Prices;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
@@ -1061,47 +1059,90 @@ public abstract class GugaCommands
 			sender.sendMessage("PLACES MENU:");
 			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
 			sender.sendMessage("/places port <jmeno>  -  Teleportuje hrace na dane misto.");
+			sender.sendMessage("/places me - Zobrazi vase mista.");
+			sender.sendMessage("/places set - Zobrazi dostupna nastaveni.");
 		}
-		else if (args.length == 2)
+		else if (args.length == 1)
 		{
 			String subCommand = args[0];
-			if (subCommand.matches("list"))
+			if(subCommand.matches("me"))
 			{
-				if (Integer.parseInt(args[1]) < 1)
-					return;
-				GugaDataPager<GugaPlace> pager;
-				if (GameMasterHandler.IsAtleastGM(sender.getName()))
+				if(PlacesHandler.getPlacesByOwner(sender.getName()).isEmpty())
 				{
-					pager = new GugaDataPager<GugaPlace>(GugaPort.GetAllPlaces(), 15);
+					ChatHandler.FailMsg(sender, "Bohuzel nemate zadna mista");
 				}
 				else
 				{
-					pager = new GugaDataPager<GugaPlace>(GugaPort.GetPlacesForPlayer(sender.getName()),  15); 
-				}
-				Iterator<GugaPlace> i = pager.GetPage(Integer.parseInt(args[1])).iterator();
-				sender.sendMessage("SEZNAM PRISTUPNYCH MIST:");
-				sender.sendMessage("STRANA " + args[1] + "/" + pager.GetPagesCount());
-				while (i.hasNext())
-				{
-					GugaPlace e = i.next();
-					if (e.GetOwner().equalsIgnoreCase("all"))
+					sender.sendMessage("VASE MISTA:");
+					Iterator <Places> it = PlacesHandler.getPlacesByOwner(sender.getName()).iterator();
+					while (it.hasNext())
 					{
-						sender.sendMessage(ChatColor.BLUE + " - " + e.GetName());
-					}
-					else if (e.GetOwner().equalsIgnoreCase("vip") && plugin.FindPlayerCurrency(sender.getName()).IsVip())
-					{
-						sender.sendMessage(ChatColor.GOLD + " - " + e.GetName());
-					}
-					else
-					{
-						sender.sendMessage(ChatColor.YELLOW + " - " + e.GetName());
+						sender.sendMessage("* " + it.next().getPortName());
 					}
 				}
 			}
-			String name = args[1];
-			if (subCommand.matches("port"))
+			else if (subCommand.matches("set"))
 			{
-				Teleport(sender,name);
+				sender.sendMessage(" /place set players <jmenoPortu> <player1,player2> - Nastavi uzivatele, kteri se mohou pouzivat port.");
+				sender.sendMessage(ChatColor.YELLOW +"- pro soukromy - zadejte pouze vase jmeno.");
+				sender.sendMessage(ChatColor.YELLOW +"- pro verejny  - zadejte \"all\".");
+				sender.sendMessage(" /place set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
+			}
+			else if (subCommand.matches("list"))
+			{
+				Iterator <Places> i = PlacesHandler.getPlacesByPlayer(sender.getName()).iterator();
+				sender.sendMessage("SEZNAM DOSTUPNYCH MIST:");
+				while (i.hasNext())
+				{
+					sender.sendMessage("* " + i.next().getPortName());
+				}
+			}
+		}
+		else if (args.length == 4)
+		{
+			String subCommand = args[0];
+			if(subCommand.matches("set"))
+			{
+				if(args[1].matches("players"))
+				{
+					if (PlacesHandler.isOwner(args[2], sender.getName()))
+					{
+						Places place;
+						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
+						{
+							place.setAllowedPlayers(args[3].split(";"));
+							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
+					}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Toto misto neexistuje!");
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
+					}
+				}
+				else if(args[1].matches("welcome"))
+				{
+					if (PlacesHandler.isOwner(args[2], sender.getName()))
+					{
+						Places place;
+						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
+						{
+							place.setWelcomeMsg(args[3]);
+							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Toto misto neexistuje!");
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
+					}
+				}
 			}
 		}
 	}
@@ -2505,10 +2546,10 @@ public abstract class GugaCommands
 					String arg2 = args[2];
 					if (arg1.matches("remove"))
 					{
-						GugaPlace place;
-						if ( (place = GugaPort.GetPlaceByName(arg2)) != null)
+						Places place;
+						if ( (place = PlacesHandler.getPlaceByName(arg2)) != null)
 						{
-							GugaPort.RemovePlace(place);
+							PlacesHandler.removePlace(place);
 							sender.sendMessage("Place successfully removed");
 						}
 						else
@@ -2520,14 +2561,14 @@ public abstract class GugaCommands
 					{
 						if (Integer.parseInt(args[2]) < 1)
 							return;
-						GugaDataPager<GugaPlace> pager = new GugaDataPager<GugaPlace>(GugaPort.GetAllPlaces(), 15);
+						GugaDataPager<Places> pager = new GugaDataPager<Places>(PlacesHandler.newPlaces, 15);
 						sender.sendMessage("LIST OF PLACES:");
 						sender.sendMessage("PAGE " + args[2] + "/" + pager.GetPagesCount());
-						Iterator<GugaPlace> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
+						Iterator<Places> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
 						while (i.hasNext())
 						{
-							GugaPlace e = i.next();
-							sender.sendMessage(" - " + e.GetName() + "(" + e.GetOwner() + ")");
+							Places e = i.next();
+							sender.sendMessage(" - " + e.getPortName() + "(" + e.getPortOwner() + ")");
 						}
 					}
 				}
@@ -2538,12 +2579,14 @@ public abstract class GugaCommands
 					String arg3 = args[3];
 					if (arg1.matches("add"))
 					{
-						if (GugaPort.GetPlaceByName(arg2) != null)
+						if (PlacesHandler.getPlaceByName(arg2) != null)
 						{
 							sender.sendMessage("This place already exists!");
 							return;
 						}
-						GugaPort.AddPlace(arg2, arg3, sender.getLocation());
+						String[] owner = {arg3};
+						PlacesHandler.addPlace(new Places(arg2, arg3, owner, 
+								(int)sender.getLocation().getX(), (int)sender.getLocation().getY(), (int)sender.getLocation().getZ(), sender.getLocation().getWorld().getName(), "Vitejte na portu hrace " + arg3 + "!"));
 						sender.sendMessage("Place successfully added");
 					}
 				}
@@ -2947,12 +2990,12 @@ public abstract class GugaCommands
 			sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /places!");
 			return;
 		}
-		GugaPlace place;
-		if ( (place = GugaPort.GetPlaceByName(name)) != null)
+		Places place;
+		if ( (place = PlacesHandler.getPlaceByName(name)) != null)
 		{
-			if (GugaPort.GetPlacesForPlayer(sender.getName()).contains(place) || GameMasterHandler.IsAtleastGM(sender.getName()))
+			if (PlacesHandler.CanTeleport(place.getPortName(), sender.getName()) || GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
-				place.Teleport(sender);
+				PlacesHandler.teleport(sender, place);
 				return;
 			}
 		}
