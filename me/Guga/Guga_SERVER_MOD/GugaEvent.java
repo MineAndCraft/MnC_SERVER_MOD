@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public abstract class GugaEvent 
 {
@@ -153,10 +154,15 @@ public abstract class GugaEvent
 			Player p = GugaEvent.plugin.getServer().getPlayer(pName);
 			if (p != null )
 			{
-				if (InventoryBackup.CreateBackup(pName, p.getInventory().getArmorContents(), p.getInventory().getContents()))
+				if (InventoryBackup.CreateBackup(pName, p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects()))
 				{
 					p.getInventory().clear();
 					p.getInventory().setArmorContents(null);
+					Iterator<PotionEffect> it = p.getActivePotionEffects().iterator();
+					while(i.hasNext())
+					{
+						p.removePotionEffect(it.next().getType());
+					}
 				}
 			}
 		}
@@ -187,6 +193,7 @@ public abstract class GugaEvent
 					i2++;
 				}
 				p.getInventory().setArmorContents(backUp.GetArmor());
+				p.addPotionEffects(backUp.GetPotions());
 			}
 		}
 		InventoryBackup.RemoveBackups(temp);

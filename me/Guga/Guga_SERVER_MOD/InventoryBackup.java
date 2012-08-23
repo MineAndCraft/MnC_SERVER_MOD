@@ -1,6 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
@@ -8,14 +9,16 @@ import java.util.Iterator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 
 public class InventoryBackup 
 {
-	public InventoryBackup(String owner, ItemStack[] armor, ItemStack[] inventory)
+	public InventoryBackup(String owner, ItemStack[] armor, ItemStack[] inventory, Collection<PotionEffect> potions)
 	{
 		this.owner = owner;
 		this.armor = armor;
 		this.inventory = inventory;
+		this.potions = potions;
 	}
 	public String GetOwner()
 	{
@@ -28,6 +31,10 @@ public class InventoryBackup
 	public ItemStack[] GetInventory()
 	{
 		return this.inventory;
+	}
+	public Collection<PotionEffect> GetPotions()
+	{
+		return this.potions;
 	}
 	public static ArrayList<InventoryBackup> GetBackups()
 	{
@@ -44,11 +51,11 @@ public class InventoryBackup
 		}
 		return null;
 	}
-	public static boolean CreateBackup(String pName, ItemStack[] armor, ItemStack[] inventory)
+	public static boolean CreateBackup(String pName, ItemStack[] armor, ItemStack[] inventory, Collection<PotionEffect> pot)
 	{
 		if (GetInventoryBackup(pName) != null)
 			return false;
-		list.add(new InventoryBackup(pName,armor, inventory));
+		list.add(new InventoryBackup(pName,armor, inventory, pot));
 		return true;
 	}
 	public static void RemoveBackup(String pName)
@@ -80,9 +87,14 @@ public class InventoryBackup
 	public static void InventoryClearWrapped(Player p)
 	{
 		PlayerInventory inv = p.getInventory();
-		CreateBackup(p.getName(), inv.getArmorContents(), inv.getContents());
+		CreateBackup(p.getName(), inv.getArmorContents(), inv.getContents(), p.getActivePotionEffects());
 		inv.clear();
-		inv.setArmorContents(null);		
+		inv.setArmorContents(null);	
+		Iterator<PotionEffect> i = p.getActivePotionEffects().iterator();
+		while(i.hasNext())
+		{
+			p.removePotionEffect(i.next().getType());
+		}
 	}
 	public static void InventoryReturnWrapped(Player p, boolean clear)
 	{
@@ -91,6 +103,8 @@ public class InventoryBackup
 			return;
 		PlayerInventory inv = p.getInventory();
 		inv.setArmorContents(backup.GetArmor());
+		Iterator<PotionEffect> it = backup.GetPotions().iterator();
+		p.addPotionEffects(backup.GetPotions());
 		ItemStack[] items = backup.GetInventory();
 		if (clear)
 			inv.clear();
@@ -106,5 +120,6 @@ public class InventoryBackup
 	private String owner;
 	private ItemStack[] armor;
 	private ItemStack[] inventory;
+	Collection<PotionEffect> potions;
 	private static ArrayList<InventoryBackup> list = new ArrayList<InventoryBackup>();
 }

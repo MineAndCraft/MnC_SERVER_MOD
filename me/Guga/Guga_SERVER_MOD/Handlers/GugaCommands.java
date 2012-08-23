@@ -919,14 +919,17 @@ public abstract class GugaCommands
 					int iron = chance[plugin.IRON];
 					int gold = chance[plugin.GOLD];
 					int diamond = chance[plugin.DIAMOND];
+					int emerald = chance[plugin.EMERALD];
 					double chanceIron = ( (double)iron / (double)1000 )  * (double)100;
 					double chanceGold = ( (double)gold / (double)1000 )  * (double)100;
 					double chanceDiamond = ( (double)diamond/ (double)1000 )  * (double)100;
+					double chanceEmerald = ( (double)emerald/ (double)1000 )  * (double)100;
 					sender.sendMessage("********************");
 					sender.sendMessage("**Sance na nalezeni ve stonu:");
 					sender.sendMessage("**Iron: " + chanceIron + "%");
 					sender.sendMessage("**Gold: " + chanceGold + "%");
 					sender.sendMessage("**Diamond: " + chanceDiamond + "%");
+					sender.sendMessage("**Emerald: " + chanceEmerald + "%");
 					sender.sendMessage("********************");
 					
 					/*iron = bonus[plugin.IRON];

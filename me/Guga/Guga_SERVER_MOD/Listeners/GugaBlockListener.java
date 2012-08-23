@@ -269,6 +269,12 @@ public class GugaBlockListener implements Listener
 					prof.GainExperience(30);
 					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zelezo!");
 				}
+				else if (bonus == GugaBonusDrop.EMERALD)
+				{
+					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(388,1));
+					prof.GainExperience(60);
+					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste emerald!");
+				}
 			}
 			/*else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
 			{
