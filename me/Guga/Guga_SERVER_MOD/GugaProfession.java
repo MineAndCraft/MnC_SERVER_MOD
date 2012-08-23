@@ -108,8 +108,8 @@ public class GugaProfession
 		
 		ironChance = (int)Math.round((double)newIron/factor);
 		goldChance = (int)Math.round((double)newGold/factor);
-		diamondChance = (int)Math.round((double)newDiamond/factor);;
-		emeraldChance = (int)Math.round((double)newEmerald/factor);;
+		diamondChance = (int)Math.round((double)newDiamond/factor);
+		emeraldChance = (int)Math.round((double)newEmerald/factor);
 	}
 	public GugaBonusDrop CobbleStoneDrop()
 	{
