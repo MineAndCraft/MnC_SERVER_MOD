@@ -85,27 +85,35 @@ public class GugaProfession
 		int newIron;
 		int newGold;
 		int newDiamond;
+		int newEmerald;
 		if (level > skillCap)
 		{
 			newIron = skillCap/10;
 			newGold = skillCap/20;
 			newDiamond = skillCap/50;
+			newEmerald = skillCap/150;
 		}
 		else
 		{
 			newIron = level/10;
 			newGold = level/20;
 			newDiamond = level/50;
+			newEmerald = level/150;
 		}
 		
 		ironChance = newIron;
 		goldChance = newGold;
 		diamondChance = newDiamond;
+		emeraldChance = newEmerald;
 	}
 	public GugaBonusDrop CobbleStoneDrop()
 	{
 		Random rnd = new Random();
 		int rNum = rnd.nextInt(1000);
+		if (rNum < emeraldChance)
+		{
+			return GugaBonusDrop.EMERALD;
+		}
 		if (rNum < diamondChance)
 		{
 			return GugaBonusDrop.DIAMOND;
@@ -125,10 +133,11 @@ public class GugaProfession
 	}
 	public int[] GetChances()
 	{
-		int chances[] = new int[3];
+		int chances[] = new int[4];
 		chances[0] = ironChance;
 		chances[1] = goldChance;
 		chances[2] = diamondChance;
+		chances[3] = emeraldChance;
 		return chances;
 	}
 	protected boolean ReachedNewLevel()
@@ -208,6 +217,7 @@ public class GugaProfession
 	int ironChance;
 	int goldChance;
 	int diamondChance;
+	int emeraldChance;
 	
 	
 	protected Guga_SERVER_MOD plugin;
