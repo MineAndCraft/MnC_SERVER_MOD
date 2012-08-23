@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -81,7 +82,7 @@ public class InventoryBackup
 		PlayerInventory inv = p.getInventory();
 		CreateBackup(p.getName(), inv.getArmorContents(), inv.getContents());
 		inv.clear();
-		inv.setArmorContents(null);
+		inv.setArmorContents(null);		
 	}
 	public static void InventoryReturnWrapped(Player p, boolean clear)
 	{
@@ -89,7 +90,6 @@ public class InventoryBackup
 		if ( (backup = GetInventoryBackup(p.getName())) == null)
 			return;
 		PlayerInventory inv = p.getInventory();
-		
 		inv.setArmorContents(backup.GetArmor());
 		ItemStack[] items = backup.GetInventory();
 		if (clear)

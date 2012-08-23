@@ -11,6 +11,8 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.PlacesHandler;
 //import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -48,6 +50,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
 		GugaBanHandler.SaveBans();
+		PlacesHandler.savePlaces();
 		//GugaFlyHandler.SaveFly();
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
@@ -81,6 +84,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		ChatHandler.SetPlugin(this);
 		BasicWorld.SetPlugin(this);
 		SpawnsHandler.SetPlugin(this);
+		PlacesHandler.setPlugin(this);
+		HomesHandler.setPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
 		{
@@ -95,6 +100,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		{
 			getServer().createWorld(WorldCreator.name("world_basic").environment(Environment.NORMAL));
 		}
+		if(getServer().getWorld("world_mine")==null)
+		{
+			getServer().createWorld(WorldCreator.name("world_mine").environment(Environment.NORMAL));
+		}
+		if(getServer().getWorld("world_adventure")==null)
+		{
+			getServer().createWorld(WorldCreator.name("world_adventure").environment(Environment.NORMAL));
+		}
 		arena.LoadArenas();
 		arena.LoadPvpStats();
 		getServer().getWorld("arena").setPVP(true);
@@ -107,10 +120,13 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getServer().getWorld("world_event").setSpawnFlags(false, false);
 		getServer().getWorld("world_basic").setPVP(false);
 		getServer().getWorld("world_basic").setSpawnFlags(true, true);
+		getServer().getWorld("world_mine").setFullTime(4000);
+		getServer().getWorld("world_mine").setPVP(false);
+		getServer().getWorld("world_mine").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
-		GugaPort.LoadPlaces();
+		//GugaPort.LoadPlaces();
 		GugaRegionHandler.LoadRegions();
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
@@ -124,9 +140,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaMCClientHandler.LoadMACWhiteList();
 		GugaMCClientHandler.LoadMinecraftOwners();
 		GugaPlayerListener.LoadCreativePlayers();
+		PlacesHandler.loadPlaces();
 		//GugaFlyHandler.LoadFly();
 		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
+		HomesHandler.loadHomes();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
@@ -274,6 +292,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if (cmd.getName().equalsIgnoreCase("ew") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandEventWorld((Player) sender, args);
+			 return true;
+		 }
+		 else if (cmd.getName().equalsIgnoreCase("aw") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandAdventureWorld((Player) sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("debug") && (sender instanceof ConsoleCommandSender))
@@ -610,7 +633,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "3.5.2";
+	public static final String version = "3.5.4";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
@@ -630,6 +653,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public GugaEventWorld EventWorld = new GugaEventWorld(this);
+	public AdventureWorld AdventureWorld = new AdventureWorld(this);
 	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();
 	public HashMap <Player,GugaAccounts> accounts = new HashMap<Player, GugaAccounts>();
 }
