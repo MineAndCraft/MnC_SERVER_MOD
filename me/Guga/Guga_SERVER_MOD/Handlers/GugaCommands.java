@@ -27,6 +27,7 @@ import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaTeams;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.Places;
 import me.Guga.Guga_SERVER_MOD.Prices;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
@@ -192,9 +193,10 @@ public abstract class GugaCommands
 		}
 		if(args.length == 0)
 		{
-			if(p.getBedSpawnLocation() != null)
+			Homes home;
+			if((home = HomesHandler.getHomeByPlayer(p.getName())) != null)
 			{
-				p.teleport(p.getBedSpawnLocation());
+				p.teleport(HomesHandler.getLocation(home));
 				ChatHandler.SuccessMsg(p, "Byl jste teleportovan na home!");
 			}
 			else
@@ -206,9 +208,9 @@ public abstract class GugaCommands
 		{
 			if(args[0].equalsIgnoreCase("set"))
 			{
-				if(p.getWorld().getName().matches("world"))
+				if(p.getWorld().getName().matches("world") || p.getWorld().getName().matches("world_basic"))
 				{
-					p.setBedSpawnLocation(p.getLocation());
+					HomesHandler.addHome(p);
 					ChatHandler.SuccessMsg(p, "Vas home byl nastaven!");
 				}
 				else
@@ -620,7 +622,8 @@ public abstract class GugaCommands
 			}
 			else if(subCommand.matches("nohunger"))
 			{
-				sender.setFoodLevel(40);
+				sender.setFoodLevel(20);
+				sender.setSaturation(20);
 				sender.sendMessage("Uspesne jste se najedli");
 			}
 			else if(subCommand.matches("mob"))
@@ -1058,7 +1061,7 @@ public abstract class GugaCommands
 		{
 			sender.sendMessage("PLACES MENU:");
 			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
-			sender.sendMessage("/places port <jmeno>  -  Teleportuje hrace na dane misto.");
+			sender.sendMessage("/pp <jmeno>  -  Teleportuje hrace na dane misto.");
 			sender.sendMessage("/places me - Zobrazi vase mista.");
 			sender.sendMessage("/places set - Zobrazi dostupna nastaveni.");
 		}
@@ -1088,14 +1091,21 @@ public abstract class GugaCommands
 				sender.sendMessage(ChatColor.YELLOW +"- pro verejny  - zadejte \"all\".");
 				sender.sendMessage(" /place set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
 			}
-			else if (subCommand.matches("list"))
+		}
+		else if (args.length == 2)
+		{
+			String subCommand = args[0];
+			if(subCommand.matches("list"))
 			{
-				Iterator <Places> i = PlacesHandler.getPlacesByPlayer(sender.getName()).iterator();
+				GugaDataPager<Places> pager = new GugaDataPager<Places>(PlacesHandler.getPlacesByPlayer(sender.getName()), 15);
+				Iterator <Places> i = pager.GetPage(Integer.parseInt(args[1])).iterator();
 				sender.sendMessage("SEZNAM DOSTUPNYCH MIST:");
+				sender.sendMessage("STRANA " + args[1] + "/" + pager.GetPagesCount());
 				while (i.hasNext())
 				{
 					sender.sendMessage("* " + i.next().getPortName());
 				}
+				
 			}
 		}
 		else if (args.length == 4)
@@ -1110,7 +1120,7 @@ public abstract class GugaCommands
 						Places place;
 						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
 						{
-							place.setAllowedPlayers(args[3].split(";"));
+							place.setAllowedPlayers(args[3].split(","));
 							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
 					}
 						else
@@ -1131,6 +1141,39 @@ public abstract class GugaCommands
 						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
 						{
 							place.setWelcomeMsg(args[3]);
+							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Toto misto neexistuje!");
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
+					}
+				}
+			}
+		}
+		else if (args.length > 4 )
+		{
+			if(args[0].matches("set"))
+			{
+				if(args[1].matches("welcome"))
+				{
+					if (PlacesHandler.isOwner(args[2], sender.getName()))
+					{
+						Places place;
+						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
+						{
+							int i = 3;
+							String msg = "";
+							while(i<args.length)
+							{
+								msg = msg + " " + args[i];
+								i++;
+							}
+							place.setWelcomeMsg(msg);
 							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
 						}
 						else
@@ -1336,7 +1379,7 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("/ew togglemobs - Toggle mobs on/off");
 				sender.sendMessage("/ew togglepvp - Toggle PvP on/off");
-				sender.sendMessage("/ew toggleregion - Toggle regin on/off");
+				sender.sendMessage("/ew toggleregion - Toggle region on/off");
 				if(GameMasterHandler.IsAdmin(sender.getName()))
 				{
 					sender.sendMessage("/eventworld setspawn - Sets a EventWorld spawn to GM's position");
@@ -1410,6 +1453,76 @@ public abstract class GugaCommands
 					Location l = sender.getLocation();
 					sender.getWorld().setSpawnLocation((int)l.getX(), (int)l.getY(), (int)l.getZ());
 					sender.sendMessage("New spawn for EventWorld has been set!");
+				}
+			}
+		}
+	}
+	public static void CommandAdventureWorld(Player sender, String args[])
+	{
+		if (args.length==0)
+		{
+			sender.sendMessage("AdventureWorld MENU:");
+			sender.sendMessage("Commands:");
+			sender.sendMessage("/aw join - Teleportuje hrace do AdventureWorldu");
+			sender.sendMessage("/aw leave - Vrati hrace do normalniho sveta");
+			if(GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/aw togglemobs - Toggle mobs on/off");
+				sender.sendMessage("/aw togglepvp - Toggle PvP on/off");
+				sender.sendMessage("/aw toggleregion - Toggle region on/off");
+				sender.sendMessage("/aw toggle - Toggle AW on/off");
+				if(GameMasterHandler.IsAdmin(sender.getName()))
+				{
+					sender.sendMessage("/aw setspawn - Sets a AdventureWorld spawn to GM's position");
+				}
+			}
+		}
+		else if (args.length == 1)
+		{
+			String subCommand = args[0];
+			if (plugin.arena.IsArena(sender.getLocation()))
+			{
+				sender.sendMessage("Z areny se nedostanete do AdventureWorldu!");
+				return;
+			}
+			else
+			{
+				if (subCommand.matches("join"))
+				{
+					if (!plugin.AdventureWorld.IsAdventureWorld(sender.getLocation()))
+					{
+						plugin.AdventureWorld.PlayerJoin(sender.getLocation(),sender);
+					}
+					else
+					{
+						sender.sendMessage("V AdventureWorldu jiz jste!");
+					}
+				}
+				else if(subCommand.matches("leave"))
+				{
+					plugin.AdventureWorld.PlayerLeave(sender);
+				}
+				else if(subCommand.matches("togglepvp") && GameMasterHandler.IsAtleastGM(sender.getName()))
+				{
+					plugin.AdventureWorld.togglePvP(sender);
+				}
+				else if(subCommand.matches("togglemobs") && GameMasterHandler.IsAtleastGM(sender.getName()))
+				{
+					plugin.AdventureWorld.toggleMobs(sender);
+				}
+				else if(subCommand.matches("toggleregion")&& GameMasterHandler.IsAtleastGM(sender.getName()))
+				{
+					plugin.AdventureWorld.toggleRegion(sender);
+				}
+				else if(subCommand.matches("toggle")&& GameMasterHandler.IsAtleastGM(sender.getName()))
+				{
+					plugin.AdventureWorld.toggleWorld(sender);
+				}
+				else if(subCommand.matches("setspawn")&&GameMasterHandler.IsAdmin(sender.getName()))
+				{
+					Location l = sender.getLocation();
+					sender.getWorld().setSpawnLocation((int)l.getX(), (int)l.getY(), (int)l.getZ());
+					sender.sendMessage("New spawn for AdventureWorld has been set!");
 				}
 			}
 		}
@@ -2011,11 +2124,11 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
 				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
+				sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
-			//sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
 		}
 		else if (args.length == 1)
 		{
@@ -2200,11 +2313,22 @@ public abstract class GugaCommands
 					BasicWorld.BasicWorldLeave(sender);
 				}
 			}
+			else if (subCommand.matches("world") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(plugin.getServer().getWorld(args[1]) != null)
+				{
+					sender.teleport(plugin.getServer().getWorld(args[1]).getSpawnLocation());
+					ChatHandler.SuccessMsg(sender, "You have been teleported!");
+				}
+				else
+					ChatHandler.FailMsg(sender, "This world doesn't exist!");
+			}
 			else if (subCommand.matches("home"))
 			{
-				if(plugin.getServer().getPlayer(args[1]).getBedSpawnLocation() != null)
+				Homes home;
+				if((home = HomesHandler.getHomeByPlayer(args[1])) != null)
 				{
-					sender.teleport(plugin.getServer().getPlayer(args[1]).getBedSpawnLocation());
+					sender.teleport(HomesHandler.getLocation(home));
 					ChatHandler.SuccessMsg(sender, "You have been teleported to " + args[1] + " spawn!");
 				}
 			}
@@ -2440,7 +2564,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("speed"))
+			else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				if (args.length == 3)
 				{
@@ -2450,8 +2574,17 @@ public abstract class GugaCommands
 						sender.sendMessage("Player is not online");
 						return;
 					}
-					GugaMCClientHandler.SendMessage(target, "SET_SPEED;" + args[2]);
-					sender.sendMessage("Speed has been succesfuly set.");
+					if(!GameMasterHandler.IsAdmin(sender.getName()))
+					{
+						if(!args[1].equalsIgnoreCase(sender.getName()))
+						{
+							ChatHandler.FailMsg(sender, "You can set your speed only.");
+							return;
+						}
+					}
+					target.setFlySpeed(Float.parseFloat(args[2]));
+					target.setWalkSpeed(Float.parseFloat(args[2]));
+					ChatHandler.SuccessMsg(sender, "Speed has been succesfuly set.");
 				}
 			}
 			else if (subCommand.matches("log") && GameMasterHandler.IsAdmin(sender.getName()))

@@ -17,6 +17,11 @@ public class ChatHandler
 	}
 	public static void SendChatMessage(Player sender, String message)
 	{
+		if(message.startsWith("@") || message.startsWith("*"))
+		{
+			ChatHandler.PerformCharChatCommand(sender, message);
+			return;
+		}
 		if(GugaMute.getPlayerStatus(sender.getName()))
 		{
 			FailMsg(sender, "Jste ztlumen! Nemuzete psat.");
@@ -156,6 +161,64 @@ public class ChatHandler
 	public static void SetDefault(Player p)
 	{
 		InitializeDisplayName(p);
+	}
+	public static void PerformCharChatCommand(Player sender, String message)
+	{
+		char[] messageInChar;
+		if(message.startsWith("@"))
+		{
+			if(message.split(" ").length > 0)
+			{
+				String[] splittedMessage;
+				String messageToSend = "";
+				messageInChar = message.split(" ")[0].toCharArray();
+				splittedMessage = message.split(" ");
+				String playerName = "";
+				int i = 1;
+				while(i < messageInChar.length)
+				{
+					playerName += messageInChar[i];
+					i++;
+				}
+				i = 1;
+				while(i < splittedMessage.length)
+				{
+					if(i == 1)
+					{
+						messageToSend += splittedMessage[i];
+					}
+					else
+					{
+						messageToSend += " " + splittedMessage[i];
+					}
+					i++;
+				}
+				sender.chat("/tell " + playerName + " " + messageToSend);
+			}
+			else
+			{
+				ChatHandler.FailMsg(sender, "Spatny pocet argumentu.");
+			}
+		}
+		else if(message.startsWith("*"))
+		{
+			if(message.split(" ").length == 1)
+			{
+				messageInChar = message.toCharArray();
+				String portName = "";
+				int i = 1;
+				while(i < messageInChar.length)
+				{
+					portName += messageInChar[i];
+					i++;
+				}
+				sender.chat("/pp " + portName);
+			}
+			else
+			{
+				ChatHandler.FailMsg(sender, "Spatny pocet argumentu.");
+			}
+		}
 	}
 	public static Guga_SERVER_MOD plugin;
 }

@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 
 import org.bukkit.ChatColor;
@@ -29,7 +30,7 @@ public class BasicWorld
 	public static void BasicWorldEnter(Player p)
 	{
 		p.teleport(plugin.getServer().getWorld("world_basic").getSpawnLocation());
-		p.setBedSpawnLocation(p.getLocation());
+		HomesHandler.addHome(p, plugin.getServer().getWorld("world_basic").getSpawnLocation());
 		p.sendMessage(ChatColor.GREEN + "Tento svet bude vasim sidlem dokud nedosahnete levelu 10!");
 		p.sendMessage(ChatColor.GREEN + "Levely ziskate kopanim!");
 		p.sendMessage(ChatColor.YELLOW + "Vice na o nasem profesionalnim svete na: mineandcraft.cz");
@@ -37,7 +38,7 @@ public class BasicWorld
 	public static void BasicWorldLeaveToWorld(Player p)
 	{
 		Location loc = SpawnsHandler.getRandomSpawn();
-		p.setBedSpawnLocation(loc);
+		HomesHandler.addHome(p, loc);
 		p.teleport(loc);
 	}
 	public static void setSpawn(Location l)

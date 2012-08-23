@@ -20,7 +20,7 @@ public class PlacesHandler
 	
 	public static void loadPlaces()
 	{
-		plugin.log.info("Loading Places file..."); //name;owner;allowedPlayers;x;y,z;world
+		plugin.log.info("Loading Places file..."); 
 		GugaFile file = new GugaFile("plugins/PlacesNew.dat", GugaFile.READ_MODE);
 		file.Open();
 		String line;
@@ -50,7 +50,7 @@ public class PlacesHandler
 	}
 	public static void savePlaces()
 	{
-		plugin.log.info("Saving Places file..."); //name;owner;allowedPlayers;x;y,z;world
+		plugin.log.info("Saving Places file..."); 
 		GugaFile file = new GugaFile("plugins/PlacesNew.dat", GugaFile.WRITE_MODE);
 		file.Open();
 		String line;
@@ -144,25 +144,36 @@ public class PlacesHandler
 	public static boolean CanTeleport (String portName, String sender)
 	{
 		Places place = PlacesHandler.getPlaceByName(portName);
-		if(place.getAllowedPlayers().length == 1 && place.getAllowedPlayers().equals("all"))
-			return true;
-		if(place.getAllowedPlayers().equals(sender))
-			return true;
-		else
-			return false;
+		String[] allowedPlayers = place.getAllowedPlayers();
+		int i = 0;
+		while(i < allowedPlayers.length)
+		{
+			if(allowedPlayers[i].equalsIgnoreCase(sender))
+				return true;
+			if(allowedPlayers[i].equalsIgnoreCase("all"))
+				return true;
+			i++;
+		}
+		return false;
 	}
 	
 	public static ArrayList<Places> getPlacesByPlayer (String player)
 	{
-		Iterator<Places> i = PlacesHandler.newPlaces.iterator();
+		Iterator<Places> it = PlacesHandler.newPlaces.iterator();
 		Places place;
 		ArrayList <Places> places = new ArrayList <Places>();
-		while(i.hasNext())
+		while(it.hasNext())
 		{
-			place = i.next();
-			if(place.getAllowedPlayers().equals(player))
+			place = it.next();
+			String[] allowedPlayers = place.getAllowedPlayers();
+			int i = 0;
+			while(i < allowedPlayers.length)
 			{
-				places.add(place);
+				if(allowedPlayers[i].equalsIgnoreCase(player))
+					places.add(place);
+				if(allowedPlayers[i].equalsIgnoreCase("all"))
+					places.add(place);
+				i++;
 			}
 		}
 		return places;

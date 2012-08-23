@@ -60,8 +60,15 @@ public class GugaEntityListener implements Listener
 		{
 			plugin.log.info("ENTITY_DAMAGE_EVENT: entity=" + e.getEntity().toString() + ",dmg=" + e.getDamage());
 		}
-		if (e.getEntity() instanceof Player)
+		if(e.getEntity() instanceof Player)
 		{
+			if(((Player)e.getEntity()).getWorld().getName().matches("arena"))
+			{
+				if(!(e instanceof EntityDamageByEntityEvent))
+				{
+					e.setCancelled(true);
+				}
+			}
 			if (GugaCommands.godMode.contains(((Player)e.getEntity()).getName().toLowerCase()))
 			{
 				e.setCancelled(true);
@@ -105,6 +112,7 @@ public class GugaEntityListener implements Listener
 						prof.GainExperience(1);
 					}
 				}*/
+				
 			}
 		}
 		if (plugin.config.accountsModule)
