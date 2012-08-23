@@ -243,6 +243,17 @@ public class GugaVirtualCurrency
 		{
 			order = new ItemStack(item.GetItemID(), amount, (short) 3);
 		}
+		else if(item.toString().contains("SAPLING_"))
+		{
+			if (item == Prices.SAPLING_DUB)
+				order = new ItemStack(item.GetItemID(), amount, (short) 0);
+			else if (item==Prices.SAPLING_BRIZA)
+				order = new ItemStack(item.GetItemID(), amount, (short) 2);
+			else if (item==Prices.SAPLING_SMRK)
+				order = new ItemStack(item.GetItemID(), amount, (short) 1);	
+			else if (item==Prices.SAPLING_JUNGLE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 3);	
+		}
 		else if (item == Prices.KRUMPAC_EFFICIENCY_V)
 		{
 			order = new ItemStack(item.GetItemID(), amount);

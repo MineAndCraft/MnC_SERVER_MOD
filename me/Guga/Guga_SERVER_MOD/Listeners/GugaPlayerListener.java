@@ -12,6 +12,7 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
@@ -19,20 +20,23 @@ import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 //import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -110,7 +114,7 @@ public class GugaPlayerListener implements Listener
 						isKicked = true;
 					}
 					i++;
-				}while(!isKicked || i<maxP);
+				}while(!isKicked && i<maxP);
 				if(!isKicked)
 				{
 					p.kickPlayer("Neni koho vykopnout");
@@ -191,22 +195,17 @@ public class GugaPlayerListener implements Listener
 		{
 			plugin.log.info("COMMAND_PREPROCESS_EVENT: playerName=" + e.getPlayer().getName() + ",cmd=" + e.getMessage());
 		}
-		int i = 0;
-		//while (i<allowedCommands.length)
+		if(!plugin.acc.UserIsLogged(e.getPlayer()))
 		{
-			if(!plugin.acc.UserIsLogged(e.getPlayer()))
+			if(e.getMessage().contains("/login") || e.getMessage().contains("/help"))
 			{
-				if(e.getMessage().contains("/login") || e.getMessage().contains("/register") || e.getMessage().contains("/help"))
-				{
-				}
-				else
-				{
-					e.getPlayer().sendMessage("Nejdrive se prihlaste!");
-					e.setCancelled(true);
-					return;
-				}
 			}
-			//i++;
+			else
+			{
+				e.getPlayer().sendMessage("Nejdrive se prihlaste!");
+				e.setCancelled(true);
+				return;
+			}
 		}
 		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl"))
 		{
@@ -216,6 +215,10 @@ public class GugaPlayerListener implements Listener
 				e.setCancelled(true);
 				return;
 			}
+		}
+		if(e.getMessage().equalsIgnoreCase("/kill") && e.getPlayer().getWorld().getName().matches("arena"))
+		{
+			e.setCancelled(true);
 		}
 		if(e.getMessage().startsWith("/md"))
 		{
@@ -237,6 +240,7 @@ public class GugaPlayerListener implements Listener
 		}
 		String msg = "";
 		String[] splitted = e.getMessage().split(" ");
+		int i = 0;
 		if (e.getMessage().contains("/tell"))
 		{
 			if(GugaMute.getPlayerStatus(e.getPlayer().getName()))
@@ -260,7 +264,7 @@ public class GugaPlayerListener implements Listener
 		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerChat(PlayerChatEvent e)
+	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
 		//plugin.socketServer.SendChatMsg(e.getPlayer().getName() + ": " + e.getMessage());
@@ -368,6 +372,7 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBedEnter(PlayerBedEnterEvent e)
 	{
+		HomesHandler.addHome(e.getPlayer(), e.getPlayer().getLocation());
 		e.getPlayer().sendMessage(ChatColor.GREEN + "Vas home byl nastaven!");
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -410,9 +415,10 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("PLAYER_RESPAWN_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		Player p = e.getPlayer();
-		if(p.getBedSpawnLocation() != null)
+		Homes home;
+		if((home = HomesHandler.getHomeByPlayer(p.getName())) != null)
 		{
-			e.setRespawnLocation(p.getBedSpawnLocation());
+			e.setRespawnLocation(HomesHandler.getLocation(home));
 		}
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
@@ -488,9 +494,14 @@ public class GugaPlayerListener implements Listener
 		else if (p.getLocation().getBlockY() < 0)
 			p.teleport(plugin.GetAvailablePortLocation(p.getLocation()));
 	}
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent e)
 	{
+		World world = e.getPlayer().getWorld();
+	    Chunk chunk = world.getChunkAt(e.getTo());
+	    int x = chunk.getX();
+	    int z = chunk.getZ();
+	    world.refreshChunk(x, z);
 		Player p = e.getPlayer();
 		GugaSpectator spec;
 		if ((spec = GugaCommands.spectation.get(p.getName())) != null)

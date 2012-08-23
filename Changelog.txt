@@ -1,3 +1,44 @@
+3.5.4
+Author:Rikub
+	- Plugin updated for bukkit 1.3.1 V2.0
+	- Added Gm command to set players speed
+	- Login errors no longer spam console
+	- Win in arena reduced from 10 to 5 credits
+	- Player in arena can be damaged only by player
+	- /kill command cannot be used in Arena
+	- AdventureWorld added
+	- Added CharCommands
+		- @<pName> <text> equivalent to /tell command
+		- *<portName> equivalent to /pp command
+	- New homes system
+	- World size handler improved for multiworld handling
+	- When users cause PlayerTeleportEvent target chunk should be pre-loaded
+	- Bug fixes
+		- New Places system was broken
+		- nonVIP players kicker was broken
+		
+	
+3.5.3
+Author:Rikub
+	- Plugin updated for MC 1.3.1
+	- Added database config file
+	- Emeralds added to shop
+	- World size has been increased by 1000 blocks in each direction
+	- AsyncChat implemented
+	- New Places system
+	
+3.5.2
+Author:Rikub
+	- New features for VIPs
+		- Flying with feather in hand
+		- MobDusquiseHandler for communication between GugaSM and MobDisq
+	- In-game red stone debug
+	- Bug Fixes
+		- Vip places bug
+		- GM off mode works again
+	- Auction removed
+	- Flying in shop removed
+	
 3.5.1
 Author:Rikub
 	- VIP places
@@ -8,6 +49,7 @@ Author:Rikub
 	- Colors in PlayerList works again
 	- EventWorld block place bug fixed
 	- Command /pl or /plugins cannot be used by normal players
+	
 3.5.0
 Author:Rikub
 	- Spawn handler added
