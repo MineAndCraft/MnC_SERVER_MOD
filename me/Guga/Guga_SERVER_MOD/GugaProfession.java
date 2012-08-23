@@ -86,12 +86,15 @@ public class GugaProfession
 		int newGold;
 		int newDiamond;
 		int newEmerald;
+		double factor;
 		if (level > skillCap)
 		{
 			newIron = skillCap/10;
 			newGold = skillCap/20;
 			newDiamond = skillCap/50;
 			newEmerald = skillCap/150;
+			
+			factor = (double)1 + ((double)skillCap / (double)1000);
 		}
 		else
 		{
@@ -99,12 +102,14 @@ public class GugaProfession
 			newGold = level/20;
 			newDiamond = level/50;
 			newEmerald = level/150;
+			
+			factor = (double)1 + ((double)level / (double)1000);
 		}
 		
-		ironChance = newIron;
-		goldChance = newGold;
-		diamondChance = newDiamond;
-		emeraldChance = newEmerald;
+		ironChance = (int)Math.round((double)newIron/factor);
+		goldChance = (int)Math.round((double)newGold/factor);
+		diamondChance = (int)Math.round((double)newDiamond/factor);;
+		emeraldChance = (int)Math.round((double)newEmerald/factor);;
 	}
 	public GugaBonusDrop CobbleStoneDrop()
 	{
