@@ -103,7 +103,6 @@ public class InventoryBackup
 			return;
 		PlayerInventory inv = p.getInventory();
 		inv.setArmorContents(backup.GetArmor());
-		Iterator<PotionEffect> it = backup.GetPotions().iterator();
 		p.addPotionEffects(backup.GetPotions());
 		ItemStack[] items = backup.GetInventory();
 		if (clear)

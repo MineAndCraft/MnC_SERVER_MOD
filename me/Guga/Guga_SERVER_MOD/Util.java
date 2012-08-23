@@ -24,6 +24,8 @@ public class Util
         for (byte b : hash) {
             formatter.format("%02x", b);
         }
-        return formatter.toString();
+        String str = formatter.toString();
+        formatter.close();
+        return str;
     }
 }
