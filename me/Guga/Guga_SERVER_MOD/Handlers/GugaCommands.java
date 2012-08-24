@@ -2127,7 +2127,8 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
 				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
-				sender.sendMessage("/gm speed <name> <speed> - Sets speed of a certain player.");
+				sender.sendMessage("/gm speed fly <name> <speed> - Sets fly speed of a certain player.");
+				sender.sendMessage("/gm speed walk <name> <speed> - Sets walk speed of a certain player.");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
@@ -2569,9 +2570,9 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
-				if (args.length == 3)
+				if (args.length == 4)
 				{
-					Player target = plugin.getServer().getPlayer(args[1]);
+					Player target = plugin.getServer().getPlayer(args[2]);
 					if (target == null)
 					{
 						sender.sendMessage("Player is not online");
@@ -2579,15 +2580,22 @@ public abstract class GugaCommands
 					}
 					if(!GameMasterHandler.IsAdmin(sender.getName()))
 					{
-						if(!args[1].equalsIgnoreCase(sender.getName()))
+						if(!args[2].equalsIgnoreCase(sender.getName()))
 						{
 							ChatHandler.FailMsg(sender, "You can set your speed only.");
 							return;
 						}
 					}
-					target.setFlySpeed(Float.parseFloat(args[2]));
-					target.setWalkSpeed(Float.parseFloat(args[2]));
-					ChatHandler.SuccessMsg(sender, "Speed has been succesfuly set.");
+					if(args[1].matches("fly"))
+					{
+						target.setFlySpeed(Float.parseFloat(args[3]));
+						ChatHandler.SuccessMsg(sender, "Fly speed has been succesfuly set.");
+					}
+					else if(args[1].matches("walk"))
+					{
+						target.setWalkSpeed(Float.parseFloat(args[3]));
+						ChatHandler.SuccessMsg(sender, "Walk speed has been succesfuly set.");
+					}
 				}
 			}
 			else if (subCommand.matches("log") && GameMasterHandler.IsAdmin(sender.getName()))
