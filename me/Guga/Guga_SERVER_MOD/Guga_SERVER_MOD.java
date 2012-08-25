@@ -73,6 +73,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaPort.SetPlugin(this);
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
+		AutoSaver.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
 		GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
@@ -145,6 +146,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
+		AutoSaver.StartSaver();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
