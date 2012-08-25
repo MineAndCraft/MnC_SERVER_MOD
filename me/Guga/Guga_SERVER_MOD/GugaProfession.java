@@ -92,7 +92,7 @@ public class GugaProfession
 			newIron = skillCap/10;
 			newGold = skillCap/20;
 			newDiamond = skillCap/50;
-			newEmerald = skillCap/150;
+			newEmerald = skillCap/1000;
 			
 			factor = (double)1 + ((double)skillCap / (double)1000);
 		}
@@ -101,7 +101,7 @@ public class GugaProfession
 			newIron = level/10;
 			newGold = level/20;
 			newDiamond = level/50;
-			newEmerald = level/150;
+			newEmerald = level/1000;
 			
 			factor = (double)1 + ((double)level / (double)1000);
 		}
