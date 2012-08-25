@@ -21,7 +21,7 @@ public abstract class AutoSaver
 			public void run()
 			{
 				SaveWorldStructures();
-				plugin.getServer().broadcastMessage(ChatColor.DARK_RED + "Ukladani serveru");
+				plugin.log.info("[AutoSaver] Saving worlds...");
 			}
 		}, 6000, 6000);
 	}

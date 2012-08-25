@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
@@ -2113,6 +2114,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm rank - Ranks sub-menu.");
 				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
 				sender.sendMessage("/gm spawn - Spawns sub-menu.");
+				sender.sendMessage("/gm save-all - Saves all files of plugin and worlds.");
 			}
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -2231,6 +2233,11 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm regions add <name> <world> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
 				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
 				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
+			}
+			else if (subCommand.matches("save-all") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				AutoSaver.SaveAll();
+				ChatHandler.SuccessMsg(sender, "Successfully saved!");
 			}
 			else if (subCommand.matches("on") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
