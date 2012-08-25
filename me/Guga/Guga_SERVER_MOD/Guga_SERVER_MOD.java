@@ -250,12 +250,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	{
 		if (sender instanceof Player)
 		{
-			String line = ((Player)sender).getName() + " used  /" + cmd.getName();
-			int i = 0;
-			while (i < args.length)
-				line += " " + args[i++];
-			log.info(line);
-		}
 		//*****************************************/who*****************************************
 		 if(cmd.getName().equalsIgnoreCase("who") && (sender instanceof Player))
 		 { 
