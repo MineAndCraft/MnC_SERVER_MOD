@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
+import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
@@ -48,6 +49,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaPlayerListener implements Listener 
@@ -674,6 +676,21 @@ public class GugaPlayerListener implements Listener
 		if (!GugaPlayerListener.plugin.acc.UserIsLogged(e.getPlayer()))
 			e.setCancelled(true);
 		
+	}
+	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e)
+	{
+		GameMaster gm = GameMasterHandler.GetGMByName(e.getPlayer().getName());
+		if(gm.GetRank() == Rank.EVENTER)
+		{
+			if(e.getFrom().getName().matches("world") && e.getPlayer().getLocation().getWorld().getName().matches("world_event"))
+			{
+				e.getPlayer().setGameMode(GameMode.CREATIVE);
+			}
+			else if(e.getFrom().getName().matches("world_event") && e.getPlayer().getLocation().getWorld().getName().matches("world"))
+			{
+				e.getPlayer().setGameMode(GameMode.SURVIVAL);
+			}
+		}
 	}
 	private boolean CanUseName(String name)
 	{
