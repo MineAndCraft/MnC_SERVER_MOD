@@ -1417,15 +1417,14 @@ public abstract class GugaCommands
 				}
 				else if(subCommand.matches("leave"))
 				{
-					GameMaster gameMaster = GameMasterHandler.GetGMByName(sender.getName());
-					if(gameMaster != null)
+					if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
 					{
-						if(gameMaster.GetRank() == Rank.EVENTER)
-						{
-							sender.setGameMode(GameMode.SURVIVAL);
-						}
+						plugin.EventWorld.PlayerLeave(sender);
 					}
-					plugin.EventWorld.PlayerLeave(sender);
+					else
+					{
+						sender.sendMessage("Nejste v EW!");
+					}
 				}
 				else if(subCommand.matches("mode") && GameMasterHandler.IsAtleastRank(sender.getName(), Rank.EVENTER))
 				{
@@ -2197,13 +2196,13 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
 				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
 			}
-			else if (subCommand.matches("ban")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if (subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
 				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
 				sender.sendMessage("/gm ban list <page>  -  Shows all banned players.");
 			}
-			else if (subCommand.matches("speed")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm speed fly <name> <speed> - Sets fly speed of a certain player.");
 				sender.sendMessage("/gm speed walk <name> <speed> - Sets walk speed of a certain player.");
