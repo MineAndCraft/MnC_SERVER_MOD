@@ -2127,8 +2127,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
 				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
-				sender.sendMessage("/gm speed fly <name> <speed> - Sets fly speed of a certain player.");
-				sender.sendMessage("/gm speed walk <name> <speed> - Sets walk speed of a certain player.");
+				sender.sendMessage("/gm speed - Speed sub-menu");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
@@ -2203,6 +2202,11 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
 				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
 				sender.sendMessage("/gm ban list <page>  -  Shows all banned players.");
+			}
+			else if (subCommand.matches("speed")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm speed fly <name> <speed> - Sets fly speed of a certain player.");
+				sender.sendMessage("/gm speed walk <name> <speed> - Sets walk speed of a certain player.");
 			}
 			else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
