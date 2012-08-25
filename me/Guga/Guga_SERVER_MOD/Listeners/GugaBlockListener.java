@@ -1,6 +1,7 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 
@@ -513,17 +514,12 @@ public class GugaBlockListener implements Listener
 		{
 			plugin.log.info("REDSTONE_CHANGE_EVENT: typeID=" + blockID + ",blockData=" + block.getData() + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
 		}
-		if (plugin.redstoneDebug)
+		if (!redStoneDebug.isEmpty())
 		{
-			Player[] p = plugin.getServer().getOnlinePlayers();
-			int i = 0;
-			while(i < p.length)
+			Iterator<Player> it = redStoneDebug.iterator();
+			while(it.hasNext())
 			{
-				if(GameMasterHandler.IsAtleastGM(p[i].getName()))
-				{
-					p[i].sendMessage(ChatColor.GRAY + "RS_Event: ID=" + blockID + ",blockData=" + block.getData() + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
-				}
-				i++;
+				it.next().sendMessage("RS_EVENT: ID=" + blockID + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
 			}
 		}
 	}
@@ -535,5 +531,6 @@ public class GugaBlockListener implements Listener
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
 	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};
 	public ArrayList<Block> dropsCache = new ArrayList<Block>();
+	public ArrayList<Player> redStoneDebug = new ArrayList<Player>();
 	public static Guga_SERVER_MOD plugin;
 }
