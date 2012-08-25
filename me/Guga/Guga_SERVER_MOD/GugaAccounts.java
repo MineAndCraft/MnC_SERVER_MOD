@@ -42,7 +42,7 @@ public class GugaAccounts
 	                     ":" + String.valueOf(this.dbPort) + "/",
 	                     connectionProps);
 	      Statement stat = conn.createStatement();
-	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+this.dbName+"`.`users` WHERE username='"+p.getName()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
+	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+this.dbName+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
 	      result.next();
 	      int count = result.getInt(1);
 	      int id = result.getInt(2);
@@ -91,7 +91,7 @@ public class GugaAccounts
 		                   ":" + String.valueOf(this.dbPort) + "/",
 		                   connectionProps);
 		    Statement stat = conn.createStatement();
-		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+this.dbName+"`.`users` WHERE username='"+p.getName()+"' LIMIT 1;");
+		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+this.dbName+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' LIMIT 1;");
 		    result.next();
 		    int count = result.getInt(1);
 		    conn.close();
