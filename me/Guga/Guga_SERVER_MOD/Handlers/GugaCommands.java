@@ -2143,15 +2143,15 @@ public abstract class GugaCommands
 			}
 			else if(subCommand.matches("rsdebug") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
-				if(plugin.redstoneDebug)
+				if(plugin.bListener.redStoneDebug.contains(sender))
 				{
+					plugin.bListener.redStoneDebug.remove(sender);
 					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned off!");
-					plugin.redstoneDebug = false;
 				}
 				else
 				{
+					plugin.bListener.redStoneDebug.add(sender);
 					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned on!");
-					plugin.redstoneDebug = true;
 				}
 			}
 			else if(subCommand.matches("rank") && GameMasterHandler.IsAtleastGM(sender.getName()))
