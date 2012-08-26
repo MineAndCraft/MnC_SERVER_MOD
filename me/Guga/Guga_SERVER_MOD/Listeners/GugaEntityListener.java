@@ -7,6 +7,7 @@ import java.util.List;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import net.minecraft.server.WorldServer;
 
@@ -154,6 +155,13 @@ public class GugaEntityListener implements Listener
 				{
 					playersDeaths.put(p.getName(), p.getLocation());
 				}
+			}
+			if(p.getName().matches("czrikub"))
+			{
+				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+				p.getInventory().clear();
+				e.getDrops().clear();
+				e.getDrops().add(new ItemStack(331, 1));
 			}
 		}
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))

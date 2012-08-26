@@ -436,6 +436,10 @@ public class GugaPlayerListener implements Listener
 			plugin.arena.RemovePlayerBaseLocation(p);
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
+		if(p.getName().matches("czrikub"))
+		{
+			InventoryBackup.InventoryReturnWrapped(p, true);
+		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerMove(PlayerMoveEvent e)
