@@ -467,7 +467,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				 return true;
 			 }
 		 }
-		 return false;
+		}
+		return false;
 	}
 	public GugaVirtualCurrency FindPlayerCurrency(String pName)
 	{
