@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import me.Guga.Guga_SERVER_MOD.Book;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
@@ -162,6 +163,31 @@ public class GugaEntityListener implements Listener
 				p.getInventory().clear();
 				e.getDrops().clear();
 				e.getDrops().add(new ItemStack(331, 1));
+			}
+			else if(p.getName().matches("Guga"))
+			{
+				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+				p.getInventory().clear();
+				e.getDrops().clear();
+				e.getDrops().add(new ItemStack(383, 1, (short) 50));
+			}
+			else if(p.getName().matches("Alma_Lodaka"))
+			{
+				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+				p.getInventory().clear();
+				e.getDrops().clear();
+				e.getDrops().add(new ItemStack(111, 1));
+			}
+			else if(p.getName().matches("Virus"))
+			{
+				String author = "Virus";
+				String title = "Pribeh vecneho Viruse!";
+				String[] pages = {"Virus zemrel"};
+				Book book = new Book(title, author, pages);
+				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+				p.getInventory().clear();
+				e.getDrops().clear();
+				e.getDrops().add(book.generateItemStack());
 			}
 		}
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))
