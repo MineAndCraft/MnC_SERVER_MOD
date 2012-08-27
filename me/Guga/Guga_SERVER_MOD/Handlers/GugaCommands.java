@@ -11,6 +11,7 @@ import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.Book;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaAuction;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
@@ -2115,6 +2116,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
 				sender.sendMessage("/gm spawn - Spawns sub-menu.");
 				sender.sendMessage("/gm save-all - Saves all files of plugin and worlds.");
+				sender.sendMessage("/gm book - Books sub-menu");
 			}
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -2239,6 +2241,10 @@ public abstract class GugaCommands
 				AutoSaver.SaveAll();
 				ChatHandler.SuccessMsg(sender, "Successfully saved!");
 			}
+			else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				sender.sendMessage("/gm book copy - Copies book in your hand.");
+			}
 			else if (subCommand.matches("on") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				if(disabledGMs.contains(sender.getName()))
@@ -2336,6 +2342,22 @@ public abstract class GugaCommands
 				}
 				else
 					ChatHandler.FailMsg(sender, "This world doesn't exist!");
+			}
+			else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if(args[1].matches("copy"))
+				{
+					if(sender.getItemInHand().getTypeId() == 387)
+					{
+						Book book = new Book(sender.getItemInHand());
+						sender.getInventory().addItem(book.generateItemStack());
+						ChatHandler.SuccessMsg(sender, "Book has been copied.");
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Item is not writable book.");
+					}
+				}
 			}
 			else if (subCommand.matches("home"))
 			{
