@@ -142,7 +142,7 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
 		}
-		
+
 		plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
 		GugaAuctionHandler.CheckPayments(p);
 		if (plugin.debug)
@@ -351,7 +351,7 @@ public class GugaPlayerListener implements Listener
 			e.getPlayer().getWorld().spawnCreature(finalLoc,CreatureType.CREEPER);
 			e.setCancelled(true);
 		}*/
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerPickupItem(PlayerPickupItemEvent e)
 	{
@@ -389,7 +389,7 @@ public class GugaPlayerListener implements Listener
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
 		GugaMCClientHandler.UnregisterUser(p);
-		
+
 		if (plugin.config.accountsModule)
 		{
 			plugin.acc.loggedUsers.remove(p.getName());
@@ -617,7 +617,7 @@ public class GugaPlayerListener implements Listener
 			if (plugin.config.chestsModule)
 			{
 				// *********************************CHEST OPENING*********************************
-				
+
 				String blockOwner;
 				if (targetBlock.getTypeId() == ID_CHEST)
 				{
@@ -679,7 +679,7 @@ public class GugaPlayerListener implements Listener
 	{
 		if (!GugaPlayerListener.plugin.acc.UserIsLogged(e.getPlayer()))
 			e.setCancelled(true);
-		
+
 	}
 	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e)
 	{
@@ -711,7 +711,7 @@ public class GugaPlayerListener implements Listener
 				allowed = true;
 			else if ( ((char)95) == pName[i])
 				allowed = true;
-			
+
 			int i2 = 48;
 			while (i2 <= 57)
 			{
@@ -747,7 +747,7 @@ public class GugaPlayerListener implements Listener
 	}
 	public static void LoadCreativePlayers()
 	{
-		
+
 		GugaFile file = new GugaFile(creativePlayersPath, GugaFile.READ_MODE);
 		if (creativePlayers.size() > 0)
 			creativePlayers.clear();
@@ -763,7 +763,7 @@ public class GugaPlayerListener implements Listener
 	{
 		String pName = p.getName();
 		Iterator<String> i = creativePlayers.iterator();
-		
+
 		while (i.hasNext())
 		{
 			if (pName.equalsIgnoreCase(i.next()))				
