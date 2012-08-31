@@ -48,7 +48,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -371,12 +370,7 @@ public class GugaPlayerListener implements Listener
 			return;
 		}
 	}
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerBedEnter(PlayerBedEnterEvent e)
-	{
-		HomesHandler.addHome(e.getPlayer(), e.getPlayer().getLocation());
-		e.getPlayer().sendMessage(ChatColor.GREEN + "Vas home byl nastaven!");
-	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerKick(PlayerKickEvent e)
 	{
@@ -418,7 +412,11 @@ public class GugaPlayerListener implements Listener
 		}
 		Player p = e.getPlayer();
 		Homes home;
-		if((home = HomesHandler.getHomeByPlayer(p.getName())) != null)
+		if(p.getBedSpawnLocation() != null)
+		{
+			e.setRespawnLocation(p.getBedSpawnLocation());
+		}
+		else if((home = HomesHandler.getHomeByPlayer(p.getName())) != null)
 		{
 			e.setRespawnLocation(HomesHandler.getLocation(home));
 		}
