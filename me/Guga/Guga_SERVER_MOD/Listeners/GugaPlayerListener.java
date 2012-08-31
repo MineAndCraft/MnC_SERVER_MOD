@@ -612,16 +612,14 @@ public class GugaPlayerListener implements Listener
 			e.setCancelled(true);
 
 	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e)
 	{
 		GameMaster gm = GameMasterHandler.GetGMByName(e.getPlayer().getName());
 		if(gm.GetRank() == Rank.EVENTER)
 		{
-			if(e.getFrom().getName().matches("world") && e.getPlayer().getLocation().getWorld().getName().matches("world_event"))
-			{
-				e.getPlayer().setGameMode(GameMode.CREATIVE);
-			}
-			else if(e.getFrom().getName().matches("world_event") && e.getPlayer().getLocation().getWorld().getName().matches("world"))
+			if(e.getFrom().getName().matches("world_event"))
 			{
 				e.getPlayer().setGameMode(GameMode.SURVIVAL);
 			}
