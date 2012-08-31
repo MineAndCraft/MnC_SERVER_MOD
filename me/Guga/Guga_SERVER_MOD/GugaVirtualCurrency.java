@@ -106,6 +106,13 @@ public class GugaVirtualCurrency
 			p.setPlayerListName(p.getName());
 		}
 	}
+	
+	public void ToggleFly(boolean fly)
+	{
+		Player p = plugin.getServer().getPlayer(playerName);
+		p.setAllowFlight(fly);
+		p.setFlying(fly);
+	}
 	public void BuyItem(String itemName, int amount)
 	{
 		Player p = plugin.getServer().getPlayer(playerName);

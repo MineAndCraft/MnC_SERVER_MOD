@@ -221,24 +221,7 @@ public class GugaPlayerListener implements Listener
 		{
 			e.setCancelled(true);
 		}
-		if(e.getMessage().startsWith("/md"))
-		{
-			if(!plugin.FindPlayerCurrency(e.getPlayer().getName()).IsVip())
-			{
-				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
-				e.setCancelled(true);
-				return;
-			}
-		}
-		if(e.getMessage().toLowerCase().startsWith("/md p") || e.getMessage().toLowerCase().startsWith("/md stats") || e.getMessage().toLowerCase().startsWith("/md types") || e.getMessage().toLowerCase().startsWith("/md baby"))
-		{
-			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
-			{
-				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
-				e.setCancelled(true);
-				return;
-			}
-		}
+
 		String msg = "";
 		String[] splitted = e.getMessage().split(" ");
 		int i = 0;
@@ -442,57 +425,7 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
-		/*if (plugin.debug)
-		{
-			plugin.log.info("PLAYER_MOVE_EVENT: playerName=" + e.getPlayer().getName());
-		}*/
 		Player p = e.getPlayer();
-		//String pName = p.getName().toLowerCase();
-		/*GugaSpectator spec;
-		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
-		{
-			spec.Teleport();
-		}*/
-		/*if(GugaFlyHandler.offFlying(p.getName()))
-		{
-			p.setAllowFlight(false);
-			p.setFlying(false);
-		}*/
-		if(plugin.FindPlayerCurrency(p.getName()).IsVip() && GugaCommands.disabledGMs.contains(p.getName()))
-		{
-			if(p.getItemInHand().getTypeId() == 288)
-			{
-				if(!p.getAllowFlight())
-				{
-					p.setAllowFlight(true);
-				    p.setFlying(true);
-				}
-			}
-			else
-			{
-					p.setAllowFlight(false);
-					p.setFlying(false);
-			}
-		}
-		if(plugin.FindPlayerCurrency(p.getName()).IsVip())
-		{
-			if(!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
-			{
-				if(p.getItemInHand().getTypeId() == 288)
-				{
-					if(!p.getAllowFlight())
-					{
-						p.setAllowFlight(true);
-					    p.setFlying(true);
-					}
-				}
-				else
-				{
-						p.setAllowFlight(false);
-						p.setFlying(false);
-				}
-			}
-		}
 		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
 			GugaWorldSizeHandler.MoveBack(p);
 		else if (p.getLocation().getBlockY() < 0)

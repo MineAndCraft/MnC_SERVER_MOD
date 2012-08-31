@@ -583,6 +583,11 @@ public abstract class GugaCommands
 			sender.sendMessage("VIP Prikazy nemuzete pouzivat ve svete pro novacky!");
 			return;
 		}
+		if (plugin.AdventureWorld.IsAdventureWorld(sender.getLocation()))
+		{
+			sender.sendMessage("VIP Prikazy nemuzete pouzivat v AdventureWorldu!");
+			return;
+		}
 		if (args.length == 0)
 		{
 			sender.sendMessage("VIP MENU:");
@@ -591,7 +596,7 @@ public abstract class GugaCommands
 			sender.sendMessage("/vip time  -  Podprikaz zmeny casu.");
 			sender.sendMessage("/vip item  -  Podprikaz itemu.");
 			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
-			sender.sendMessage("/vip mob - Zmena vasi entity na jinou");
+			sender.sendMessage("/vip fly - Podprikaz letani.");
 		}
 		else if (args.length == 1)
 		{
@@ -608,7 +613,6 @@ public abstract class GugaCommands
 				sender.sendMessage("/vip tp back  -  Teleport zpet na predchozi pozici.");
 				sender.sendMessage("/vip tp bed  -  Teleport k posteli.");
 				sender.sendMessage("/vip tp death  -  Teleportuje vas na posledni misto smrti.");
-				sender.sendMessage("/vip tp endtrapka  -  Teleportuje vas na endermani expici farmu.");
 			}
 			else if (subCommand.matches("time"))
 			{
@@ -628,12 +632,11 @@ public abstract class GugaCommands
 				sender.setSaturation(20);
 				sender.sendMessage("Uspesne jste se najedli");
 			}
-			else if(subCommand.matches("mob"))
+			else if(subCommand.matches("fly"))
 			{
-				sender.sendMessage("VIP MOB MENU:");
-				sender.sendMessage("/vip mob types - Vypise vsechny moby na ktere se muzete zmenit.");
-				sender.sendMessage("/vip mob <jmenoMoba> - Zmeni Vasi entitu na zadanou.");
-				sender.sendMessage("/vip mob restart - Nastavi Vam puvodni tvar!");
+				sender.sendMessage("VIP FLY MENU:");
+				sender.sendMessage("/vip fly on - Zapne letani.");
+				sender.sendMessage("/vip fly off - Vypne letani.");
 			}
 		}
 		else if (args.length == 2)
@@ -727,43 +730,18 @@ public abstract class GugaCommands
 						sender.sendMessage("Vas cas nepotrebuje restartovat!");
 				}
 			}
-			else if (subCommand.matches("mob"))
+			else if (subCommand.matches("fly"))
 			{
-				if(arg1.matches("types"))
+				GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName()); 
+				if(args[1].matches("on"))
 				{
-					sender.sendMessage("TYPY MOBU:");
-					int i = 0;
-					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
-					while(i<mobs.length)
-					{
-						sender.sendMessage(mobs[i]);
-						i++;
-					}
+					curr.ToggleFly(true);
+					ChatHandler.SuccessMsg(sender, "Letani zapnuto!");
 				}
-				else if(arg1.matches("restart"))
+				else if(args[1].matches("off"))
 				{
-					MobDisguiseHandler.SendCommand(sender, arg1);
-					ChatHandler.SuccessMsg(sender, "Jste opet Vy!");
-				}
-				else
-				{
-					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
-					int i = 0;
-					boolean exists = false;
-					while (i < mobs.length)
-					{
-						if(mobs[i].matches(arg1))
-						{
-							exists = true;
-							MobDisguiseHandler.SendCommand(sender, arg1);
-							ChatHandler.SuccessMsg(sender, "Je z Vas " + arg1 + ".");
-						}
-						i++;
-					}
-					if(!exists)
-					{
-						ChatHandler.FailMsg(sender, "Tento mob neni povolen!");
-					}
+					curr.ToggleFly(false);
+					ChatHandler.SuccessMsg(sender, "Letani vypnuto!");
 				}
 			}
 		}
