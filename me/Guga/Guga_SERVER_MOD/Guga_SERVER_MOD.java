@@ -146,7 +146,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
-		AutoSaver.StartSaver();
+		//AutoSaver.StartSaver();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
@@ -639,6 +639,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public BukkitScheduler scheduler;
 	
 	//public GugaSocketServer socketServer;
+	public final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
 	public final GugaConfiguration config = new GugaConfiguration(this);
 	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
 	public final GugaEntityListener enListener = new GugaEntityListener(this);

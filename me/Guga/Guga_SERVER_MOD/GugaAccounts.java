@@ -21,11 +21,6 @@ public class GugaAccounts
 	GugaAccounts (Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
-		GugaFile file = new GugaFile("plugins/dbConfig.txt", GugaFile.READ_MODE);
-		file.Open();
-		String[] acc = file.ReadLine().split(";");
-		this.dbUserName = acc[0];
-		this.dbPassword = acc[1];
 	}
 	
 	public boolean LoginUser(Player p,String password)
@@ -35,14 +30,14 @@ public class GugaAccounts
 	  {
 	   Connection conn = null;
 	   Properties connectionProps = new Properties();
-	      connectionProps.put("user", this.dbUserName);
-	      connectionProps.put("password", this.dbPassword);
+	      connectionProps.put("user", plugin.dbConfig.getUsername());
+	      connectionProps.put("password", plugin.dbConfig.getPassword());
 	      conn = DriverManager.getConnection("jdbc:mysql://" +
-	                       this.dbServer +
-	                     ":" + String.valueOf(this.dbPort) + "/",
+	                       plugin.dbConfig.getDbServer() +
+	                     ":" + String.valueOf(plugin.dbConfig.getPort()) + "/",
 	                     connectionProps);
 	      Statement stat = conn.createStatement();
-	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+this.dbName+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
+	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+plugin.dbConfig.getName()+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
 	      result.next();
 	      int count = result.getInt(1);
 	      int id = result.getInt(2);
@@ -84,14 +79,14 @@ public class GugaAccounts
 		{
 			Connection conn = null;
 			Properties connectionProps = new Properties();
-		    connectionProps.put("user", this.dbUserName);
-		    connectionProps.put("password", this.dbPassword);
+		    connectionProps.put("user", plugin.dbConfig.getUsername());
+		    connectionProps.put("password", plugin.dbConfig.getPassword());
 		    conn = DriverManager.getConnection("jdbc:mysql://" +
-		                		   this.dbServer +
-		                   ":" + String.valueOf(this.dbPort) + "/",
+		                		   plugin.dbConfig.getDbServer() +
+		                   ":" + String.valueOf(plugin.dbConfig.getPort()) + "/",
 		                   connectionProps);
 		    Statement stat = conn.createStatement();
-		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+this.dbName+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' LIMIT 1;");
+		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+plugin.dbConfig.getName()+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' LIMIT 1;");
 		    result.next();
 		    int count = result.getInt(1);
 		    conn.close();
@@ -176,11 +171,5 @@ public class GugaAccounts
 	// *********************************PLAYERS ONLINE*********************************
 	public  ArrayList<String> loggedUsers = new ArrayList<String>();
 	
-	
-	private final String dbServer = "146.255.27.116";
-	private String dbUserName;
-	private String dbPassword;
-	private final String dbName = "minecraft_users_20715";
-	private final int dbPort = 3306;
 	public static Guga_SERVER_MOD plugin;
 }
