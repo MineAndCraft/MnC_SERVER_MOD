@@ -813,45 +813,6 @@ public abstract class GugaCommands
 						sender.sendMessage("Tato hodnota nelze nastavit!");
 				}
 			}
-			else if (subCommand.matches("mob"))
-			{
-				if(arg1.matches("types"))
-				{
-					sender.sendMessage("TYPY MOBU:");
-					int i = 0;
-					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
-					while(i<mobs.length)
-					{
-						sender.sendMessage(mobs[i]);
-						i++;
-					}
-				}
-				else if(arg1.matches("restart"))
-				{
-					MobDisguiseHandler.SendCommand(sender, arg1);
-					ChatHandler.SuccessMsg(sender, "Jste opet Vy!");
-				}
-				else
-				{
-					String[] mobs = MobDisguiseHandler.GetVipAllowedMobs();
-					int i = 0;
-					boolean exists = false;
-					while (i < mobs.length)
-					{
-						if(mobs[0].matches(arg1))
-						{
-							exists = true;
-							MobDisguiseHandler.SendCommand(sender, arg1);
-							ChatHandler.SuccessMsg(sender, "Je z Vas " + arg1 + ".");
-						}
-						i++;
-					}
-					if(!exists)
-					{
-						ChatHandler.FailMsg(sender, "Tento mob neni povolen!");
-					}
-				}
-			}
 		}
 	}
 	public static void CommandRpg(Player sender, String args[])
