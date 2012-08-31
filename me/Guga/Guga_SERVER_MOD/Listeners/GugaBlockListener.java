@@ -24,8 +24,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +46,7 @@ public class GugaBlockListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		plugin.logger.LogBlockBreak(e, e.getBlock().getTypeId());
+		//plugin.logger.LogBlockBreak(e, e.getBlock().getTypeId());
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
 		if (plugin.arena.IsArena(p.getLocation()))
@@ -331,7 +329,7 @@ public class GugaBlockListener implements Listener
 		{
 			plugin.log.info("BLOCK_PLACE_EVENT: typeID="+e.getBlock().getTypeId()+",PlayerName="+e.getPlayer().getName());
 		}
-		plugin.logger.LogBlockPlace(e);
+		//plugin.logger.LogBlockPlace(e);
 		if (plugin.arena.IsArena(e.getBlock().getLocation()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
@@ -474,14 +472,7 @@ public class GugaBlockListener implements Listener
 		}
 		return false;
 	}
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onBlockIgnite(BlockIgniteEvent e)
-	{
-		if(e.getCause() == IgniteCause.FLINT_AND_STEEL)
-		{
-			plugin.logger.LogBlockIgnite(e);
-		}
-	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBurn(BlockBurnEvent e)
 	{
