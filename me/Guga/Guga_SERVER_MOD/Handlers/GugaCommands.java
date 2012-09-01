@@ -24,7 +24,6 @@ import me.Guga.Guga_SERVER_MOD.GugaMiner;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
-import me.Guga.Guga_SERVER_MOD.GugaSpawner;
 import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaTeams;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
@@ -44,7 +43,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -1695,7 +1693,7 @@ public abstract class GugaCommands
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
 		}
-		if (!GameMasterHandler.IsAtleastGM(sender.getName()))
+		if ((!GameMasterHandler.IsAtleastGM(sender.getName())) && (!GameMasterHandler.IsRank(sender.getName(), Rank.EVENTER)))
 		{
 			if (args.length > 0)
 			{
@@ -1734,7 +1732,7 @@ public abstract class GugaCommands
 			sender.sendMessage("Commands:");
 			sender.sendMessage("/event players - Shows players submenu.");
 			sender.sendMessage("/event inventory - Shows inventory submenu.");
-			sender.sendMessage("/event spawners - Shows spawners submenu.");
+			//sender.sendMessage("/event spawners - Shows spawners submenu.");
 			sender.sendMessage("/event teleport - Teleports all tagged players to your location.");
 			sender.sendMessage("/event tpback - Teleports all players back to their original locations.");
 			sender.sendMessage("/event give <itemID> <amount> - Adds specified item to tagged players.");
@@ -1800,7 +1798,7 @@ public abstract class GugaCommands
 				return;
 			}
 		}
-		else if (arg1.equalsIgnoreCase("spawners"))
+		/*else if (arg1.equalsIgnoreCase("spawners"))
 		{
 			if (args.length == 1)
 			{
@@ -1893,7 +1891,7 @@ public abstract class GugaCommands
 				}
 				return;
 			}
-		}
+		}*/
 		else if (arg1.equalsIgnoreCase("inventory"))
 		{
 			if (args.length == 1)
