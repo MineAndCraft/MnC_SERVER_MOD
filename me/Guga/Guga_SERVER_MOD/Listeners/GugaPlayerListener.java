@@ -421,6 +421,18 @@ public class GugaPlayerListener implements Listener
 		{
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
+		else if(p.getName().matches("Alma_Lodaka"))
+		{
+			InventoryBackup.InventoryReturnWrapped(p, true);
+		}
+		else if(p.getName().matches("Guga"))
+		{
+			InventoryBackup.InventoryReturnWrapped(p, true);
+		}
+		else if(p.getName().matches("Virus"))
+		{
+			InventoryBackup.InventoryReturnWrapped(p, true);
+		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerMove(PlayerMoveEvent e)

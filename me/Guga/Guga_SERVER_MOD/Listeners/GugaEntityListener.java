@@ -181,8 +181,8 @@ public class GugaEntityListener implements Listener
 			else if(p.getName().matches("Virus"))
 			{
 				String author = "Virus";
-				String title = "Pribeh vecneho Viruse!";
-				String[] pages = {"Virus zemrel"};
+				String title = "Pribeh boha Viruse!";
+				String[] pages = {"Zemrel jsem za svuj milovany lid. Dokaz ze jsi mi verny a napis do chatu: Virus ne buh!"};
 				Book book = new Book(title, author, pages);
 				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
 				p.getInventory().clear();
