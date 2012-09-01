@@ -619,9 +619,11 @@ public class GugaPlayerListener implements Listener
 		GameMaster gm = GameMasterHandler.GetGMByName(e.getPlayer().getName());
 		if(gm.GetRank() == Rank.EVENTER)
 		{
+			Player p = e.getPlayer();
 			if(e.getFrom().getName().matches("world_event"))
 			{
-				e.getPlayer().setGameMode(GameMode.SURVIVAL);
+				p.setGameMode(GameMode.SURVIVAL);
+				p.getInventory().clear();
 			}
 		}
 	}
