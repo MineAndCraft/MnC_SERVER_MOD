@@ -1371,8 +1371,16 @@ public abstract class GugaCommands
 				{
 					if(plugin.EventWorld.IsEventWorld(sender.getLocation()))
 					{
-						sender.setGameMode(GameMode.CREATIVE);
-						ChatHandler.SuccessMsg(sender, "GameMode pro EW nastaven");
+						if(sender.getGameMode() == GameMode.SURVIVAL)
+						{
+							sender.setGameMode(GameMode.CREATIVE);
+							ChatHandler.SuccessMsg(sender, "Creative mod nastaven");
+						}
+						else
+						{
+							sender.setGameMode(GameMode.SURVIVAL);
+							ChatHandler.SuccessMsg(sender, "Survival mod nastaven");
+						}
 					}
 					else
 					{
