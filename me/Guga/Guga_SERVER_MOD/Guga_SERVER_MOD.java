@@ -631,7 +631,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "3.5.4";
+	public static final String version = "3.5.5";
 	private static final String professionsFile = "plugins/Professions.dat";
 	private static final String currencyFile = "plugins/Currency.dat";
 
