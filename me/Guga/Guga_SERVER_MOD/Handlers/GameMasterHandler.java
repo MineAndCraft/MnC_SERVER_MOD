@@ -97,6 +97,17 @@ public abstract class GameMasterHandler
 		}
 		return false;
 	}
+	public static boolean IsRank(String name, Rank rank)
+	{
+		GameMaster gm;
+		if((gm = GameMasterHandler.GetGMByName(name)) != null)
+		{
+			if(gm.GetRank() == rank)
+				return true;
+			return false;
+		}
+		return false;
+	}
 	public static void LoadGMs()
 	{
 		plugin.log.info("Loading GMs file...");
