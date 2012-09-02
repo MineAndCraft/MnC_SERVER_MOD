@@ -37,7 +37,7 @@ public class GugaAccounts
 	                     ":" + String.valueOf(plugin.dbConfig.getPort()) + "/",
 	                     connectionProps);
 	      Statement stat = conn.createStatement();
-	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+plugin.dbConfig.getName()+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
+	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+plugin.dbConfig.getName()+"`.`mnc_users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
 	      result.next();
 	      int count = result.getInt(1);
 	      int id = result.getInt(2);
@@ -46,7 +46,7 @@ public class GugaAccounts
 	      {
 	       logged = true;
 	       Statement s = conn.createStatement();
-	       s.executeQuery("UPDATE `users` SET `lastjoin` = NOW() WHERE `id`='"+String.valueOf(id)+"';");
+	       s.executeQuery("UPDATE `mnc_users` SET `lastjoin` = NOW() WHERE `id`='"+String.valueOf(id)+"';");
 	       conn.close();
 	      }
 	      conn.close();
@@ -86,7 +86,7 @@ public class GugaAccounts
 		                   ":" + String.valueOf(plugin.dbConfig.getPort()) + "/",
 		                   connectionProps);
 		    Statement stat = conn.createStatement();
-		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+plugin.dbConfig.getName()+"`.`users` WHERE username_clean='"+p.getName().toLowerCase()+"' LIMIT 1;");
+		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+plugin.dbConfig.getName()+"`.`mnc_users` WHERE username_clean='"+p.getName().toLowerCase()+"' LIMIT 1;");
 		    result.next();
 		    int count = result.getInt(1);
 		    conn.close();
@@ -138,7 +138,7 @@ public class GugaAccounts
 					}
 					else
 					{
-						p.sendMessage(ChatColor.YELLOW + "Registrujte se na webu - odkaz: " + ChatColor.RED + "http://mineandcraft.cz/userfiles/register.php");
+						p.sendMessage(ChatColor.YELLOW + "Registrujte se na webu - odkaz: " + ChatColor.RED + "http://mineandcraft.cz/navod-na-pripojeni/");
 					}
 				}
 			}
