@@ -1,5 +1,10 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
 public class DatabaseConfiguration 
 {
 	public DatabaseConfiguration()
@@ -37,6 +42,34 @@ public class DatabaseConfiguration
 			}
 		}
 	}
+	
+	public void connectDb()
+	{
+		conn = null;
+		Properties connectionProps = new Properties();
+	    connectionProps.put("user", db_username);
+		connectionProps.put("password", db_password);
+		try 
+		{
+			conn = DriverManager.getConnection("jdbc:mysql://" + db_server + ":" + String.valueOf(db_port) + "/", connectionProps);
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void disconnectDb()
+	{
+		try 
+		{
+			conn.close();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
 	public String getDbServer()
 	{
 		return db_server;
@@ -61,10 +94,18 @@ public class DatabaseConfiguration
 	{
 		return db_name;
 	}
-	public String db_server;
-	public int db_port;
-	public String db_username;
-	public String db_name;
-	public String db_password;
-	public String filePath = "plugins/dbConfig.ini";
+	
+	public Connection getConection()
+	{
+		return conn;
+	}
+	
+	private Connection conn;
+	
+	private String db_server;
+	private int db_port;
+	private String db_username;
+	private String db_name;
+	private String db_password;
+	private String filePath = "plugins/dbConfig.ini";
 }

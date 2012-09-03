@@ -57,6 +57,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		arena.SaveArenas();
 		logger.SaveWrapperBreak();
 		logger.SaveWrapperPlace();
+		dbConfig.disconnectDb();
 	}
 
 	public void onEnable() 
@@ -66,6 +67,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvents(bListener, this);
 		pManager.registerEvents(enListener, this);
 		
+		dbConfig.connectDb();
 		
 		GugaMCClientHandler.SetPlugin(this);
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "Guga");

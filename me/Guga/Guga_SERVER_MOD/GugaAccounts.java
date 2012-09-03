@@ -3,7 +3,6 @@ package me.Guga.Guga_SERVER_MOD;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -11,10 +10,6 @@ import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.DriverManager;
-import java.sql.Connection;
-
-
 
 public class GugaAccounts 
 {
@@ -24,44 +19,35 @@ public class GugaAccounts
 	}
 	
 	public boolean LoginUser(Player p,String password)
-	 {
-	  boolean logged = false;
-	  try
-	  {
-	   Connection conn = null;
-	   Properties connectionProps = new Properties();
-	      connectionProps.put("user", plugin.dbConfig.getUsername());
-	      connectionProps.put("password", plugin.dbConfig.getPassword());
-	      conn = DriverManager.getConnection("jdbc:mysql://" +
-	                       plugin.dbConfig.getDbServer() +
-	                     ":" + String.valueOf(plugin.dbConfig.getPort()) + "/",
-	                     connectionProps);
-	      Statement stat = conn.createStatement();
-	      ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+plugin.dbConfig.getName()+"`.`mnc_users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
-	      result.next();
-	      int count = result.getInt(1);
-	      int id = result.getInt(2);
-	      stat.close();
-	      if(count == 1)
-	      {
-	       logged = true;
-	       Statement s = conn.createStatement();
-	       s.executeQuery("UPDATE `mnc_users` SET `lastjoin` = NOW() WHERE `id`='"+String.valueOf(id)+"';");
-	       conn.close();
-	      }
-	      conn.close();
-	  }
-	  catch(Exception e)
-	  {
-	    //e.printStackTrace();
-	  }
-	  if(logged)
-	  {
-	   loggedUsers.add(p.getName());
-	   return true;
-	  }
-	  return false;
-	 }
+	{
+		boolean logged = false;
+		try
+		{
+			Statement stat = plugin.dbConfig.getConection().createStatement();
+			ResultSet result = stat.executeQuery("SELECT count(*),id FROM `"+ plugin.dbConfig.getName()+"`.`mnc_users` WHERE username_clean='"+p.getName().toLowerCase()+"' AND password='"+Util.sha1(password)+"' LIMIT 1;");
+			result.next();
+			int count = result.getInt(1);
+			int id = result.getInt(2);
+			stat.close();
+			if(count == 1)
+			{
+				logged = true;
+				stat = plugin.dbConfig.getConection().createStatement();
+				stat.executeQuery("UPDATE `mnc_users` SET `lastlogin` = NOW() WHERE `id`='"+String.valueOf(id)+"';");
+				stat.close();
+			}
+		}
+		catch(Exception e)
+		{
+			//e.printStackTrace();
+		}
+		if(logged)
+		{
+			loggedUsers.add(p.getName());
+			return true;
+		}
+		return false;
+	}
 
 	public boolean UserIsLogged(Player p)
 	{
@@ -77,19 +63,11 @@ public class GugaAccounts
 	{
 		try
 		{
-			Connection conn = null;
-			Properties connectionProps = new Properties();
-		    connectionProps.put("user", plugin.dbConfig.getUsername());
-		    connectionProps.put("password", plugin.dbConfig.getPassword());
-		    conn = DriverManager.getConnection("jdbc:mysql://" +
-		                		   plugin.dbConfig.getDbServer() +
-		                   ":" + String.valueOf(plugin.dbConfig.getPort()) + "/",
-		                   connectionProps);
-		    Statement stat = conn.createStatement();
+		    Statement stat = plugin.dbConfig.getConection().createStatement();
 		    ResultSet result = stat.executeQuery("SELECT count(*) FROM `"+plugin.dbConfig.getName()+"`.`mnc_users` WHERE username_clean='"+p.getName().toLowerCase()+"' LIMIT 1;");
 		    result.next();
 		    int count = result.getInt(1);
-		    conn.close();
+		    stat.close();
 		    if(count == 1)
 		    	return true;
 		    else
