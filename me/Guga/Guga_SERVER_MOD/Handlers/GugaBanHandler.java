@@ -215,9 +215,8 @@ public abstract class GugaBanHandler
 		}
 		file.Close();
 	}
-	public static boolean IsIpWhitelisted(Player p)
+	public static boolean IsIpWhitelisted(String pName)
 	{
-		String pName = p.getName();
 		Iterator<String> i = whitelistedPlayers.iterator();
 		
 		while (i.hasNext())
