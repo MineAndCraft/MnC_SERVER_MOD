@@ -260,12 +260,12 @@ public class GugaLogger
 			}
 		});
 	}
-	public void LogPlayerJoins(final String pName,final String MacAddr, final String IpAddr)
+	public void LogPlayerJoins(final String pName, final String IpAddr)
 	{
 		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 			public void run()
 			{
-				String line = new Date() + ";" + pName + ";" + MacAddr + ";" + IpAddr;
+				String line = new Date() + ";" + pName + ";" + IpAddr;
 				GugaFile file = new GugaFile(playerJoinsFile, GugaFile.APPEND_MODE);
 				file.Open();
 				file.WriteLine(line);
