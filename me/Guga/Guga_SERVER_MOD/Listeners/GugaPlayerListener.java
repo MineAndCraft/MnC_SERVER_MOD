@@ -42,6 +42,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -58,45 +60,39 @@ public class GugaPlayerListener implements Listener
 		plugin = gugaSM;
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerJoin(PlayerJoinEvent e)
+	public void onPlayerLoginEvent(PlayerLoginEvent e)
 	{
-		final Player p = e.getPlayer();
-		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
-		if (!p.isOnline())
-			return;
-		if (!GugaMCClientHandler.HasClient(p))
+		String pName = e.getPlayer().getName();
+		//CHECK BANS
+		if (GugaBanHandler.GetGugaBan(pName) == null)
+			GugaBanHandler.AddBan(pName, 0);
+		if (!GugaBanHandler.IsIpWhitelisted(pName))
 		{
-			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
-			return;
-		}
-		if (GugaMCClientHandler.IsWhiteListed(p))
-			return;
-		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
-			GugaBanHandler.AddBan(p.getName(), 0);
-		if (!GugaBanHandler.IsIpWhitelisted(p))
-		{
-			if (GugaBanHandler.IsBanned(p.getName()))
+			if (GugaBanHandler.IsBanned(pName))
 			{
-				GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+				GugaBan ban = GugaBanHandler.GetGugaBan(pName);
 				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-				p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
+				e.disallow(Result.KICK_BANNED, "Jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
 				return;
 			   }
 		}
-		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
+		//LOAD CURR
+		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(pName);
 		if (curr == null)
 		{
-			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
+			curr = new GugaVirtualCurrency(plugin, pName, 0, new Date(0));
 			plugin.playerCurrency.add(curr);
 		}
-		if (plugin.professions.get(p.getName()) == null)
+		if (plugin.professions.get(pName) == null)
 		{
-			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
+			plugin.professions.put(pName, new GugaProfession(pName, 0, plugin));
 		}
+		
+		//KICK NON-VIP IF SERVER IS FULL
 		int maxP = plugin.getServer().getMaxPlayers();
 		if(plugin.getServer().getOnlinePlayers().length == maxP)
 		{
-			if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER) || curr.IsVip())
+			if(GameMasterHandler.IsAtleastRank(pName, Rank.BUILDER) || curr.IsVip())
 			{
 				Player[]players = plugin.getServer().getOnlinePlayers();
 				int i = 0;
@@ -111,44 +107,55 @@ public class GugaPlayerListener implements Listener
 					}
 					else
 					{
-						players[iToKick].kickPlayer("Bylo uvolneno misto pro VIP");
+						players[iToKick].kickPlayer("Bylo uvolneno misto pro VIP.");
 						isKicked = true;
 					}
 					i++;
 				}while(!isKicked && i<maxP);
 				if(!isKicked)
 				{
-					p.kickPlayer("Neni koho vykopnout");
+					e.disallow(Result.KICK_FULL, "Na serveru jsou jen sama VIP  :o!");
 				}
 			}
 			else
 			{
-				p.kickPlayer("Server je plny misto je rezervovano");
+				e.disallow(Result.KICK_FULL, "Server je plny. Pro okamzite pripojeni si kupte VIP!");
 			}
 		}
-		if (p.getName().contains(" "))
+		
+		//KICK BAD NAMED PLAYERS
+		if (pName.contains(" "))
 		{
-			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
+			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno bez mezery!");
 			return;
 		}
-		if (!CanUseName(p.getName()))
+		if (!CanUseName(pName))
 		{
-			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
+			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
 			return;
 		}
-		if (p.getName().matches(""))
+		if (pName.matches(""))
 		{
-			p.kickPlayer("Prosim zvolte si jmeno!");
+			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno!");
 			return;
 		}
-
-		plugin.logger.LogPlayerJoins(p.getName(), GugaMCClientHandler.GetPlayerMacAddr(p),p.getAddress().toString());
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerJoin(PlayerJoinEvent e)
+	{
+		final Player p = e.getPlayer();
+		long timeStart = System.nanoTime();
+		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
+		plugin.logger.LogPlayerJoins(p.getName(), p.getAddress().toString());
 		GugaAuctionHandler.CheckPayments(p);
+		ChatHandler.InitializeDisplayName(p);
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
 		}
-		long timeStart = System.nanoTime();
+		
+		//WELCOME MESSAGE
 		p.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
 		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
 		Player[]players = plugin.getServer().getOnlinePlayers();
@@ -162,8 +169,9 @@ public class GugaPlayerListener implements Listener
 				toSend += ", " + players[i].getName();
 			i++;
 		}
-		ChatHandler.InitializeDisplayName(p);
 		p.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
+		
+		//CHECK IF PLAYER IS CREATIVE-ALLOWED
 		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
 		{
 			if(GugaPlayerListener.IsCreativePlayer(p))
@@ -176,6 +184,7 @@ public class GugaPlayerListener implements Listener
 					p.setGameMode(GameMode.SURVIVAL);
 			}
 		}
+		
 		if(GugaCommands.fly.contains(p.getName().toLowerCase()))
 		{
 			p.setAllowFlight(true);
