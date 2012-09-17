@@ -3026,7 +3026,7 @@ public abstract class GugaCommands
 					 ChatHandler.FailMsg(sender, "Prihlaseni se nezdarilo!");
 					 return;
 				 }
-				 if(!GugaBanHandler.IsIpWhitelisted(sender))
+				 if(!GugaBanHandler.IsIpWhitelisted(sender.getName()))
 						 GugaBanHandler.UpdateBanAddr(sender.getName());
 				/* GugaProfession prof;
 					if ((prof = plugin.professions.get(sender.getName())) != null)
