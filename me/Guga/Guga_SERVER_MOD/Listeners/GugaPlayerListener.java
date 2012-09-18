@@ -191,6 +191,7 @@ public class GugaPlayerListener implements Listener
 			p.setFlying(true);
 		}
 		plugin.acc.playerStart.put(p.getName(), p.getLocation());
+		plugin.acc.playerKickTime.put(p.getName(), System.currentTimeMillis() + 30000);
 		plugin.acc.tpTask.add(p.getName());
 		plugin.acc.StartTpTask();
 		if (plugin.debug)

@@ -113,6 +113,10 @@ public class GugaAccounts
 					if (UserIsRegistered(p))
 					{
 						p.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login VaseHeslo"+ChatColor.WHITE+"!");
+						if(playerKickTime.get(playerName) < System.currentTimeMillis())
+						{
+							p.kickPlayer("Nestihl(a) jste se prihlasit do 30 sekund!");
+						}
 					}
 					else
 					{
@@ -141,7 +145,8 @@ public class GugaAccounts
 	}
 	
 	// *********************************START LOCATION*********************************
-	public HashMap<String, Location> playerStart = new HashMap<String, Location>(); // <playerName, location>	
+	public HashMap<String, Location> playerStart = new HashMap<String, Location>(); // <playerName, location>
+	public HashMap<String, Long> playerKickTime = new HashMap<String, Long>();
 	public ArrayList<String> tpTask = new ArrayList<String>();  // <pName>
 
 	
