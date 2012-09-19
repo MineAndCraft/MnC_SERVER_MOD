@@ -16,7 +16,7 @@ public abstract class AutoSaver
 	
 	public static void StartSaver()
 	{
-		plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable() {
+		plugin.scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
 			public void run()
 			{
 				SaveWorldStructures();
