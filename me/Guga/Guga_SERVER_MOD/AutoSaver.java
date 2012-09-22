@@ -1,5 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import org.bukkit.ChatColor;
+
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -20,9 +22,10 @@ public abstract class AutoSaver
 			public void run()
 			{
 				SaveWorldStructures();
+				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[SERVER] Autosave: Ukladam mapy pro Vase bezpeci...");
 				plugin.log.info("[AutoSaver] Saving worlds...");
 			}
-		}, 6000, 6000);
+		}, 24000, 24000);
 	}
 	
 	public static void SaveWorldStructures()
