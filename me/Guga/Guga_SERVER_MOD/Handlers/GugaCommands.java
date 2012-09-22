@@ -2149,6 +2149,7 @@ public abstract class GugaCommands
 			{
 				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
 				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
+				sender.sendMessage("/gm ban whitelist - Whitelist sub-menu.");
 				sender.sendMessage("/gm ban list <page>  -  Shows all banned players.");
 			}
 			else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
@@ -2227,7 +2228,7 @@ public abstract class GugaCommands
 					sender.sendMessage("This player is not online!");
 				}
 			}
-			else if(subCommand.matches("mute"))
+			else if(subCommand.matches("mute") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				if(args[1].matches("list"))
 				{
@@ -2304,7 +2305,7 @@ public abstract class GugaCommands
 					}
 				}
 			}
-			else if (subCommand.matches("home"))
+			else if (subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				Homes home;
 				if((home = HomesHandler.getHomeByPlayer(args[1])) != null)
@@ -2443,6 +2444,15 @@ public abstract class GugaCommands
 					{
 						sender.sendMessage("You are not spectating anyone!");
 					}
+				}
+			}
+			else if(subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(args[1].matches("whitelist"))
+				{
+					sender.sendMessage("/gm ban whitelist add <playerName> - Adds player to whitelist.");
+					sender.sendMessage("/gm ban whitelist remove <playerName> - Removes player from whitelist");
+					sender.sendMessage("/gm ban whitelist - Prints acctualy whitelisted players");
 				}
 			}
 		}
@@ -2640,6 +2650,17 @@ public abstract class GugaCommands
 							sender.sendMessage(ban.GetPlayerName() + "  -  " + hours + " hours");
 						}
 					}
+					else if(arg1.matches("whitelist"))
+					{
+						GugaDataPager<String> pager = new GugaDataPager<String>(GugaBanHandler.GetWhitelistedPlayers(), 15);
+						Iterator <String> i = pager.GetPage(Integer.parseInt(arg2)).iterator();
+						sender.sendMessage("WHITELISTED PLAYERS:");
+						sender.sendMessage("PAGE " + args[1] + "/" + pager.GetPagesCount());
+						while (i.hasNext())
+						{
+							sender.sendMessage(i.next());
+						}
+					}
 				}
 				else if (args.length == 4)
 				{
@@ -2656,6 +2677,36 @@ public abstract class GugaCommands
 						if (p != null)
 							p.kickPlayer("Vas ucet byl zabanovan na " + arg3 + " hodiny.");
 						sender.sendMessage("Player banned!");
+					}
+					else if(arg1.matches("whitelist"))
+					{
+						if(arg2.matches("add"))
+						{
+							if(!GugaBanHandler.IsIpWhitelisted(arg3))
+							{
+								GugaBanHandler.WhiteListPlayer(arg3);
+								GugaBanHandler.SaveIpWhiteList();
+								ChatHandler.SuccessMsg(sender, "Player successully added to ban whitelist!");
+							}
+							else
+							{
+								ChatHandler.FailMsg(sender, "Player is already whitelisted!");
+							}
+								
+						}
+						else if(arg2.matches("remove"))
+						{
+							if(GugaBanHandler.IsIpWhitelisted(arg3))
+							{
+								GugaBanHandler.RemovePlayerFromWhitelist(arg3);
+								GugaBanHandler.SaveIpWhiteList();
+								ChatHandler.SuccessMsg(sender, "Player successully removed from ban whitelist!");
+							}
+							else
+							{
+								ChatHandler.FailMsg(sender, "Player is not whitelisted!");
+							}
+						}
 					}
 				}
 			}

@@ -204,6 +204,7 @@ public abstract class GugaBanHandler
 	}
 	public static void LoadIpWhiteList()
 	{
+		plugin.log.info("Loading WhiteList file...");
 		GugaFile file = new GugaFile(whitelistedPlayersPath, GugaFile.READ_MODE);
 		if (whitelistedPlayers.size() > 0)
 			whitelistedPlayers.clear();
@@ -212,6 +213,30 @@ public abstract class GugaBanHandler
 		while ((line = file.ReadLine()) != null)
 		{
 			whitelistedPlayers.add(line);
+		}
+		file.Close();
+	}
+	public static void WhiteListPlayer(String playerName)
+	{
+		whitelistedPlayers.add(playerName);
+	}
+	public static void RemovePlayerFromWhitelist(String playerName)
+	{
+		whitelistedPlayers.remove(playerName);
+	}
+	public static ArrayList<String> GetWhitelistedPlayers()
+	{
+		return whitelistedPlayers;
+	}
+	public static void SaveIpWhiteList()
+	{
+		plugin.log.info("Saving WhiteList file...");
+		GugaFile file = new GugaFile(whitelistedPlayersPath, GugaFile.WRITE_MODE);
+		file.Open();
+		Iterator<String> i = whitelistedPlayers.iterator();
+		while(i.hasNext())
+		{
+			file.WriteLine(i.next());
 		}
 		file.Close();
 	}
