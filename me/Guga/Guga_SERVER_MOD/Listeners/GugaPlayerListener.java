@@ -59,24 +59,10 @@ public class GugaPlayerListener implements Listener
 	{
 		plugin = gugaSM;
 	}
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerLoginEvent(PlayerLoginEvent e)
 	{
 		String pName = e.getPlayer().getName();
-		//CHECK BANS
-		if (GugaBanHandler.GetGugaBan(pName) == null)
-			GugaBanHandler.AddBan(pName, 0);
-		if (!GugaBanHandler.IsIpWhitelisted(pName))
-		{
-			if (GugaBanHandler.IsBanned(pName))
-			{
-				GugaBan ban = GugaBanHandler.GetGugaBan(pName);
-				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-				e.disallow(Result.KICK_BANNED, "Jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
-				return;
-			   }
-		}
-		
 		Player[] players = plugin.getServer().getOnlinePlayers();
 		int i = 0;
 		while(i<players.length)
@@ -90,25 +76,51 @@ public class GugaPlayerListener implements Listener
 			}
 			i++;
 		}
-		//LOAD CURR
-		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(pName);
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerJoin(PlayerJoinEvent e)
+	{
+		final Player p = e.getPlayer();
+		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
+		if (!p.isOnline())
+			return;
+		if (!GugaMCClientHandler.HasClient(p))
+		{
+			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
+			return;
+		}
+		if (GugaMCClientHandler.IsWhiteListed(p))
+			return;
+		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
+			GugaBanHandler.AddBan(p.getName(), 0);
+		if (!GugaBanHandler.IsIpWhitelisted(p.getName()))
+		{
+			if (GugaBanHandler.IsBanned(p.getName()))
+			{
+				GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
+				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
+				p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
+				return;
+			   }
+		}
+		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
 		if (curr == null)
 		{
-			curr = new GugaVirtualCurrency(plugin, pName, 0, new Date(0));
+			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
 			plugin.playerCurrency.add(curr);
 		}
-		if (plugin.professions.get(pName) == null)
+		if (plugin.professions.get(p.getName()) == null)
 		{
-			plugin.professions.put(pName, new GugaProfession(pName, 0, plugin));
+			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
 		}
-		
-		//KICK NON-VIP IF SERVER IS FULL
 		int maxP = plugin.getServer().getMaxPlayers();
 		if(plugin.getServer().getOnlinePlayers().length == maxP)
 		{
-			if(GameMasterHandler.IsAtleastRank(pName, Rank.BUILDER) || curr.IsVip())
+			if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER) || curr.IsVip())
 			{
-				i = 0;
+				Player[]players = plugin.getServer().getOnlinePlayers();
+				int i = 0;
 				boolean isKicked = false;
 				Random r = new Random();
 				do{
@@ -120,55 +132,44 @@ public class GugaPlayerListener implements Listener
 					}
 					else
 					{
-						players[iToKick].kickPlayer("Bylo uvolneno misto pro VIP.");
+						players[iToKick].kickPlayer("Bylo uvolneno misto pro VIP");
 						isKicked = true;
 					}
 					i++;
 				}while(!isKicked && i<maxP);
 				if(!isKicked)
 				{
-					e.disallow(Result.KICK_FULL, "Na serveru jsou jen sama VIP  :o!");
+					p.kickPlayer("Neni koho vykopnout");
 				}
 			}
 			else
 			{
-				e.disallow(Result.KICK_FULL, "Server je plny. Pro okamzite pripojeni si kupte VIP!");
+				p.kickPlayer("Server je plny misto je rezervovano");
 			}
 		}
-		
-		//KICK BAD NAMED PLAYERS
-		if (pName.contains(" "))
+		if (p.getName().contains(" "))
 		{
-			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno bez mezery!");
+			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
 			return;
 		}
-		if (!CanUseName(pName))
+		if (!CanUseName(p.getName()))
 		{
-			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
+			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
 			return;
 		}
-		if (pName.matches(""))
+		if (p.getName().matches(""))
 		{
-			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno!");
+			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
 		}
-	}
-	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerJoin(PlayerJoinEvent e)
-	{
-		final Player p = e.getPlayer();
-		long timeStart = System.nanoTime();
-		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
-		plugin.logger.LogPlayerJoins(p.getName(), p.getAddress().toString());
+
+		plugin.logger.LogPlayerJoins(p.getName() ,p.getAddress().toString());
 		GugaAuctionHandler.CheckPayments(p);
-		ChatHandler.InitializeDisplayName(p);
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
 		}
-		
-		//WELCOME MESSAGE
+		long timeStart = System.nanoTime();
 		p.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
 		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
 		Player[]players = plugin.getServer().getOnlinePlayers();
@@ -182,9 +183,8 @@ public class GugaPlayerListener implements Listener
 				toSend += ", " + players[i].getName();
 			i++;
 		}
+		ChatHandler.InitializeDisplayName(p);
 		p.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
-		
-		//CHECK IF PLAYER IS CREATIVE-ALLOWED
 		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
 		{
 			if(GugaPlayerListener.IsCreativePlayer(p))
@@ -197,14 +197,12 @@ public class GugaPlayerListener implements Listener
 					p.setGameMode(GameMode.SURVIVAL);
 			}
 		}
-		
 		if(GugaCommands.fly.contains(p.getName().toLowerCase()))
 		{
 			p.setAllowFlight(true);
 			p.setFlying(true);
 		}
 		plugin.acc.playerStart.put(p.getName(), p.getLocation());
-		plugin.acc.playerKickTime.put(p.getName(), System.currentTimeMillis() + 30000);
 		plugin.acc.tpTask.add(p.getName());
 		plugin.acc.StartTpTask();
 		if (plugin.debug)
