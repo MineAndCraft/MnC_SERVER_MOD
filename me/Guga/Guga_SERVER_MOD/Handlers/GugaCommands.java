@@ -1748,6 +1748,17 @@ public abstract class GugaCommands
 			sender.sendMessage("Players teleported.");
 			return;
 		}
+		else if(arg1.equalsIgnoreCase("msg"))
+		{
+			int i = 1;
+			String msg = "";
+			while(i<(args.length))
+			{
+				msg += " " + args[i];
+				i++;
+			}
+			plugin.getServer().broadcastMessage(ChatColor.AQUA + "[EVENT]" + ChatColor.RED + msg);
+		}
 		else if (arg1.equalsIgnoreCase("allowinv"))
 		{
 			GugaEvent.ToggleAcceptInvites();
