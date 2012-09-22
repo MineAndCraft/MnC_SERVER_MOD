@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import me.Guga.Guga_SERVER_MOD.GugaFile;
+import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Places;
 
@@ -152,6 +153,14 @@ public class PlacesHandler
 				return true;
 			if(allowedPlayers[i].equalsIgnoreCase("all"))
 				return true;
+			else if(allowedPlayers[i].equalsIgnoreCase("vip"))
+			{
+				GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender);
+				if(curr.IsVip())
+					return true;
+				else
+					return false;
+			}
 			i++;
 		}
 		return false;
