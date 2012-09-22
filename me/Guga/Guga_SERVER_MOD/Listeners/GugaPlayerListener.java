@@ -76,6 +76,20 @@ public class GugaPlayerListener implements Listener
 				return;
 			   }
 		}
+		
+		Player[] players = plugin.getServer().getOnlinePlayers();
+		int i = 0;
+		while(i<players.length)
+		{
+			if(players[i].getName().matches(pName))
+			{
+				if(plugin.acc.UserIsLogged(pName))
+				{
+					e.disallow(Result.KICK_OTHER, "Hrac s timto jmenem uz je online!");
+				}
+			}
+			i++;
+		}
 		//LOAD CURR
 		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(pName);
 		if (curr == null)
@@ -94,8 +108,7 @@ public class GugaPlayerListener implements Listener
 		{
 			if(GameMasterHandler.IsAtleastRank(pName, Rank.BUILDER) || curr.IsVip())
 			{
-				Player[]players = plugin.getServer().getOnlinePlayers();
-				int i = 0;
+				i = 0;
 				boolean isKicked = false;
 				Random r = new Random();
 				do{
