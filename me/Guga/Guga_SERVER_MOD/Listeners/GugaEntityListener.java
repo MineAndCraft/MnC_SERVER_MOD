@@ -66,10 +66,13 @@ public class GugaEntityListener implements Listener
 		{
 			if(((Player)e.getEntity()).getWorld().getName().matches("arena"))
 			{
-				if(!(e instanceof EntityDamageByEntityEvent))
+				if(e instanceof EntityDamageByEntityEvent)
 				{
-					e.setCancelled(true);
+					if(plugin.arena.IsImortal(((Player)e.getEntity()).getName()))
+						e.setCancelled(true);
 				}
+				else
+					e.setCancelled(true);
 			}
 			if (GugaCommands.godMode.contains(((Player)e.getEntity()).getName().toLowerCase()))
 			{
@@ -96,25 +99,6 @@ public class GugaEntityListener implements Listener
 					e.setCancelled(true);
 					return;
 				}
-				//GugaProfession prof = plugin.professions.get(damager.getName());
-				//LivingEntity target = (LivingEntity)event.getEntity();
-				//prof.GainExperience(3);
-				/*if (prof instanceof GugaHunter)
-				{
-					if (!(target instanceof Player))
-					{
-						prof.GainExperience(3);
-						event.setDamage(((GugaHunter) prof).IncreaseDamage(event.getDamage()));
-					}
-				}
-				else if(prof instanceof GugaMiner)
-				{
-					if (!(target instanceof Player))
-					{
-						prof.GainExperience(1);
-					}
-				}*/
-				
 			}
 		}
 		if (plugin.config.accountsModule)

@@ -68,6 +68,9 @@ public class GugaArena
 		{
 			p.teleport(plugin.getServer().getWorld("arena").getSpawnLocation());
 		}
+		if(playerImortality.containsKey(p.getName()))
+			playerImortality.remove(p.getName());
+		playerImortality.put(p.getName(), System.currentTimeMillis() + 3000);
 		DisableLeave(p, 60);
 	}
 	public void PlayerLeave(Player p)
@@ -501,6 +504,13 @@ public class GugaArena
 		}
 		return false;
 	}
+	
+	public boolean IsImortal(String pName)
+	{
+		if(playerImortality.get(pName) > System.currentTimeMillis())
+			return true;
+		return false;
+	}
 	public enum ArenaTier
 	{
 		RANK1		(0, new int[][]{{268, 297}, {5, 10}}, new int[]{0, 0, 0, 0}), 
@@ -577,6 +587,7 @@ public class GugaArena
 	private HashMap<String, Integer> multiKillCounter = new HashMap<String, Integer>();
 	private HashMap<String,Location> baseLocation = new HashMap<String,Location>();
 	private List<String> cannotLeave = Collections.synchronizedList(new ArrayList<String>());
+	private HashMap<String, Long> playerImortality = new HashMap<String, Long>();
 	private int spawnIndex;
 	private ArenaSpawn actualSpawn;
 	private ArrayList<ArenaSpawn> spawnList = new ArrayList<ArenaSpawn>();
