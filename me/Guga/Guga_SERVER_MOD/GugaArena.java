@@ -507,6 +507,8 @@ public class GugaArena
 	
 	public boolean IsImortal(String pName)
 	{
+		if(playerImortality.get(pName) == null)
+			return false;
 		if(playerImortality.get(pName) > System.currentTimeMillis())
 			return true;
 		return false;
