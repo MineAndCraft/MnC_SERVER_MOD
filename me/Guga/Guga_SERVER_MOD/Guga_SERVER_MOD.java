@@ -58,6 +58,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		logger.SaveWrapperBreak();
 		logger.SaveWrapperPlace();
 		dbConfig.disconnectDb();
+		AutoSaver.SaveWorldStructures();
 	}
 
 	public void onEnable() 

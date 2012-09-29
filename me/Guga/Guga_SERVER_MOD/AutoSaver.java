@@ -22,7 +22,7 @@ public abstract class AutoSaver
 			public void run()
 			{
 				SaveWorldStructures();
-				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[SERVER] Autosave: Ukladam mapy pro Vase bezpeci...");
+				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] Autosave: Ukladam mapy pro Vase bezpeci...");
 				plugin.log.info("[AutoSaver] Saving worlds...");
 			}
 		}, 24000, 24000);
