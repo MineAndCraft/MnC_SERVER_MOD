@@ -41,7 +41,7 @@ public class GugaConfiguration
 			{
 				FileInputStream fRead = new FileInputStream(config);
 				DataInputStream inStream = new DataInputStream(fRead);
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));		
+				BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream)) ;		
 				String line;
 				String option;
 				boolean value;

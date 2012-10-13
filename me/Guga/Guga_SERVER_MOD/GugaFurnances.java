@@ -117,8 +117,8 @@ public class GugaFurnances
 		file.Close();
 	}
 	
-	public String owner[] = new String[10000];
-	public Location[] location = new Location[10000];
+	public String owner[] = new String[20000];
+	public Location[] location = new Location[20000];
 	private String LockerFile = "plugins/Furnances.dat";
 	public static Guga_SERVER_MOD plugin;
 }
