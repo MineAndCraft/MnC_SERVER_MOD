@@ -1028,10 +1028,10 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("set"))
 			{
-				sender.sendMessage(" /place set players <jmenoPortu> <player1,player2> - Nastavi uzivatele, kteri se mohou pouzivat port.");
+				sender.sendMessage(" /places set players <jmenoPortu> <player1,player2> - Nastavi uzivatele, kteri se mohou pouzivat port.");
 				sender.sendMessage(ChatColor.YELLOW +"- pro soukromy - zadejte pouze vase jmeno.");
 				sender.sendMessage(ChatColor.YELLOW +"- pro verejny  - zadejte \"all\".");
-				sender.sendMessage(" /place set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
+				sender.sendMessage(" /places set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
 			}
 		}
 		else if (args.length == 2)
