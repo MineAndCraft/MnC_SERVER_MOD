@@ -148,6 +148,7 @@ public class ChatHandler
 		else if(plugin.professions.get(p.getName()).GetLevel() < 10)
 		{
 			ChatHandler.SetPrefix(p, "new");
+			p.setPlayerListName(ChatColor.GRAY + p.getName());
 		}
 		else
 		{
