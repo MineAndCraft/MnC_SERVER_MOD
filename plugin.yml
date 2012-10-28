@@ -54,3 +54,6 @@ commands:
         description: Home command
     aw:
         description: Adventure world menu
+    activate:
+        description: For craftcon bonuses activation
+        

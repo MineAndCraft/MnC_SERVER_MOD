@@ -211,7 +211,11 @@ public class GugaVirtualCurrency
 			else if (item == Prices.EGG_ZOMBIE)
 				order = new ItemStack(item.GetItemID(), amount, (short) 54);
 			else if (item==Prices.EGG_OCELOT)
-				order = new ItemStack(item.GetItemID(), amount, (short) 98);		
+				order = new ItemStack(item.GetItemID(), amount, (short) 98);
+			else if (item==Prices.EGG_WITCH)
+				order = new ItemStack(item.GetItemID(), amount, (short) 64);
+			else if (item==Prices.EGG_BAT)
+				order = new ItemStack(item.GetItemID(), amount, (short) 63);
 		}
 		else if(item.toString().contains("WOOL_"))
 		{
@@ -266,6 +270,17 @@ public class GugaVirtualCurrency
 			order = new ItemStack(item.GetItemID(), amount);
 			order.addEnchantment(Enchantment.DIG_SPEED, 5);
 			order.addEnchantment(Enchantment.DURABILITY, 3);
+		}
+		else if(item.toString().contains("HEAD_"))
+		{
+			if (item == Prices.HEAD_SKELETON)
+				order = new ItemStack(item.GetItemID(), amount, (short) 0);
+			else if (item==Prices.HEAD_ZOMBIE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 2);
+			else if (item==Prices.HEAD_STEVE)
+				order = new ItemStack(item.GetItemID(), amount, (short) 3);
+			else if (item==Prices.HEAD_CREEPER)
+				order = new ItemStack(item.GetItemID(), amount, (short) 4);
 		}
 		else
 			order = new ItemStack(item.GetItemID(), amount);

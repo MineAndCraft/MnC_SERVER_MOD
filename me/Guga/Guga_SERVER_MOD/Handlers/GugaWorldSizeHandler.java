@@ -118,10 +118,10 @@ public abstract class GugaWorldSizeHandler
 				}
 			}
 			p.teleport(p.getWorld().getHighestBlockAt(xNew, zNew).getLocation());
-			p.sendMessage("Dosel jste na konec mapy!");
+			ChatHandler.FailMsg(p, "Dosel jste na konec mapy!");
 		}
 	}
 
-	private static int worldSize = 3500; // world size in blocks - in each direction
+	private static int worldSize = 4000; // world size in blocks - in each direction
 	private static int otherWorldSize = 2000;
 }

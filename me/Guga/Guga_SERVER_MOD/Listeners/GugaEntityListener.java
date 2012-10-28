@@ -21,6 +21,7 @@ import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
+import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +33,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaEntityListener implements Listener
@@ -39,6 +41,17 @@ public class GugaEntityListener implements Listener
 	public GugaEntityListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
+	}
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onCreatureSpawnEvent(CreatureSpawnEvent e)
+	{
+		if((e.getEntity() instanceof Wither))
+		{
+			if(!(e.getEntity().getWorld().getName().matches("world_nether")))
+			{
+				e.setCancelled(true);
+			}
+		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityRegainHealth(EntityRegainHealthEvent e)
@@ -279,7 +292,7 @@ public class GugaEntityListener implements Listener
 			Location loc = e.getLocation();
 		    WorldServer localWorldServer = ((CraftWorld)loc.getWorld()).getHandle();
 		    localWorldServer.makeSound(loc.getX(), loc.getY(), loc.getZ(), "random.explode", 4.0F, (1.0F + (localWorldServer.random.nextFloat() - localWorldServer.random.nextFloat()) * 0.2F) * 0.7F);
-		    localWorldServer.a("hugeexplosion", loc.getX(), loc.getY(), loc.getZ(), 0.0D, 0.0D, 0.0D);
+		    localWorldServer.a("hugeexplosion", (int)loc.getX(), (int)loc.getY(), (int)loc.getZ());
 			}catch(Exception ex)
 			{
 				ex.printStackTrace();

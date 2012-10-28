@@ -7,6 +7,8 @@ public enum Prices
 	EMERALD_BLOCK(133, 20, 1),
 	GOLD_BLOCK(41, 5, 1), 
 	DIAMOND_BLOCK(57, 15, 1),
+	BEACON_BLOCK(138, 300, 1),
+	ANVIL(145, 15, 1),
 	SLIMEBALL(341, 5, 1), 
 	SNOWBALL(332, 11, 16), 
 	CLAY(337, 3, 16), 
@@ -31,6 +33,8 @@ public enum Prices
 	EGG_MAGMA_SLIME(383, 10, 1),
 	EGG_MOOSHROOM(383, 10, 1),
 	EGG_OCELOT(383,40, 1),
+	EGG_WITCH(383,60,1),
+	EGG_BAT(383,60,1),
 	MYCELIUM(110, 50, 64), 
 	GOLD_ORE(14,2,1), 
 	IRON_ORE(15,1,1),
@@ -58,6 +62,8 @@ public enum Prices
 	DANDELION(37,5,64),
 	MASHROOM_BROWN(29,10,64),
 	MASHROOM_RED(10,10,64),
+	CARROT(391,30,64),
+	POTATO(392,30,64),
 	CACTUS(81,5,64),
 	VINES(106,10,64),
 	WOOL(35,5,64),
@@ -86,7 +92,11 @@ public enum Prices
 	FISH(349,25,64),
 	SADDLE(329,5,1),
 	BED(355,5,1),
-	SPONGE(19,100,64);
+	SPONGE(19,100,64),
+	HEAD_SKELETON(397, 200, 1),
+	HEAD_ZOMBIE(397, 200, 1),
+	HEAD_CREEPER(397, 200, 1),
+	HEAD_STEVE(397, 200, 1);
 	
 	
 	private Prices(int id, int price, int ammount)
