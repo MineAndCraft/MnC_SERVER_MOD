@@ -2,6 +2,8 @@ package me.Guga.Guga_SERVER_MOD;
 
 import java.util.Random;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
+
 import org.bukkit.ChatColor;
 
 
@@ -74,6 +76,7 @@ public class GugaProfession
 			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
 			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
 			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/world");
+			ChatHandler.InitializeDisplayName(plugin.getServer().getPlayer(playerName));
 		}
 		//if (level <= 20)
 		//{
