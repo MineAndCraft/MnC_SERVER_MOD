@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,11 +59,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		logger.SaveWrapperBreak();
 		logger.SaveWrapperPlace();
 		dbConfig.disconnectDb();
-		AutoSaver.SaveWorldStructures();
 	}
 
 	public void onEnable() 
-	{	
+	{
 		PluginManager pManager = this.getServer().getPluginManager();
 		pManager.registerEvents(pListener, this);
 		pManager.registerEvents(bListener, this);
@@ -130,6 +130,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
+		loadVIPCodes();
+		loadCreditsCodes();
 		//GugaPort.LoadPlaces();
 		GugaRegionHandler.LoadRegions();
 		GugaAuctionHandler.LoadAuctions();
@@ -399,34 +401,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandConfirm((Player)sender,args);
 		 }
-		 //*****************************************/register*****************************************
-		 /*else if(cmd.getName().equalsIgnoreCase("register") && (sender instanceof Player))
-		 {
-			if (config.accountsModule)
-			{
-				GugaCommands.CommandRegister((Player)sender, args);
-				return true;
-			}			
-			else
-			{
-				sender.sendMessage("This is not enabled on this server!");
-				return true;
-			}
-		 }*/
-		 /*else if(cmd.getName().equalsIgnoreCase("password") && (sender instanceof Player))
-		 {
-			 if (config.accountsModule)
-				{
-				 GugaCommands.CommandPassword((Player)sender, args);
-					return true;
-				}			
-				else
-				{
-					sender.sendMessage("This is not enabled on this server!");
-					return true;
-				}
-		 }*/
-		//*****************************************/lock*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
 		 {
 			 if (config.chestsModule)
@@ -468,6 +442,39 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 {
 				 sender.sendMessage("This is not enabled on this server!");
 				 return true;
+			 }
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("activate") && (sender instanceof Player))
+		 {
+			 if(args.length != 2)
+				 return false;
+			 if(args[0].equalsIgnoreCase("credits"))
+			 {
+				 if(creditsCodes.contains(args[1]))
+				 {
+					 GugaVirtualCurrency curr = this.FindPlayerCurrency(sender.getName());
+					 curr.AddCurrency(500);
+					 creditsCodes.remove(args[1]);
+					 saveCreditsCodes();
+					 logger.LogShopTransaction(Prices.ARROW, 1, sender.getName()+";CRAFTCON;CREDITS;"+args[1]);
+					 ChatHandler.SuccessMsg((Player)sender, "Vase kredity z Craftconu byly pripsany!");
+				 }
+			 }
+			 else if(args[0].equalsIgnoreCase("vip"))
+			 {
+				 if(vipCodes.contains(args[1]))
+				 {
+					GugaVirtualCurrency curr = this.FindPlayerCurrency(sender.getName());
+					int months = 1;
+					Calendar c = Calendar.getInstance();
+					c.setTime(new Date());
+					c.add(Calendar.MONTH, months);	
+					curr.SetExpirationDate(c.getTime());
+					logger.LogShopTransaction(Prices.ARROW, 1, sender.getName()+";CRAFTCON;VIP;"+args[1]);
+					vipCodes.remove(args[1]);
+					saveVIPCodes();
+					ChatHandler.SuccessMsg((Player)sender, "Vase VIP z Craftconu bylo aktivovano do " + c.getTime() + "!");
+				 }
 			 }
 		 }
 		}
@@ -624,6 +631,46 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		return tpLoc;
 	}
 	
+	public void loadCreditsCodes()
+	{
+		GugaFile file = new GugaFile("plugins/CreditsCodes.dat", GugaFile.READ_MODE);
+		String line;
+		while((line = file.ReadLine()) != null)
+		{
+			this.creditsCodes.add(line);
+		}
+		file.Close();
+	}
+	public void saveCreditsCodes()
+	{
+		GugaFile file = new GugaFile("plugins/CreditsCodes.dat", GugaFile.WRITE_MODE);
+		Iterator<String> i = creditsCodes.iterator();
+		while(i.hasNext())
+		{
+			file.WriteLine(i.next());
+		}
+		file.Close();
+	}
+	public void loadVIPCodes()
+	{
+		GugaFile file = new GugaFile("plugins/VipCodes.dat", GugaFile.READ_MODE);
+		String line;
+		while((line = file.ReadLine()) != null)
+		{
+			this.vipCodes.add(line);
+		}
+		file.Close();
+	}
+	public void saveVIPCodes()
+	{
+		GugaFile file = new GugaFile("plugins/VipCodes.dat", GugaFile.WRITE_MODE);
+		Iterator<String> i = vipCodes.iterator();
+		while(i.hasNext())
+		{
+			file.WriteLine(i.next());
+		}
+		file.Close();
+	}
 	public HashMap<String,GugaProfession> professions = new HashMap<String,GugaProfession>();
 	
 	// ************* chances *************
@@ -658,4 +705,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public AdventureWorld AdventureWorld = new AdventureWorld(this);
 	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();
 	public HashMap <Player,GugaAccounts> accounts = new HashMap<Player, GugaAccounts>();
+	public ArrayList<String> creditsCodes = new ArrayList<String>();
+	public ArrayList<String> vipCodes = new ArrayList<String>();
+	
 }
