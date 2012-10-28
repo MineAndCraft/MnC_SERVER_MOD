@@ -151,7 +151,7 @@ public class GugaChests
 		
 		file.Close();
 	}
-	public class Chest
+	public static class Chest
 	{
 		public Chest(String owner, Location location)
 		{

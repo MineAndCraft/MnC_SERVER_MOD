@@ -1,5 +1,10 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import me.Guga.Guga_SERVER_MOD.GugaChests.Chest;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -12,53 +17,32 @@ public class GugaDispensers
 	}
 	public void LockBlock(Block furnance,String chestOwner)
 	{
-		int i = 0;
-		while (location[i] != null)
-		{
-			i++;
-		}
-		location[i] = furnance.getLocation();
-		owner[i] = chestOwner;
+		chestList.add(new Chest(chestOwner, furnance.getLocation()));
 		SaveDispensers();
 	}
 	public void UnlockBlock(Block furnance,String chestOwner)
 	{
-		Location bufferLoc[] = new Location[10000];
-		String bufferOwn[] = new String[10000];
-		int i = 0;
-		int i2 = 0;
-		while (location[i2] != null)
+		Iterator<Chest> i = chestList.iterator();
+		int index = 0;
+		while (i.hasNext())
 		{
-			if (LocationEquals(location[i],furnance.getLocation()))
-			{
-				i2++;
-			}
-			bufferLoc[i] = location[i2];
-			bufferOwn[i] = owner[i2];
-			i++;
-			i2++;
+			Chest c = i.next();
+			if (LocationEquals(c.GetLocation(), furnance.getLocation()))
+				break;
+
+			index++;
 		}
-		i=0;
-		location = new Location[10000];
-		owner = new String[10000];
-		while (bufferLoc[i] != null)
-		{
-			location[i] = bufferLoc[i];
-			owner[i] = bufferOwn[i];
-			i++;
-		}
+		chestList.remove(index);
 		SaveDispensers();
 	}
 	public String GetBlockOwner(Block chest)
 	{
-		int i = 0;
-		while (location[i] != null)
+		Iterator<Chest> i = chestList.iterator();
+		while (i.hasNext())
 		{
-			if (LocationEquals(location[i],chest.getLocation()))
-			{
-				return owner[i];
-			}
-			i++;
+			Chest c = i.next();
+			if (LocationEquals(c.GetLocation(), chest.getLocation()))
+				return c.GetOwner();
 		}
 		return "notFound";
 	}
@@ -68,7 +52,7 @@ public class GugaDispensers
 		GugaFile file = new GugaFile(LockerFile, GugaFile.READ_MODE);
 		file.Open();
 		String line;
-		int i = 0;
+		//int i = 0;
 		double locX;
 		double locY;
 		double locZ;
@@ -77,9 +61,8 @@ public class GugaDispensers
 			locX = Double.parseDouble(line.split(";")[0]);
 			locY = Double.parseDouble(line.split(";")[1]);
 			locZ = Double.parseDouble(line.split(";")[2]);
-			location[i] = new Location(plugin.getServer().getWorld("world"),locX, locY, locZ);
-			owner[i] = line.split(";")[3];
-			i++;
+			/*location[i] =*/  chestList.add(new Chest(line.split(";")[3], new Location(plugin.getServer().getWorld("world"),locX, locY, locZ)));
+			//i++;
 		}
 		file.Close();
 	}
@@ -102,23 +85,23 @@ public class GugaDispensers
 		plugin.log.info("Saving Dispensers Data...");
 		GugaFile file = new GugaFile(LockerFile, GugaFile.WRITE_MODE);
 		file.Open();
-		int i = 0;
-		while (location[i] != null)
+
+		Iterator<Chest> i = chestList.iterator();
+		while (i.hasNext())
 		{
-			String x = Integer.toString(location[i].getBlockX());
-			String y = Integer.toString(location[i].getBlockY());
-			String z = Integer.toString(location[i].getBlockZ());
+			Chest chest = i.next();
+			String x = Integer.toString(chest.GetLocation().getBlockX());
+			String y = Integer.toString(chest.GetLocation().getBlockY());
+			String z = Integer.toString(chest.GetLocation().getBlockZ());
 			
 			String line;
-			line = x+";"+y+";"+z+";"+owner[i];
+			line = x+";"+y+";"+z+";"+chest.GetOwner();
 			file.WriteLine(line);
-			i++;
 		}
+		
 		file.Close();
 	}
-	
-	public String owner[] = new String[20000];
-	public Location[] location = new Location[20000];
+	public ArrayList<Chest> chestList = new ArrayList<Chest>();
 	private String LockerFile = "plugins/Dispensers.dat";
 	public static Guga_SERVER_MOD plugin;
 }
