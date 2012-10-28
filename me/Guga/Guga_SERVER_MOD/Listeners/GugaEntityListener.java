@@ -179,7 +179,7 @@ public class GugaEntityListener implements Listener
 			{
 				String author = "Virus";
 				String title = "Pribeh boha Viruse!";
-				String[] pages = {"Zemrel jsem za svuj milovany lid. Dokaz ze jsi mi verny a napis do chatu: Virus ne buh!"};
+				String[] pages = {"Zemrel jsem za svuj milovany lid. Dokaz ze jsi mi verny a napis do chatu: Virus je buh!"};
 				Book book = new Book(title, author, pages);
 				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
 				p.getInventory().clear();
