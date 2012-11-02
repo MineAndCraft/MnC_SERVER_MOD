@@ -103,12 +103,7 @@ public class AdventureWorld
 	}
 	public static boolean regionStatus()
 	{
-		if(region==true)
-		{
-			return true;
-		}
-		else
-			return false;
+		return region;
 	}
 	private Guga_SERVER_MOD plugin;
 	private static boolean region = true;

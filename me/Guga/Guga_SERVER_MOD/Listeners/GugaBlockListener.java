@@ -69,6 +69,16 @@ public class GugaBlockListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
+		if(plugin.AdventureWorld.IsAdventureWorld(p.getLocation()) && plugin.AdventureWorld.regionStatus())
+		{
+			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
+			{
+				return;
+			}
+			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes kopat!");
+			e.setCancelled(true);
+			return;
+		}
 		if (!GugaRegionHandler.CanInteract(p, e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
