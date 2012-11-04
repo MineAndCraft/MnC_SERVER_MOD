@@ -25,7 +25,7 @@ public abstract class AutoSaver
 				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] Autosave: Ukladam mapy pro Vase bezpeci...");
 				plugin.log.info("[AutoSaver] Saving worlds...");
 			}
-		}, 24000, 24000);
+		}, 12000, 12000);
 	}
 	
 	public static void SaveWorldStructures()
@@ -52,5 +52,6 @@ public abstract class AutoSaver
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "save-all");
 		plugin.getServer().savePlayers();
 	}
+	
 	private static Guga_SERVER_MOD plugin;
 }
