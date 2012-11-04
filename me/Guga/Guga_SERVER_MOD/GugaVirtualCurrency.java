@@ -213,9 +213,9 @@ public class GugaVirtualCurrency
 			else if (item==Prices.EGG_OCELOT)
 				order = new ItemStack(item.GetItemID(), amount, (short) 98);
 			else if (item==Prices.EGG_WITCH)
-				order = new ItemStack(item.GetItemID(), amount, (short) 64);
+				order = new ItemStack(item.GetItemID(), amount, (short) 66);
 			else if (item==Prices.EGG_BAT)
-				order = new ItemStack(item.GetItemID(), amount, (short) 63);
+				order = new ItemStack(item.GetItemID(), amount, (short) 65);
 		}
 		else if(item.toString().contains("WOOL_"))
 		{
