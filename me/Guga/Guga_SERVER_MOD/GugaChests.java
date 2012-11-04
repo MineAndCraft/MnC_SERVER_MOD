@@ -15,42 +15,11 @@ public class GugaChests
 	}
 	public void LockBlock(Block chest,String chestOwner)
 	{
-		//int i = 0;
-		/*while (location[i] != null)
-		{
-			i++;
-		}
-		location[i] = chest.getLocation();
-		owner[i] = chestOwner;**/
 		chestList.add(new Chest(chestOwner, chest.getLocation()));
 		SaveChests();
 	}
 	public void UnlockBlock(Block chest,String chestOwner)
 	{
-		/*Location bufferLoc[] = new Location[20000];
-		String bufferOwn[] = new String[20000];
-		int i = 0;
-		int i2 = 0;
-		while (location[i2] != null)
-		{
-			if (LocationEquals(location[i],chest.getLocation()))
-			{
-				i2++;
-			}
-			bufferLoc[i] = location[i2];
-			bufferOwn[i] = owner[i2];
-			i++;
-			i2++;
-		}
-		i=0;
-		location = new Location[20000];
-		owner = new String[20000];
-		while (bufferLoc[i] != null)
-		{
-			location[i] = bufferLoc[i];
-			owner[i] = bufferOwn[i];
-			i++;
-		}*/
 		Iterator<Chest> i = chestList.iterator();
 		int index = 0;
 		while (i.hasNext())
@@ -66,15 +35,6 @@ public class GugaChests
 	}
 	public String GetBlockOwner(Block chest)
 	{
-		/*int i = 0;
-		while (location[i] != null)
-		{
-			if (LocationEquals(location[i],chest.getLocation()))
-			{
-				return owner[i];
-			}
-			i++;
-		}*/
 		Iterator<Chest> i = chestList.iterator();
 		while (i.hasNext())
 		{
@@ -91,7 +51,6 @@ public class GugaChests
 		GugaFile file = new GugaFile(LockerFile, GugaFile.READ_MODE);
 		file.Open();
 		String line;
-		//int i = 0;
 		double locX;
 		double locY;
 		double locZ;
@@ -100,8 +59,7 @@ public class GugaChests
 			locX = Double.parseDouble(line.split(";")[0]);
 			locY = Double.parseDouble(line.split(";")[1]);
 			locZ = Double.parseDouble(line.split(";")[2]);
-			/*location[i] =*/  chestList.add(new Chest(line.split(";")[3], new Location(plugin.getServer().getWorld("world"),locX, locY, locZ)));
-			//i++;
+			chestList.add(new Chest(line.split(";")[3], new Location(plugin.getServer().getWorld("world"),locX, locY, locZ)));
 		}
 		file.Close();
 	}
@@ -124,18 +82,6 @@ public class GugaChests
 		plugin.log.info("Saving Chests Data...");
 		GugaFile file = new GugaFile(LockerFile, GugaFile.WRITE_MODE);
 		file.Open();
-		/*int i = 0;
-		while (location[i] != null)
-		{
-			String x = Integer.toString(location[i].getBlockX());
-			String y = Integer.toString(location[i].getBlockY());
-			String z = Integer.toString(location[i].getBlockZ());
-			
-			String line;
-			line = x+";"+y+";"+z+";"+owner[i];
-			file.WriteLine(line);
-			i++;
-		}*/
 		Iterator<Chest> i = chestList.iterator();
 		while (i.hasNext())
 		{
@@ -164,8 +110,6 @@ public class GugaChests
 		private Location location;
 	}
 	public ArrayList<Chest> chestList = new ArrayList<Chest>();
-	//public String owner[] = new String[20000];
-	//public Location[] location = new Location[20000];
 	private String LockerFile = "plugins/Chests.dat";
 	public static Guga_SERVER_MOD plugin;
 }
