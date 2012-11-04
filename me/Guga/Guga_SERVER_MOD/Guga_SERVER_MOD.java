@@ -84,6 +84,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
 		GugaTeams.SetPlugin(this);
+		Votes.setPlugin(this);
 		//GugaFlyHandler.SetPlugin(this);
 		ChatHandler.SetPlugin(this);
 		BasicWorld.SetPlugin(this);
@@ -152,6 +153,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
+		Votes.Start();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();

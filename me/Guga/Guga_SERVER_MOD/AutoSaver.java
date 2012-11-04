@@ -52,6 +52,5 @@ public abstract class AutoSaver
 		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "save-all");
 		plugin.getServer().savePlayers();
 	}
-	
 	private static Guga_SERVER_MOD plugin;
 }
