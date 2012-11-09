@@ -1317,7 +1317,12 @@ public abstract class GugaCommands
 			sender.sendMessage("Commands:");
 			sender.sendMessage("/ew join - Teleportuje hrace do eventWorldu");
 			sender.sendMessage("/ew leave - Vrati hrace do normalniho sveta");
-			if(GameMasterHandler.IsAtleastGM(sender.getName()))
+			GameMaster gm = GameMasterHandler.GetGMByName(sender.getName());
+			if((gm = GameMasterHandler.GetGMByName(sender.getName())) == null)
+			{
+				return;
+			}
+			if(GameMasterHandler.IsAtleastGM(sender.getName()) || gm.GetRank() == Rank.EVENTER )
 			{
 				sender.sendMessage("/ew togglemobs - Toggle mobs on/off");
 				sender.sendMessage("/ew togglepvp - Toggle PvP on/off");
@@ -1327,7 +1332,6 @@ public abstract class GugaCommands
 					sender.sendMessage("/eventworld setspawn - Sets a EventWorld spawn to GM's position");
 				}
 			}
-			GameMaster gm = GameMasterHandler.GetGMByName(sender.getName());
 			if(gm.GetRank() == Rank.EVENTER)
 			{
 				sender.sendMessage("/ew mode");
@@ -1343,6 +1347,7 @@ public abstract class GugaCommands
 			}
 			else
 			{
+				GameMaster gm = GameMasterHandler.GetGMByName(sender.getName());
 				if (subCommand.matches("join"))
 				{
 					if (!plugin.EventWorld.IsEventWorld(sender.getLocation()))
@@ -1385,19 +1390,19 @@ public abstract class GugaCommands
 						ChatHandler.FailMsg(sender,"Tento prikaz funguje jen v EW");
 					}
 				}
-				else if(subCommand.matches("togglepvp") && GameMasterHandler.IsAtleastGM(sender.getName()))
+				else if(subCommand.matches("togglepvp") && (GameMasterHandler.IsAtleastGM(sender.getName())) || gm.GetRank() == Rank.EVENTER )
 				{
 					plugin.EventWorld.togglePvP(sender);
 				}
-				else if(subCommand.matches("togglemobs") && GameMasterHandler.IsAtleastGM(sender.getName()))
+				else if(subCommand.matches("togglemobs") && (GameMasterHandler.IsAtleastGM(sender.getName())) || gm.GetRank() == Rank.EVENTER )
 				{
 					plugin.EventWorld.toggleMobs(sender);
 				}
-				else if(subCommand.matches("toggleregion")&& GameMasterHandler.IsAtleastGM(sender.getName()))
+				else if(subCommand.matches("toggleregion") && (GameMasterHandler.IsAtleastGM(sender.getName())) || gm.GetRank() == Rank.EVENTER )
 				{
 					plugin.EventWorld.toggleRegion(sender);
 				}
-				else if(subCommand.matches("setspawn")&&GameMasterHandler.IsAdmin(sender.getName()))
+				else if(subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
 				{
 					Location l = sender.getLocation();
 					sender.getWorld().setSpawnLocation((int)l.getX(), (int)l.getY(), (int)l.getZ());
