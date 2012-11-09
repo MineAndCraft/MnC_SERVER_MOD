@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 
 
+import me.Guga.Guga_SERVER_MOD.AdventureWorld;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
 import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
@@ -75,7 +76,7 @@ public class GugaBlockListener implements Listener
 			{
 				return;
 			}
-			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes kopat!");
+			p.sendMessage(ChatColor.BLUE+"[ADVENTUREWORLD]: "+ChatColor.WHITE+"V AW nemuzes kopat!");
 			e.setCancelled(true);
 			return;
 		}
@@ -356,6 +357,16 @@ public class GugaBlockListener implements Listener
 				return;
 			}
 			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes pokladat blocky!");
+			e.setCancelled(true);
+			return;
+		}
+		if(plugin.EventWorld.IsEventWorld(p.getLocation()) && plugin.AdventureWorld.regionStatus())
+		{
+			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
+			{
+				return;
+			}
+			p.sendMessage(ChatColor.BLUE+"[ADVENTUREWORLD]: "+ChatColor.WHITE+"V AW nemuzes pokladat blocky!");
 			e.setCancelled(true);
 			return;
 		}

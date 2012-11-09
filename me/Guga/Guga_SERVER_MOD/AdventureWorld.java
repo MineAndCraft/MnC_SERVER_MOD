@@ -101,7 +101,7 @@ public class AdventureWorld
 			p.sendMessage("AdventureWorld is off");	
 		}
 	}
-	public static boolean regionStatus()
+	public boolean regionStatus()
 	{
 		return region;
 	}
