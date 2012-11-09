@@ -146,8 +146,28 @@ public class Votes
         }
         return votes;
 	}
-	
-	private static void saveUrl(String filename, String urlString) throws MalformedURLException, IOException
+	public static void addCredits()
+	{
+		GugaFile file = new GugaFile("plugins/votes.txt", GugaFile.READ_MODE);
+		String line;
+		String[]splittedLine;
+		while((line = file.ReadLine()) != null)
+		{
+			splittedLine = line.split(";");
+			GugaVirtualCurrency curr = plugin.FindPlayerCurrency(splittedLine[0]);
+			if((curr != null) && (splittedLine[3].matches("standard access")))
+			{
+				plugin.getServer().broadcastMessage("Player " + splittedLine[0] + " gets 5 credits!");
+				curr.AddCurrency(5);
+			}
+			else if(splittedLine[3].matches("corrupted access"))
+			{
+				plugin.getServer().broadcastMessage("Player " + splittedLine[0] + " corrupted access!");
+			}
+			
+		}
+	}
+	public static void saveUrl(String filename, String urlString) throws MalformedURLException, IOException
     {
     	BufferedInputStream in = null;
     	FileOutputStream fout = null;
