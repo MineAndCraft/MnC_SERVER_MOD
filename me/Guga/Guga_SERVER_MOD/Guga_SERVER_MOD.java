@@ -154,6 +154,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
 		Votes.Start();
+		this.autoKicker.startThread();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
@@ -698,6 +699,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
 	public final GugaMessageListener msgListener = new GugaMessageListener(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
+	public final AutoKicker autoKicker = new AutoKicker(this);
 	public GugaChests chests;
 	public GugaFurnances furnances;
 	public GugaDispensers dispensers;

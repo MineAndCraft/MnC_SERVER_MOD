@@ -1,5 +1,4 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
-import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -466,6 +465,7 @@ public class GugaPlayerListener implements Listener
 			GugaWorldSizeHandler.MoveBack(p);
 		else if (p.getLocation().getBlockY() < 0)
 			p.teleport(plugin.GetAvailablePortLocation(p.getLocation()));
+		plugin.autoKicker.addPlayer(p.getName(), System.currentTimeMillis() + (15 * 60 * 1000));
 	}
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent e)
