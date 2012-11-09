@@ -1,4 +1,5 @@
 package me.Guga.Guga_SERVER_MOD.Listeners;
+import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -6,6 +7,7 @@ import java.util.Random;
 
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
+import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
 import me.Guga.Guga_SERVER_MOD.GugaMute;
@@ -117,7 +119,7 @@ public class GugaPlayerListener implements Listener
 		int maxP = plugin.getServer().getMaxPlayers();
 		if(plugin.getServer().getOnlinePlayers().length == maxP)
 		{
-			if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER) || curr.IsVip())
+			if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER) || curr.IsVip() || (GugaEvent.GetPlayers().contains(p.getName())))
 			{
 				Player[]players = plugin.getServer().getOnlinePlayers();
 				int i = 0;
@@ -126,7 +128,7 @@ public class GugaPlayerListener implements Listener
 				do{
 					int iToKick = r.nextInt(maxP - 1);
 					curr = plugin.FindPlayerCurrency(players[iToKick].getName());
-					if(curr.IsVip() || GameMasterHandler.IsAtleastRank(players[iToKick].getName(), Rank.BUILDER))
+					if(curr.IsVip() || GameMasterHandler.IsAtleastRank(players[iToKick].getName(), Rank.BUILDER) || (GugaEvent.GetPlayers().contains(p.getName())))
 					{
 						isKicked = false;
 					}
