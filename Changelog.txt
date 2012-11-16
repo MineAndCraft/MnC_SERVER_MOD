@@ -1,3 +1,28 @@
+3.5.6
+Author: Rikub
+	- Command /event is ready to use for eventers
+	- Command /event msg for eventers added
+	- Command /ew is ready to use for eventers
+	- Name of table for logins changed
+	- Database connect is fired on server start
+	- MAC adress removed from Joins Logger
+	- Kick for non-logged player after 30 sec
+	- Player cant log in when player with same name is online
+	- Command /gm ban whitelist added
+	- Places only for VIPs added
+	- World autosaver added
+	- Arena imortallity for 3 sec ofter /arena join added
+	- Arena's win removed
+	- Commands for Craftcon bonuses activation added
+	- Fixed bug in cmd. desc. of /places set
+	- Updated shop
+		- Added new eggs (bat, witch)
+		- Added new blocks of 1.4.2
+	- Noobs will be less significant in PlayerList
+Author: Guga
+	- Dispensers, furnances fix 
+Author: Stanley/Rikub
+	- Automatic adding of credits (from voting on czech-craft.eu)
 3.5.5
 Author:Rikub
 	- Plugin updated for bukkit 1.3.2 (2352)

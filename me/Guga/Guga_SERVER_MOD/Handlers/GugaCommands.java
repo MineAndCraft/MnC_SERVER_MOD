@@ -1347,7 +1347,6 @@ public abstract class GugaCommands
 			}
 			else
 			{
-				GameMaster gm = GameMasterHandler.GetGMByName(sender.getName());
 				if (subCommand.matches("join"))
 				{
 					if (!plugin.EventWorld.IsEventWorld(sender.getLocation()))
@@ -1390,15 +1389,15 @@ public abstract class GugaCommands
 						ChatHandler.FailMsg(sender,"Tento prikaz funguje jen v EW");
 					}
 				}
-				else if(subCommand.matches("togglepvp") && (GameMasterHandler.IsAtleastGM(sender.getName())) || gm.GetRank() == Rank.EVENTER )
+				else if(subCommand.matches("togglepvp") && GameMasterHandler.IsAtleastRank(sender.getName(), Rank.EVENTER))
 				{
 					plugin.EventWorld.togglePvP(sender);
 				}
-				else if(subCommand.matches("togglemobs") && (GameMasterHandler.IsAtleastGM(sender.getName())) || gm.GetRank() == Rank.EVENTER )
+				else if(subCommand.matches("togglemobs") && GameMasterHandler.IsAtleastRank(sender.getName(), Rank.EVENTER))
 				{
 					plugin.EventWorld.toggleMobs(sender);
 				}
-				else if(subCommand.matches("toggleregion") && (GameMasterHandler.IsAtleastGM(sender.getName())) || gm.GetRank() == Rank.EVENTER )
+				else if(subCommand.matches("toggleregion") && GameMasterHandler.IsAtleastRank(sender.getName(), Rank.EVENTER))
 				{
 					plugin.EventWorld.toggleRegion(sender);
 				}
@@ -2805,7 +2804,7 @@ public abstract class GugaCommands
 						while (i.hasNext())
 						{
 							GugaRegion region = i.next();
-							String[] owners = region.GetOwners();
+							String[] owners = region.GetPlayers();
 							int[] coords = region.GetCoords();
 							sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
 						}
