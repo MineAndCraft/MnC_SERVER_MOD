@@ -16,7 +16,6 @@ public class AutoKicker
 		this.plugin.scheduler.scheduleSyncRepeatingTask(this.plugin, new Runnable() {
 			public void run()
 			{
-				plugin.log.info("Kick");
 				kickUnactivePlayers();
 			}
 		}, 300, 300);
