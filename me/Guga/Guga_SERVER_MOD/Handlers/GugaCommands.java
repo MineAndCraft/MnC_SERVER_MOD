@@ -45,7 +45,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 public abstract class GugaCommands 
 {
 	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
@@ -621,7 +620,7 @@ public abstract class GugaCommands
 			else if (subCommand.matches("item"))
 			{
 				sender.sendMessage("Item Menu:");
-				sender.sendMessage("/vip item add <itemID>  -  Prida stack daneho itemu.");
+				sender.sendMessage("/vip item add <itemID> <pocetStacku> -  Prida dany pocet stacku daneho itemu.");
 				sender.sendMessage("/vip item list - Vypise vsechny dostupne itemy a jejich ID.");
 			}
 			else if(subCommand.matches("nohunger"))
@@ -785,16 +784,7 @@ public abstract class GugaCommands
 			{
 				if (arg1.matches("add"))
 				{
-					int itemID = Integer.parseInt(arg2);
-					if (VipItems.IsVipItem(itemID))
-					{
-						ItemStack item = new ItemStack(itemID, 64);
-						PlayerInventory pInventory = sender.getInventory();
-						pInventory.addItem(item);
-						sender.sendMessage("Item pridan!");
-					}
-					else
-						sender.sendMessage("Tento item nejde pridat!");
+					ChatHandler.FailMsg(sender, "Tento prikaz byl nahrazen! Viz prikaz /vip");
 				}
 			}
 			else if (subCommand.matches("time"))
@@ -810,6 +800,30 @@ public abstract class GugaCommands
 					else 
 						sender.sendMessage("Tato hodnota nelze nastavit!");
 				}
+			}
+		}
+		else if (args.length == 4)
+		{
+			String subCommand = args[0];
+			if(subCommand.matches("item"))
+			{
+				int itemID = Integer.parseInt(args[2]);
+				if(VipItems.IsVipItem(itemID))
+				{
+					if(args[1].matches("add"))
+					{
+						int numberOfStacks = Integer.parseInt(args[3]);
+						int i = 0;
+						while(i<numberOfStacks)
+						{
+							sender.getInventory().addItem(new ItemStack(itemID, 64));
+							i++;
+						}
+						ChatHandler.SuccessMsg(sender, "Itemy byly pridany!");
+					}
+				}
+				else
+					ChatHandler.FailMsg(sender, "Tento item nelze pridat!");
 			}
 		}
 	}
@@ -2199,7 +2213,7 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("save-all") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
-				AutoSaver.SaveAll();
+				AutoSaver.SaveWorldStructures();
 				ChatHandler.SuccessMsg(sender, "Successfully saved!");
 			}
 			else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
@@ -2804,7 +2818,7 @@ public abstract class GugaCommands
 						while (i.hasNext())
 						{
 							GugaRegion region = i.next();
-							String[] owners = region.GetPlayers();
+							String[] owners = region.GetOwners();
 							int[] coords = region.GetCoords();
 							sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
 						}
