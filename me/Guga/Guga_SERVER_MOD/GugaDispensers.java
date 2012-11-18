@@ -56,13 +56,14 @@ public class GugaDispensers
 		double locX;
 		double locY;
 		double locZ;
+		String world;
 		while ((line = file.ReadLine()) != null)
 		{
 			locX = Double.parseDouble(line.split(";")[0]);
 			locY = Double.parseDouble(line.split(";")[1]);
 			locZ = Double.parseDouble(line.split(";")[2]);
-			/*location[i] =*/  chestList.add(new Chest(line.split(";")[3], new Location(plugin.getServer().getWorld("world"),locX, locY, locZ)));
-			//i++;
+			world = line.split(";")[3];
+			chestList.add(new Chest(line.split(";")[4], new Location(plugin.getServer().getWorld(world),locX, locY, locZ)));
 		}
 		file.Close();
 	}
@@ -74,7 +75,10 @@ public class GugaDispensers
 			{
 				if (loc1.getBlockZ() == loc2.getBlockZ())
 				{
-					return true;
+					if(loc1.getWorld() == loc2.getWorld())
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -93,9 +97,9 @@ public class GugaDispensers
 			String x = Integer.toString(chest.GetLocation().getBlockX());
 			String y = Integer.toString(chest.GetLocation().getBlockY());
 			String z = Integer.toString(chest.GetLocation().getBlockZ());
-			
+			String world = chest.GetLocation().getWorld().getName();
 			String line;
-			line = x+";"+y+";"+z+";"+chest.GetOwner();
+			line = x+";"+y+";"+z+";"+world+";"+chest.GetOwner();
 			file.WriteLine(line);
 		}
 		
