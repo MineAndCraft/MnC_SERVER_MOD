@@ -154,7 +154,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
 		Votes.Start();
-		this.autoKicker.startThread();
+		//this.autoKicker.startThread();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
