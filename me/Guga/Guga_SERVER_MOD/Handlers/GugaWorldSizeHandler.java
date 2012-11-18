@@ -122,6 +122,6 @@ public abstract class GugaWorldSizeHandler
 		}
 	}
 
-	private static int worldSize = 4000; // world size in blocks - in each direction
-	private static int otherWorldSize = 2000;
+	private static int worldSize = 3500; // world size in blocks - in each direction
+	private static int otherWorldSize = 1500;
 }
