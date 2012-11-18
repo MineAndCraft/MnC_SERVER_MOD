@@ -163,7 +163,6 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Prosim zvolte si jmeno!");
 			return;
 		}
-
 		plugin.logger.LogPlayerJoins(p.getName() ,p.getAddress().toString());
 		GugaAuctionHandler.CheckPayments(p);
 		if (plugin.debug)
@@ -653,12 +652,20 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e)
 	{
-		GameMaster gm = GameMasterHandler.GetGMByName(e.getPlayer().getName());
+		Player p = e.getPlayer();
+		if(p.getAllowFlight())
+		{
+			if(p.getGameMode() == GameMode.SURVIVAL)
+			{
+				p.setFlying(false);
+				p.setAllowFlight(false);
+			}
+		}
+		GameMaster gm = GameMasterHandler.GetGMByName(p.getName());
 		if(gm != null)
 		{
 			if(gm.GetRank() == Rank.EVENTER)
 			{
-				Player p = e.getPlayer();
 				if(e.getFrom().getName().matches("world_event"))
 				{
 					p.setGameMode(GameMode.SURVIVAL);
