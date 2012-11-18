@@ -1,6 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
@@ -25,12 +26,16 @@ public abstract class AutoSaver
 				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] Autosave: Ukladam mapy pro Vase bezpeci...");
 				plugin.log.info("[AutoSaver] Saving worlds...");
 			}
-		}, 12000, 12000);
+		}, 18000, 18000);
 	}
 	
 	public static void SaveWorldStructures()
 	{
-		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "save-all");
+		for(World world : plugin.getServer().getWorlds())
+		{
+			world.save();
+			plugin.log.info("Saving world " + world.getName() + ".");
+		}
 		plugin.getServer().savePlayers();
 	}
 	public static void SaveAll()
@@ -47,10 +52,6 @@ public abstract class AutoSaver
 		SpawnsHandler.SaveSpawns();
 		plugin.arena.SavePvpStats();
 		plugin.arena.SaveArenas();
-		plugin.logger.SaveWrapperBreak();
-		plugin.logger.SaveWrapperPlace();
-		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "save-all");
-		plugin.getServer().savePlayers();
 	}
 	private static Guga_SERVER_MOD plugin;
 }
