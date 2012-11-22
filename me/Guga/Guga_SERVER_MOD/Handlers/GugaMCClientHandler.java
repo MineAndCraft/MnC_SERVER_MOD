@@ -150,7 +150,7 @@ public abstract class GugaMCClientHandler
 	
 	private static String skinPoolPath = "/usr/SkinPool/";
 	private static String skinRealPath = "/home/apps/Skins/Body/";
-	private static String whiteListPath = "plugins/whiteListMAC.dat";
-	private static String minecraftOwnPath = "plugins/mcOwners.dat";
+	private static String whiteListPath = "plugins/MineAndCraft_plugin/whiteListMAC.dat";
+	private static String minecraftOwnPath = "plugins/MineAndCraft_plugin/mcOwners.dat";
 	private static Guga_SERVER_MOD plugin;
 }

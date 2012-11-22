@@ -149,6 +149,6 @@ public abstract class GugaAnnouncement
 	private static ArrayList<String> messages = new ArrayList<String>();
 	private static int position = 0;
 	private static int taskID;
-	private static String announcementFile = "plugins/Announcements.dat";
+	private static String announcementFile = "plugins/MineAndCraft_plugin/Announcements.dat";
 	private static Guga_SERVER_MOD plugin;
 }

@@ -258,6 +258,6 @@ public abstract class GugaBanHandler
 	private static ArrayList<GugaBan> bans = new ArrayList<GugaBan>();
 	private static ArrayList<String> whitelistedPlayers = new ArrayList<String>();
 	
-	private static String whitelistedPlayersPath="plugins/whiteListIP.dat";
-	private static String bansFile = "plugins/Bans.dat";
+	private static String whitelistedPlayersPath="plugins/MineAndCraft_plugin/whiteListIP.dat";
+	private static String bansFile = "plugins/MineAndCraft_plugin/Bans.dat";
 }

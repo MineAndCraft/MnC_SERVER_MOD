@@ -116,6 +116,6 @@ public class GugaChests
 		private Location location;
 	}
 	public ArrayList<Chest> chestList = new ArrayList<Chest>();
-	private String LockerFile = "plugins/Chests.dat";
+	private String LockerFile = "plugins/MineAndCraft_plugin/Chests.dat";
 	public static Guga_SERVER_MOD plugin;
 }

@@ -46,7 +46,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SaveProfessions();
 		SaveCurrency();
 		GugaAnnouncement.SaveAnnouncements();
-		GugaPort.SavePlaces();
 		GugaRegionHandler.SaveRegions();
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();
@@ -56,8 +55,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
-		logger.SaveWrapperBreak();
-		logger.SaveWrapperPlace();
+		//logger.SaveWrapperBreak();
+		//logger.SaveWrapperPlace();
 		dbConfig.disconnectDb();
 	}
 
@@ -73,7 +72,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaMCClientHandler.SetPlugin(this);
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "Guga");
 		Bukkit.getMessenger().registerIncomingPluginChannel(this, "Guga", msgListener);
-		GugaPort.SetPlugin(this);
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
@@ -636,7 +634,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	
 	public void loadCreditsCodes()
 	{
-		GugaFile file = new GugaFile("plugins/CreditsCodes.dat", GugaFile.READ_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/CreditsCodes.dat", GugaFile.READ_MODE);
 		String line;
 		while((line = file.ReadLine()) != null)
 		{
@@ -646,7 +644,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public void saveCreditsCodes()
 	{
-		GugaFile file = new GugaFile("plugins/CreditsCodes.dat", GugaFile.WRITE_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/CreditsCodes.dat", GugaFile.WRITE_MODE);
 		Iterator<String> i = creditsCodes.iterator();
 		while(i.hasNext())
 		{
@@ -656,7 +654,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public void loadVIPCodes()
 	{
-		GugaFile file = new GugaFile("plugins/VipCodes.dat", GugaFile.READ_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/VipCodes.dat", GugaFile.READ_MODE);
 		String line;
 		while((line = file.ReadLine()) != null)
 		{
@@ -666,7 +664,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public void saveVIPCodes()
 	{
-		GugaFile file = new GugaFile("plugins/VipCodes.dat", GugaFile.WRITE_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/VipCodes.dat", GugaFile.WRITE_MODE);
 		Iterator<String> i = vipCodes.iterator();
 		while(i.hasNext())
 		{
@@ -685,8 +683,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public boolean redstoneDebug = false;
 	
 	public static final String version = "3.5.5";
-	private static final String professionsFile = "plugins/Professions.dat";
-	private static final String currencyFile = "plugins/Currency.dat";
+	private static final String professionsFile = "plugins/MineAndCraft_plugin/Professions.dat";
+	private static final String currencyFile = "plugins/MineAndCraft_plugin/Currency.dat";
 
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;

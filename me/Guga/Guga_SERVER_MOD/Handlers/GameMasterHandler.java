@@ -137,5 +137,5 @@ public abstract class GameMasterHandler
 	}
 	public static ArrayList<GameMaster> gameMasters = new ArrayList<GameMaster>();
 	private static Guga_SERVER_MOD plugin;
-	private static String gmFile = "plugins/GameMasters.dat";
+	private static String gmFile = "plugins/MineAndCraft_plugin/GameMasters.dat";
 }

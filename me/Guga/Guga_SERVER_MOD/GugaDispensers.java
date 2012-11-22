@@ -106,6 +106,6 @@ public class GugaDispensers
 		file.Close();
 	}
 	public ArrayList<Chest> chestList = new ArrayList<Chest>();
-	private String LockerFile = "plugins/Dispensers.dat";
+	private String LockerFile = "plugins/MineAndCraft_plugin/Dispensers.dat";
 	public static Guga_SERVER_MOD plugin;
 }

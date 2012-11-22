@@ -99,7 +99,7 @@ public abstract class GugaRegionHandler
 	public static void SaveRegions()
 	{
 		plugin.log.info("Saving Regions file...");
-		GugaFile file = new GugaFile("plugins/Regions.dat", GugaFile.WRITE_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/Regions.dat", GugaFile.WRITE_MODE);
 		file.Open();
 		GugaRegion region;
 		String name;
@@ -123,7 +123,7 @@ public abstract class GugaRegionHandler
 	public static void LoadRegions()
 	{
 		plugin.log.info("Loading Regions file...");
-		GugaFile file = new GugaFile("plugins/Regions.dat", GugaFile.READ_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/Regions.dat", GugaFile.READ_MODE);
 		file.Open();
 		String line;
 		String name;

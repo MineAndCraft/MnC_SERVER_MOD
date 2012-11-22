@@ -107,5 +107,5 @@ public class DatabaseConfiguration
 	private String db_username;
 	private String db_name;
 	private String db_password;
-	private String filePath = "plugins/dbConfig.ini";
+	private String filePath = "plugins/MineAndCraft_plugin/dbConfig.ini";
 }

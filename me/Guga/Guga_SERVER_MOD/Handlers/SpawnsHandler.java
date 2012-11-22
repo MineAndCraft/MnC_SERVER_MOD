@@ -77,6 +77,6 @@ public class SpawnsHandler
 		return spawn.getLocation();
 	}
 	public static ArrayList<GugaSpawns> spawns = new ArrayList<GugaSpawns>();
-	private static String spawnsFile = "plugins/spawnsFile.dat";
+	private static String spawnsFile = "plugins/MineAndCraft_plugin/spawnsFile.dat";
 	private static Guga_SERVER_MOD plugin;
 }

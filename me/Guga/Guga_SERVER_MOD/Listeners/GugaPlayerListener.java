@@ -758,6 +758,6 @@ public class GugaPlayerListener implements Listener
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] allowedCommands = { "/login", "/register", "/help"};
 	public boolean canSpeedUp = true;
-	private static String creativePlayersPath = "plugins/creativePlayers.dat";
+	private static String creativePlayersPath = "plugins/MineAndCraft_plugin/creativePlayers.dat";
 	public static Guga_SERVER_MOD plugin;
 	}

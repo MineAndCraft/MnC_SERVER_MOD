@@ -22,7 +22,7 @@ public class PlacesHandler
 	public static void loadPlaces()
 	{
 		plugin.log.info("Loading Places file..."); 
-		GugaFile file = new GugaFile("plugins/PlacesNew.dat", GugaFile.READ_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/PlacesNew.dat", GugaFile.READ_MODE);
 		file.Open();
 		String line;
 		String portName;
@@ -52,7 +52,7 @@ public class PlacesHandler
 	public static void savePlaces()
 	{
 		plugin.log.info("Saving Places file..."); 
-		GugaFile file = new GugaFile("plugins/PlacesNew.dat", GugaFile.WRITE_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/PlacesNew.dat", GugaFile.WRITE_MODE);
 		file.Open();
 		String line;
 		Places place;

@@ -20,7 +20,7 @@ public class HomesHandler
 	public static void loadHomes()
 	{
 		plugin.log.info("Loading Homes file...");
-		GugaFile file = new GugaFile("plugins/Homes.dat", GugaFile.READ_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/Homes.dat", GugaFile.READ_MODE);
 		file.Open();
 		String line;
 		String playerName;
@@ -45,7 +45,7 @@ public class HomesHandler
 	public static void saveHomes()
 	{
 		plugin.log.info("Saving Homes file...");
-		GugaFile file = new GugaFile("plugins/Homes.dat", GugaFile.WRITE_MODE);
+		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/Homes.dat", GugaFile.WRITE_MODE);
 		file.Open();
 		String line;
 		String playerName;

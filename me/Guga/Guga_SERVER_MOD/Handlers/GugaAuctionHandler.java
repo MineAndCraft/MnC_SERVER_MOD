@@ -226,6 +226,6 @@ public abstract class GugaAuctionHandler
 	public static int CURRENCY = 266;
 	public static int ITEMS_PER_PAGE = 20;
 	private static Guga_SERVER_MOD plugin;
-	private static String auctionFile = "plugins/Auctions.dat";
-	private static String paymentFile = "plugins/Payments.dat";
+	private static String auctionFile = "plugins/MineAndCraft_plugin/Auctions.dat";
+	private static String paymentFile = "plugins/MineAndCraft_plugin/Payments.dat";
 }

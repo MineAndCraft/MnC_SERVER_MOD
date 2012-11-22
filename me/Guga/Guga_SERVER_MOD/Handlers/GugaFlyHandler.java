@@ -95,6 +95,6 @@ public class GugaFlyHandler
 		return null;
 	}
 	public static ArrayList<GugaFly> flyingPlayers = new ArrayList<GugaFly>();
-	public static String flyFile = "plugins/Fly.dat";
+	public static String flyFile = "plugins/MineAndCraft_plugin/Fly.dat";
 	public static Guga_SERVER_MOD plugin;
 }

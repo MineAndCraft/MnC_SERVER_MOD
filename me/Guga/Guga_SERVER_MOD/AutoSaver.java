@@ -43,7 +43,6 @@ public abstract class AutoSaver
 		plugin.SaveProfessions();
 		plugin.SaveCurrency();
 		GugaAnnouncement.SaveAnnouncements();
-		GugaPort.SavePlaces();
 		GugaRegionHandler.SaveRegions();
 		GugaAuctionHandler.SaveAuctions();
 		GugaAuctionHandler.SavePayments();

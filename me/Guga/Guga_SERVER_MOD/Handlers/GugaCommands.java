@@ -3234,7 +3234,7 @@ public abstract class GugaCommands
 	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
 	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
 	public static ArrayList<String> disabledGMs = new ArrayList<String>();
-	public static String FeedbackFile = "plugins/FeedbackFile.dat";
+	public static String FeedbackFile = "plugins/MineAndCraft_plugin/FeedbackFile.dat";
 	private static Guga_SERVER_MOD plugin;
 
 }

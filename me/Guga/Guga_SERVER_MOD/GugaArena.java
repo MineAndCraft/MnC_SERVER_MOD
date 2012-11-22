@@ -592,8 +592,8 @@ public class GugaArena
 	private ArenaSpawn actualSpawn;
 	private ArrayList<ArenaSpawn> spawnList = new ArrayList<ArenaSpawn>();
 	private Guga_SERVER_MOD plugin;
-	private static final String arenaFile = "plugins/Arenas.dat";
-	private static final String statsFile = "plugins/ArenaStats.dat";
+	private static final String arenaFile = "plugins/MineAndCraft_plugin/Arenas.dat";
+	private static final String statsFile = "plugins/MineAndCraft_plugin/ArenaStats.dat";
 	public class ArenaSpawn
 	{
 		public ArenaSpawn(String name, Location location)

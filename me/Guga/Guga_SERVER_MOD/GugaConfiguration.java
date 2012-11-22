@@ -116,6 +116,6 @@ public class GugaConfiguration
 	public int lvlCap;
 	public int baseXp;
 	public int xpIncrement;
-	private String configFile = "plugins/config.ini";
+	private String configFile = "plugins/MineAndCraft_plugin/config.ini";
 	Guga_SERVER_MOD plugin;
 }
