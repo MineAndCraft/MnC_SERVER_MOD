@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD.Handlers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,7 +12,7 @@ import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
-import me.Guga.Guga_SERVER_MOD.Book;
+import me.Guga.Guga_SERVER_MOD.MyBook;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaAuction;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
@@ -2324,8 +2325,8 @@ public abstract class GugaCommands
 				{
 					if(sender.getItemInHand().getTypeId() == 387)
 					{
-						Book book = new Book(sender.getItemInHand());
-						sender.getInventory().addItem(book.generateItemStack());
+						MyBook book = new MyBook(sender.getItemInHand());
+						sender.getInventory().addItem(book.createItem());
 						ChatHandler.SuccessMsg(sender, "Book has been copied.");
 					}
 					else
@@ -3083,6 +3084,184 @@ public abstract class GugaCommands
 			ChatHandler.FailMsg(sender, "Jeste nemate level 10!");
 		}
 	}
+	public static void commandCopy(Player commandSender, String args[])
+	{
+		if(!GameMasterHandler.IsAtleastRank(commandSender.getName(), Rank.EVENTER))
+		{
+			return;
+		}
+		if(args.length == 0)
+		{
+			commandSender.sendMessage(ChatColor.RED + "Type: \"/bc help\" for more informations.");
+			return;
+		}
+
+		if(args[0].toLowerCase().matches("help"))
+		{
+			if(args.length == 1)
+			{
+				commandSender.sendMessage(ChatColor.AQUA + "BOOK COPIER COMMANDS AND INFO!");
+				commandSender.sendMessage("<> - required arguments");
+				commandSender.sendMessage("[] - optional arguments");
+				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book copy [value] - Copies book in your hand.(No value means 1*)");
+				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book give <player> [value] - Adds book in your hand to target player's inventory.");
+				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book save <fileName> - Saves book in your hand to file.");
+				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book load <fileName> - Loads book from file to your inventory.");
+			}
+		}
+
+		else if(args[0].toLowerCase().matches("give"))
+		{
+			if(args.length == 2)
+			{
+				Player p;
+				if((p = plugin.getServer().getPlayer(args[1])) != null)
+				{
+					try
+					{
+						ItemStack item = new MyBook(commandSender.getItemInHand()).createItem();
+						p.getInventory().addItem(item);
+						p.sendMessage("You recieve some book...");
+						commandSender.sendMessage("Book has been added to target player's inventory!");
+					}
+					catch(NumberFormatException e)
+					{
+						commandSender.sendMessage(ChatColor.RED + "Second argument must be number (Integer)");
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					commandSender.sendMessage(ChatColor.RED + "Target player is offline");
+				}
+			}
+
+			else if(args.length == 3)
+			{
+				if(commandSender.getItemInHand().getTypeId() == 387)
+				{
+					Player p;
+					if((p = plugin.getServer().getPlayer(args[1])) != null)
+					{
+						try
+						{
+							int numberOfBooks = Integer.parseInt(args[2]);
+							ItemStack item = new MyBook(commandSender.getItemInHand()).createItem();
+							item.setAmount(numberOfBooks);
+							p.getInventory().addItem(item);
+							p.sendMessage("You recieved some books...");
+							commandSender.sendMessage("Books has been added to target player's inventory!");
+						}
+						catch(NumberFormatException e)
+						{
+							commandSender.sendMessage(ChatColor.RED + "Second argument must be number (Integer)");
+							e.printStackTrace();
+						}
+					}
+					else
+					{
+						commandSender.sendMessage(ChatColor.RED + "Target player is offline");
+					}
+				}
+				else
+				{
+						commandSender.sendMessage("This isn't book! You need ID: 387.");
+				}
+			}
+		}
+
+		else if(args[0].toLowerCase().matches("copy"))
+		{
+			if(args.length == 1)
+			{
+				if(commandSender.getItemInHand().getTypeId() == 387)
+				{
+					MyBook book = new MyBook(commandSender.getItemInHand());
+					commandSender.getInventory().addItem(book.createItem());
+					commandSender.sendMessage("Book has been copied!");
+				}
+				else
+				{
+					commandSender.sendMessage("This isn't book! You need ID: 387.");
+				}
+			}
+			else if(args.length == 2)
+			{
+				if(commandSender.getItemInHand().getTypeId() == 387)
+				{
+					try
+					{
+						int numberOfBooks = Integer.parseInt(args[1]);
+						ItemStack item = new MyBook(commandSender.getItemInHand()).createItem();
+						item.setAmount(numberOfBooks);
+						commandSender.getInventory().addItem(item);
+						commandSender.sendMessage("Books has been copied!");
+					}
+					catch(NumberFormatException e)
+					{
+						commandSender.sendMessage(ChatColor.RED + "Second argument must be number (Integer)");
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					commandSender.sendMessage("This isn't book! You need ID: 387.");
+				}
+			}
+		}
+
+		else if(args[0].toLowerCase().matches("load"))
+		{
+			if(args.length == 2)
+			{
+				String fileName = args[1];
+				if(!fileName.endsWith(".book"))
+				{
+					fileName += ".book";
+				}
+				String completePath = "plugins/MineAndCraft_plugin/Books/" + fileName;
+				File file = new File(completePath);
+				if(!file.exists())
+				{
+					commandSender.sendMessage(ChatColor.RED + "This file doesn't exist.");
+					return;
+				}
+				
+				MyBook book = MyBook.restoreObject(completePath);
+				commandSender.getInventory().addItem(book.createItem());
+				commandSender.sendMessage("Book has been loaded.");
+			}
+		}
+
+		else if(args[0].toLowerCase().matches("save"))
+		{
+			if(args.length == 2)
+			{
+				if(commandSender.getItemInHand().getTypeId() == 387)
+				{
+					String fileName = args[1];
+					if(!fileName.endsWith(".book"))
+					{
+						fileName += ".book";
+					}
+					String completePath = "plugins/MineAndCraft_plugin/Books/" + fileName;
+					File file = new File(completePath);
+					if(file.exists())
+					{
+						commandSender.sendMessage(ChatColor.RED + "This file already exists.");
+						return;
+					}
+					MyBook book = new MyBook(commandSender.getItemInHand());
+					book.serialize(completePath);
+					commandSender.sendMessage("Book has been saved.");
+				}
+				else
+				{
+					commandSender.sendMessage("This isn't book! You need ID: 387.");
+				}
+			}
+		}
+	}
 	public static void CommandLogin(Player sender, String args[])
 	{
 		 String pass = args[0];
@@ -3099,6 +3278,12 @@ public abstract class GugaCommands
 					{
 						BasicWorld.BasicWorldEnter(sender);
 						ChatHandler.SuccessMsg(sender, "Vitejte ve svete pro novacky!");
+						File file = new File(MyBook.joinBookPath);
+						if(file.exists())
+						{
+							MyBook book = MyBook.restoreObject(MyBook.joinBookPath);
+							sender.getInventory().addItem(book.createItem());
+						}
 					}
 				 }
 				 else

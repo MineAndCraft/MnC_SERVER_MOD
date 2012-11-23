@@ -402,6 +402,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandConfirm((Player)sender,args);
 		 }
+		 else if(cmd.getName().equalsIgnoreCase("book") && (sender instanceof Player))
+		 {
+			 GugaCommands.commandCopy((Player)sender, args);
+		 }
 		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
 		 {
 			 if (config.chestsModule)

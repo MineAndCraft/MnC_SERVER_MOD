@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import me.Guga.Guga_SERVER_MOD.Book;
+import me.Guga.Guga_SERVER_MOD.MyBook;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
@@ -180,11 +180,11 @@ public class GugaEntityListener implements Listener
 				String author = "Virus";
 				String title = "Pribeh boha Viruse!";
 				String[] pages = {"Zemrel jsem za svuj milovany lid. Dokaz ze jsi mi verny a napis do chatu: Virus je buh!"};
-				Book book = new Book(title, author, pages);
+				MyBook book = new MyBook(title, author, pages);
 				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
 				p.getInventory().clear();
 				e.getDrops().clear();
-				e.getDrops().add(book.generateItemStack());
+				e.getDrops().add(book.createItem());
 			}
 		}
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))

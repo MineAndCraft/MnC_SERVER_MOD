@@ -56,4 +56,6 @@ commands:
         description: Adventure world menu
     activate:
         description: For craftcon bonuses activation
+    book:
+        description: Command for writableBooks
         
