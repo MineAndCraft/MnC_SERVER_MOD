@@ -30,6 +30,7 @@ public class Votes
 		plugin = gsm;
 	}
 	private static Guga_SERVER_MOD plugin;
+	private static String filePath = "plugins/MineAndCraft_plugin/votes.xml";
 	
 	public static void Start()
 	{
@@ -37,7 +38,7 @@ public class Votes
 			public void run()
 			{
 				try {
-					saveUrl("plugins/votes.xml","http://www.czech-craft.eu/xml/363.xml");
+					saveUrl(filePath,"http://www.czech-craft.eu/xml/363.xml");
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -46,7 +47,7 @@ public class Votes
 					e.printStackTrace();
 				}
 				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] Pricitaji se kredity za hlasovani...");
-				File votesFile = new File("plugins/votes.xml");
+				File votesFile = new File(filePath);
 				HashMap<String,Integer> votes = new HashMap<String,Integer>();
 				votes = Votes.Parse(plugin.dbConfig.getConection(), votesFile);
 				Iterator<Entry<String, Integer>> it = votes.entrySet().iterator();

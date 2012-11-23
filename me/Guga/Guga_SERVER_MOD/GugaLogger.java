@@ -448,11 +448,11 @@ public class GugaLogger
 	private boolean logBlockIgnite;
 	
 	
-	private String blockBreakFile = "plugins/BlockBreakLog.log";
-	private String blockIgniteFile = "plugins/BlockIgniteLog.log";
-	private String blockPlaceFile = "plugins/BlockPlaceLog.log";
-	private String shopTransactionFile = "plugins/ShopTransaction.log";
-	private String playerJoinsFile = "plugins/PlayerJoinLog.log";
+	private String blockBreakFile = "plugins/MineAndCraft_plugin/BlockBreakLog.log";
+	private String blockIgniteFile = "plugins/MineAndCraft_plugin/BlockIgniteLog.log";
+	private String blockPlaceFile = "plugins/MineAndCraft_plugin/BlockPlaceLog.log";
+	private String shopTransactionFile = "plugins/MineAndCraft_plugin/ShopTransaction.log";
+	private String playerJoinsFile = "plugins/MineAndCraft_plugin/PlayerJoinLog.log";
 	public HashMap<Player, ArrayList<String>> blockCache = new HashMap<Player, ArrayList<String>>();
 	private Guga_SERVER_MOD plugin;
 }
