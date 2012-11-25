@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
+import me.Guga.Guga_SERVER_MOD.Enchantments;
+import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MyBook;
@@ -2091,7 +2093,8 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm fly <name> - Toggles fly mode for certain player.");
 				sender.sendMessage("/gm spawn - Spawns sub-menu.");
 				sender.sendMessage("/gm save-all - Saves all files of plugin and worlds.");
-				sender.sendMessage("/gm book - Books sub-menu");
+				sender.sendMessage("/gm book - Books sub-menu.");
+				sender.sendMessage("/gm enchant - Enchantments sub-menu.");
 			}
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -2241,6 +2244,12 @@ public abstract class GugaCommands
 					sender.sendMessage("GM state succesfully turned off!");
 				}
 			}
+			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				sender.sendMessage("/gm enchant <name> <level> - Enchants item in your hand to certain enchantment level.");
+				sender.sendMessage("/gm enchant all - Enchants item in your to maximal natural level and all enchantments.");
+				sender.sendMessage("/gm enchant rikubstyle - Enchants item in your hand to level 127 and all enchantments.");
+			}
 		}
 		else if (args.length == 2)
 		{
@@ -2334,6 +2343,14 @@ public abstract class GugaCommands
 						ChatHandler.FailMsg(sender, "Item is not writable book.");
 					}
 				}
+			}
+			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				if(args[1].matches("all"))
+					Enchantments.enchantAll(sender);
+				else if(args[1].matches("rikubstyle"))
+					Enchantments.enchantAllInRikubStyle(sender);
+				ChatHandler.SuccessMsg(sender, "Enchantments has been added.");
 			}
 			else if (subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -3061,6 +3078,33 @@ public abstract class GugaCommands
 						Player tarPlayer = plugin.getServer().getPlayer(tarName);
 						spectation.put(tarPlayer.getName(), new GugaSpectator(plugin,tarPlayer,sender));
 						sender.sendMessage("Starting spectation.");
+					}
+				}
+			}
+			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
+			{
+				EnchantmentResult result = Enchantments.enchantItem(sender, args[1], Integer.parseInt(args[2]));
+				switch(result)
+				{
+					case ENCHANTED:
+					{
+						ChatHandler.SuccessMsg(sender, "Enchantment has been added.");
+						break;
+					}
+					case INVALID_ID:
+					{
+						ChatHandler.FailMsg(sender, "Invalid name of enchantment.");
+						break;
+					}
+					case CANNOT_ENCHANT:
+					{
+						ChatHandler.FailMsg(sender, "Cannot enchant this item.");
+						break;
+					}
+					default:
+					{
+						ChatHandler.FailMsg(sender, "Unknown error.");
+						break;
 					}
 				}
 			}
