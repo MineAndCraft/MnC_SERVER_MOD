@@ -2109,6 +2109,7 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
 				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
 				sender.sendMessage("/gm speed - Speed sub-menu");
+				sender.sendMessage("/gm enderchest - Enderchest sub-menu.");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
@@ -2219,6 +2220,10 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm regions add <name> <world> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
 				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
 				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
+			}
+			else if (subCommand.matches("enderchest") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm enderchest show <playerName> - Shows enderchest of certain player.");
 			}
 			else if (subCommand.matches("save-all") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
@@ -2824,6 +2829,22 @@ public abstract class GugaCommands
 						PlacesHandler.addPlace(new Places(arg2, arg3, owner, 
 								(int)sender.getLocation().getX(), (int)sender.getLocation().getY(), (int)sender.getLocation().getZ(), sender.getLocation().getWorld().getName(), "Vitejte na portu hrace " + arg3 + "!"));
 						sender.sendMessage("Place successfully added");
+					}
+				}
+			}
+			else if (subCommand.matches("enderchest") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(args.length == 3)
+				{
+					if(args[1].matches("show"))
+					{
+						Player target = plugin.getServer().getPlayer(args[2]);
+						if(target != null)
+						{
+							sender.openInventory(target.getEnderChest());
+						}
+						else
+							ChatHandler.FailMsg(sender, "Player is not online.");
 					}
 				}
 			}
