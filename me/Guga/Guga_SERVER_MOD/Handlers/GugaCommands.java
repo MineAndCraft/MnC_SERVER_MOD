@@ -2099,13 +2099,13 @@ public abstract class GugaCommands
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm ban - Bans sub-menu.");
-				sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
+				//sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 				sender.sendMessage("/gm mute - Mute sub-menu.");
 				sender.sendMessage("/gm kill <player> - Kills target player.");
 				sender.sendMessage("/gm on - Turn your GM status to on");
 				sender.sendMessage("/gm off - Turn your GM status to off");
 				sender.sendMessage("/gm bw - BasicWorld sub-menu");
-				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
+				sender.sendMessage("/gm home- Homes sub-menu.");
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
 				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
 				sender.sendMessage("/gm speed - Speed sub-menu");
@@ -2133,6 +2133,11 @@ public abstract class GugaCommands
 					plugin.bListener.redStoneDebug.add(sender);
 					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned on!");
 				}
+			}
+			else if(subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
+				sender.sendMessage("/gm home set <player> - Sets home of certain player to your position.");
 			}
 			else if(subCommand.matches("rank") && GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
@@ -2572,6 +2577,18 @@ public abstract class GugaCommands
 					{
 						plugin.getServer().getWorld(args[1]).setTime(Integer.parseInt(args[2]));
 						ChatHandler.SuccessMsg(sender, "Cas byl uspesne nastaven");
+					}
+				}
+			}
+			else if (subCommand.matches("home")  && GameMasterHandler.IsAtleastGM(sender.getName()))
+			{
+				if(args.length == 3)
+				{
+					if(args[1].matches("set"))
+					{
+						Location loc = sender.getLocation();
+						HomesHandler.addHome(new Homes(args[2], (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
+						ChatHandler.SuccessMsg(sender, "Home has been uccessfully set");
 					}
 				}
 			}

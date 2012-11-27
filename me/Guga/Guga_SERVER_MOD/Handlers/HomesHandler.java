@@ -122,6 +122,19 @@ public class HomesHandler
 		}
 		saveHomes();
 	}
+	public static void addHome(Homes home)
+	{
+		Homes actual = getHomeByPlayer(home.getPlayerName());
+		if(actual == null)
+		{
+			homes.add(home);
+		}
+		else
+		{
+			homes.remove(actual);
+			homes.add(home);
+		}
+	}
 	public static ArrayList<Homes> homes = new ArrayList<Homes>();
 	public static Guga_SERVER_MOD plugin;
 }
