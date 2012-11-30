@@ -91,6 +91,21 @@ public class GugaPlayerListener implements Listener
 			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
 			return;
 		}
+		if (p.getName().contains(" "))
+		{
+			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
+			return;
+		}
+		if (!CanUseName(p.getName()))
+		{
+			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
+			return;
+		}
+		if (p.getName().matches(""))
+		{
+			p.kickPlayer("Prosim zvolte si jmeno!");
+			return;
+		}
 		if (GugaMCClientHandler.IsWhiteListed(p))
 			return;
 		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
@@ -148,21 +163,7 @@ public class GugaPlayerListener implements Listener
 				p.kickPlayer("Server je plny misto je rezervovano");
 			}
 		}
-		if (p.getName().contains(" "))
-		{
-			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
-			return;
-		}
-		if (!CanUseName(p.getName()))
-		{
-			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
-			return;
-		}
-		if (p.getName().matches(""))
-		{
-			p.kickPlayer("Prosim zvolte si jmeno!");
-			return;
-		}
+		
 		plugin.logger.LogPlayerJoins(p.getName() ,p.getAddress().toString());
 		GugaAuctionHandler.CheckPayments(p);
 		if (plugin.debug)
