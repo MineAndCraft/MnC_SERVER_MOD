@@ -57,5 +57,8 @@ commands:
     activate:
         description: For craftcon bonuses activation
     book:
-        description: Command for writableBooks
-        
+        description: Command for writableBook
+    tell:
+        description: Command for whisper
+    msg:
+        description: Command for whisper

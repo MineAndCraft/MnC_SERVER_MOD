@@ -9,7 +9,6 @@ import me.Guga.Guga_SERVER_MOD.GugaBan;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
-import me.Guga.Guga_SERVER_MOD.GugaMute;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
@@ -232,7 +231,7 @@ public class GugaPlayerListener implements Listener
 				return;
 			}
 		}
-		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl"))
+		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") || e.getMessage().equalsIgnoreCase("/me"))
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
@@ -244,31 +243,6 @@ public class GugaPlayerListener implements Listener
 		if(e.getMessage().equalsIgnoreCase("/kill") && e.getPlayer().getWorld().getName().matches("arena"))
 		{
 			e.setCancelled(true);
-		}
-
-		String msg = "";
-		String[] splitted = e.getMessage().split(" ");
-		int i = 0;
-		if (e.getMessage().contains("/tell"))
-		{
-			if(GugaMute.getPlayerStatus(e.getPlayer().getName()))
-			{
-				e.getPlayer().sendMessage("Jste ztlumen. Nelze pouzit /tell");
-				e.setCancelled(true);
-				return;
-			}
-			String pName = splitted[1];
-			i = 2;
-			while (i < splitted.length)
-			{
-				msg += splitted[i];
-				msg += " ";
-				i++;
-			}
-			Player p = plugin.getServer().getPlayer(pName);
-			//plugin.socketServer.SendChatMsg(e.getPlayer().getName() + " -> " + p.getName() + ": " + msg);
-			e.getPlayer().sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
-			GugaCommands.reply.put(p, e.getPlayer());
 		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)

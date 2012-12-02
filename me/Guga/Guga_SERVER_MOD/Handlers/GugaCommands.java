@@ -45,6 +45,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -3398,6 +3399,51 @@ public abstract class GugaCommands
 	{
 		plugin.debug = !plugin.debug;
 		plugin.log.info("DEBUG="+plugin.debug);
+	}
+	public static void CommandWhisper(CommandSender sender, String[]args)
+	{
+		Player p = plugin.getServer().getPlayer(args[0]);
+		if(sender instanceof ConsoleCommandSender)
+		{
+			if(p == null)
+			{
+				plugin.log.info("This player is not online!");
+			}
+			else
+			{
+				int i = 1;
+				String msg = "";
+				while(i<args.length)
+				{
+					msg += " " + args[i];
+					i++;
+				}
+				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE +"CONSOLE septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+			}
+		}
+		else
+		{
+			Player playerSender = (Player)sender;
+			if(GugaMute.getPlayerStatus(playerSender.getName()))
+			{
+				ChatHandler.FailMsg(playerSender, "Jste ztlumen. Nemuzete pouzit tento prikaz!");
+			}
+			if(p == null)
+				ChatHandler.FailMsg(playerSender, "Tento hrac je offline!");
+			else
+			{
+				int i = 1;
+				String msg = "";
+				while(i<args.length)
+				{
+					msg += " " + args[i];
+					i++;
+				}
+				playerSender.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + "Vy -> " + p.getDisplayName() + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + playerSender.getDisplayName() + " septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				GugaCommands.reply.put(p, playerSender);
+			}
+		}
 	}
 	/*public static void CommandPassword(Player sender, String args[])
 	{

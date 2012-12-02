@@ -276,6 +276,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 	GugaCommands.TestCommand(args);
 		 }
+		 else if (cmd.getName().equalsIgnoreCase("tell"))
+		 {
+			 GugaCommands.CommandWhisper(sender, args);
+		 }
+		 else if (cmd.getName().equalsIgnoreCase("msg"))
+		 {
+			 GugaCommands.CommandWhisper(sender, args);
+		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandPlaces((Player)sender, args);
