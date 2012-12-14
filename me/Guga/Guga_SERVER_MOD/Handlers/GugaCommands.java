@@ -3418,7 +3418,7 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE +"CONSOLE septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				p.sendMessage(ChatColor.DARK_AQUA + "[CONSOLE septa]" + msg);
 			}
 		}
 		else
@@ -3439,8 +3439,8 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				playerSender.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + "Vy -> " + p.getDisplayName() + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
-				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + playerSender.getDisplayName() + " septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				playerSender.sendMessage(ChatColor.DARK_AQUA + "[Vy -> " + p.getName() + "]" + msg);
+				p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa]" + msg);
 				GugaCommands.reply.put(p, playerSender);
 			}
 		}
