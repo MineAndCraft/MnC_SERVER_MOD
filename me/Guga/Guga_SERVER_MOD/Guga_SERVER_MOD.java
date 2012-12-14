@@ -136,9 +136,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAuctionHandler.LoadAuctions();
 		GugaAuctionHandler.LoadPayments();
 		GugaBanHandler.LoadBans();
-		chests = new GugaChests(this);
-		furnances = new GugaFurnances(this);
-		dispensers = new GugaDispensers(this);
+		blockLocker = new Locker(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
@@ -710,9 +708,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaMessageListener msgListener = new GugaMessageListener(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
 	public final AutoKicker autoKicker = new AutoKicker(this);
-	public GugaChests chests;
-	public GugaFurnances furnances;
-	public GugaDispensers dispensers;
+	public Locker blockLocker;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public GugaEventWorld EventWorld = new GugaEventWorld(this);

@@ -39,6 +39,7 @@ import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency.VipItems;
 import me.Guga.Guga_SERVER_MOD.GugaMute;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
+import me.Guga.Guga_SERVER_MOD.Locker;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -246,42 +247,18 @@ public abstract class GugaCommands
 	{
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
-		if (blockType == ID_CHEST)
+		if (Locker.LockableBlocks.isLockableBlock(blockType))
 		{
-			if (plugin.chests.GetBlockOwner(chest).matches("notFound"))
+			if (!plugin.blockLocker.IsLocked(chest))
 			{
-				plugin.chests.LockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase truhla byla zamcena.");
+				plugin.blockLocker.LockBlock(chest,sender.getName());
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase blok byl zamcen.");
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Truhlu jiz nekdo zamkl!");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Blok jiz nekdo zamkl!");
 			}
 		}	
-		else if(blockType == ID_DISPENSER)
-		{
-			if (plugin.dispensers.GetBlockOwner(chest).matches("notFound"))
-			{
-				plugin.dispensers.LockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vas davkovac byl zamcen.");
-			}
-			else
-			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Davkovac jiz nekdo zamkl!");
-			}
-		}
-		else if(blockType == ID_FURNANCE || blockType == ID_FURNANCE_BURNING)
-		{
-			if (plugin.furnances.GetBlockOwner(chest).matches("notFound"))
-			{
-				plugin.furnances.LockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase pec byla zamcena.");
-			}
-			else
-			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Pec jiz nekdo zamkl!");
-			}
-		}
 		else
 		{
 			sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Tento block nelze zamcit!");
@@ -319,40 +296,17 @@ public abstract class GugaCommands
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
 
-		if (blockType == ID_CHEST)
+		if (Locker.LockableBlocks.isLockableBlock(blockType))
 		{
-			if ( (plugin.chests.GetBlockOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
+			String owner = plugin.blockLocker.GetBlockOwner(chest); 
+			if (  (owner != null && owner.matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
 			{
-				plugin.chests.UnlockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vase truhla byla odemcena.");
+				plugin.blockLocker.UnlockBlock(chest);
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas blok byl odemcena.");
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tuto truhlu nemuzete odemknout!");
-			}
-		}
-		else if(blockType==ID_DISPENSER)
-		{
-			if ( (plugin.dispensers.GetBlockOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
-			{
-				plugin.dispensers.UnlockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas davkovac byl odemcen.");
-			}
-			else
-			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tento davkovac nemuzete odemknout!");
-			}
-		}
-		else if(blockType==ID_FURNANCE)
-		{
-			if ( (plugin.furnances.GetBlockOwner(chest).matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
-			{
-				plugin.furnances.UnlockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vase pec byla odemcena.");
-			}
-			else
-			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tuto pec nemuzete odemknout!");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tento blok nemuzete odemknout!");
 			}
 		}
 		else
@@ -3418,7 +3372,7 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				p.sendMessage(ChatColor.DARK_AQUA + "[CONSOLE septa]" + msg);
+				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE +"CONSOLE septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
 			}
 		}
 		else
@@ -3439,8 +3393,8 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				playerSender.sendMessage(ChatColor.DARK_AQUA + "[Vy -> " + p.getName() + "]" + msg);
-				p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa]" + msg);
+				playerSender.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + "Vy -> " + p.getDisplayName() + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + playerSender.getDisplayName() + " septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
 				GugaCommands.reply.put(p, playerSender);
 			}
 		}
@@ -3532,10 +3486,6 @@ public abstract class GugaCommands
 		}
 		return false;
 	}
-	private static int ID_CHEST=54;
-	private static int ID_DISPENSER=23;
-	private static int ID_FURNANCE=61;
-	private static int ID_FURNANCE_BURNING=62;
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();

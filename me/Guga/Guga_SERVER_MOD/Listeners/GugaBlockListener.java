@@ -9,6 +9,7 @@ import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -188,102 +189,57 @@ public class GugaBlockListener implements Listener
 			}
 		}
 		//*************************************************************************
-		String chestOwner;
 		int blockType = targetBlock.getTypeId();
-		if (blockType == ID_CHEST)
+		if (Locker.LockableBlocks.isLockableBlock(blockType))
 		{
-			chestOwner = plugin.chests.GetBlockOwner(targetBlock);
-			if(chestOwner.matches("notFound"))
-			{
-				
-			}
-			else
+			if(plugin.blockLocker.IsLocked(targetBlock))
 			{
 				e.setCancelled(true);
-				if (chestOwner.matches(p.getName()))
+				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
+				if (owner == p.getName())
 				{
 					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! Nejdrive ji odemknete.");
 				}
 				else
 				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! " + chestOwner + " je vlastnikem teto truhly.");
+					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! " + owner + " je vlastnikem teto truhly.");
 				}
 			}
 		}
-		else if(blockType==ID_DISPENSER)
+		
+		int typeId = targetBlock.getTypeId();
+		prof.GainExperience(3);
+		//TODO: balance experience
+		if (typeId == 1)
 		{
-			chestOwner = plugin.dispensers.GetBlockOwner(targetBlock);
-			if(chestOwner.matches("notFound"))
+			GugaBonusDrop bonus = prof.CobbleStoneDrop();
+			if (bonus == GugaBonusDrop.DIAMOND)
 			{
-				
+				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
+				prof.GainExperience(50);
+				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste diamant!");
 			}
-			else
+			else if (bonus == GugaBonusDrop.GOLD)
 			{
-				e.setCancelled(true);
-				if (chestOwner.matches(p.getName()))
-				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamceny davkovac! Nejdrive jej odemknete.");
-				}
-				else
-				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamceny davkovac! " + chestOwner + " je vlastnikem tohoto davkovace.");
-				}
+				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
+				prof.GainExperience(40);
+				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zlato!");
 			}
-		}
-		else if(blockType==ID_FURNANCE || blockType==ID_FURNANCE_BURNING)
-		{
-			chestOwner = plugin.furnances.GetBlockOwner(targetBlock);
-			if(chestOwner.matches("notFound"))
+			else if (bonus == GugaBonusDrop.IRON)
 			{
-				
+				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
+				prof.GainExperience(30);
+				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zelezo!");
 			}
-			else
+			else if (bonus == GugaBonusDrop.EMERALD)
 			{
-				e.setCancelled(true);
-				if (chestOwner.matches(p.getName()))
-				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou pec! Nejdrive ji odemknete.");
-				}
-				else
-				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou pec! " + chestOwner + " je vlastnikem teto pece.");
-					}
-				}
+				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(388,1));
+				prof.GainExperience(60);
+				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste emerald!");
 			}
-			int typeId = targetBlock.getTypeId();
-			if (!IsInstaBreakBlock(typeId))
-			{
-				prof.GainExperience(3);
-			}
-			if (typeId == 1)
-			{
-				GugaBonusDrop bonus = prof.CobbleStoneDrop();
-				if (bonus == GugaBonusDrop.DIAMOND)
-				{
-					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
-					prof.GainExperience(50);
-					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste diamant!");
-				}
-				else if (bonus == GugaBonusDrop.GOLD)
-				{
-					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
-					prof.GainExperience(40);
-					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zlato!");
-				}
-				else if (bonus == GugaBonusDrop.IRON)
-				{
-					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
-					prof.GainExperience(30);
-					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zelezo!");
-				}
-				else if (bonus == GugaBonusDrop.EMERALD)
-				{
-					p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(388,1));
-					prof.GainExperience(60);
-					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste emerald!");
-				}
-			}
-			/*else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
+		}		
+		
+		/*else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
 			{
 				int drops;
 				if (dropsCache.contains(targetBlock))
@@ -378,117 +334,47 @@ public class GugaBlockListener implements Listener
 		}
 		//54
 		Block block = e.getBlockPlaced();
-		if (block.getTypeId() == 54)
+		if(Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
 		{
-			if(plugin.chests.GetBlockOwner(block).equalsIgnoreCase("notFound"))
+			if(block.getTypeId() == Locker.LockableBlocks.CHEST.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				Block W=block.getRelative(BlockFace.WEST);
 				Block E=block.getRelative(BlockFace.EAST);
 				Block N=block.getRelative(BlockFace.NORTH);
 				Block S=block.getRelative(BlockFace.SOUTH);
-				if(W.getTypeId()==54)
+				
+				if(W.getTypeId() == 54 || E.getTypeId() == 54 || N.getTypeId() == 54 || S.getTypeId() == 54)
 				{
-					if((plugin.chests.GetBlockOwner(W).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(W).equalsIgnoreCase(p.getName()))
+					String username = e.getPlayer().getName();
+					String wo = plugin.blockLocker.GetBlockOwner(W);
+					String eo = plugin.blockLocker.GetBlockOwner(E);
+					String no = plugin.blockLocker.GetBlockOwner(N);
+					String so = plugin.blockLocker.GetBlockOwner(S);
+					if( (wo!=null && !username.matches(wo) && plugin.blockLocker.IsLocked(W)) ||
+						(eo!=null && !username.matches(eo) && plugin.blockLocker.IsLocked(E)) ||
+						(no!=null && !username.matches(no) && plugin.blockLocker.IsLocked(N)) ||
+						(so!=null && !username.matches(so) && plugin.blockLocker.IsLocked(S)))
 					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
-						return;
-					}
-					else
-					{
+						p.sendMessage(username+"><"+plugin.blockLocker.GetBlockOwner(S)+".."+plugin.blockLocker.IsLocked(S));
 						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
 						e.setCancelled(true);
 						return;
 					}
-				}
-				else if(E.getTypeId()==54)
-				{
-					if((plugin.chests.GetBlockOwner(E).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(E).equalsIgnoreCase(p.getName()))
-					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
-						return;
-					}
 					else
 					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
-						e.setCancelled(true);
-						return;
-					}
-
-				}
-				else if(N.getTypeId()==54)
-				{
-					if((plugin.chests.GetBlockOwner(N).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(N).equalsIgnoreCase(p.getName()))
-					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
+						plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
 						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
-						return;
-					}
-					else
-					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
-						e.setCancelled(true);
-						return;
-					}
-				}
-				else if(S.getTypeId()==54)
-				{
-					if((plugin.chests.GetBlockOwner(S).equalsIgnoreCase("notFound"))||plugin.chests.GetBlockOwner(S).equalsIgnoreCase(p.getName()))
-					{
-						plugin.chests.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
-						return;
-					}
-					else
-					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
-						e.setCancelled(true);
 						return;
 					}
 				}
 				else
 				{
-					plugin.chests.LockBlock(block,e.getPlayer().getName());
+					plugin.blockLocker.LockBlock(block, e.getPlayer().getName());
 					p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase truhla byla zamcena.");
 					return;
-				}
+				}			
 			}
 		}
-		else if(block.getTypeId()==ID_DISPENSER)
-		{
-			if(plugin.dispensers.GetBlockOwner(block).equalsIgnoreCase("notFound"))
-			{
-				plugin.dispensers.LockBlock(block,e.getPlayer().getName());
-				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen. Vice: /locker");
-			}
-		}
-		else if(block.getTypeId()==ID_FURNANCE || block.getTypeId()==ID_FURNANCE_BURNING)
-		{
-			if(plugin.furnances.GetBlockOwner(block).equalsIgnoreCase("notFound"))
-			{
-				plugin.furnances.LockBlock(block,e.getPlayer().getName());
-				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase pec byla zamcena. Vice: /locker");
-			}
-		}
-		/*int typeId = e.getBlock().getTypeId();
-		if ((typeId == 14) || (typeId == 15) || (typeId == 56))
-		{
-			dropsCache.add(e.getBlock());
-		}*/
-	}
-	public boolean IsInstaBreakBlock(int blockId)
-	{
-		int i = 0;
-		while (i < instaBreakBlocks.length)
-		{
-			if (instaBreakBlocks[i] == blockId)
-			{
-				return true;
-			}
-			i++;
-		}
-		return false;
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -532,10 +418,6 @@ public class GugaBlockListener implements Listener
 			}
 		}
 	}
-	private int ID_CHEST=54;
-	private int ID_DISPENSER=23;
-	private int ID_FURNANCE=61;
-	private int ID_FURNANCE_BURNING=62;
 	private int ID_SELECT_ITEM = 269;
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
 	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};

@@ -15,6 +15,7 @@ import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
+import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
@@ -554,51 +555,17 @@ public class GugaPlayerListener implements Listener
 					}
 				}
 			}
+			
 			Block targetBlock;
 			targetBlock = e.getClickedBlock();
-			if (plugin.config.chestsModule)
+			if (plugin.config.chestsModule && Locker.LockableBlocks.isLockableBlock(targetBlock.getTypeId()))
 			{
 				// *********************************CHEST OPENING*********************************
 
-				String blockOwner;
-				if (targetBlock.getTypeId() == ID_CHEST)
+				if(!plugin.blockLocker.HasAccessPermission(targetBlock, p.getName()))
 				{
-					blockOwner = plugin.chests.GetBlockOwner(targetBlock);
-					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
-					{
-						return;
-					}
-					else
-					{
-						e.setCancelled(true);
-						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tato truhla je zamcena!");
-					}
-				}
-				else if(targetBlock.getTypeId() == ID_DISPENSER)
-				{
-					blockOwner = plugin.dispensers.GetBlockOwner(targetBlock);
-					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
-					{
-						return;
-					}
-					else
-					{
-						e.setCancelled(true);
-						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento davkovac je zamcen!");
-					}
-				}
-				else if(targetBlock.getTypeId() == ID_FURNANCE || targetBlock.getTypeId() == ID_FURNANCE_BURNING)
-				{
-					blockOwner = plugin.furnances.GetBlockOwner(targetBlock);
-					if(blockOwner.matches(p.getName()) || blockOwner.matches("notFound") || GameMasterHandler.IsAtleastGM(p.getName()))
-					{
-						return;
-					}
-					else
-					{
-						e.setCancelled(true);
-						p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tato pec je zamcena!");
-					}
+					e.setCancelled(true);
+					p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento blok je zamcen!");
 				}
 			}
 		}
@@ -724,10 +691,7 @@ public class GugaPlayerListener implements Listener
 		}
 		return false;
 	}
-	private int ID_CHEST=54;
-	private int ID_DISPENSER=23;
-	private int ID_FURNANCE=61;
-	private int ID_FURNANCE_BURNING=62;
+
 	private int ID_SELECT_ITEM = 269;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
