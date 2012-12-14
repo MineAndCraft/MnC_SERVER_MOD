@@ -9,7 +9,11 @@ public class Locker
 	
 	public static enum LockableBlocks
 	{
-		CHEST(54, "chest");
+		CHEST(54, "chest"),
+		FURNANCE(61, "furnance"),
+		BURNING_FURNANCE(62, "furnance"),
+		DISPENSER(23, "dispenser");
+		
 		LockableBlocks(int blockID, String name)
 		{
 			this.blockID = blockID;
