@@ -51,7 +51,7 @@ public class DatabaseConfiguration
 		connectionProps.put("password", db_password);
 		try 
 		{
-			conn = DriverManager.getConnection("jdbc:mysql://" + db_server + ":" + String.valueOf(db_port) + "/", connectionProps);
+			conn = DriverManager.getConnection("jdbc:mysql://" + db_server + ":" + String.valueOf(db_port) + "/" + this.db_name, connectionProps);
 		} 
 		catch (SQLException e) 
 		{
