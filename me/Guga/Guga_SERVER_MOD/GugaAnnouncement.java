@@ -22,7 +22,7 @@ public abstract class GugaAnnouncement
 	}
 	public static void StartAnnouncing()
 	{
-		plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable() {
+		plugin.scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
 			public void run()
 			{
 				if (messages.size() > 0)

@@ -72,7 +72,7 @@ public class GugaHunter extends GugaProfession
 		{
 			return;
 		}
-		regenTaskId = plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable(){
+		regenTaskId = plugin.scheduler.scheduleSyncRepeatingTask(plugin, new Runnable(){
 			public void run()
 			{
 				Player p;

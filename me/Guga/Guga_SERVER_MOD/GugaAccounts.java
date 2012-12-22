@@ -85,7 +85,7 @@ public class GugaAccounts
 		if(running)
 			return;
 
-		taskId = plugin.scheduler.scheduleAsyncRepeatingTask(plugin, new Runnable(){
+		taskId = plugin.scheduler.scheduleSyncRepeatingTask(plugin, new Runnable(){
 		Iterator<String> it;
 		String playerName;
 			public void run()

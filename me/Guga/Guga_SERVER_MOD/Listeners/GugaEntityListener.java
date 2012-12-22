@@ -4,17 +4,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import me.Guga.Guga_SERVER_MOD.MyBook;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
-import net.minecraft.server.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
@@ -175,17 +172,7 @@ public class GugaEntityListener implements Listener
 				e.getDrops().clear();
 				e.getDrops().add(new ItemStack(111, 1));
 			}
-			else if(p.getName().matches("Virus"))
-			{
-				String author = "Virus";
-				String title = "Pribeh boha Viruse!";
-				String[] pages = {"Zemrel jsem za svuj milovany lid. Dokaz ze jsi mi verny a napis do chatu: Virus je buh!"};
-				MyBook book = new MyBook(title, author, pages);
-				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
-				p.getInventory().clear();
-				e.getDrops().clear();
-				e.getDrops().add(book.createItem());
-			}
+			
 		}
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))
 		{
@@ -288,15 +275,6 @@ public class GugaEntityListener implements Listener
 		}
 		if(e.getEntity() instanceof Creeper)
 		{
-			try{
-			Location loc = e.getLocation();
-		    WorldServer localWorldServer = ((CraftWorld)loc.getWorld()).getHandle();
-		    localWorldServer.makeSound(loc.getX(), loc.getY(), loc.getZ(), "random.explode", 4.0F, (1.0F + (localWorldServer.random.nextFloat() - localWorldServer.random.nextFloat()) * 0.2F) * 0.7F);
-		    localWorldServer.a("hugeexplosion", (int)loc.getX(), (int)loc.getY(), (int)loc.getZ());
-			}catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}
 			e.setCancelled(true);
 			return;
 		}

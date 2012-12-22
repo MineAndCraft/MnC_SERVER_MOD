@@ -26,7 +26,7 @@ public class GugaLogger
 	}
 	public void PrintShopData(final Player sender, final int page)
 	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
+		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
 				GugaDataPager<String> pager = new GugaDataPager<String>(GetShopTransactionData(), 15);
@@ -42,7 +42,7 @@ public class GugaLogger
 	}
 	public void PrintBlockData(final Player sender, final Block block)
 	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
+		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
 				sender.sendMessage("Searching...");
@@ -102,7 +102,7 @@ public class GugaLogger
 	
 	public void PrintLogData(final Player sender, final Block block)
 	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
+		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
 				sender.sendMessage("Searching...");
@@ -249,7 +249,7 @@ public class GugaLogger
 	}
 	public void LogShopTransaction(final Prices item, final int amount, final String pName)
 	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run()
 			{
 				String line = new Date() + ";" + pName + ";" + item.toString() + ";" + amount;
@@ -262,7 +262,7 @@ public class GugaLogger
 	}
 	public void LogPlayerJoins(final String pName, final String IpAddr)
 	{
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run()
 			{
 				String line = new Date() + ";" + pName + ";" + IpAddr;
@@ -363,7 +363,7 @@ public class GugaLogger
 	{
 		if (logBlockPlace)
 		{
-			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
 				public void run()
 				{
 					String line;
@@ -400,7 +400,7 @@ public class GugaLogger
 	{
 		if (logBlockIgnite)
 		{
-			plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
 				public void run()
 				{
 					String line;

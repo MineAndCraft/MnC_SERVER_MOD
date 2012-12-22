@@ -10,7 +10,6 @@ import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
-import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
@@ -346,11 +345,6 @@ public class GugaPlayerListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		if (GugaSpectator.spectatorList.contains(p))
-		{
-			e.setCancelled(true);
-			return;
-		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -402,12 +396,6 @@ public class GugaPlayerListener implements Listener
 		{
 			e.setRespawnLocation(HomesHandler.getLocation(home));
 		}
-		GugaSpectator spec;
-		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
-		{
-			spec.Teleport();
-			spec.InvisTarget();
-		}
 		plugin.acc.SetStartLocation(p, e.getRespawnLocation());
 		Location respawnLoc;
 		if ((respawnLoc =plugin.arena.GetPlayerBaseLocation(p)) != null)
@@ -451,13 +439,6 @@ public class GugaPlayerListener implements Listener
 	    int x = chunk.getX();
 	    int z = chunk.getZ();
 	    world.refreshChunk(x, z);
-		Player p = e.getPlayer();
-		GugaSpectator spec;
-		if ((spec = GugaCommands.spectation.get(p.getName())) != null)
-		{
-			spec.Teleport();
-			spec.InvisTarget();
-		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e)

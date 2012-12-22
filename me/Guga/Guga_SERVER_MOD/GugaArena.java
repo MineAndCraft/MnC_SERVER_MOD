@@ -108,7 +108,7 @@ public class GugaArena
 		final String pName = p.getName();
 		int serverTicks = seconds*20;
 		cannotLeave.add(pName);
-		plugin.scheduler.scheduleAsyncDelayedTask(plugin, new Runnable(){
+		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
 				cannotLeave.remove(pName);

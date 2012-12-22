@@ -1,12 +1,10 @@
 package me.Guga.Guga_SERVER_MOD.Handlers;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
@@ -14,7 +12,6 @@ import me.Guga.Guga_SERVER_MOD.Enchantments;
 import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
-import me.Guga.Guga_SERVER_MOD.MyBook;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaAuction;
 import me.Guga.Guga_SERVER_MOD.GugaBan;
@@ -22,12 +19,10 @@ import me.Guga.Guga_SERVER_MOD.GugaDataPager;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaHunter;
-import me.Guga.Guga_SERVER_MOD.GugaInvisibility;
 import me.Guga.Guga_SERVER_MOD.GugaMiner;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
-import me.Guga.Guga_SERVER_MOD.GugaSpectator;
 import me.Guga.Guga_SERVER_MOD.GugaTeams;
 import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
@@ -2293,22 +2288,7 @@ public abstract class GugaCommands
 				else
 					ChatHandler.FailMsg(sender, "This world doesn't exist!");
 			}
-			else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if(args[1].matches("copy"))
-				{
-					if(sender.getItemInHand().getTypeId() == 387)
-					{
-						MyBook book = new MyBook(sender.getItemInHand());
-						sender.getInventory().addItem(book.createItem());
-						ChatHandler.SuccessMsg(sender, "Book has been copied.");
-					}
-					else
-					{
-						ChatHandler.FailMsg(sender, "Item is not writable book.");
-					}
-				}
-			}
+			
 			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				if(args[1].matches("all"))
@@ -2438,24 +2418,6 @@ public abstract class GugaCommands
 				{
 					godMode.add(arg1.toLowerCase());
 					sender.sendMessage("Immortality for " + arg1 + " has been turned on");
-				}
-			}
-			else if (subCommand.matches("invis") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				ToggleInvisibility(sender, arg1);
-			}
-			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (arg1.matches("stop"))
-				{
-					if (RemoveSpectation(sender))
-					{
-						sender.sendMessage("Spectation stopped");
-					}
-					else
-					{
-						sender.sendMessage("You are not spectating anyone!");
-					}
 				}
 			}
 			else if(subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
@@ -3060,20 +3022,6 @@ public abstract class GugaCommands
 					sender.teleport(loc);
 				}
 			}
-			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 3)
-				{
-					String arg1 = args[1];
-					if (arg1.matches("player"))
-					{
-						String tarName = args[2];
-						Player tarPlayer = plugin.getServer().getPlayer(tarName);
-						spectation.put(tarPlayer.getName(), new GugaSpectator(plugin,tarPlayer,sender));
-						sender.sendMessage("Starting spectation.");
-					}
-				}
-			}
 			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
 			{
 				EnchantmentResult result = Enchantments.enchantItem(sender, args[1], Integer.parseInt(args[2]));
@@ -3121,184 +3069,7 @@ public abstract class GugaCommands
 			ChatHandler.FailMsg(sender, "Jeste nemate level 10!");
 		}
 	}
-	public static void commandCopy(Player commandSender, String args[])
-	{
-		if(!GameMasterHandler.IsAtleastRank(commandSender.getName(), Rank.EVENTER))
-		{
-			return;
-		}
-		if(args.length == 0)
-		{
-			commandSender.sendMessage(ChatColor.RED + "Type: \"/bc help\" for more informations.");
-			return;
-		}
-
-		if(args[0].toLowerCase().matches("help"))
-		{
-			if(args.length == 1)
-			{
-				commandSender.sendMessage(ChatColor.AQUA + "BOOK COPIER COMMANDS AND INFO!");
-				commandSender.sendMessage("<> - required arguments");
-				commandSender.sendMessage("[] - optional arguments");
-				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book copy [value] - Copies book in your hand.(No value means 1*)");
-				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book give <player> [value] - Adds book in your hand to target player's inventory.");
-				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book save <fileName> - Saves book in your hand to file.");
-				commandSender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book load <fileName> - Loads book from file to your inventory.");
-			}
-		}
-
-		else if(args[0].toLowerCase().matches("give"))
-		{
-			if(args.length == 2)
-			{
-				Player p;
-				if((p = plugin.getServer().getPlayer(args[1])) != null)
-				{
-					try
-					{
-						ItemStack item = new MyBook(commandSender.getItemInHand()).createItem();
-						p.getInventory().addItem(item);
-						p.sendMessage("You recieve some book...");
-						commandSender.sendMessage("Book has been added to target player's inventory!");
-					}
-					catch(NumberFormatException e)
-					{
-						commandSender.sendMessage(ChatColor.RED + "Second argument must be number (Integer)");
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					commandSender.sendMessage(ChatColor.RED + "Target player is offline");
-				}
-			}
-
-			else if(args.length == 3)
-			{
-				if(commandSender.getItemInHand().getTypeId() == 387)
-				{
-					Player p;
-					if((p = plugin.getServer().getPlayer(args[1])) != null)
-					{
-						try
-						{
-							int numberOfBooks = Integer.parseInt(args[2]);
-							ItemStack item = new MyBook(commandSender.getItemInHand()).createItem();
-							item.setAmount(numberOfBooks);
-							p.getInventory().addItem(item);
-							p.sendMessage("You recieved some books...");
-							commandSender.sendMessage("Books has been added to target player's inventory!");
-						}
-						catch(NumberFormatException e)
-						{
-							commandSender.sendMessage(ChatColor.RED + "Second argument must be number (Integer)");
-							e.printStackTrace();
-						}
-					}
-					else
-					{
-						commandSender.sendMessage(ChatColor.RED + "Target player is offline");
-					}
-				}
-				else
-				{
-						commandSender.sendMessage("This isn't book! You need ID: 387.");
-				}
-			}
-		}
-
-		else if(args[0].toLowerCase().matches("copy"))
-		{
-			if(args.length == 1)
-			{
-				if(commandSender.getItemInHand().getTypeId() == 387)
-				{
-					MyBook book = new MyBook(commandSender.getItemInHand());
-					commandSender.getInventory().addItem(book.createItem());
-					commandSender.sendMessage("Book has been copied!");
-				}
-				else
-				{
-					commandSender.sendMessage("This isn't book! You need ID: 387.");
-				}
-			}
-			else if(args.length == 2)
-			{
-				if(commandSender.getItemInHand().getTypeId() == 387)
-				{
-					try
-					{
-						int numberOfBooks = Integer.parseInt(args[1]);
-						ItemStack item = new MyBook(commandSender.getItemInHand()).createItem();
-						item.setAmount(numberOfBooks);
-						commandSender.getInventory().addItem(item);
-						commandSender.sendMessage("Books has been copied!");
-					}
-					catch(NumberFormatException e)
-					{
-						commandSender.sendMessage(ChatColor.RED + "Second argument must be number (Integer)");
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					commandSender.sendMessage("This isn't book! You need ID: 387.");
-				}
-			}
-		}
-
-		else if(args[0].toLowerCase().matches("load"))
-		{
-			if(args.length == 2)
-			{
-				String fileName = args[1];
-				if(!fileName.endsWith(".book"))
-				{
-					fileName += ".book";
-				}
-				String completePath = "plugins/MineAndCraft_plugin/Books/" + fileName;
-				File file = new File(completePath);
-				if(!file.exists())
-				{
-					commandSender.sendMessage(ChatColor.RED + "This file doesn't exist.");
-					return;
-				}
-				
-				MyBook book = MyBook.restoreObject(completePath);
-				commandSender.getInventory().addItem(book.createItem());
-				commandSender.sendMessage("Book has been loaded.");
-			}
-		}
-
-		else if(args[0].toLowerCase().matches("save"))
-		{
-			if(args.length == 2)
-			{
-				if(commandSender.getItemInHand().getTypeId() == 387)
-				{
-					String fileName = args[1];
-					if(!fileName.endsWith(".book"))
-					{
-						fileName += ".book";
-					}
-					String completePath = "plugins/MineAndCraft_plugin/Books/" + fileName;
-					File file = new File(completePath);
-					if(file.exists())
-					{
-						commandSender.sendMessage(ChatColor.RED + "This file already exists.");
-						return;
-					}
-					MyBook book = new MyBook(commandSender.getItemInHand());
-					book.serialize(completePath);
-					commandSender.sendMessage("Book has been saved.");
-				}
-				else
-				{
-					commandSender.sendMessage("This isn't book! You need ID: 387.");
-				}
-			}
-		}
-	}
+	
 	public static void CommandLogin(Player sender, String args[])
 	{
 		 String pass = args[0];
@@ -3311,16 +3082,10 @@ public abstract class GugaCommands
 					plugin.acc.tpTask.remove(sender.getName());
 					sender.teleport(plugin.acc.playerStart.get(sender.getName()));
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
-					if(plugin.professions.get(sender.getName()).GetXp() == 0 && !BasicWorld.IsBasicWorld(sender.getLocation()))
+					if(plugin.professions.get(sender.getName()).GetLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
 						BasicWorld.BasicWorldEnter(sender);
 						ChatHandler.SuccessMsg(sender, "Vitejte ve svete pro novacky!");
-						File file = new File(MyBook.joinBookPath);
-						if(file.exists())
-						{
-							MyBook book = MyBook.restoreObject(MyBook.joinBookPath);
-							sender.getInventory().addItem(book.createItem());
-						}
 					}
 				 }
 				 else
@@ -3424,28 +3189,6 @@ public abstract class GugaCommands
 			sender.sendMessage("Nejdrive se musite zaregistrovat!");
 		}
 	}*/
-	private static void ToggleInvisibility(Player sender, String pName)
-	{
-		Player p = plugin.getServer().getPlayer(pName);
-		GugaInvisibility inv;
-		if (!p.isOnline())
-		{
-			return;
-		}
-		if ( (inv = invis.get(p)) != null)
-		{
-			inv.Stop();
-			invis.remove(p);
-			sender.sendMessage("Invisibility for " + pName + " has been turned off");
-		}
-		else
-		{
-			inv = new GugaInvisibility(p, 50, plugin);
-			inv.Start();
-			invis.put(p, inv);
-			sender.sendMessage("Invisibility for " + pName + " has been turned on");
-		}
-	}
 	private static void Teleport(Player sender,String name)
 	{
 		if (plugin.arena.IsArena(sender.getLocation()))
@@ -3469,23 +3212,7 @@ public abstract class GugaCommands
 		}
 		sender.sendMessage("Toto misto neexistuje!");
 	}
-	private static boolean RemoveSpectation(Player spectator)
-	{
-		Iterator<Entry<String, GugaSpectator>> i;
-		i = spectation.entrySet().iterator();
-		while (i.hasNext())
-		{
-			Entry<String, GugaSpectator> element = i.next();
-			GugaSpectator spec = element.getValue();
-			if (spec.GetSpectator().getName().matches(spectator.getName()))
-			{
-				spec.SpectateStop();
-				i.remove();
-				return true;
-			}
-		}
-		return false;
-	}
+
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
@@ -3494,8 +3221,6 @@ public abstract class GugaCommands
 	public static int x2 = 0;
 	public static int z1 = 0;
 	public static int z2 = 0;
-	public static HashMap<Player, GugaInvisibility> invis = new HashMap<Player, GugaInvisibility>();
-	public static HashMap<String, GugaSpectator> spectation = new HashMap<String, GugaSpectator>(); // <target, GugaSpectator>
 	public static ArrayList<String> disabledGMs = new ArrayList<String>();
 	public static String FeedbackFile = "plugins/MineAndCraft_plugin/FeedbackFile.dat";
 	private static Guga_SERVER_MOD plugin;
