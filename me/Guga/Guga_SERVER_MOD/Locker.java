@@ -99,39 +99,11 @@ public class Locker
 		return false;
 	}
 	
-	public boolean HasAccessPermission(Block block,String owner)
+	public boolean HasAccessPermission(Block block,String user)
 	{
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `"+this.plugin.dbConfig.getName()+"`.mnc_chests c LEFT JOIN `"+this.plugin.dbConfig.getName()+"`.mnc_users u ON c.owner_id=u.id WHERE c.world = ? AND c.x = ? AND c.z = ? AND c.y = ? AND u.username_clean = ?;");
-			stat.setString(1, block.getLocation().getWorld().getName());
-			stat.setInt(2, block.getLocation().getBlockX());
-			stat.setInt(3, block.getLocation().getBlockZ());
-			stat.setInt(4, block.getLocation().getBlockY());
-			stat.setString(5, owner.toLowerCase());
-			ResultSet res = stat.executeQuery();
-			if(res.next())
-			{
-				if(res.getInt("count") == 1)
-				{
-					res.close();
-					return true;
-				}
-			}
-			res.close();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
+		String owner = GetBlockOwner(block);
+		if(owner == null || owner.matcher("") || owner.equalsIgnoreCase(user))
+			return true;
 		return false;
 	}
 	

@@ -543,7 +543,8 @@ public class GugaPlayerListener implements Listener
 			{
 				// *********************************CHEST OPENING*********************************
 
-				if(!plugin.blockLocker.HasAccessPermission(targetBlock, p.getName()))
+				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
+				if(!(owner == null || owner.matches("") || p.getName().equalsIgnoreCase(owner) || GameMasterHandler.IsAtleastGM(p.getName()) ))
 				{
 					e.setCancelled(true);
 					p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento blok je zamcen!");
