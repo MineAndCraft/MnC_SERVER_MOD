@@ -17,11 +17,11 @@ public class ChatHandler
 	}
 	public static void SendChatMessage(Player sender, String message)
 	{
-		if(message.startsWith("@") || message.startsWith("*"))
+		/*if(message.startsWith("@") || message.startsWith("*"))
 		{
 			ChatHandler.PerformCharChatCommand(sender, message);
 			return;
-		}
+		}*/
 		if(GugaMute.getPlayerStatus(sender.getName()))
 		{
 			FailMsg(sender, "Jste ztlumen! Nemuzete psat.");

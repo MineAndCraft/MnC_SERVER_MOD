@@ -374,6 +374,21 @@ public class GugaBlockListener implements Listener
 					return;
 				}			
 			}
+			else if(block.getTypeId() == Locker.LockableBlocks.FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
+			{
+				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
+				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase pec byla zamcena.");
+			}
+			else if(block.getTypeId() == Locker.LockableBlocks.BURNING_FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
+			{
+				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
+				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase pec byla zamcena.");
+			}
+			else if(block.getTypeId() == Locker.LockableBlocks.DISPENSER.getID() && !plugin.blockLocker.IsLocked(block))
+			{
+				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
+				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen.");
+			}
 		}
 	}
 	

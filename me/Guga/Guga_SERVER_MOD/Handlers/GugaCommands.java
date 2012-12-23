@@ -247,7 +247,7 @@ public abstract class GugaCommands
 			if (!plugin.blockLocker.IsLocked(chest))
 			{
 				plugin.blockLocker.LockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vase blok byl zamcen.");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vas blok byl zamcen.");
 			}
 			else
 			{
@@ -297,7 +297,7 @@ public abstract class GugaCommands
 			if (  (owner != null && owner.matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
 			{
 				plugin.blockLocker.UnlockBlock(chest);
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas blok byl odemcena.");
+				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas blok byl odemcen.");
 			}
 			else
 			{
@@ -3137,7 +3137,7 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE +"CONSOLE septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				p.sendMessage(ChatColor.DARK_AQUA + "[" + "CONSOLE septa" + "]" + msg);
 			}
 		}
 		else
@@ -3158,8 +3158,8 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				playerSender.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + "Vy -> " + p.getDisplayName() + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
-				p.sendMessage(ChatColor.AQUA + "[" + ChatColor.WHITE + playerSender.getDisplayName() + " septa" + ChatColor.AQUA + "]" + ChatColor.WHITE + msg);
+				playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getDisplayName() + "]" + msg);
+				p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getDisplayName() + " septa" + "]" + msg);
 				GugaCommands.reply.put(p, playerSender);
 			}
 		}
