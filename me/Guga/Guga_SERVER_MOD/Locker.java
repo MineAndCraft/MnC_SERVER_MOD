@@ -102,7 +102,7 @@ public class Locker
 	public boolean HasAccessPermission(Block block,String user)
 	{
 		String owner = GetBlockOwner(block);
-		if(owner == null || owner.matcher("") || owner.equalsIgnoreCase(user))
+		if(owner == null || owner.matches("") || owner.equalsIgnoreCase(user))
 			return true;
 		return false;
 	}
