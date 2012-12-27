@@ -544,7 +544,9 @@ public class GugaPlayerListener implements Listener
 				// *********************************CHEST OPENING*********************************
 
 				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
-				if(!(owner == null || owner.matches("") || p.getName().equalsIgnoreCase(owner) || GameMasterHandler.IsAtleastGM(p.getName()) ))
+				if(!(owner == null || owner.matches("") || 
+						p.getName().toLowerCase().equalsIgnoreCase(owner.toLowerCase()) //HACK: p.getName().equalsIgnoreCase(owner) does not work, even though it should 
+						|| GameMasterHandler.IsAtleastGM(p.getName()) ))
 				{
 					e.setCancelled(true);
 					p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento blok je zamcen!");
