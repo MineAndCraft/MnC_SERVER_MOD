@@ -165,12 +165,12 @@ public class GugaEntityListener implements Listener
 				e.getDrops().clear();
 				e.getDrops().add(new ItemStack(383, 1, (short) 50));
 			}
-			else if(p.getName().matches("Alma_Lodaka"))
+			else if(p.getName().matches("Stanley2"))
 			{
 				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
 				p.getInventory().clear();
 				e.getDrops().clear();
-				e.getDrops().add(new ItemStack(111, 1));
+				e.getDrops().add(new ItemStack(42, 1));
 			}
 			
 		}

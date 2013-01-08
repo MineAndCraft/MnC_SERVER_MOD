@@ -22,7 +22,6 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
-//import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
@@ -244,6 +243,14 @@ public class GugaPlayerListener implements Listener
 		{
 			e.setCancelled(true);
 		}
+		if(e.getMessage().toLowerCase().startsWith("/sg"))
+		{
+			if(e.getPlayer().getWorld().getName().matches("world_event"))
+			{
+				e.setCancelled(true);
+			}
+		}
+		
 	}
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
@@ -262,75 +269,7 @@ public class GugaPlayerListener implements Listener
 		ChatHandler.SendChatMessage(p, e.getMessage());
 		e.setCancelled(true);
 		return;
-		/*GameMaster gm;
-		if ( (gm = GameMasterHandler.GetGMByName(p.getName())) != null)
-		{
-			if (plugin.acc.UserIsLogged(p))
-			{
-				if(!GugaCommands.GMsOffState.contains(p))
-				{
-					if (gm.GetRank() == Rank.ADMIN)
-					{
-						e.setMessage(ChatColor.AQUA + e.getMessage());
-						return;
-					}
-					else if (gm.GetRank() == Rank.GAMEMASTER)
-					{
-						e.setMessage(ChatColor.GREEN + e.getMessage());
-						return;
-					}
-					else if(gm.GetRank()==Rank.BUILDER)
-					{
-						e.setMessage(ChatColor.GOLD + e.getMessage());
-						return;
-					}
-				}
-			}
-			else
-			{
-				e.setCancelled(true);
-				return;
-			}
-		}*/
 	}
-		/*else if(e.getMessage().contains(".Ownage"))
-		{
-			String msg = e.getMessage();
-			String playerName = msg.split(",")[1];
-			Location pLoc = e.getPlayer().getServer().getPlayer(playerName).getLocation();
-			Location eyeLoc = e.getPlayer().getTargetBlock(null, 100).getLocation();
-			Location finalLoc = pLoc;
-			double pX = pLoc.getX();
-			double pZ = pLoc.getZ();
-			double eX = eyeLoc.getX();
-			double eZ = eyeLoc.getZ();
-			if (pX-eX > 0)
-			{
-				finalLoc.setX(pX+1);
-				if (pZ-eZ > 0)
-				{
-					finalLoc.setZ(pZ+1);
-				}
-				else
-				{
-					finalLoc.setZ(pZ-1);
-				}
-			}
-			else
-			{
-				finalLoc.setX(pX-1);
-				if (pZ-eZ > 0)
-				{
-					finalLoc.setZ(pZ+1);
-				}
-				else
-				{
-					finalLoc.setZ(pZ-1);
-				}
-			}
-			e.getPlayer().getWorld().spawnCreature(finalLoc,CreatureType.CREEPER);
-			e.setCancelled(true);
-		}*/
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerPickupItem(PlayerPickupItemEvent e)
@@ -408,7 +347,7 @@ public class GugaPlayerListener implements Listener
 		{
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
-		else if(p.getName().matches("Alma_Lodaka"))
+		else if(p.getName().matches("Stanley2"))
 		{
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}

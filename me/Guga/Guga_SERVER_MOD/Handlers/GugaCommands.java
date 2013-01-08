@@ -62,94 +62,43 @@ public abstract class GugaCommands
 	}
 	public static void CommandWho(Player sender)
 	{
-		Player[] p = plugin.getServer().getOnlinePlayers();
-		String pName;
-		double playerX;
-		double playerZ;
-		double senderX = sender.getLocation().getX();
-		double senderZ = sender.getLocation().getZ();
-		
-		double distX;
-		double distZ;
-		double distance;
-		sender.sendMessage("******************************");
-		sender.sendMessage("HRACI ONLINE:");
+		Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
+		String list = "";
+		int playerCap = plugin.getServer().getMaxPlayers();
 		int i = 0;
-		while (i < p.length)
+		sender.sendMessage(ChatColor.BLUE + "****************ON-LINE HRACI(" + onlinePlayers.length + "/" + playerCap +")****************");
+		while(i<onlinePlayers.length)
 		{
-			pName = p[i].getName();
-			if (p[i].getName()!= sender.getName())
+			Player p = onlinePlayers[i];
+			int level = plugin.professions.get(p.getName()).GetLevel();
+			if(GameMasterHandler.IsRank(p.getName(), Rank.ADMIN))
 			{
-				playerX = p[i].getLocation().getX();
-				playerZ = p[i].getLocation().getZ();
-				
-				distX = Math.abs(playerX-senderX);
-				distZ = Math.abs(playerZ-senderZ);
-				distance = Math.sqrt((distX*distX)+(distZ*distZ));
-				distance = Math.round(distance*10);
-				distance = distance/10;
-				String msg;
-				if (plugin.professions.get(p[i].getName()) != null)
-				{
-					msg = "- " + pName;
-					msg += /*"  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() +*/ "   Level " + plugin.professions.get(p[i].getName()).GetLevel()+ "  " + distance + " bloku daleko";
-					if (plugin.FindPlayerCurrency(pName).IsVip())
-					{
-						sender.sendMessage(ChatColor.GOLD + msg);
-					}
-					else
-					{
-						sender.sendMessage(msg);
-					}
-				}
-				else
-				{
-					msg = "- " + pName + "  " + distance + " bloku daleko";
-					if (plugin.FindPlayerCurrency(pName).IsVip())
-					{
-						sender.sendMessage(ChatColor.GOLD + msg);
-					}
-					else
-					{
-						sender.sendMessage(msg);
-					}
-				}
+				list += ChatColor.AQUA + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
+			}
+			else if(GameMasterHandler.IsRank(p.getName(), Rank.GAMEMASTER))
+			{
+				list += ChatColor.GREEN + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
+			}
+			else if(GameMasterHandler.IsRank(p.getName(), Rank.BUILDER))
+			{
+				list += ChatColor.GOLD + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
+			}
+			else if(plugin.FindPlayerCurrency(p.getName()).IsVip())
+			{
+				list += ChatColor.GOLD + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
 			}
 			else
 			{
-				String msg;
-				if (plugin.professions.get(p[i].getName()) != null)
-				{
-					msg = "- " + pName;
-					msg += /*"  Prof: " +plugin.professions.get(p[i].getName()).GetProfession() +*/ "   Level " + plugin.professions.get(p[i].getName()).GetLevel();
-					if (plugin.FindPlayerCurrency(pName).IsVip())
-					{
-						sender.sendMessage(ChatColor.GOLD + msg);
-					}
-					else
-					{
-						sender.sendMessage(msg);
-					}
-				}
-				else
-				{
-					msg = "- " + pName;
-
-					if (plugin.FindPlayerCurrency(pName).IsVip())
-					{
-						sender.sendMessage(ChatColor.GOLD + msg);
-					}
-					else
-					{
-						sender.sendMessage(msg);
-					}
-				}
+				list += p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
 			}
-			
+			if(i == (onlinePlayers.length-1))
+				list += ".";
+			else
+				list += ", ";
 			i++;
 		}
-		sender.sendMessage("******************************");
-		
+		sender.sendMessage(list);
+		sender.sendMessage("****************************************************");
 	}	
 	public static void CommandHelp(Player sender)
 	{
@@ -520,22 +469,22 @@ public abstract class GugaCommands
 		}
 		if (plugin.arena.IsArena(sender.getLocation()))
 		{
-			sender.sendMessage("VIP Prikazy nemuzete pouzivat v arene!");
+			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
 			return;
 		}
 		if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
 		{
-			sender.sendMessage("VIP Prikazy nemuzete pouzivat v EventWorldu!");
+			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
 			return;
 		}
 		if (BasicWorld.IsBasicWorld(sender.getLocation()))
 		{
-			sender.sendMessage("VIP Prikazy nemuzete pouzivat ve svete pro novacky!");
+			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
 			return;
 		}
-		if (plugin.AdventureWorld.IsAdventureWorld(sender.getLocation()))
+		if (sender.getWorld().getName().startsWith("survival_"))
 		{
-			sender.sendMessage("VIP Prikazy nemuzete pouzivat v AdventureWorldu!");
+			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
 			return;
 		}
 		if (args.length == 0)
@@ -1377,76 +1326,7 @@ public abstract class GugaCommands
 			}
 		}
 	}
-	public static void CommandAdventureWorld(Player sender, String args[])
-	{
-		if (args.length==0)
-		{
-			sender.sendMessage("AdventureWorld MENU:");
-			sender.sendMessage("Commands:");
-			sender.sendMessage("/aw join - Teleportuje hrace do AdventureWorldu");
-			sender.sendMessage("/aw leave - Vrati hrace do normalniho sveta");
-			if(GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/aw togglemobs - Toggle mobs on/off");
-				sender.sendMessage("/aw togglepvp - Toggle PvP on/off");
-				sender.sendMessage("/aw toggleregion - Toggle region on/off");
-				sender.sendMessage("/aw toggle - Toggle AW on/off");
-				if(GameMasterHandler.IsAdmin(sender.getName()))
-				{
-					sender.sendMessage("/aw setspawn - Sets a AdventureWorld spawn to GM's position");
-				}
-			}
-		}
-		else if (args.length == 1)
-		{
-			String subCommand = args[0];
-			if (plugin.arena.IsArena(sender.getLocation()))
-			{
-				sender.sendMessage("Z areny se nedostanete do AdventureWorldu!");
-				return;
-			}
-			else
-			{
-				if (subCommand.matches("join"))
-				{
-					if (!plugin.AdventureWorld.IsAdventureWorld(sender.getLocation()))
-					{
-						plugin.AdventureWorld.PlayerJoin(sender.getLocation(),sender);
-					}
-					else
-					{
-						sender.sendMessage("V AdventureWorldu jiz jste!");
-					}
-				}
-				else if(subCommand.matches("leave"))
-				{
-					plugin.AdventureWorld.PlayerLeave(sender);
-				}
-				else if(subCommand.matches("togglepvp") && GameMasterHandler.IsAtleastGM(sender.getName()))
-				{
-					plugin.AdventureWorld.togglePvP(sender);
-				}
-				else if(subCommand.matches("togglemobs") && GameMasterHandler.IsAtleastGM(sender.getName()))
-				{
-					plugin.AdventureWorld.toggleMobs(sender);
-				}
-				else if(subCommand.matches("toggleregion")&& GameMasterHandler.IsAtleastGM(sender.getName()))
-				{
-					plugin.AdventureWorld.toggleRegion(sender);
-				}
-				else if(subCommand.matches("toggle")&& GameMasterHandler.IsAtleastGM(sender.getName()))
-				{
-					plugin.AdventureWorld.toggleWorld(sender);
-				}
-				else if(subCommand.matches("setspawn")&&GameMasterHandler.IsAdmin(sender.getName()))
-				{
-					Location l = sender.getLocation();
-					sender.getWorld().setSpawnLocation((int)l.getX(), (int)l.getY(), (int)l.getZ());
-					sender.sendMessage("New spawn for AdventureWorld has been set!");
-				}
-			}
-		}
-	}
+	
 	public static void CommandArena(Player sender, String args[])
 	{
 		if (!plugin.acc.UserIsLogged(sender))
@@ -3158,8 +3038,8 @@ public abstract class GugaCommands
 					msg += " " + args[i];
 					i++;
 				}
-				playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getDisplayName() + "]" + msg);
-				p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getDisplayName() + " septa" + "]" + msg);
+				playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getName() + "]" + msg);
+				p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa" + "]" + msg);
 				GugaCommands.reply.put(p, playerSender);
 			}
 		}

@@ -107,9 +107,13 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		{
 			getServer().createWorld(WorldCreator.name("world_mine").environment(Environment.NORMAL));
 		}
-		if(getServer().getWorld("world_adventure")==null)
+		if(getServer().getWorld("survival_games")==null)
 		{
-			getServer().createWorld(WorldCreator.name("world_adventure").environment(Environment.NORMAL));
+			getServer().createWorld(WorldCreator.name("survival_games").environment(Environment.NORMAL));
+		}
+		if(getServer().getWorld("survival_games2")==null)
+		{
+			getServer().createWorld(WorldCreator.name("survival_games2").environment(Environment.NORMAL));
 		}
 		arena.LoadArenas();
 		arena.LoadPvpStats();
@@ -126,6 +130,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getServer().getWorld("world_mine").setFullTime(4000);
 		getServer().getWorld("world_mine").setPVP(false);
 		getServer().getWorld("world_mine").setSpawnFlags(false, false);
+		getServer().getWorld("survival_games").setPVP(true);
+		getServer().getWorld("survival_games").setSpawnFlags(false, false);
+		getServer().getWorld("survival_games2").setPVP(true);
+		getServer().getWorld("survival_games2").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
@@ -252,20 +260,18 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	}
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
-		if (sender instanceof Player)
-		{
-		//*****************************************/who*****************************************
+	//*****************************************/who*****************************************
 		 if(cmd.getName().equalsIgnoreCase("who") && (sender instanceof Player))
 		 { 
 		   GugaCommands.CommandWho((Player)sender);
 		   return true;
 		 }
-		 else if (cmd.getName().equalsIgnoreCase("event"))
+		 else if (cmd.getName().equalsIgnoreCase("event") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandEvent((Player)sender, args);
 			 return true;
 		 }
-		 else if (cmd.getName().equalsIgnoreCase("team"))
+		 else if (cmd.getName().equalsIgnoreCase("team") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandTeam((Player)sender, args);
 			 return true;
@@ -300,11 +306,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if (cmd.getName().equalsIgnoreCase("ew") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandEventWorld((Player) sender, args);
-			 return true;
-		 }
-		 else if (cmd.getName().equalsIgnoreCase("aw") && (sender instanceof Player))
-		 {
-			 GugaCommands.CommandAdventureWorld((Player) sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("debug") && (sender instanceof ConsoleCommandSender))
@@ -469,6 +470,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 					 saveCreditsCodes();
 					 logger.LogShopTransaction(Prices.ARROW, 1, sender.getName()+";CRAFTCON;CREDITS;"+args[1]);
 					 ChatHandler.SuccessMsg((Player)sender, "Vase kredity z Craftconu byly pripsany!");
+					 return true;
 				 }
 			 }
 			 else if(args[0].equalsIgnoreCase("vip"))
@@ -485,10 +487,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 					vipCodes.remove(args[1]);
 					saveVIPCodes();
 					ChatHandler.SuccessMsg((Player)sender, "Vase VIP z Craftconu bylo aktivovano do " + c.getTime() + "!");
+					return true;
 				 }
 			 }
 		 }
-		}
 		return false;
 	}
 	public GugaVirtualCurrency FindPlayerCurrency(String pName)
@@ -712,7 +714,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public GugaEventWorld EventWorld = new GugaEventWorld(this);
-	public AdventureWorld AdventureWorld = new AdventureWorld(this);
 	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();
 	public HashMap <Player,GugaAccounts> accounts = new HashMap<Player, GugaAccounts>();
 	public ArrayList<String> creditsCodes = new ArrayList<String>();

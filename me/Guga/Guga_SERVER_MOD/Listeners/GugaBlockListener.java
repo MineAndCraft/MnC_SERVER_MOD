@@ -68,16 +68,7 @@ public class GugaBlockListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		if(plugin.AdventureWorld.IsAdventureWorld(p.getLocation()) && plugin.AdventureWorld.regionStatus())
-		{
-			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
-			{
-				return;
-			}
-			p.sendMessage(ChatColor.BLUE+"[ADVENTUREWORLD]: "+ChatColor.WHITE+"V AW nemuzes kopat!");
-			e.setCancelled(true);
-			return;
-		}
+		
 		if (!GugaRegionHandler.CanInteract(p, e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
@@ -313,16 +304,7 @@ public class GugaBlockListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		if(plugin.EventWorld.IsEventWorld(p.getLocation()) && plugin.AdventureWorld.regionStatus())
-		{
-			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.EVENTER))
-			{
-				return;
-			}
-			p.sendMessage(ChatColor.BLUE+"[ADVENTUREWORLD]: "+ChatColor.WHITE+"V AW nemuzes pokladat blocky!");
-			e.setCancelled(true);
-			return;
-		}
+		
 		if (!GugaRegionHandler.CanInteract(e.getPlayer(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
