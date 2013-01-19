@@ -634,8 +634,13 @@ public abstract class GugaCommands
 				GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName()); 
 				if(args[1].matches("on"))
 				{
-					curr.ToggleFly(true);
-					ChatHandler.SuccessMsg(sender, "Letani zapnuto!");
+					if(sender.getWorld().getName().matches("world"))
+					{
+						curr.ToggleFly(true);
+						ChatHandler.SuccessMsg(sender, "Letani zapnuto!");
+					}
+					else
+						ChatHandler.FailMsg(sender, "Letani je povoleno pouze v hlavnim svete");
 				}
 				else if(args[1].matches("off"))
 				{
