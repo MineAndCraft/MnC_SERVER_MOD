@@ -18,6 +18,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.PlacesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
+import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaMessageListener;
@@ -66,6 +67,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvents(pListener, this);
 		pManager.registerEvents(bListener, this);
 		pManager.registerEvents(enListener, this);
+		pManager.registerEvents(customListener, this);
 		
 		dbConfig.connectDb();
 		
@@ -111,10 +113,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		{
 			getServer().createWorld(WorldCreator.name("survival_games").environment(Environment.NORMAL));
 		}
-		if(getServer().getWorld("survival_games2")==null)
-		{
-			getServer().createWorld(WorldCreator.name("survival_games2").environment(Environment.NORMAL));
-		}
 		arena.LoadArenas();
 		arena.LoadPvpStats();
 		getServer().getWorld("arena").setPVP(true);
@@ -132,8 +130,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getServer().getWorld("world_mine").setSpawnFlags(false, false);
 		getServer().getWorld("survival_games").setPVP(true);
 		getServer().getWorld("survival_games").setSpawnFlags(false, false);
-		getServer().getWorld("survival_games2").setPVP(true);
-		getServer().getWorld("survival_games2").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
 		LoadProfessions();
 		LoadCurrency();
@@ -157,13 +153,13 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
-		Votes.Start();
+		//Votes.Start();
 		//this.autoKicker.startThread();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
 		GugaMCClientHandler.ReloadSkins();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
-		log.info("Created by Guga 2011.");
+		log.info("Created by MineAndCraft team 2011 - 2013.");
 	}
 	public void SaveCurrency()
 	{
@@ -708,6 +704,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaEntityListener enListener = new GugaEntityListener(this);
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
 	public final GugaMessageListener msgListener = new GugaMessageListener(this);
+	public final CustomListener customListener = new CustomListener(this);
 	public final GugaAccounts acc = new GugaAccounts(this);
 	public final AutoKicker autoKicker = new AutoKicker(this);
 	public Locker blockLocker;
