@@ -17,11 +17,6 @@ public class ChatHandler
 	}
 	public static void SendChatMessage(Player sender, String message)
 	{
-		/*if(message.startsWith("@") || message.startsWith("*"))
-		{
-			ChatHandler.PerformCharChatCommand(sender, message);
-			return;
-		}*/
 		if(GugaMute.getPlayerStatus(sender.getName()))
 		{
 			FailMsg(sender, "Jste ztlumen! Nemuzete psat.");
@@ -71,6 +66,10 @@ public class ChatHandler
 		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER))
 		{
 			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.GOLD + message);
+		}
+		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.HELPER))
+		{
+			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.GREEN + message);
 		}
 		else if(curr.IsVip())
 		{
@@ -140,6 +139,11 @@ public class ChatHandler
 			ChatHandler.SetPrefix(p, "builder");
 			p.setPlayerListName(ChatColor.GOLD+p.getName());
 		}
+		else if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.HELPER))
+		{
+			ChatHandler.SetPrefix(p, "helper");
+			p.setPlayerListName(ChatColor.GREEN+p.getName());
+		}
 		else if(curr.IsVip())
 		{
 			ChatHandler.SetPrefix(p, "vip");
@@ -163,6 +167,7 @@ public class ChatHandler
 	{
 		InitializeDisplayName(p);
 	}
+	
 	public static void PerformCharChatCommand(Player sender, String message)
 	{
 		char[] messageInChar;

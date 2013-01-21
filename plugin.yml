@@ -26,6 +26,8 @@ commands:
         description: Fly menu
     gm:
         description: GM Commands menu
+    helper:
+        description: Command for helpers
     debug:
         description: Toggle debug
     shop:

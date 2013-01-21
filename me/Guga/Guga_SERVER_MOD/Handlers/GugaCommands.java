@@ -1852,6 +1852,76 @@ public abstract class GugaCommands
 			}
 		}
 	}
+	public static void CommandHelper(Player sender, String args[])
+	{
+		GameMaster gm;
+		if((gm = GameMasterHandler.GetGMByName(sender.getName())) != null)
+		{
+			if(gm.GetRank() == Rank.HELPER)
+			{
+				Player []players = plugin.getServer().getOnlinePlayers();
+				String command = "/gm ";
+				int r=0;
+				while(r < args.length)
+				{
+					command += args[r] + " ";
+					r++;
+				}
+				r = 0;
+				while(r < players.length)
+				{
+					if(GameMasterHandler.IsAtleastGM(players[r].getName()))
+					{
+						players[r].sendMessage(ChatColor.GRAY+sender.getName() + " used command: " + command);
+					}
+					r++;
+				}
+				if(args.length == 0)
+				{
+					sender.sendMessage("**************MENU HELPERU**************");
+					sender.sendMessage("/helper mute - Zobrazi podmenu.");
+					sender.sendMessage("/helper kick <hrac> - Vykopne hrace ze serveru kvuli zadanemu duvodu.");
+				}
+				else if(args[0].toLowerCase().matches("mute"))
+				{
+					if(args.length == 1)
+					{
+						sender.sendMessage("/helper mute add <name> <time> - Ztlumi hrace na urcity cas v minutach.");
+						sender.sendMessage("/helper mute list - Zorazi seznam ztlumenych hracu.");
+					}
+					else if(args.length == 2)
+					{
+						if(args[1].toLowerCase().matches("list"))
+						{
+							GugaMute.printPlayers(sender);
+						}
+					}
+					else if(args.length == 4)
+					{
+						if(args[1].toLowerCase().matches("add"))
+						{
+							GugaMute.addPlayer(args[2], Integer.parseInt(args[3]));
+							ChatHandler.SuccessMsg(sender, "Hrac byl ztlumen.");
+						}
+					}
+				}
+				else if(args[0].toLowerCase().matches("kick"))
+				{
+					if(args.length == 2)
+					{
+						Player p;
+						if((p = plugin.getServer().getPlayer(args[1])) != null)
+						{
+							p.kickPlayer("Byl jste vykopnut helperem.");
+							ChatHandler.SuccessMsg(sender, "Hrac byl vykopnut");
+						}
+						else
+							ChatHandler.FailMsg(sender, "Tento hrac neni online");
+					}
+				}
+			}
+		}
+	}
 	public static void CommandGM(Player sender, String args[])
 	{
 		if (!(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER)))
@@ -2854,7 +2924,7 @@ public abstract class GugaCommands
 						Player target = plugin.getServer().getPlayer(arg2);
 						if(target != null)
 						{
-							if(arg3.equalsIgnoreCase("eventer")||arg3.equalsIgnoreCase("builder")||arg3.equalsIgnoreCase("admin")||arg3.equalsIgnoreCase("gamemaster"))
+							if(arg3.equalsIgnoreCase("helper")||arg3.equalsIgnoreCase("eventer")||arg3.equalsIgnoreCase("builder")||arg3.equalsIgnoreCase("admin")||arg3.equalsIgnoreCase("gamemaster"))
 							{
 								if(!GameMasterHandler.gameMasters.contains(GameMasterHandler.GetGMByName(target.getName())))
 								{

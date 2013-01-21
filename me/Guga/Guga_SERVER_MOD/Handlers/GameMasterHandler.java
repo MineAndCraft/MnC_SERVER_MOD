@@ -31,7 +31,6 @@ public abstract class GameMasterHandler
 			p.setOp(true);
 		}
 		GameMasterHandler.gameMasters.add(new GameMaster(name, r));
-		p.setGameMode(GameMode.CREATIVE);
 		ChatHandler.InitializeDisplayName(p);
 		SaveGMs();
 	}

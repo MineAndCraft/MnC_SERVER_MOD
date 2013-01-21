@@ -352,6 +352,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandWorld((Player)sender);
 			 return true;
 		 }
+		 else if ((cmd.getName().equalsIgnoreCase("helper")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandHelper((Player)sender, args);
+			 return true;
+		 }
 		//*****************************************module*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
 		 {
