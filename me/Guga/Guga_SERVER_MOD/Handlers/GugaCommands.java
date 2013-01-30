@@ -1881,6 +1881,47 @@ public abstract class GugaCommands
 					sender.sendMessage("**************MENU HELPERU**************");
 					sender.sendMessage("/helper mute - Zobrazi podmenu.");
 					sender.sendMessage("/helper kick <hrac> - Vykopne hrace ze serveru kvuli zadanemu duvodu.");
+					sender.sendMessage("/helper tp - Zobrazi podmenu.");
+				}
+				else if(args[0].toLowerCase().matches("tp"))
+				{
+					if(args.length == 1)
+					{
+						sender.sendMessage("/helper tp <hrac> - teleportuje Vas k zadanemu hraci.");
+						sender.sendMessage("/helper tp back - teteportuje Vas zpet.");
+					}
+					else if(args.length == 2)
+					{
+						if(args[1].toLowerCase().matches("back"))
+						{
+							if(backTeleport.containsKey(sender.getName()))
+							{
+								sender.teleport(backTeleport.get(sender.getName()));
+								ChatHandler.SuccessMsg(sender, "Byl jste teleportovan.");
+							}
+							else
+								ChatHandler.FailMsg(sender, "Nikam jste se jeste neteleportoval.");
+						}
+						else
+						{
+							Player p = plugin.getServer().getPlayer(args[1]);
+							if(p != null)
+							{
+								String name = sender.getName();
+								if(backTeleport.containsKey(name))
+								{
+									backTeleport.remove(name);
+									backTeleport.put(name, sender.getLocation());
+								}
+								else
+									backTeleport.put(name, sender.getLocation());
+								sender.teleport(p);
+								ChatHandler.SuccessMsg(sender, "Byl jste teleportovan.");
+							}
+							else
+								ChatHandler.FailMsg(sender, "Hrac je offline.");
+						}
+					}
 				}
 				else if(args[0].toLowerCase().matches("mute"))
 				{
@@ -3169,6 +3210,7 @@ public abstract class GugaCommands
 	}
 
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
+	public static HashMap<String, Location> backTeleport = new HashMap<String, Location>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static ArrayList<String> fly = new ArrayList<String>();

@@ -69,7 +69,7 @@ public class ChatHandler
 		}
 		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.HELPER))
 		{
-			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.GREEN + message);
+			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.BLUE + message);
 		}
 		else if(curr.IsVip())
 		{
@@ -142,7 +142,7 @@ public class ChatHandler
 		else if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.HELPER))
 		{
 			ChatHandler.SetPrefix(p, "helper");
-			p.setPlayerListName(ChatColor.GREEN+p.getName());
+			p.setPlayerListName(ChatColor.BLUE+p.getName());
 		}
 		else if(curr.IsVip())
 		{
