@@ -57,7 +57,6 @@ public class GugaArena
 		{
 			baseLocation.put(p.getName(), p.getLocation());
 		}
-		p.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " +p.getName() + " vstoupil do Areny!");
 		InventoryBackup.InventoryClearWrapped(p);
 		GiveItems(p);
 		if (this.actualSpawn != null)
@@ -68,9 +67,12 @@ public class GugaArena
 		{
 			p.teleport(plugin.getServer().getWorld("arena").getSpawnLocation());
 		}
+		if(!players.contains(p.getName()))
+			players.add(p.getName());
 		if(playerImortality.containsKey(p.getName()))
 			playerImortality.remove(p.getName());
 		playerImortality.put(p.getName(), System.currentTimeMillis() + 3000);
+		this.sendInfo(ChatColor.DARK_GREEN + "[ARENA]: " +p.getName() + " vstoupil do Areny!");
 		DisableLeave(p, 60);
 	}
 	public void PlayerLeave(Player p)
@@ -94,7 +96,7 @@ public class GugaArena
 		{
 			p.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
 		}
-		p.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " +p.getName() + " opustil Arenu");
+		this.sendInfo(ChatColor.DARK_GREEN + "[ARENA]: " +p.getName() + " opustil Arenu");
 		InventoryBackup.InventoryReturnWrapped(p, true);
 	}
 	public boolean IsArena(Location loc)
@@ -162,7 +164,7 @@ public class GugaArena
 		{
 			if (multiKill.intValue() > 3)
 			{
-				plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " +pName + " je na killing spree! Ma " + multiKill + " killu v rade!");
+				this.sendInfo(ChatColor.DARK_GREEN + "[ARENA]: " +pName + " je na killing spree! Ma " + multiKill + " killu v rade!");
 				kills++;
 			}
 		}
@@ -170,7 +172,7 @@ public class GugaArena
 		{
 			if (multiKill.intValue() >= 3 )
 			{
-				plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + pName + " prerusil killing spree hrace " + victim.getName() + "!");
+				this.sendInfo(ChatColor.DARK_GREEN + "[ARENA]: " + pName + " prerusil killing spree hrace " + victim.getName() + "!");
 				kills++;
 			}
 		}
@@ -430,8 +432,10 @@ public class GugaArena
 	}
 	public void WinRound(Player winner)
 	{
-		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + ChatColor.GOLD + winner.getName() + ChatColor.DARK_GREEN + " VYHRAVA TOTO KOLO!");
+		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + ChatColor.GOLD + winner.getName() + ChatColor.DARK_GREEN + " VYHRAVA TOTO KOLO A ZISKAVA 2 KREDITY!");
 		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: ZACINA NOVE KOLO V ARENE!");
+		plugin.FindPlayerCurrency(winner.getName()).AddCurrency(2);
+		players.clear();
 		ClearStats();
 		this.RotateArena();
 		
@@ -581,6 +585,19 @@ public class GugaArena
 		private int[][] items; 
 		private int[] armor;
 	}
+	
+	private void sendInfo(String message)
+	{
+		Iterator<String> iter = players.iterator();
+		while(iter.hasNext())
+		{
+			Player p = plugin.getServer().getPlayer(iter.next());
+			if(p != null)
+			{
+				p.sendMessage(message);
+			}
+		}
+	}
 	private Player killCache;
 	
 	private HashMap<String,Integer> pvpStats = new HashMap<String,Integer>();
@@ -588,6 +605,7 @@ public class GugaArena
 	private HashMap<String,Location> baseLocation = new HashMap<String,Location>();
 	private List<String> cannotLeave = Collections.synchronizedList(new ArrayList<String>());
 	private HashMap<String, Long> playerImortality = new HashMap<String, Long>();
+	private ArrayList<String> players = new ArrayList<String>();
 	private int spawnIndex;
 	private ArenaSpawn actualSpawn;
 	private ArrayList<ArenaSpawn> spawnList = new ArrayList<ArenaSpawn>();

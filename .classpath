@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="D:/Downloads/bukkit-1.4.6-R0.1-20121220.180858-1.jar"/>
 	<classpathentry kind="lib" path="D:/Downloads/craftbukkit-1.4.6-R0.1-20121221.060237-7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Richard Kuba/Desktop/Votifier.jar"/>
+	<classpathentry kind="lib" path="D:/Downloads/Votifier (3).jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
