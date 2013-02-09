@@ -634,13 +634,13 @@ public abstract class GugaCommands
 				GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName()); 
 				if(args[1].matches("on"))
 				{
-					if(sender.getWorld().getName().matches("world"))
+					if(sender.getWorld().getName().matches("world") || sender.getWorld().getName().matches("world_nether"))
 					{
 						curr.ToggleFly(true);
 						ChatHandler.SuccessMsg(sender, "Letani zapnuto!");
 					}
 					else
-						ChatHandler.FailMsg(sender, "Letani je povoleno pouze v hlavnim svete");
+						ChatHandler.FailMsg(sender, "Letani je povoleno pouze v hlavnim svete a netheru.");
 				}
 				else if(args[1].matches("off"))
 				{
@@ -923,10 +923,12 @@ public abstract class GugaCommands
 		if (args.length == 0)
 		{
 			sender.sendMessage("PLACES MENU:");
-			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
-			sender.sendMessage("/pp <jmeno>  -  Teleportuje hrace na dane misto.");
+			sender.sendMessage("/pp <jmeno>  -  Teleportuje Vas na dane misto.");
 			sender.sendMessage("/places me - Zobrazi vase mista.");
 			sender.sendMessage("/places set - Zobrazi dostupna nastaveni.");
+			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
+			
+			sender.sendMessage(ChatColor.BOLD + "/places create <jmeno> - Vytvori soukrome misto a pozici, kde stojite. Pristup pro ostatni lze nastavit pomoci /places set .");
 		}
 		else if (args.length == 1)
 		{
@@ -969,6 +971,52 @@ public abstract class GugaCommands
 					sender.sendMessage("* " + i.next().getPortName());
 				}
 				
+			}
+			else if(subCommand.matches("create"))
+			{
+				char[] placeName = args[1].toCharArray();
+				int i = 0;
+				boolean allowed = true;
+				while(i<placeName.length)
+				{
+					int actual = (int)placeName[i];
+					if( (actual >= 65 && actual <= 90) || (actual >= 97 && actual <= 122) || (actual >= 48 && actual <= 57))
+					{}
+					else
+					{
+						allowed = false;
+						break;
+					}
+					i++;
+				}
+				if(allowed)
+				{
+					GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName());
+					if(curr.GetCurrency() >= 550)
+					{
+						if(PlacesHandler.getPlaceByName(args[1]) == null)
+						{
+							String playerName = sender.getName();
+							String placesName = args[1];
+							String[] owner = {sender.getName()};
+							int X = sender.getLocation().getBlockX();
+							int Y = sender.getLocation().getBlockY();
+							int Z = sender.getLocation().getBlockZ();
+							String world = sender.getLocation().getWorld().getName();
+							String welcomeMsg = "Vitejte na portu hrace " + playerName + ".";
+							PlacesHandler.addPlace(new Places(placesName, playerName, owner, X, Y, Z, world, welcomeMsg));
+							PlacesHandler.savePlaces();
+							curr.RemoveCurrency(550);
+							ChatHandler.SuccessMsg(sender, "Vas port byl vytvoren.");
+						}
+						else
+							ChatHandler.FailMsg(sender, "Tento nazev uz je pouzit");
+					}
+					else
+						ChatHandler.FailMsg(sender, "Nemate dostatek kreditu.");
+				}
+				else
+					ChatHandler.FailMsg(sender, "Nazev obsahuje nepovoleny znak");
 			}
 		}
 		else if (args.length == 4)
