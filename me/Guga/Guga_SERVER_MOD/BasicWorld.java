@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 
@@ -31,13 +32,18 @@ public class BasicWorld
 	{
 		p.teleport(plugin.getServer().getWorld("world_basic").getSpawnLocation());
 		HomesHandler.addHome(p, plugin.getServer().getWorld("world_basic").getSpawnLocation());
-		p.sendMessage(ChatColor.GREEN + "Tento svet bude vasim sidlem dokud nedosahnete levelu 10!");
-		p.sendMessage(ChatColor.GREEN + "Levely ziskate kopanim!");
-		p.sendMessage(ChatColor.YELLOW + "Vice na o nasem profesionalnim svete na: mineandcraft.cz");
+		p.sendMessage(ChatColor.RED + "*************************************");
+		p.sendMessage(ChatColor.DARK_AQUA + "Nyni se nachazite ve svete pro novacky, " +
+				"kde musite dosahnout " + ChatColor.DARK_RED + "LEVELU 10" + ChatColor.DARK_AQUA +" (level zjistite prikazem /rpg status). " + ChatColor.DARK_RED + 
+				"LEVELY" + ChatColor.DARK_AQUA +" ziskavate kopanim. Pote se muzete teleportovat do " + ChatColor.DARK_RED + "PROFESIONALNIHO SVETA.");
+		
+		p.sendMessage(ChatColor.YELLOW + "Vice na o nasem profesionalnim svete na: " + ChatColor.DARK_BLUE + ">>> www.mineandcraft.cz/navod-na-pripojeni <<<");
+		p.sendMessage(ChatColor.RED + "*************************************");
 	}
 	public static void BasicWorldLeaveToWorld(Player p)
 	{
 		Location loc = SpawnsHandler.getRandomSpawn();
+		ChatHandler.InitializeDisplayName(p);
 		HomesHandler.addHome(p, loc);
 		p.teleport(loc);
 	}
