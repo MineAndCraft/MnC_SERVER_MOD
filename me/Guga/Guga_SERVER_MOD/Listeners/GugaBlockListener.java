@@ -13,8 +13,10 @@ import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import net.minecraft.server.v1_4_6.Material;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -372,6 +374,15 @@ public class GugaBlockListener implements Listener
 				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen.");
 			}
 		}
+		if(block.getTypeId() == 19)
+		{
+			World world = block.getWorld();
+			int x = block.getX();
+			int y = block.getY();
+			int z = block.getZ();
+			this.clearWaterSponge(world, x, y, z, 3);
+			block.setTypeId(0);
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -414,6 +425,23 @@ public class GugaBlockListener implements Listener
 				it.next().sendMessage("RS_EVENT: ID=" + blockID + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
 			}
 		}
+	}
+	
+	private void clearWaterSponge(World world, int x, int y, int z, int radius)
+	{
+		for (int cx = -radius; cx <= radius; cx++) 
+		{
+            for (int cy = -radius; cy <=radius; cy++) 
+            {
+                for (int cz = -radius; cz <= radius; cz++) 
+                {
+                    if (world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 8 || world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 9) //isWater?
+                    {
+                        world.getBlockAt(x + cx, y + cy, z + cz).setTypeId(0);
+                    }
+                }
+            }
+        }
 	}
 	private int ID_SELECT_ITEM = 269;
 	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
