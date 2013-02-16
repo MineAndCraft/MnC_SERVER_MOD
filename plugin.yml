@@ -1,13 +1,17 @@
 name: Guga_SERVER_MOD
 main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
-version: 3.5.5
+version: 4.0.0
 commands:
     who:
         description: Gets Names of Online players
     help:
         description: Prints all possible commands
+    getcoords:
+        desctiption: Prints coordinates of target block
     login:
         description: Logs a player
+    register:
+        description: Registers a new player
     locker:
         description: Info about how to lock or unlock chest
     lock:
@@ -54,8 +58,6 @@ commands:
         description: Command teleports player from basicWorld to world
     home:
         description: Home command
-    aw:
-        description: Adventure world menu
     activate:
         description: For craftcon bonuses activation
     book:
@@ -64,3 +66,7 @@ commands:
         description: Command for whisper
     msg:
         description: Command for whisper
+    friend:
+        description: Friendlist commands
+    block:
+        description: Blocklist commands

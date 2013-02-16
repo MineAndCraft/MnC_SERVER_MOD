@@ -1,58 +1,44 @@
 package me.Guga.Guga_SERVER_MOD;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
-import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.PlacesHandler;
-//import me.Guga.Guga_SERVER_MOD.Handlers.GugaFlyHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
-import me.Guga.Guga_SERVER_MOD.Listeners.GugaMessageListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaPlayerListener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-//import Native.*;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+
 public class Guga_SERVER_MOD extends JavaPlugin
 {	
 	public void onDisable() 
 	{
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
 		GugaEvent.ClearAllGroups();
-		SaveProfessions();
-		SaveCurrency();
+		this.userManager.save();
 		GugaAnnouncement.SaveAnnouncements();
 		GugaRegionHandler.SaveRegions();
-		GugaAuctionHandler.SaveAuctions();
-		GugaAuctionHandler.SavePayments();
-		GugaBanHandler.SaveBans();
-		PlacesHandler.savePlaces();
-		//GugaFlyHandler.SaveFly();
+		//GugaAuctionHandler.SaveAuctions();
+		//GugaAuctionHandler.SavePayments();
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
@@ -63,6 +49,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 
 	public void onEnable() 
 	{
+		_instance = this;
+		
 		PluginManager pManager = this.getServer().getPluginManager();
 		pManager.registerEvents(pListener, this);
 		pManager.registerEvents(bListener, this);
@@ -71,25 +59,19 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		
 		dbConfig.connectDb();
 		
-		GugaMCClientHandler.SetPlugin(this);
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "Guga");
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, "Guga", msgListener);
 		GugaCommands.SetPlugin(this);
 		GugaAnnouncement.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
-		GugaAuctionHandler.SetPlugin(this);
+		//GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
-		GugaBanHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
 		GugaTeams.SetPlugin(this);
-		Votes.setPlugin(this);
 		//GugaFlyHandler.SetPlugin(this);
 		ChatHandler.SetPlugin(this);
-		BasicWorld.SetPlugin(this);
+		BasicWorld.Init(this);
 		SpawnsHandler.SetPlugin(this);
-		PlacesHandler.setPlugin(this);
 		HomesHandler.setPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
@@ -131,129 +113,25 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getServer().getWorld("survival_games").setPVP(true);
 		getServer().getWorld("survival_games").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
-		LoadProfessions();
-		LoadCurrency();
 		loadVIPCodes();
 		loadCreditsCodes();
-		//GugaPort.LoadPlaces();
 		GugaRegionHandler.LoadRegions();
-		GugaAuctionHandler.LoadAuctions();
-		GugaAuctionHandler.LoadPayments();
-		GugaBanHandler.LoadBans();
+		//GugaAuctionHandler.LoadAuctions();
+		//GugaAuctionHandler.LoadPayments();
 		blockLocker = new Locker(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
-		GugaMCClientHandler.LoadMACWhiteList();
-		GugaMCClientHandler.LoadMinecraftOwners();
 		GugaPlayerListener.LoadCreativePlayers();
-		PlacesHandler.loadPlaces();
-		//GugaFlyHandler.LoadFly();
-		GugaBanHandler.LoadIpWhiteList();
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
-		//Votes.Start();
-		//this.autoKicker.startThread();
 		//this.socketServer = new GugaSocketServer(12451, this);
 		//this.socketServer.ListenStart();
-		GugaMCClientHandler.ReloadSkins();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by MineAndCraft team 2011 - 2013.");
 	}
-	public void SaveCurrency()
-	{
-		log.info("Saving Currency Data...");
-		GugaFile file = new GugaFile(currencyFile, GugaFile.WRITE_MODE);
-		file.Open();
-		String line;
-		String currency;
-		String vipExp;
-		String name;
-		Iterator<GugaVirtualCurrency> i = playerCurrency.iterator();
-		while (i.hasNext())
-		{
-			GugaVirtualCurrency p = i.next();
-			name = p.GetPlayerName();
-			vipExp = Long.toString(p.GetExpirationDate());
-			currency = Integer.toString(p.GetCurrency());
-			line = name + ";" + currency + ";" + vipExp;
-			file.WriteLine(line);
-		}
-		file.Close();
-	}
-	public void LoadCurrency()
-	{
-		log.info("Loading Currency Data...");
-		GugaFile file = new GugaFile(currencyFile, GugaFile.READ_MODE);	
-		file.Open();
-		String line;
-		String []splittedLine;
-		long vipExp;
-		String name;
-		int currency;
-		while ((line = file.ReadLine()) != null)
-		{
-			splittedLine = line.split(";");
-			name = splittedLine[0];
-			currency = Integer.parseInt(splittedLine[1]);				
-			vipExp = Long.parseLong(splittedLine[2]);
-			playerCurrency.add(new GugaVirtualCurrency(this, name, currency,new Date(vipExp)));
-		}
-		file.Close();
-	}
-	public void SaveProfessions()
-	{
-		log.info("Saving Professions Data...");
-		GugaFile file = new GugaFile(professionsFile, GugaFile.WRITE_MODE);
-		file.Open();
-		String line;
-		Collection<GugaProfession> profCollection;
-		profCollection = professions.values();
-		Object[] objectArray;
-		objectArray = profCollection.toArray();
-		GugaProfession prof;
-		int i =0;
-		while (i<objectArray.length)
-		{
-			prof = (GugaProfession) objectArray[i];
-			line = prof.GetPlayerName() + ";" + prof.GetProfession() + ";" + prof.GetXp();
-			file.WriteLine(line);
-			i++;
-		}
-		file.Close();
-	}
-	public void LoadProfessions()
-	{
-		log.info("Loading Professions Data...");
-		GugaFile file = new GugaFile(professionsFile, GugaFile.READ_MODE);	
-		file.Open();
-		String line;
-		String []splittedLine;
-		String pName;
-		String profName;
-		String xp;
-		while ((line = file.ReadLine()) != null)
-		{
-			splittedLine = line.split(";");
-			pName = splittedLine[0];
-			profName = splittedLine[1];
-			xp = splittedLine[2];
-			if (profName.matches("Miner"))
-			{
-				professions.put(pName, new GugaProfession(pName,Integer.parseInt(xp),this));
-			}
-			else if (profName.matches("Hunter"))
-			{
-				professions.put(pName, new GugaProfession(pName,Integer.parseInt(xp),this));
-			}
-			else if (profName.matches("Profession"))
-			{
-				professions.put(pName, new GugaProfession(pName,Integer.parseInt(xp),this));
-			}
-		}
-		file.Close();
-	}
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
 	//*****************************************/who*****************************************
@@ -279,10 +157,12 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if (cmd.getName().equalsIgnoreCase("tell"))
 		 {
 			 GugaCommands.CommandWhisper(sender, args);
+			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("msg"))
 		 {
 			 GugaCommands.CommandWhisper(sender, args);
+			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
@@ -291,8 +171,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("ah") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandAH((Player)sender, args);
-			 return true;
+			 //GugaCommands.CommandAH((Player)sender, args);
+			 return false;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("arena") && (sender instanceof Player))
 		 {
@@ -338,10 +218,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandLocker((Player)sender);
 		 }
-		 else if ((cmd.getName().equalsIgnoreCase("fly")) && (sender instanceof Player))
-		 {
-			 GugaCommands.CommandFly((Player)sender, args);
-		 }
 		 else if ((cmd.getName().equalsIgnoreCase("home")) && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandHome((Player)sender, args);
@@ -355,12 +231,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if ((cmd.getName().equalsIgnoreCase("helper")) && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandHelper((Player)sender, args);
-			 return true;
-		 }
-		//*****************************************module*****************************************
-		 else if(cmd.getName().equalsIgnoreCase("module") && (sender instanceof ConsoleCommandSender))
-		 {
-			 GugaCommands.CommandModule(args);
 			 return true;
 		 }
 		//*****************************************/help*****************************************
@@ -416,46 +286,42 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
 		 {
-			 if (config.chestsModule)
-			 {
-				 GugaCommands.CommandLock((Player)sender);
-				 return true;
-			 }
-			 else
-			 {
-				 Player p = (Player)sender;
-				 p.sendMessage("This is not enabled on this server!");
-				 return true;
-			 }	
+			 GugaCommands.CommandLock((Player)sender);
+			 return true;
 		 }
 		//*****************************************/unlock*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("unlock") && (sender instanceof Player))
 		 {
-			 if (config.chestsModule)
-			 {
 				 GugaCommands.CommandUnlock((Player)sender);		
 				 return true;
-			 }
-			 else
-			 {
-				 Player p = (Player)sender;
-				 p.sendMessage("This is not enabled on this server!");
-				 return true;
-			 }
 		 }
 		//*****************************************/login*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("login") && (sender instanceof Player))
 		 {
-			 if (config.accountsModule)
-			 {	 
-				 GugaCommands.CommandLogin((Player)sender, args);
-				 return true;
-			 }
+			 GugaCommands.CommandLogin((Player)sender, args);
+			 return true;
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("getcoords") && (sender instanceof Player))
+		 {
+			 Location l=((Player)sender).getTargetBlock(null, 50).getLocation();
+			 if(l!=null)
+				 sender.sendMessage(String.format("Block coordinates: %d=x:%d,y:%d,z:%d", l.getBlock().getTypeId(),l.getBlockX(),l.getBlockY(),l.getBlockZ()));
 			 else
-			 {
-				 sender.sendMessage("This is not enabled on this server!");
-				 return true;
-			 }
+				 sender.sendMessage("Block coordinates:null");
+			 return true;
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("friend") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandFriend((Player)sender,args);
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("block") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandBlock((Player)sender,args);
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("register"))
+		 {
+			 GugaCommands.CommandRegister((Player)sender,args);
+			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("activate") && (sender instanceof Player))
 		 {
@@ -465,11 +331,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 {
 				 if(creditsCodes.contains(args[1]))
 				 {
-					 GugaVirtualCurrency curr = this.FindPlayerCurrency(sender.getName());
-					 curr.AddCurrency(500);
+					 this.currencyManager.addCredits(sender.getName(),500);
 					 creditsCodes.remove(args[1]);
 					 saveCreditsCodes();
-					 logger.LogShopTransaction(Prices.ARROW, 1, sender.getName()+";CRAFTCON;CREDITS;"+args[1]);
+					 logger.LogShopTransaction(Prices.ARROW.toString(), 1, sender.getName()+";CRAFTCON;CREDITS;"+args[1]);
 					 ChatHandler.SuccessMsg((Player)sender, "Vase kredity z Craftconu byly pripsany!");
 					 return true;
 				 }
@@ -478,35 +343,19 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 {
 				 if(vipCodes.contains(args[1]))
 				 {
-					GugaVirtualCurrency curr = this.FindPlayerCurrency(sender.getName());
-					int months = 1;
-					Calendar c = Calendar.getInstance();
-					c.setTime(new Date());
-					c.add(Calendar.MONTH, months);	
-					curr.SetExpirationDate(c.getTime());
-					logger.LogShopTransaction(Prices.ARROW, 1, sender.getName()+";CRAFTCON;VIP;"+args[1]);
+					int months=1;
+					this.vipManager.addVip(sender.getName(), months*2592000);
+					logger.LogShopTransaction(Prices.ARROW.toString(), 1, sender.getName()+";CRAFTCON;VIP;"+args[1]);
 					vipCodes.remove(args[1]);
 					saveVIPCodes();
-					ChatHandler.SuccessMsg((Player)sender, "Vase VIP z Craftconu bylo aktivovano do " + c.getTime() + "!");
+					ChatHandler.SuccessMsg((Player)sender, "Vase VIP z Craftconu bylo aktivovano do " + new Date(System.currentTimeMillis() + 2592000000l) + "!");
 					return true;
 				 }
 			 }
 		 }
 		return false;
 	}
-	public GugaVirtualCurrency FindPlayerCurrency(String pName)
-	{
-		Iterator<GugaVirtualCurrency> i = playerCurrency.iterator();
-		while (i.hasNext())
-		{
-			GugaVirtualCurrency p = i.next();
-			if (p.GetPlayerName().equalsIgnoreCase(pName))
-			{
-				return p;
-			}
-		}
-		return null;
-	}
+
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)
 	{
 		Location baseLoc = p.getTargetBlock(null, 50).getLocation();
@@ -685,7 +534,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		}
 		file.Close();
 	}
-	public HashMap<String,GugaProfession> professions = new HashMap<String,GugaProfession>();
+	
 	
 	// ************* chances *************
 	public int IRON = 0;
@@ -695,30 +544,38 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "3.5.5";
-	private static final String professionsFile = "plugins/MineAndCraft_plugin/Professions.dat";
-	private static final String currencyFile = "plugins/MineAndCraft_plugin/Currency.dat";
-
+	public static final String version = "beta4.0.0";
+	public static final String shopItemConfigFilePath = "plugins/MineAndCraft_plugin/Shop.cfg";
+	public static final String basicWorldBanRegionsConfigFilePath = "plugins/MineAndCraft_plugin/BWBanRegions.dat";
+	public static final String basicWorldBanRegionsDeviationsFilePath = "plugins/MineAndCraft_plugin/BWBanDeviations.dat";
+	
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
 	
-	//public GugaSocketServer socketServer;
-	public final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
-	public final GugaConfiguration config = new GugaConfiguration(this);
+	public final DatabaseManager dbConfig = new DatabaseManager();
 	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
 	public final GugaEntityListener enListener = new GugaEntityListener(this);
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
-	public final GugaMessageListener msgListener = new GugaMessageListener(this);
 	public final CustomListener customListener = new CustomListener(this);
-	public final GugaAccounts acc = new GugaAccounts(this);
-	public final AutoKicker autoKicker = new AutoKicker(this);
 	public Locker blockLocker;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public GugaEventWorld EventWorld = new GugaEventWorld(this);
-	public ArrayList<GugaVirtualCurrency> playerCurrency = new ArrayList<GugaVirtualCurrency>();
-	public HashMap <Player,GugaAccounts> accounts = new HashMap<Player, GugaAccounts>();
 	public ArrayList<String> creditsCodes = new ArrayList<String>();
 	public ArrayList<String> vipCodes = new ArrayList<String>();
+
+	public final UserManager userManager = new UserManager(this);
+	public final VipManager vipManager = new VipManager(this);
+	public final ShopManager shopManager = new ShopManager(this);
+	public final CurrencyManager currencyManager = new CurrencyManager(this);
+	public final PlacesManager placesManager = new PlacesManager(this);
+	public final BanHandler banHandler = new BanHandler(this);
+	
+	private static Guga_SERVER_MOD _instance;
+	
+	public static Guga_SERVER_MOD getInstance()
+	{
+		return _instance;
+	}
 	
 }

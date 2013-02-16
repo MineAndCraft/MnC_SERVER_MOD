@@ -2,10 +2,9 @@ package me.Guga.Guga_SERVER_MOD;
 
 import java.util.Random;
 
-import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
-
 import org.bukkit.ChatColor;
 
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 
 public class GugaProfession 
 {
@@ -193,7 +192,6 @@ public class GugaProfession
 		if (CanLevelUp())
 		{
 			xp = xp+exp;
-			//MapXpBar();
 			CheckIfDinged();
 		}
 	}
@@ -204,10 +202,7 @@ public class GugaProfession
 			LevelUp();
 		}
 	}
-	public String GetProfession()
-	{
-		return "Profession";
-	}
+
 	protected int xp;
 	protected int xpNeeded;
 	protected int xpIncrement;

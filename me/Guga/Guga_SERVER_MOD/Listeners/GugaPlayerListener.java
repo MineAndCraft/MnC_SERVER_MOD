@@ -4,26 +4,21 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
+import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
-import me.Guga.Guga_SERVER_MOD.GugaBan;
+import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
-import me.Guga.Guga_SERVER_MOD.GugaHunter;
-import me.Guga.Guga_SERVER_MOD.GugaProfession;
-import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
+import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.Locker;
-import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
-import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaAuctionHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaBanHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaMCClientHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaWorldSizeHandler;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -37,10 +32,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -48,8 +45,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaPlayerListener implements Listener 
@@ -59,79 +54,82 @@ public class GugaPlayerListener implements Listener
 		plugin = gugaSM;
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerLoginEvent(PlayerLoginEvent e)
+	public void onPlayerLogin(PlayerLoginEvent e)
 	{
-		String pName = e.getPlayer().getName();
-		Player[] players = plugin.getServer().getOnlinePlayers();
-		int i = 0;
-		while(i<players.length)
+		Player player = e.getPlayer();
+		//check if there is player with this name already connected
+		for(Player p : plugin.getServer().getOnlinePlayers())
 		{
-			if(players[i].getName().matches(pName))
+			if(p.getName().equalsIgnoreCase(player.getName()))
 			{
-				if(plugin.acc.UserIsLogged(pName))
+				if(plugin.userManager.userIsLogged(p.getName()))
 				{
 					e.disallow(Result.KICK_OTHER, "Hrac s timto jmenem uz je online!");
 				}
 			}
-			i++;
+		}
+		
+		//check if player has allowed name
+		if (player.getName().equals(""))
+		{
+			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno!");
+			return;
+		}
+		if (!player.getName().matches("[a-zA-Z0-9_\\-\\.]{2,16}"))
+		{
+			e.disallow(Result.KICK_OTHER,"Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
+			return;
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
-		final Player p = e.getPlayer();
-		e.setJoinMessage(ChatColor.YELLOW+p.getName()+ " se pripojil/a.");
-		if (!p.isOnline())
-			return;
-		if (!GugaMCClientHandler.HasClient(p))
+		final Player player = e.getPlayer();
+		e.setJoinMessage(ChatColor.YELLOW+player.getName()+ " se pripojil/a.");
+		if (!player.isOnline())
 		{
-			p.kickPlayer("Stahnete si naseho klienta na www.mineandcraft.cz (navod na pripojeni)");
+			player.kickPlayer("You have timed out.");
 			return;
 		}
-		if (p.getName().contains(" "))
+		
+		// check for bans
+		long banExpiration = plugin.banHandler.userBanExpiration(player.getName());
+		if(banExpiration != 0)
 		{
-			p.kickPlayer("Prosim zvolte si jmeno bez mezery!");
-			return;
-		}
-		if (!CanUseName(p.getName()))
-		{
-			p.kickPlayer("Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
-			return;
-		}
-		if (p.getName().matches(""))
-		{
-			p.kickPlayer("Prosim zvolte si jmeno!");
-			return;
-		}
-		if (GugaMCClientHandler.IsWhiteListed(p))
-			return;
-		if (GugaBanHandler.GetGugaBan(p.getName()) == null)
-			GugaBanHandler.AddBan(p.getName(), 0);
-		if (!GugaBanHandler.IsIpWhitelisted(p.getName()))
-		{
-			if (GugaBanHandler.IsBanned(p.getName()))
+			if(banExpiration == -1)
 			{
-				GugaBan ban = GugaBanHandler.GetGugaBan(p.getName());
-				long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-				p.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi za " + Long.toString(hours) + " hodin(y)");
-				return;
-			   }
+				player.kickPlayer("Na nasem serveru jste permanentne zabanovan!");
+			}
+			else if((banExpiration*1000)>System.currentTimeMillis())
+			{
+				player.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi "+ new Date(banExpiration).toString());					}
+			return;
 		}
-		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
-		if (curr == null)
+		
+		String ipAddress = player.getAddress().getAddress().toString();
+		if(!plugin.banHandler.isIPWhitelisted(ipAddress))
 		{
-			curr = new GugaVirtualCurrency(plugin, p.getName(), 0, new Date(0));
-			plugin.playerCurrency.add(curr);
+			long ipBanExpiration = plugin.banHandler.ipBanExpiration(ipAddress);
+			if(ipBanExpiration != 0)
+			{
+				if(ipBanExpiration == -1)
+				{
+					player.kickPlayer("Vase IP je na nasem serveru permanentne zabanovana!");
+					return;
+				}
+				else if(ipBanExpiration*1000 > System.currentTimeMillis())
+				{
+					player.kickPlayer("Vase IP je na nasem serveru zabanovana! Ban vyprsi "+ new Date(ipBanExpiration).toString());
+					return;
+				}
+			}
 		}
-		if (plugin.professions.get(p.getName()) == null)
-		{
-			plugin.professions.put(p.getName(), new GugaProfession(p.getName(), 0, plugin));
-		}
+
 		int maxP = plugin.getServer().getMaxPlayers();
 		if(plugin.getServer().getOnlinePlayers().length == maxP)
 		{
-			if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER) || curr.IsVip() || (GugaEvent.GetPlayers().contains(p.getName())))
+			if(GameMasterHandler.IsAtleastRank(player.getName(), Rank.BUILDER) || plugin.vipManager.isVip(player.getName()) || (GugaEvent.GetPlayers().contains(player.getName())))
 			{
 				Player[]players = plugin.getServer().getOnlinePlayers();
 				int i = 0;
@@ -139,8 +137,7 @@ public class GugaPlayerListener implements Listener
 				Random r = new Random();
 				do{
 					int iToKick = r.nextInt(maxP - 1);
-					curr = plugin.FindPlayerCurrency(players[iToKick].getName());
-					if(curr.IsVip() || GameMasterHandler.IsAtleastRank(players[iToKick].getName(), Rank.BUILDER) || (GugaEvent.GetPlayers().contains(p.getName())))
+					if((plugin.vipManager.isVip((players[iToKick].getName()))) || GameMasterHandler.IsAtleastRank(players[iToKick].getName(), Rank.BUILDER) || (GugaEvent.GetPlayers().contains(player.getName())))
 					{
 						isKicked = false;
 					}
@@ -153,24 +150,39 @@ public class GugaPlayerListener implements Listener
 				}while(!isKicked && i<maxP);
 				if(!isKicked)
 				{
-					p.kickPlayer("Neni koho vykopnout");
+					player.kickPlayer("Neni koho vykopnout");
 				}
 			}
 			else
 			{
-				p.kickPlayer("Server je plny misto je rezervovano");
+				player.kickPlayer("Server je plny misto je rezervovano");
 			}
 		}
 		
-		plugin.logger.LogPlayerJoins(p.getName() ,p.getAddress().toString());
-		GugaAuctionHandler.CheckPayments(p);
+		plugin.logger.LogPlayerJoins(player.getName() ,player.getAddress().toString());
+		
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
 		}
+		
+		if(!plugin.userManager.userIsRegistered(player.getName()))
+		{
+			synchronized(player){
+				try{
+					player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
+					player.getInventory().clear();
+				}catch(Exception x){
+					
+				}
+			}
+		}
+		
+		plugin.userManager.onPlayerJoin(player);
+		
 		long timeStart = System.nanoTime();
-		p.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
-		p.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
+		player.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
+		player.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
 		Player[]players = plugin.getServer().getOnlinePlayers();
 		String toSend = "";
 		int i=0;
@@ -182,35 +194,32 @@ public class GugaPlayerListener implements Listener
 				toSend += ", " + players[i].getName();
 			i++;
 		}
-		ChatHandler.InitializeDisplayName(p);
-		p.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
-		if(!(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER)))
+		ChatHandler.InitializeDisplayName(player);
+		player.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
+		if(!(GameMasterHandler.IsAtleastRank(player.getName(), Rank.BUILDER)))
 		{
-			if(GugaPlayerListener.IsCreativePlayer(p))
+			if(GugaPlayerListener.IsCreativePlayer(player))
 			{
-				p.sendMessage("Jste uzivatel se zaregistorvanym creative modem!");
+				player.sendMessage("Jste uzivatel se zaregistorvanym creative modem!");
 			}
 			else
 			{
-				if (p.getGameMode().equals(GameMode.CREATIVE))
-					p.setGameMode(GameMode.SURVIVAL);
+				if (player.getGameMode().equals(GameMode.CREATIVE))
+					player.setGameMode(GameMode.SURVIVAL);
 			}
 		}
-		if(GugaCommands.fly.contains(p.getName().toLowerCase()))
+		if(GugaCommands.fly.contains(player.getName().toLowerCase()))
 		{
-			p.setAllowFlight(true);
-			p.setFlying(true);
+			player.setAllowFlight(true);
+			player.setFlying(true);
 		}
-		plugin.acc.playerStart.put(p.getName(), p.getLocation());
-		plugin.acc.playerKickTime.put(p.getName(), System.currentTimeMillis() + 30000);
-		plugin.autoKicker.addPlayer(p.getName(), (System.currentTimeMillis() + (15 * 60 * 1000)));
-		plugin.acc.tpTask.add(p.getName());
-		plugin.acc.StartTpTask();
+		
 		if (plugin.debug)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERJOIN=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e)
 	{
@@ -218,9 +227,9 @@ public class GugaPlayerListener implements Listener
 		{
 			plugin.log.info("COMMAND_PREPROCESS_EVENT: playerName=" + e.getPlayer().getName() + ",cmd=" + e.getMessage());
 		}
-		if(!plugin.acc.UserIsLogged(e.getPlayer()))
+		if(!plugin.userManager.userIsLogged(e.getPlayer().getName()))
 		{
-			if(e.getMessage().contains("/login") || e.getMessage().contains("/help"))
+			if(e.getMessage().contains("/login") || e.getMessage().contains("/help") || e.getMessage().contains("/register"))
 			{
 			}
 			else
@@ -230,7 +239,7 @@ public class GugaPlayerListener implements Listener
 				return;
 			}
 		}
-		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") || e.getMessage().equalsIgnoreCase("/me"))
+		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") || e.getMessage().equalsIgnoreCase("/me") || e.getMessage().equalsIgnoreCase("/w"))
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
@@ -256,19 +265,16 @@ public class GugaPlayerListener implements Listener
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
-		//plugin.socketServer.SendChatMsg(e.getPlayer().getName() + ": " + e.getMessage());
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
 		}
-		if (!plugin.acc.UserIsLogged(p))
+		e.setCancelled(true);
+		if (!plugin.userManager.userIsLogged(p.getName()))
 		{
-			e.setCancelled(true);
 			return;
 		}
-		ChatHandler.SendChatMessage(p, e.getMessage());
-		e.setCancelled(true);
-		return;
+		ChatHandler.Chat(p,e.getMessage());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -278,8 +284,19 @@ public class GugaPlayerListener implements Listener
 		{
 			plugin.log.info("PLAYER_PICKUP_EVENT: playerName=" + e.getPlayer() + ",itemID=" + e.getItem().getItemStack().getTypeId());
 		}
-		Player p = e.getPlayer();
-		if (!plugin.acc.UserIsLogged(p))
+
+		MinecraftPlayer pl = plugin.userManager.getUser(e.getPlayer().getName());
+		if(pl == null)
+		{
+			e.setCancelled(true);
+			return;
+		}
+		if (!pl.isAuthenticated())
+		{
+			e.setCancelled(true);
+			return;
+		}		 
+		if(pl.getProfession() == null || (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
 		{
 			e.setCancelled(true);
 			return;
@@ -289,35 +306,26 @@ public class GugaPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerKick(PlayerKickEvent e)
 	{
+		Player player = e.getPlayer();
 		e.setLeaveMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
+
+		plugin.userManager.logoutUser(player.getName());
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent e)
 	{
 		e.setQuitMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
-		GugaMCClientHandler.UnregisterUser(p);
 
-		if (plugin.config.accountsModule)
-		{
-			plugin.acc.loggedUsers.remove(p.getName());
-		}
-		plugin.SaveProfessions();
-		plugin.SaveCurrency();
-		GugaProfession prof;
-		if ((prof = plugin.professions.get(p.getName())) != null)
-		{
-			if (prof instanceof GugaHunter)
-			{
-				((GugaHunter)prof).StopRegenHp();
-			}
-		}
+		plugin.userManager.logoutUser(p.getName());
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_QUIT_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000)+ ",playerName=" + e.getPlayer().getName());
 		}	
 	}
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerRespawn(PlayerRespawnEvent e)
 	{
@@ -335,7 +343,7 @@ public class GugaPlayerListener implements Listener
 		{
 			e.setRespawnLocation(HomesHandler.getLocation(home));
 		}
-		plugin.acc.SetStartLocation(p, e.getRespawnLocation());
+		p.teleport(e.getRespawnLocation());
 		Location respawnLoc;
 		if ((respawnLoc =plugin.arena.GetPlayerBaseLocation(p)) != null)
 		{
@@ -360,16 +368,36 @@ public class GugaPlayerListener implements Listener
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
 	}
-	@EventHandler(priority = EventPriority.NORMAL)
+	
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
-		Player p = e.getPlayer();
-		if (!GugaWorldSizeHandler.CanMove(p.getLocation()))
-			GugaWorldSizeHandler.MoveBack(p);
-		else if (p.getLocation().getBlockY() < 0)
-			p.teleport(plugin.GetAvailablePortLocation(p.getLocation()));
-		plugin.autoKicker.addPlayer(p.getName(), System.currentTimeMillis() + (15 * 60 * 1000));
+		Player player = e.getPlayer();
+		MinecraftPlayer pl = plugin.userManager.getUser(player.getName());
+		if(pl == null)
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
+		if (!pl.isAuthenticated())
+		{
+			Location from = e.getFrom();
+			Location to = e.getTo();
+			if(!(from.getX()==to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()))
+			{
+				if(!e.getPlayer().teleport(e.getFrom()))
+					e.setCancelled(true);
+				return;
+			}
+		}
+		
+		//if (!GugaWorldSizeHandler.CanMove(player.getLocation()))
+		//	GugaWorldSizeHandler.MoveBack(player);
+		//else if (player.getLocation().getBlockY() < 0)
+		//	player.teleport(plugin.GetAvailablePortLocation(player.getLocation()));
 	}
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent e)
 	{
@@ -379,6 +407,7 @@ public class GugaPlayerListener implements Listener
 	    int z = chunk.getZ();
 	    world.refreshChunk(x, z);
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e)
 	{
@@ -387,60 +416,35 @@ public class GugaPlayerListener implements Listener
 			plugin.log.info("PLAYER_INTERACT_EVENT: playerName=" + e.getPlayer().getName() + ",typeID=" + e.getClickedBlock().getTypeId());
 		}
 		long timeStart = System.nanoTime();
-		Player p = e.getPlayer();
-		Block b = e.getClickedBlock();
-		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
+		Player player = e.getPlayer();
+		Block block = e.getClickedBlock();
+		MinecraftPlayer pl = plugin.userManager.getUser(e.getPlayer().getName());
+		if(pl == null)
 		{
 			e.setCancelled(true);
 			return;
 		}
-		if(e.getAction() == Action.LEFT_CLICK_BLOCK)
+		if (!pl.isAuthenticated())
 		{
-			if(GameMasterHandler.IsAdmin(p.getName()))
-			{
-				GugaCommands.x1 = b.getX();
-				GugaCommands.z1 = b.getZ();
-				if(p.getItemInHand().getTypeId() == ID_SELECT_ITEM)
-				{
-					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
-					int i=0;
-					while(i < OnLinePlayers.length)
-					{
-						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
-						{
-							OnLinePlayers[i].sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets first position to X:" + Integer.toString(GugaCommands.x1) + " Z: " + Integer.toString(GugaCommands.z1));
-						}
-						i++;
-					}
-				}
-			}
+			e.setCancelled(true);
+			return;
 		}
+		try{
+		if(pl.getProfession() == null 
+		|| (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(block.getLocation())))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		}catch(Exception x){
+			e.setCancelled(true);
+			return;
+		}
+		
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
-			if(GameMasterHandler.IsAdmin(p.getName()))
-			{
-				if(p.getItemInHand().getTypeId() == ID_SELECT_ITEM)
-				{
-					GugaCommands.x2 = b.getX();
-					GugaCommands.z2 = b.getZ();
-					Player[]OnLinePlayers = plugin.getServer().getOnlinePlayers();
-					int i=0;
-					while(i < OnLinePlayers.length)
-					{
-						if(GameMasterHandler.IsAdmin(OnLinePlayers[i].getName()))
-						{
-							OnLinePlayers[i].sendMessage(ChatColor.LIGHT_PURPLE + p.getName() + " Sets second position to X:" + Integer.toString(GugaCommands.x2) + " Z: " + Integer.toString(GugaCommands.z2));
-						}
-						i++;
-					}
-				}
-			}
-			/*GugaSpectator spec;
-			if ((spec = GugaCommands.spectation.get(p.getName())) != null)
-			{
-				//spec.CloneInventory();
-			}*/
-			GugaProfession prof = plugin.professions.get(p.getName());
+			
+			GugaProfession2 prof = pl.getProfession();
 			if (prof == null)
 			{
 				int itemID;
@@ -450,7 +454,7 @@ public class GugaPlayerListener implements Listener
 					itemID = item.getTypeId();
 					if ( (itemID == 259) || (itemID == 327))
 					{
-						p.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
+						player.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
 						e.setCancelled(true);
 						return;
 					}
@@ -468,7 +472,7 @@ public class GugaPlayerListener implements Listener
 						itemID = item.getTypeId();
 						if ( (itemID == 259) || (itemID == 327))
 						{
-							p.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
+							player.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
 							e.setCancelled(true);
 							return;
 						}
@@ -476,42 +480,41 @@ public class GugaPlayerListener implements Listener
 				}
 			}
 			
-			Block targetBlock;
-			targetBlock = e.getClickedBlock();
-			if (plugin.config.chestsModule && Locker.LockableBlocks.isLockableBlock(targetBlock.getTypeId()))
+			if (Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
 			{
 				// *********************************CHEST OPENING*********************************
-
-				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
-				if(!(owner == null || owner.matches("") || 
-						p.getName().toLowerCase().equalsIgnoreCase(owner.toLowerCase()) //HACK: p.getName().equalsIgnoreCase(owner) does not work, even though it should 
-						|| GameMasterHandler.IsAtleastGM(p.getName()) ))
+				if(!(plugin.blockLocker.hasBlockAccess(player,block)|| GameMasterHandler.IsAtleastGM(player.getName()) ))
 				{
 					e.setCancelled(true);
-					p.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento blok je zamcen!");
+					player.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento blok je zamcen!");
 				}
 			}
 		}
-		/*else if (e.getAction() == Action.LEFT_CLICK_BLOCK)
-		{
-			if (GugaCommands.speed.contains(p.getName().toLowerCase()))
-			{
-				Block targetBlock;
-				targetBlock = e.getClickedBlock();
-				targetBlock.setTypeId(0);
-			}
-		}*/
 		if (plugin.debug == true)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDropItem(PlayerDropItemEvent e)
 	{
-		if (!GugaPlayerListener.plugin.acc.UserIsLogged(e.getPlayer()))
+		MinecraftPlayer pl = plugin.userManager.getUser(e.getPlayer().getName());
+		if(pl == null)
+		{
 			e.setCancelled(true);
-
+			return;
+		}
+		if (!pl.isAuthenticated())
+		{
+			e.setCancelled(true);
+			return;
+		}		 
+		if(pl.getProfession() == null || (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
+		{
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -539,55 +542,7 @@ public class GugaPlayerListener implements Listener
 			}
 		}
 	}
-	private boolean CanUseName(String name)
-	{
-		char[] pName = name.toCharArray();
-		int i = 0;
-		while (i < pName.length)
-		{
-			boolean allowed = false;
-			if ( ((char)39) == pName[i])
-				allowed = true;
-			else if ( ((char)45) == pName[i])
-				allowed = true;
-			else if ( ((char)46) == pName[i])
-				allowed = true;
-			else if ( ((char)95) == pName[i])
-				allowed = true;
-
-			int i2 = 48;
-			while (i2 <= 57)
-			{
-				if ( ((char)i2) == pName[i] )
-					allowed = true;
-				if (allowed)
-					break;
-				i2++;
-			}
-			i2 = 65;
-			while (i2 <= 90)
-			{
-				if ( ((char)i2) == pName[i] )
-					allowed = true;
-				if (allowed)
-					break;
-				i2++;
-			}
-			i2 = 97;
-			while (i2 <= 122)
-			{
-				if ( ((char)i2) == pName[i] )
-					allowed = true;
-				if (allowed)
-					break;
-				i2++;
-			}
-			if (!allowed)
-				return false;
-			i++;
-		}
-		return true;
-	}
+	
 	public static void LoadCreativePlayers()
 	{
 
@@ -602,6 +557,7 @@ public class GugaPlayerListener implements Listener
 		}
 		file.Close();
 	}
+	
 	public static boolean IsCreativePlayer(Player p)
 	{
 		String pName = p.getName();
@@ -615,11 +571,9 @@ public class GugaPlayerListener implements Listener
 		return false;
 	}
 
-	private int ID_SELECT_ITEM = 269;
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	public String[] vipCommands = { "/tp", "/time" };
 	public String[] allowedCommands = { "/login", "/register", "/help"};
-	public boolean canSpeedUp = true;
 	private static String creativePlayersPath = "plugins/MineAndCraft_plugin/creativePlayers.dat";
 	public static Guga_SERVER_MOD plugin;
-	}
+}

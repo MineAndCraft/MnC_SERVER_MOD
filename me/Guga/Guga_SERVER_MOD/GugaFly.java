@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 
+@Deprecated
 public class GugaFly 
 {
 	public GugaFly(String playerName, long expiration)

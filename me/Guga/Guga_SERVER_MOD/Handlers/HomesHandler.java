@@ -135,6 +135,11 @@ public class HomesHandler
 			homes.add(home);
 		}
 	}
+	public static boolean isWorldAllowedToSetHomeIn(String world)
+	{
+		return world.matches("world") || world.matches("world_basic");
+	}
+	
 	public static ArrayList<Homes> homes = new ArrayList<Homes>();
 	public static Guga_SERVER_MOD plugin;
 }

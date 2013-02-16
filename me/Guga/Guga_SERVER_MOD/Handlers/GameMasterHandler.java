@@ -24,7 +24,7 @@ public abstract class GameMasterHandler
 	}
 	public static void AddGMIng(String name, String rank)
 	{
-		Player p = plugin.getServer().getPlayer(name);
+		Player p = plugin.getServer().getPlayerExact(name);
 		Rank r = Rank.GetRankByName(rank);
 		if(r==Rank.ADMIN)
 		{
@@ -36,7 +36,7 @@ public abstract class GameMasterHandler
 	}
 	public static void RemoveGMIng(String name)
 	{
-		Player p = plugin.getServer().getPlayer(name);
+		Player p = plugin.getServer().getPlayerExact(name);
 		GameMasterHandler.gameMasters.remove(GameMasterHandler.GetGMByName(name));
 		p.setDisplayName(name);
 		p.setPlayerListName(name);

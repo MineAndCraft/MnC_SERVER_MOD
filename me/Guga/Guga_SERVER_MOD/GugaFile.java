@@ -1,7 +1,5 @@
 package me.Guga.Guga_SERVER_MOD;
 
-
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -45,7 +43,6 @@ public class GugaFile
 		{
 			return this.bReader.readLine();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -59,7 +56,6 @@ public class GugaFile
 			this.bWriter.write(line);
 			this.bWriter.newLine();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -72,7 +68,6 @@ public class GugaFile
 				this.bWriter.close();
 				this.fWriter.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -94,7 +89,6 @@ public class GugaFile
 				this.bWriter.close();
 				this.fWriter.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -130,7 +124,6 @@ public class GugaFile
 			this.dInput = new DataInputStream(this.fInput);
 			this.bReader = new BufferedReader(new InputStreamReader(this.dInput));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/*FileInputStream fRead = new FileInputStream(curr);
@@ -156,7 +149,6 @@ public class GugaFile
 			this.fWriter= new FileWriter(this.file, false);
 			this.bWriter = new BufferedWriter(this.fWriter);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -178,7 +170,6 @@ public class GugaFile
 			this.fWriter= new FileWriter(this.file, true);
 			this.bWriter = new BufferedWriter(this.fWriter);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -187,7 +178,6 @@ public class GugaFile
 		try {
 			this.fInput = new FileInputStream(this.file);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -211,7 +201,6 @@ public class GugaFile
 		{
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -251,51 +240,3 @@ public class GugaFile
 	public static int APPEND_MODE = 3;
 	public static int BINARY_MODE = 4;
 }
-
-//*****************NATIVE VERSION******************
-
-/*import Native.GugaNativeBridge;
-
-public class GugaFile 
-{
-	
-	GugaFile(String filePath, int openMode)
-	{
-		this.openMode = openMode;
-		this.filePath = filePath;
-	}
-	public void Open()
-	{
-	if (this.openMode == GugaFile.READ_MODE)
-		this.fileHandle = GugaNativeBridge.CreateHandle(filePath, 0);
-	else if (this.openMode == GugaFile.WRITE_MODE)
-		this.fileHandle = GugaNativeBridge.CreateHandle(filePath, 1);
-	else if (this.openMode == GugaFile.APPEND_MODE)
-		this.fileHandle = GugaNativeBridge.CreateHandle(filePath, 2);
-	}
-	public String ReadLine()
-	{
-		String line = GugaNativeBridge.ReadLine(fileHandle);
-		GugaPort.plugin.log.info("DATA: [" + line + "]");
-		if (line == "" || line == null || line.length() < 1)
-			return null;
-		return line;
-	}
-	public void WriteLine(String line)
-	{
-		GugaNativeBridge.WriteLine(line, fileHandle);
-	}
-	public void Close()
-	{
-		GugaNativeBridge.CloseHandle(fileHandle);
-	}
-
-	private int fileHandle;
-	
-	private int openMode;
-	private String filePath;
-	
-	public static int READ_MODE = 0;
-	public static int WRITE_MODE = 1;
-	public static int APPEND_MODE = 2;
-}*/

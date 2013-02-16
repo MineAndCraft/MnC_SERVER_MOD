@@ -36,7 +36,7 @@ public class GugaArena
 		if (victim != killCache)
 		{
 			GugaProfession prof;
-			if ((prof = plugin.professions.get(killer.getName())) != null)
+			if ((prof = plugin.userManager.getUser(killer.getName()).getProfession()) != null)
 			{
 				prof.GainExperience(100);
 			}
@@ -434,7 +434,7 @@ public class GugaArena
 	{
 		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: " + ChatColor.GOLD + winner.getName() + ChatColor.DARK_GREEN + " VYHRAVA TOTO KOLO A ZISKAVA 2 KREDITY!");
 		plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "[ARENA]: ZACINA NOVE KOLO V ARENE!");
-		plugin.FindPlayerCurrency(winner.getName()).AddCurrency(2);
+		plugin.currencyManager.addCredits(winner.getName(),2);
 		players.clear();
 		ClearStats();
 		this.RotateArena();

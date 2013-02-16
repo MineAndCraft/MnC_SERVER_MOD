@@ -29,10 +29,10 @@ public class GugaLogger
 		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
 			public void run()
 			{
-				GugaDataPager<String> pager = new GugaDataPager<String>(GetShopTransactionData(), 15);
+				DataPager<String> pager = new DataPager<String>(GetShopTransactionData(), 15);
 				sender.sendMessage("LIST OF MOST BUYED ITEMS:");
-				sender.sendMessage("PAGE " + page + "/" + pager.GetPagesCount());
-				Iterator<String> i = pager.GetPage(page).iterator();
+				sender.sendMessage("PAGE " + page + "/" + pager.getPageCount());
+				Iterator<String> i = pager.getPage(page).iterator();
 				while (i.hasNext())
 				{
 					sender.sendMessage(i.next());
@@ -247,12 +247,12 @@ public class GugaLogger
 		file.Close();
 		return dataBuffer;
 	}
-	public void LogShopTransaction(final Prices item, final int amount, final String pName)
+	public void LogShopTransaction(final String itemName, final int amount, final String pName)
 	{
 		plugin.scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
 			public void run()
 			{
-				String line = new Date() + ";" + pName + ";" + item.toString() + ";" + amount;
+				String line = new Date() + ";" + pName + ";" + itemName + ";" + amount;
 				GugaFile file = new GugaFile(shopTransactionFile, GugaFile.APPEND_MODE);
 				file.Open();
 				file.WriteLine(line);

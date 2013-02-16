@@ -1,3 +1,32 @@
+4.0.0 beta
+Author: Hawkeye
+	- Remaked API for places, vip, virtual currency, ban system, player handling, and so on
+		- GugaVirtualCurrency removed, replaced with VipManager and CurrencyManager 
+		- Places handler remove, replaced with PlacesManager
+		- GugaBan, GugaBanHandler removed, replaced with BanHandler also featuring IPBan whitelist
+		- removed obsolete and unused AuctionHandler, GugaPhysics, GugaFly,
+			GugaNativeBridge, GugaMCClientHandler, and so on
+		- created GugaProfession2 so MySQL can be used to store experience of players
+			(Note: GugaProfession stayed the same)
+		- in-game shop now loads items from YAML file (plugin/MineAndCraft_plugin/Shop.cfg)
+		- player handling:
+			- All key data (id, name, profession instance, connection state)
+				about online players are managed by UserManager
+			- players cannot move from the block they are standing at, if not authenticated
+				(They can, however, turn and look around to prevent weird feeling after being teleported back to starting position)
+			-  players now can register ingame
+		- BasicWorld:
+			- Automated banning of griefers in BasicWorld on selected regions
+			- After joining basic world, players are given iron tools, leather armor and food
+			- players from basic world can now visit other worlds, but they can only spectate
+		- Chat functionality:
+			- Implemented parsing of chat commands
+			- Chat command "@" (at sign) as an alias for "/tell" added
+			- Added blocklist (/block), which prevents blocked player from whispering
+			- Mute no longer mutes whispers
+		- Bugfixes, cleanup
+		Note: This list doesn't have to be complete
+	
 3.5.6
 Author: Rikub
 	- Command /event is ready to use for eventers

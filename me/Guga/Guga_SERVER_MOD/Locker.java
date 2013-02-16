@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class Locker 
 {
@@ -99,14 +100,6 @@ public class Locker
 		return false;
 	}
 	
-	public boolean HasAccessPermission(Block block,String user)
-	{
-		String owner = GetBlockOwner(block);
-		if(owner == null || owner.matches("") || owner.equalsIgnoreCase(user))
-			return true;
-		return false;
-	}
-	
 	public void UnlockBlock(Block block)
 	{
 		PreparedStatement stat = null;
@@ -138,8 +131,7 @@ public class Locker
 		String uname = "";
 		try{
 			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(u.username) as count,u.username as username " +
-					"FROM `"+this.plugin.dbConfig.getName()+"`.mnc_chests c " +
-					"LEFT JOIN `"+this.plugin.dbConfig.getName()+"`.mnc_users u ON c.owner_id=u.id " +
+					"FROM `mnc_chests` c LEFT JOIN `mnc_users` u ON c.owner_id=u.id " +
 					"WHERE c.world = ? AND c.x = ? AND c.z = ? AND c.y = ?");
 			stat.setString(1, block.getLocation().getWorld().getName());
 			stat.setInt(2, block.getLocation().getBlockX());
@@ -149,7 +141,6 @@ public class Locker
 			if(res.next())
 			{
 				uname = res.getString("username");
-				res.close();
 			}
 		}catch(Exception e)
 		{
@@ -178,15 +169,13 @@ public class Locker
 			stat.setInt(2, block.getLocation().getBlockX());
 			stat.setInt(3, block.getLocation().getBlockZ());
 			stat.setInt(4, block.getLocation().getBlockY());
-			ResultSet res = stat.executeQuery();
-			if(res.next())
+			ResultSet result = stat.executeQuery();
+			if(result.next())
 			{
-				if(res.getInt("count")==1)
+				if(result.getInt("count")==1)
 				{
-					res.close();
 					return true;
 				}
-				res.close();
 			}
 		}catch(Exception e)
 		{
@@ -205,8 +194,46 @@ public class Locker
 		return false;
 	}
 
-	void LoadChests()
+	public boolean hasBlockAccess(Player player, Block block)
 	{
-		
+		String blockOwner = this.GetBlockOwner(block);
+		if(blockOwner == null || blockOwner.equals("") || blockOwner.toLowerCase().equals(player.getName().toLowerCase()))
+			return true;
+		else
+			return false;
+	}
+
+	public boolean IsOwner(Block block, String username)
+	{
+		PreparedStatement stat = null;
+		try{
+			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(u.username) as count " +
+					"FROM `mnc_chests` c LEFT JOIN `mnc_users` u ON c.owner_id=u.id " +
+					"WHERE u.username_clean = ? AND c.world = ? AND c.x = ? AND c.z = ? AND c.y = ?");
+			stat.setString(1,username.toLowerCase());
+			stat.setString(2, block.getLocation().getWorld().getName());
+			stat.setInt(3, block.getLocation().getBlockX());
+			stat.setInt(4, block.getLocation().getBlockZ());
+			stat.setInt(5, block.getLocation().getBlockY());
+			ResultSet res = stat.executeQuery();
+			if(res.next())
+			{
+				return res.getInt("count") == 1;
+			}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if(stat!=null)
+				try {
+					stat.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		//TODO: what about door? 
+		return false;
 	}
 }

@@ -2,36 +2,27 @@ package me.Guga.Guga_SERVER_MOD;
 
 import java.util.ArrayList;
 
-public class GugaDataPager <E>
+public class DataPager <E>
 {
-	public GugaDataPager(ArrayList<E> data, int itemsPerPage)
+	public DataPager(ArrayList<E> data, int itemsPerPage)
 	{
 		this.data = data;
 		this.itemsPerPage = itemsPerPage;
 	}
-	public ArrayList<E> GetPage(int page)
+	public ArrayList<E> getPage(int page)
 	{
-		ArrayList<E> list = new ArrayList<E>();
 		if (page < 1)
 			return null;
 		int firstItem = this.itemsPerPage * (page-1);
 		int lastItem = this.itemsPerPage * page;
-		int i = firstItem;
-		if (this.data.size() < firstItem)
-		{
+		if(!(firstItem < this.data.size()))
 			return null;
-		}
-		while (i < lastItem)
-		{
-			if (this.data.size() <= i)
-				break;
-			E item = this.data.get(i);
-			list.add(item);
-			i++;
-		}
-		return list;
+		if(lastItem>this.data.size())
+			lastItem=this.data.size();
+		return new ArrayList<E>(this.data.subList(firstItem, lastItem));
 	}
-	public int GetPagesCount()
+	
+	public int getPageCount()
 	{
 		double pages = (double)this.data.size() / (double)this.itemsPerPage;
 		int num;

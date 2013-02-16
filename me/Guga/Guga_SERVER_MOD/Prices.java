@@ -1,7 +1,7 @@
 package me.Guga.Guga_SERVER_MOD;
+
 public enum Prices 
 {
-	KRUMPAC_EFFICIENCY_V(278, 100, 1),
 	MOB_SPAWNER(52,100,1),
 	IRON_BLOCK(42, 2, 1),
 	EMERALD_BLOCK(133, 20, 1),

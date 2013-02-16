@@ -1,40 +1,37 @@
 package me.Guga.Guga_SERVER_MOD.Handlers;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
+import me.Guga.Guga_SERVER_MOD.DataPager;
 import me.Guga.Guga_SERVER_MOD.Enchantments;
 import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
-import me.Guga.Guga_SERVER_MOD.GugaAuction;
-import me.Guga.Guga_SERVER_MOD.GugaBan;
-import me.Guga.Guga_SERVER_MOD.GugaDataPager;
-import me.Guga.Guga_SERVER_MOD.GugaEvent;
-import me.Guga.Guga_SERVER_MOD.GugaFile;
-import me.Guga.Guga_SERVER_MOD.GugaHunter;
-import me.Guga.Guga_SERVER_MOD.GugaMiner;
-import me.Guga.Guga_SERVER_MOD.GugaParty;
-import me.Guga.Guga_SERVER_MOD.GugaProfession;
-import me.Guga.Guga_SERVER_MOD.GugaRegion;
-import me.Guga.Guga_SERVER_MOD.GugaTeams;
-import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
-import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
-import me.Guga.Guga_SERVER_MOD.Homes;
-import me.Guga.Guga_SERVER_MOD.Places;
-import me.Guga.Guga_SERVER_MOD.Prices;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
-import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency.VipItems;
+import me.Guga.Guga_SERVER_MOD.GugaEvent;
+import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaMute;
-import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
+import me.Guga.Guga_SERVER_MOD.GugaParty;
+import me.Guga.Guga_SERVER_MOD.GugaProfession2;
+import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.GugaTeams;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.Locker;
+import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
+import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
+import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
+import me.Guga.Guga_SERVER_MOD.ShopManager.ShopItem;
+import me.Guga.Guga_SERVER_MOD.VipManager.VipItems;
+import me.Guga.Guga_SERVER_MOD.VipManager.VipUser;
+import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -70,7 +67,8 @@ public abstract class GugaCommands
 		while(i<onlinePlayers.length)
 		{
 			Player p = onlinePlayers[i];
-			int level = plugin.professions.get(p.getName()).GetLevel();
+			GugaProfession2 prof = plugin.userManager.getUser(p.getName()).getProfession();
+			int level = (prof==null)? 0 : prof.GetLevel();
 			if(GameMasterHandler.IsRank(p.getName(), Rank.ADMIN))
 			{
 				list += ChatColor.AQUA + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
@@ -83,7 +81,7 @@ public abstract class GugaCommands
 			{
 				list += ChatColor.GOLD + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
 			}
-			else if(plugin.FindPlayerCurrency(p.getName()).IsVip())
+			else if(plugin.vipManager.isVip((p.getName())))
 			{
 				list += ChatColor.GOLD + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
 			}
@@ -156,7 +154,7 @@ public abstract class GugaCommands
 		{
 			if(args[0].equalsIgnoreCase("set"))
 			{
-				if(p.getWorld().getName().matches("world") || p.getWorld().getName().matches("world_basic"))
+				if(HomesHandler.isWorldAllowedToSetHomeIn(p.getWorld().getName()))
 				{
 					HomesHandler.addHome(p);
 					ChatHandler.SuccessMsg(p, "Vas home byl nastaven!");
@@ -211,7 +209,7 @@ public abstract class GugaCommands
 	public static void CommandConfirm(Player sender, String args[])
 	{
 		Player p = vipTeleports.get(sender);
-		GugaVirtualCurrency vip = plugin.FindPlayerCurrency(p.getName());
+		VipUser vip = plugin.vipManager.getVip(p.getName());
 		if (p != null && vip != null)
 		{
 			if (GugaEvent.ContainsPlayer(p.getName()))
@@ -226,7 +224,7 @@ public abstract class GugaCommands
 				p.sendMessage(ChatColor.GREEN + "[TELEPORT]: Nemuzete pouzit teleport v Arene!");
 				return;
 			}
-			vip.SetLastTeleportLoc(p.getLocation());
+			plugin.vipManager.SetLastTeleportLoc(p.getName(),p.getLocation());
 			p.teleport(sender);
 			vipTeleports.remove(sender);
 			
@@ -240,10 +238,9 @@ public abstract class GugaCommands
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
 
-		if (Locker.LockableBlocks.isLockableBlock(blockType))
-		{
-			String owner = plugin.blockLocker.GetBlockOwner(chest); 
-			if (  (owner != null && owner.matches(sender.getName())) || (GameMasterHandler.IsAtleastGM(sender.getName())) )
+		if (Locker.LockableBlocks.isLockableBlock(blockType) && plugin.blockLocker.IsLocked(chest))
+		{ 
+			if (plugin.blockLocker.IsOwner(chest, sender.getName()) || GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				plugin.blockLocker.UnlockBlock(chest);
 				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas blok byl odemcen.");
@@ -259,9 +256,10 @@ public abstract class GugaCommands
 		}
 		
 	}
+	
 	public static void CommandShop(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("Nejdrive se prihlaste!");
 			return;
@@ -276,7 +274,7 @@ public abstract class GugaCommands
 			sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /shop!");
 			return;
 		}
-		GugaVirtualCurrency p = plugin.FindPlayerCurrency(sender.getName());
+		
 		if (args.length == 0)
 		{
 			sender.sendMessage("Shop Menu:");
@@ -295,7 +293,7 @@ public abstract class GugaCommands
 			else if (subCommand.matches("balance"))
 			{
 				sender.sendMessage("Vas ucet:");
-				sender.sendMessage("Kredity: " + p.GetCurrency());
+				sender.sendMessage("Kredity: " + plugin.currencyManager.getBalance(sender.getName()));
 			}
 		}
 		else if (args.length == 2)
@@ -305,159 +303,32 @@ public abstract class GugaCommands
 			
 			if (subCommand.matches("buy"))
 			{
-				p.BuyItem(arg1, 1);
+				plugin.shopManager.buyItem(sender.getName(),arg1, 1);
 			}
 			else if(subCommand.matches("items"))
 			{
-				ArrayList<Prices> prices = new ArrayList<Prices>();
-				for (Prices i : Prices.values())
-				{
-					prices.add(i);
-				}
-				GugaDataPager<Prices> pager = new GugaDataPager<Prices>(prices, 15);
-				Iterator<Prices> i = pager.GetPage(Integer.parseInt(args[1])).iterator();
+				DataPager<ShopItem> pager = new DataPager<ShopItem>(plugin.shopManager.getShopItemList(), 15);
+				Iterator<ShopItem> i = pager.getPage(Integer.parseInt(args[1])).iterator();
 				sender.sendMessage("SEZNAM ITEMU:");
-				sender.sendMessage("STRANA " + args[1] + "/" + pager.GetPagesCount());
+				sender.sendMessage("STRANA " + args[1] + "/" + pager.getPageCount());
 				while (i.hasNext())
 				{
-					Prices item = i.next();
-					if (item == Prices.KRUMPAC_EFFICIENCY_V)
-						sender.sendMessage(ChatColor.GOLD + item.toString() +" -    cena: "+ item.GetItemPrice() + " Diamantovy krumpac s Efficiency V + Unbreaking III");
-					else
-						sender.sendMessage(item.toString() +" -    cena: "+ item.GetItemPrice() + ChatColor.YELLOW + " po: " + item.GetAmmount());
+					ShopItem item = i.next();
+					sender.sendMessage(String.format("%s - %s - cena: %d "+ChatColor.YELLOW+"po: %d", item.getName(),item.getIdString(),item.getPrice(),item.getAmount()));
 				}
 			}
 		}
-		/*else if (args.length == 3)
-		{
-			String subCommand = args[0];
-			String arg1 = args[1]; // item
-			String arg2 = args[2]; // amount
-			if (subCommand.matches("buy"))
-			{
-				p.BuyItem(arg1, Integer.parseInt(arg2));
-			}
-			
-		}*/
 	}
-	public static void CommandFly(Player sender, String args[])
-	{
-		/*if (!plugin.acc.UserIsLogged(sender))
-		{
-			sender.sendMessage("Nejprve se musite prihlasit!");
-			return;
-		}
-		if (GugaEvent.ContainsPlayer(sender.getName()))
-		{
-			sender.sendMessage("Nemuzete pouzivat FLY prikazy v prubehu eventu!");
-			return;
-		}
-		if (plugin.arena.IsArena(sender.getLocation()))
-		{
-			sender.sendMessage("FLY Prikazy nemuzete pouzivat v arene!");
-			return;
-		}
-		if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
-		{
-			sender.sendMessage("FLY Prikazy nemuzete pouzivat v EventWorldu!");
-			return;
-		}
-		if(args.length == 0)
-		{
-			sender.sendMessage(ChatColor.AQUA+" MENU LETANI:");
-			if(!GugaFlyHandler.isFlying(sender.getName()))
-			{
-				sender.sendMessage(ChatColor.GOLD + " CENIK:");
-				sender.sendMessage(" *Letani na 2 hodiny, CENA: 250 kreditu.");
-				sender.sendMessage(" *Letani na 4 hodiny, CENA: 450 kreditu.");
-				sender.sendMessage(" *Letani na 8 hodin, CENA: 650 kreditu.");
-				sender.sendMessage(" *Letani na 24 hodin, CENA: 950 kreditu.");
-				sender.sendMessage(" /fly activate <pocetHodin> - Aktuvuje letani na urcity pocet hodin.");
-			}
-			else
-			{
-				sender.sendMessage( "/fly on - zapne letani.");
-				sender.sendMessage( "/fly off - vypte letani.");
-			}	
-		}
-		else if((args.length == 1) && (GugaFlyHandler.isFlying(sender.getName())))
-		{
-			if(args[0].equalsIgnoreCase("on"))
-			{
-				sender.setAllowFlight(true);
-				sender.setFlying(true);
-				sender.sendMessage("Letani bylo zapnuto!");
-			}
-			else if(args[0].equalsIgnoreCase("off"))
-			{
-				sender.setAllowFlight(false);
-				sender.setFlying(false);
-				sender.sendMessage("Letani bylo vypnuto!");
-			}
-		}
-		else if((args.length == 2) && (!GugaFlyHandler.isFlying(sender.getName())))
-		{
-			GugaVirtualCurrency c = plugin.FindPlayerCurrency(sender.getName());
-			int currency = c.GetCurrency();
-			if(args[0].equalsIgnoreCase("activate"))
-			{
-				if(args[1].equalsIgnoreCase("2"))
-				{
-					if(currency >= 250)
-					{
-						c.RemoveCurrency(250);
-						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (2*60*60*1000));
-						sender.sendMessage("Letani bylo aktivovano");
-						sender.setAllowFlight(true);
-						sender.setFlying(true);
-					}
-				}
-				else if(args[1].equalsIgnoreCase("4"))
-				{
-					if(currency >= 450)
-					{
-						c.RemoveCurrency(450);
-						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (4*60*60*1000));
-						sender.sendMessage("Letani bylo aktivovano");
-						sender.setAllowFlight(true);
-						sender.setFlying(true);
-					}
-				}
-				else if(args[1].equalsIgnoreCase("8"))
-				{
-					if(currency >= 650)
-					{
-						c.RemoveCurrency(650);
-						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (8*60*60*1000));
-						sender.sendMessage("Letani bylo aktivovano");
-						sender.setAllowFlight(true);
-						sender.setFlying(true);
-					}
-				}
-				else if(args[1].equalsIgnoreCase("24"))
-				{
-					if(currency >= 950)
-					{
-						c.RemoveCurrency(950);
-						GugaFlyHandler.AddFlyingPlayer(sender.getName(), System.currentTimeMillis() + (24*60*60*1000));
-						sender.sendMessage("Letani bylo aktivovano");
-						sender.setAllowFlight(true);
-						sender.setFlying(true);
-					}
-				}
-				GugaFlyHandler.SaveFly();
-			}
-		}*/
-	}
+	
 	public static void CommandVIP(Player sender, String args[])
 	{
-		GugaVirtualCurrency vip = plugin.FindPlayerCurrency(sender.getName());
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
 		}
-		if (!vip.IsVip())
+		VipUser vip = plugin.vipManager.getVip(sender.getName());
+		if (vip == null)
 		{
 			sender.sendMessage("Pouze VIP mohou pouzivat tento prikaz!");
 			return;
@@ -502,7 +373,7 @@ public abstract class GugaCommands
 			String subCommand = args[0];
 			if (subCommand.matches("expiration"))
 			{
-				sender.sendMessage("Vase VIP vyprsi: " + new Date(vip.GetExpirationDate()));
+				sender.sendMessage("Vase VIP vyprsi: " + new Date(vip.getExpiration()));
 			}
 			else if (subCommand.matches("tp"))
 			{
@@ -547,23 +418,23 @@ public abstract class GugaCommands
 				if (arg1.matches("back"))
 				{
 					Location locCache = sender.getLocation();
-					Location tpLoc = vip.GetLastTeleportLoc();
+					Location tpLoc = plugin.vipManager.GetLastTeleportLoc(sender.getName());
 					if (tpLoc == null)
 					{
 						sender.sendMessage("Nejdrive se musite nekam teleportovat!");
 						return;
 					}
 					sender.teleport(tpLoc);
-					vip.SetLastTeleportLoc(locCache);
+					plugin.vipManager.SetLastTeleportLoc(sender.getName(),locCache);
 				}
 				else if (arg1.matches("spawn"))
 				{
-					vip.SetLastTeleportLoc(sender.getLocation());
+					plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
 					sender.teleport(sender.getWorld().getSpawnLocation());
 				}
 				else if (arg1.matches("bed"))
 				{
-					vip.SetLastTeleportLoc(sender.getLocation());
+					plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
 					Location loc = sender.getBedSpawnLocation();
 					Location tpLoc = loc;
 					boolean canTeleport = false;
@@ -631,20 +502,19 @@ public abstract class GugaCommands
 			}
 			else if (subCommand.matches("fly"))
 			{
-				GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName()); 
 				if(args[1].matches("on"))
 				{
-					if(sender.getWorld().getName().matches("world") || sender.getWorld().getName().matches("world_nether"))
+					if(sender.getWorld().getName().matches("world"))
 					{
-						curr.ToggleFly(true);
+						plugin.vipManager.setFly(sender.getName(),true);
 						ChatHandler.SuccessMsg(sender, "Letani zapnuto!");
 					}
 					else
-						ChatHandler.FailMsg(sender, "Letani je povoleno pouze v hlavnim svete a netheru.");
+						ChatHandler.FailMsg(sender, "Letani je povoleno pouze v hlavnim svete");
 				}
 				else if(args[1].matches("off"))
 				{
-					curr.ToggleFly(false);
+					plugin.vipManager.setFly(sender.getName(),false);
 					ChatHandler.SuccessMsg(sender, "Letani vypnuto!");
 				}
 			}
@@ -658,13 +528,10 @@ public abstract class GugaCommands
 			{
 				if (arg1.matches("player"))
 				{
-					/*vip.SetLastTeleportLoc(sender.getLocation());
-					Player p = plugin.getServer().getPlayer(arg2);
-					sender.teleport(p);*/
 					Player p = plugin.getServer().getPlayer(arg2);
 					if (p == null)
 					{
-						sender.sendMessage("Tento hrac neni online!");
+						ChatHandler.FailMsg(sender,"Tento hrac neni online!");
 						return;
 					}
 					if (p.getLocation().getWorld().getName().matches("world_basic"))
@@ -702,10 +569,10 @@ public abstract class GugaCommands
 					if ( (time >= 0) && (time <= 24000) )
 					{
 						sender.setPlayerTime(time, false);
-						sender.sendMessage("Cas byl uspesne zmenen");
+						ChatHandler.SuccessMsg(sender,"Cas byl uspesne zmenen");
 					}
 					else 
-						sender.sendMessage("Tato hodnota nelze nastavit!");
+						ChatHandler.FailMsg(sender,"Tato hodnota nelze nastavit!");
 				}
 			}
 		}
@@ -736,546 +603,258 @@ public abstract class GugaCommands
 	}
 	public static void CommandRpg(Player sender, String args[])
 	{
-		if (args.length == 0)
+		GugaProfession2 prof;
+		if ((prof = plugin.userManager.getUser(sender.getName()).getProfession()) != null)
 		{
-			sender.sendMessage("RPG MENU:");
-			sender.sendMessage("/rpg status  -  Zobrazi vas status.");
-			sender.sendMessage("/rpg skills  -  Zobrazi vase bonusy.");
-		//	sender.sendMessage("/rpg select <miner/hunter>  -  Vybere profesi.");
-			sender.sendMessage("/rpg info  -  Info o profesi.");
-		//	sender.sendMessage("/rpg info <miner/hunter>  -  Info o dane profesi.");*/
+			int lvl = prof.GetLevel();
+			int xp = prof.GetXp();
+			int xpNeeded = prof.GetXpNeeded();
+			sender.sendMessage("**************************");
+			sender.sendMessage("*Guga RPG version 1 stats*");
+			sender.sendMessage("**Level:" + lvl);
+			sender.sendMessage("**XP:" + xp + "/" + xpNeeded);
+			sender.sendMessage("**************************");
+			int chance[] = prof.GetChances();
+			int iron = chance[plugin.IRON];
+			int gold = chance[plugin.GOLD];
+			int diamond = chance[plugin.DIAMOND];
+			int emerald = chance[plugin.EMERALD];
+			double chanceIron = ( (double)iron / (double)1000 )  * (double)100;
+			double chanceGold = ( (double)gold / (double)1000 )  * (double)100;
+			double chanceDiamond = ( (double)diamond/ (double)1000 )  * (double)100;
+			double chanceEmerald = ( (double)emerald/ (double)1000 )  * (double)100;
+			sender.sendMessage("**Sance na nalezeni ve stonu:");
+			sender.sendMessage("**Iron: " + chanceIron + "% (+0.1% kazdych 10 levelu)");
+			sender.sendMessage("**Gold: " + chanceGold + "% (+0.1% kazdych 20 levelu)");
+			sender.sendMessage("**Diamond: " + chanceDiamond + "% (+0.1% kazdych 50 levelu)");
+			sender.sendMessage("**Emerald: " + chanceEmerald + "% (+0.1% kazdych 100 levelu)");
+			sender.sendMessage("**************************");
 		}
-		else if (args.length == 1)
+		else 
 		{
-			String subCommand = args[0];
-			if (subCommand.matches("status"))
-			{
-				GugaProfession prof;
-				if ((prof = plugin.professions.get(sender.getName())) != null)
-				{
-					int lvl = prof.GetLevel();
-					int xp = prof.GetXp();
-					int xpNeeded = prof.GetXpNeeded();
-					sender.sendMessage("********************");
-					sender.sendMessage("**Level:" + lvl);
-					sender.sendMessage("**XP:" + xp + "/" + xpNeeded);
-					sender.sendMessage("********************");
-					sender.sendMessage("********************");
-				}
-				else 
-				{
-					sender.sendMessage("Nejdrive si musite zvolit profesi!");
-				}
-			}
-			else if (subCommand.matches("skills"))
-			{
-				GugaProfession prof;
-				if ((prof = plugin.professions.get(sender.getName())) == null)
-				{
-					sender.sendMessage("Nejdrive si musite zvolit profesi!");
-				}
-					int chance[] = prof.GetChances();
-					//int bonus[] = miner.GetBonusDrops();
-					int iron = chance[plugin.IRON];
-					int gold = chance[plugin.GOLD];
-					int diamond = chance[plugin.DIAMOND];
-					int emerald = chance[plugin.EMERALD];
-					double chanceIron = ( (double)iron / (double)1000 )  * (double)100;
-					double chanceGold = ( (double)gold / (double)1000 )  * (double)100;
-					double chanceDiamond = ( (double)diamond/ (double)1000 )  * (double)100;
-					double chanceEmerald = ( (double)emerald/ (double)1000 )  * (double)100;
-					sender.sendMessage("********************");
-					sender.sendMessage("**Sance na nalezeni ve stonu:");
-					sender.sendMessage("**Iron: " + chanceIron + "%");
-					sender.sendMessage("**Gold: " + chanceGold + "%");
-					sender.sendMessage("**Diamond: " + chanceDiamond + "%");
-					sender.sendMessage("**Emerald: " + chanceEmerald + "%");
-					sender.sendMessage("********************");
-					
-					/*iron = bonus[plugin.IRON];
-					gold = bonus[plugin.GOLD];
-					diamond = bonus[plugin.DIAMOND];
-					
-					sender.sendMessage("**Bonusove dropy z:");
-					sender.sendMessage("**Iron: +" + iron);
-					sender.sendMessage("**Gold: +" + gold);
-					sender.sendMessage("**Diamond: +" + diamond);
-					
-					sender.sendMessage("********************");
-					sender.sendMessage("********************");*/
-					
-				//}
-				/*else if (prof instanceof GugaHunter)
-				{
-					GugaHunter hunter = (GugaHunter)prof;
-					double regen = ((double)hunter.GetHpRegen())/2;
-					int dmg = hunter.GetDamageIncrease();
-					sender.sendMessage("********************");
-					sender.sendMessage("**HP Regen: " + regen + "hp za minutu");
-					sender.sendMessage("**Zvyseny damage: " + dmg);
-					sender.sendMessage("********************");
-					sender.sendMessage("********************");
-				}*/
-			}
-			else if (subCommand.matches("select"))
-			{
-				sender.sendMessage("Prosim uvedte profesi kterou chcete! Miner nebo Hunter");
-			}
-			else if (subCommand.matches("info"))
-			{
-				/*sender.sendMessage("********************");
-				sender.sendMessage("**Profesi si muzete vybrat tak, ze napisete");
-				sender.sendMessage("** /rpg select <vase_profese>");
-				sender.sendMessage("**Mate na vyber ze dvou profesi:");
-				sender.sendMessage("**      -Hunter a Miner");
-				sender.sendMessage("**Kazda profese ma jine bonusy");*/
-				sender.sendMessage("**XP ziskavate za zabijeni monster a kopani");
-			//	sender.sendMessage("**Kazda profese dostava rozdilny pocet XP.");
-				sender.sendMessage("**Maximalni level: " + new GugaProfession().GetLvlCap());
-			}
-		}
-		else if (args.length == 2)
-		{
-			String subCommand = args[0];
-			String arg1 = args[1];
-			
-			if (subCommand.matches("select"))
-			{
-				if (arg1.matches("hunter"))
-				{
-					if (plugin.professions.get(sender.getName()) == null)
-					{
-						GugaHunter prof = new GugaHunter(sender.getName(),0,plugin);
-						plugin.professions.put(sender.getName(), prof);
-						prof.StartRegenHp();
-						sender.sendMessage("Stal jste se Hunterem!");
-					}
-					else 
-					{
-						sender.sendMessage("Nemuzete si znovu zvolit profesi!");
-					}
-				}
-				else if (arg1.matches("miner"))
-				{
-					if (plugin.professions.get(sender.getName()) == null)
-					{
-						GugaMiner prof = new GugaMiner(sender.getName(),0,plugin);
-						plugin.professions.put(sender.getName(), prof);
-						sender.sendMessage("Stal jste se Minerem!");
-					}
-					else 
-					{
-						sender.sendMessage("Nemuzete si znovu zvolit profesi!");
-					}
-				}
-				else 
-				{
-					sender.sendMessage("Toto neni profese!");
-				}
-			}
-			else if (subCommand.matches("info"))
-			{
-				/*if (arg1.matches("hunter"))
-				{
-					sender.sendMessage("********************");
-					sender.sendMessage("**Hunterovo Bonusy:");
-					sender.sendMessage("** - Hp Regen (+0,5 kazde 2 levely)");
-					sender.sendMessage("** - Bonus Damage (+1 kazde 4 levely)");
-					sender.sendMessage("********************");
-					sender.sendMessage("********************");
-					
-				}*/
-			//	else if (arg1.matches("miner"))
-			//	{
-					/*sender.sendMessage("********************");
-					sender.sendMessage("**Minerovo Bonusy:");
-					sender.sendMessage("** - Zvysene dropy z:");
-					sender.sendMessage("**      -Iron (+1 every 6 levels)");
-					sender.sendMessage("**      -Gold (+1 every 8 levels)");
-					sender.sendMessage("**      -Diamond (+1 every 10 levels)");*/
-					sender.sendMessage("********************");
-					sender.sendMessage("** - Sance vzacneho dropu ze Stone:");
-					sender.sendMessage("**      -Iron (+0.1% kazdych 10 levelu)");
-					sender.sendMessage("**      -Gold (+0.1% kazdych 20 levelu)");
-					sender.sendMessage("**      -Diamond (+0.1% kazdych 50 levelu)");
-					sender.sendMessage("********************");
-			//	}
-			}
-		}
-		else if (args.length == 3)
-		{
-			String subCommand = args[0];
-			String player = args[1];
-			String xp = args[2];
-			if (subCommand.matches("xp") && sender instanceof ConsoleCommandSender)
-			{
-				plugin.professions.get(player).GainExperience(Integer.parseInt(xp));
-			}
+			plugin.log.warning("Cannot get profession for player "+sender.getName()+".");
 		}
 	}
+	
 	public static void CommandPlaces(Player sender, String args[])
 	{
-		if (BasicWorld.IsBasicWorld(sender.getLocation()))
-		{
-			sender.sendMessage("PP Prikazy nemuzete pouzivat ve svete pro novacky!");
-			return;
-		}
 		if (args.length == 0)
 		{
 			sender.sendMessage("PLACES MENU:");
-			sender.sendMessage("/pp <jmeno>  -  Teleportuje Vas na dane misto.");
+			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
+			sender.sendMessage("/pp <jmeno>  -  Teleportuje hrace na dane misto.");
 			sender.sendMessage("/places me - Zobrazi vase mista.");
 			sender.sendMessage("/places set - Zobrazi dostupna nastaveni.");
-			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
-			
-			sender.sendMessage(ChatColor.BOLD + "/places create <jmeno> - Vytvori soukrome misto a pozici, kde stojite. Pristup pro ostatni lze nastavit pomoci /places set .");
 		}
-		else if (args.length == 1)
+		else
 		{
 			String subCommand = args[0];
+			String args1 = (args.length>=2)? args[1] : "";
+			String args2 = (args.length>=3)? args[2] : "";
+			String args3 = (args.length>=4)? args[3] : "";
+			String args4 = (args.length>=5)? args[4] : "";
 			if(subCommand.matches("me"))
 			{
-				if(PlacesHandler.getPlacesByOwner(sender.getName()).isEmpty())
+				if (BasicWorld.isNew(sender))
+				{
+					sender.sendMessage("PP Prikazy nemuzete pouzivat ve svete pro novacky!");
+					return;
+				}
+				ArrayList<Place> places = plugin.placesManager.getPlacesByOwner(sender.getName());
+				if(places.isEmpty())
 				{
 					ChatHandler.FailMsg(sender, "Bohuzel nemate zadna mista");
 				}
 				else
 				{
 					sender.sendMessage("VASE MISTA:");
-					Iterator <Places> it = PlacesHandler.getPlacesByOwner(sender.getName()).iterator();
+					Iterator<Place> it = places.iterator();
 					while (it.hasNext())
 					{
-						sender.sendMessage("* " + it.next().getPortName());
+						Place current = it.next();
+						sender.sendMessage("* " + current.getName());
 					}
 				}
 			}
 			else if (subCommand.matches("set"))
 			{
-				sender.sendMessage(" /places set players <jmenoPortu> <player1,player2> - Nastavi uzivatele, kteri se mohou pouzivat port.");
-				sender.sendMessage(ChatColor.YELLOW +"- pro soukromy - zadejte pouze vase jmeno.");
-				sender.sendMessage(ChatColor.YELLOW +"- pro verejny  - zadejte \"all\".");
-				sender.sendMessage(" /places set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
+				if (BasicWorld.isNew(sender))
+				{
+					sender.sendMessage("PP Prikazy nemuzete pouzivat ve svete pro novacky!");
+					return;
+				}
+				if(args1.matches("players"))
+				{
+					if(args2.matches("add"))
+					{
+						if (plugin.placesManager.isOwner(args3, sender.getName()))
+						{
+							if(plugin.placesManager.isTeleportPrivate(args3))
+							{
+								if(plugin.placesManager.addTeleportAccess(args3, args4))
+								{
+									ChatHandler.SuccessMsg(sender,"Uzivatel '"+args4+"' ma nyni pristup k portu '"+args[3]+"'.");
+								}
+								else
+								{
+									ChatHandler.FailMsg(sender,"Pristup se nepodarilo pridat.");
+								}
+							}
+							else
+								ChatHandler.FailMsg(sender,"Tento teleport neni privatni");
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args3 + "!");
+						}
+					}
+					else if(args[2].matches("remove"))
+					{
+						if (plugin.placesManager.isOwner(args3, sender.getName()))
+						{
+							if(plugin.placesManager.isTeleportPrivate(args3))
+							{
+								if(plugin.placesManager.removeTeleportAccess(args3, args4))
+								{
+									ChatHandler.SuccessMsg(sender,"Uzivatel '"+args4+"' uz nema pristup k portu '"+args3+"'.");
+								}
+								else
+								{
+									ChatHandler.FailMsg(sender,"Pristup se nepodarilo odebrat.");
+								}
+							}
+							else
+								ChatHandler.FailMsg(sender,"Tento teleport neni privatni");	
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args3 + "!");
+						}
+					}
+					else if(args2.matches("list"))
+					{
+						if (plugin.placesManager.isOwner(args3, sender.getName()))
+						{
+							ArrayList<String> users = plugin.placesManager.listTeleportAccess(args[3]);
+							sender.sendMessage("K portu '"+args3+"' maji pristup (celkem "+String.valueOf(users.size())+"):");
+							sender.sendMessage(users.toString());
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[3] + "!");
+						}
+					}
+				
+				}
+				else if(args1.matches("welcome"))
+				{
+					if (plugin.placesManager.isOwner(args[2], sender.getName()))
+					{
+						StringBuilder msg = new StringBuilder();
+						for(int i=3;i<args.length;)
+						{
+							msg.append(args[i++]);
+							if(i < args.length)
+								msg.append(" ");
+						}
+						if(plugin.placesManager.setWelcomeMessage(args[2],msg.toString()))
+						{
+							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Nepodarilo se nastavit uvitaci zpravu");
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
+					}
+				}
+				else if(args1.equalsIgnoreCase("type"))
+				{
+					String type;
+					if(args3.equalsIgnoreCase("public"))
+						type = "public";
+					else if(args3.equalsIgnoreCase("private"))
+						type = "private";
+					else
+					{
+						ChatHandler.FailMsg(sender, "Invalid place type");
+						return;
+					}
+					if(plugin.placesManager.modifyTeleportType(args2, type))
+					{
+						for(String u : plugin.placesManager.listTeleportAccess(args2))
+						{
+							plugin.placesManager.removeTeleportAccess(args2, u);
+						}
+						ChatHandler.SuccessMsg(sender, "Place was sucessfully modified");
+					}
+					else
+						ChatHandler.FailMsg(sender, "Place modification failed");
+				}	
+				else
+				{
+					sender.sendMessage(" /places set players add <jmenoPortu> <player> - Nastavi uzivatele, ktery muze pouzivat port.");
+					sender.sendMessage(" /places set players remove <jmenoPortu> <player> - Odebere uzivatele, ktery muze pouzivat port.");
+					sender.sendMessage(" /places set players list <jmenoPortu> <player> - Vypise uzivatele, kteri mohou pouzivat port.");
+					sender.sendMessage(" /places set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
+					sender.sendMessage(" /places set type <jmenoPortu> public|private - nastavi typ portu");
+				}
 			}
-		}
-		else if (args.length == 2)
-		{
-			String subCommand = args[0];
-			if(subCommand.matches("list"))
+			else if(subCommand.matches("list"))
 			{
-				GugaDataPager<Places> pager = new GugaDataPager<Places>(PlacesHandler.getPlacesByPlayer(sender.getName()), 15);
-				Iterator <Places> i = pager.GetPage(Integer.parseInt(args[1])).iterator();
+				ArrayList<Place> places = plugin.placesManager.getAccessiblePlaces(sender.getName());
+				DataPager<Place> pager = new DataPager<Place>(places, 15);
+				int pageNum;
+				try{
+					pageNum = Integer.parseInt(args[1]);
+				}
+				catch(Exception e){
+					pageNum =1;
+				}
+				Iterator <Place> i = pager.getPage(pageNum).iterator();
 				sender.sendMessage("SEZNAM DOSTUPNYCH MIST:");
-				sender.sendMessage("STRANA " + args[1] + "/" + pager.GetPagesCount());
+				sender.sendMessage("STRANA " + args[1] + "/" + pager.getPageCount());
+				Place placeData=null;
 				while (i.hasNext())
 				{
-					sender.sendMessage("* " + i.next().getPortName());
+					placeData = i.next();
+					sender.sendMessage(String.format("* %d - %s",placeData.getId(),placeData.getName()));
 				}
-				
 			}
-			else if(subCommand.matches("create"))
+			else if(subCommand.equalsIgnoreCase("create"))
 			{
-				char[] placeName = args[1].toCharArray();
-				int i = 0;
-				boolean allowed = true;
-				while(i<placeName.length)
+				long balance = plugin.currencyManager.getBalance(sender.getName());
+				if(balance < 550)
 				{
-					int actual = (int)placeName[i];
-					if( (actual >= 65 && actual <= 90) || (actual >= 97 && actual <= 122) || (actual >= 48 && actual <= 57))
-					{}
-					else
-					{
-						allowed = false;
-						break;
-					}
-					i++;
+					ChatHandler.FailMsg(sender, "Nemate dost kreditu. Port stoji 550.");
+					return;
 				}
-				if(allowed)
+				if(plugin.placesManager.addTeleport(args1, sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), "private"))
 				{
-					GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName());
-					if(curr.GetCurrency() >= 550)
-					{
-						if(PlacesHandler.getPlaceByName(args[1]) == null)
-						{
-							String playerName = sender.getName();
-							String placesName = args[1];
-							String[] owner = {sender.getName()};
-							int X = sender.getLocation().getBlockX();
-							int Y = sender.getLocation().getBlockY();
-							int Z = sender.getLocation().getBlockZ();
-							String world = sender.getLocation().getWorld().getName();
-							String welcomeMsg = "Vitejte na portu hrace " + playerName + ".";
-							PlacesHandler.addPlace(new Places(placesName, playerName, owner, X, Y, Z, world, welcomeMsg));
-							PlacesHandler.savePlaces();
-							curr.RemoveCurrency(550);
-							ChatHandler.SuccessMsg(sender, "Vas port byl vytvoren.");
-						}
-						else
-							ChatHandler.FailMsg(sender, "Tento nazev uz je pouzit");
-					}
-					else
-						ChatHandler.FailMsg(sender, "Nemate dostatek kreditu.");
+					plugin.currencyManager.addCredits(sender.getName(), -550);
+					ChatHandler.SuccessMsg(sender, "Port byl vytvoren");
 				}
 				else
-					ChatHandler.FailMsg(sender, "Nazev obsahuje nepovoleny znak");
-			}
-		}
-		else if (args.length == 4)
-		{
-			String subCommand = args[0];
-			if(subCommand.matches("set"))
-			{
-				if(args[1].matches("players"))
 				{
-					if (PlacesHandler.isOwner(args[2], sender.getName()))
-					{
-						Places place;
-						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
-						{
-							place.setAllowedPlayers(args[3].split(","));
-							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
-					}
-						else
-						{
-							ChatHandler.FailMsg(sender, "Toto misto neexistuje!");
-						}
-					}
-					else
-					{
-						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
-					}
-				}
-				else if(args[1].matches("welcome"))
-				{
-					if (PlacesHandler.isOwner(args[2], sender.getName()))
-					{
-						Places place;
-						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
-						{
-							place.setWelcomeMsg(args[3]);
-							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
-						}
-						else
-						{
-							ChatHandler.FailMsg(sender, "Toto misto neexistuje!");
-						}
-					}
-					else
-					{
-						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
-					}
-				}
-			}
-		}
-		else if (args.length > 4 )
-		{
-			if(args[0].matches("set"))
-			{
-				if(args[1].matches("welcome"))
-				{
-					if (PlacesHandler.isOwner(args[2], sender.getName()))
-					{
-						Places place;
-						if ((place = PlacesHandler.getPlaceByName(args[2])) != null)
-						{
-							int i = 3;
-							String msg = "";
-							while(i<args.length)
-							{
-								msg = msg + " " + args[i];
-								i++;
-							}
-							place.setWelcomeMsg(msg);
-							ChatHandler.SuccessMsg(sender, "Nastaveni bylo uspesne!");
-						}
-						else
-						{
-							ChatHandler.FailMsg(sender, "Toto misto neexistuje!");
-						}
-					}
-					else
-					{
-						ChatHandler.FailMsg(sender, "Nejste majitelem mista " + args[2] + "!");
-					}
+					ChatHandler.FailMsg(sender, "Port se nepodarilo vytvorit.");
 				}
 			}
 		}
 	}
 	public static void CommandPP(Player sender, String args[])
 	{
-		if (BasicWorld.IsBasicWorld(sender.getLocation()))
-		{
-			sender.sendMessage("PP Prikazy nemuzete pouzivat ve svete pro novacky!");
-			return;
-		}
 		if(args.length==1)
 		{
 			Teleport(sender,args[0]);
 		}
 	}
-	public static void CommandAH(Player sender, String args[])
-	{
-		if (args.length == 0)
-		{
-			sender.sendMessage("AUCTION HOUSE MENU:");
-			sender.sendMessage("Jako Platidlo slouzi Gold Ingoty!");
-			sender.sendMessage("Prikazy:");
-			sender.sendMessage("/ah show - Zobrazi pocet stran.");
-			sender.sendMessage("/ah show <strana> - Zobrazi danou stranku nabidky aukce.");
-			sender.sendMessage("/ah buy <id> - Koupi aukci podle id z /ah show.");
-			sender.sendMessage("/ah create <itemID> <pocet> <cena> - Vytvori novou aukci.");
-			sender.sendMessage("/ah cancel <id> - Stornuje aukci podle ID z /ah my.");
-			sender.sendMessage("/ah my - Zobrazi vase aukce.");
-			return;
-		}
-		if (args.length >= 1)
-		{
-			String subCmd = args[0];
-			if (subCmd.equalsIgnoreCase("show"))
-			{
-				if (args.length == 1)
-				{
-					sender.sendMessage("Aktualni pocet stran: " + GugaAuctionHandler.GetPagesCount());
-				}
-				else if (args.length == 2)
-				{
-					int page = Integer.parseInt(args[1]);
-					GugaDataPager<GugaAuction> pager = new GugaDataPager<GugaAuction>(GugaAuctionHandler.GetAllAuctions(), 15);
-					sender.sendMessage("ID ; itemID ; pocet ; cena ; vlastnik");
-					Iterator<GugaAuction> i = pager.GetPage(page).iterator();
-					int i2 = 15 * (page - 1);
-					while (i.hasNext())
-					{
-						GugaAuction auction = i.next();
-						int itemID = auction.GetItemID();
-						int amount = auction.GetAmount();
-						int price = auction.GetPrice();
-						String owner = auction.GetOwner();
-						sender.sendMessage(i2 + " ; " + itemID + " ; " + amount + " ; " + price + " ; " + owner);
-						i2++;
-					}
-				}
-			}
-			else if (subCmd.equalsIgnoreCase("create"))
-			{
-				if (args.length == 4)
-				{
-					int itemID = Integer.parseInt(args[1]);
-					int amount = Integer.parseInt(args[2]);
-					int price = Integer.parseInt(args[3]);
-					if (GugaAuctionHandler.CreateAuction(itemID, amount, price, sender))
-						sender.sendMessage("Aukce uspesne vytvorena!");
-					else
-					{
-						sender.sendMessage("Nemate dostatek itemu v inventari!");
-					}
-					
-				}
-			}
-			else if (subCmd.equalsIgnoreCase("buy"))
-			{
-				if (args.length == 2)
-				{
-					int index = Integer.parseInt(args[1]);
-					if (GugaAuctionHandler.GetAllAuctions().get(index).GetOwner().matches(sender.getName()))
-					{
-						sender.sendMessage("Nemuzete koupit vlastni aukci!");
-						return;
-					}
-					if (GugaAuctionHandler.BuyAuction(sender, index))
-						sender.sendMessage("Aukce uspesne koupena!");
-					else
-						sender.sendMessage("Nemate na zaplaceni!");
-				}
-			}
-			else if (subCmd.equalsIgnoreCase("cancel"))
-			{
-				if (args.length == 2)
-				{
-					int index = Integer.parseInt(args[1]);
-					if (GugaAuctionHandler.CancelAuction(index, sender))
-						sender.sendMessage("Aukce uspesne zrusena.");
-					else
-						sender.sendMessage("Aukce s timto ID neexistuje!");
-				}
-			}
-			else if (subCmd.equalsIgnoreCase("my"))
-			{
-				if (args.length == 1)
-				{
-					ArrayList<GugaAuction> list = GugaAuctionHandler.GetPlayerAuctions(sender);
-					if (list.size() == 0)
-					{
-						sender.sendMessage("Nemate zadnou aukci!");
-						return;
-					}
-					Iterator<GugaAuction> i = list.iterator();
-					int i2 = 0;
-					sender.sendMessage("ID ; itemID ; amount ; price");
-					while (i.hasNext())
-					{
-						GugaAuction auction = i.next();
-						int itemID = auction.GetItemID();
-						int amount = auction.GetAmount();
-						int price = auction.GetPrice();
-						sender.sendMessage(i2 + " ; " + itemID + " ; " + amount + " ; " + price);
-						i2++;
-					}
-				}
-			}
-		}
-	}
-	public static void CommandModule(String args[])
-	{
-		if (args.length >= 1)	
-		 {
-			if (args[0].equalsIgnoreCase("ChestsModule"))
-			{
-				plugin.config.chestsModule = !plugin.config.chestsModule;
-				plugin.config.SetConfiguration();
-				plugin.log.info("chestModule = "+plugin.config.chestsModule);
-			}
-			else if (args[0].equalsIgnoreCase("AccountsModule"))
-			{
-				plugin.config.accountsModule = !plugin.config.accountsModule;
-				plugin.config.SetConfiguration();
-				plugin.log.info("accountsModule = "+plugin.config.accountsModule);
-			}
-		 }
-		 else
-		 {
-			 plugin.log.info("Modules:");
-			 plugin.log.info("	AccountsModule	= "+plugin.config.accountsModule);
-			 plugin.log.info("	ChestsModule	= "+plugin.config.chestsModule);
-		 }
-	}
-	/*public static void CommandRegister(Player sender, String args[])
-	{
-		if(!GugaMCClientHandler.HasClient(sender))
-		{
-			sender.sendMessage("Nemate client");
-			return;
-		}
-		if(plugin.acc.UserIsRegistered(sender))
-		{
-			sender.sendMessage("Tento ucet je jiz zaregistrovan!");
-		}
-		else
-		{
-			if (args.length > 0)
-			{
-				String pass = args[0];
-				plugin.acc.RegisterUser(sender, pass);
-				GugaBanHandler.UpdateBanAddr(sender.getName());
-			}
-			else
-			{
-				sender.sendMessage("Prosim zadejte vase heslo!");
-			}
-		}
-	}*/
+
 	public static void CommandEventWorld(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("K pouziti tohoto prikazu je treba se prihlasit!");
 			return;
@@ -1382,7 +961,7 @@ public abstract class GugaCommands
 	
 	public static void CommandArena(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("K pouziti tohoto prikazu je treba se prihlasit!");
 			return;
@@ -1406,11 +985,6 @@ public abstract class GugaCommands
 					sender.sendMessage("Z EventWorldu se nedostanete do areny!");
 					return;
 				}
-				/*if(GugaFlyHandler.isFlying(sender.getName()))
-				{
-					sender.setFlying(false);
-					sender.setAllowFlight(false);
-				}*/
 				if (!plugin.arena.IsArena(sender.getLocation()))
 				{
 					plugin.arena.PlayerJoin(sender);
@@ -1504,7 +1078,6 @@ public abstract class GugaCommands
 				}
 				String cmd = "/tell " + p.getName() + " " + msg;
 				sender.chat(cmd);
-				//sender.sendMessage(ChatColor.GRAY + "To " + p.getName() + ": " + msg);
 				reply.put(p, sender);
 				return;
 			}
@@ -1513,7 +1086,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandTeam(Player sender, String args[])
 	{
-		if(!plugin.acc.UserIsLogged(sender))
+		if(!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
@@ -1569,7 +1142,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandFeedback(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
@@ -1592,7 +1165,7 @@ public abstract class GugaCommands
 	}
 	public static void CommandEvent(Player sender, String args[])
 	{
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
@@ -1877,10 +1450,10 @@ public abstract class GugaCommands
 				}
 				else if (args[1].equalsIgnoreCase("list"))
 				{
-					GugaDataPager<String> pager = new GugaDataPager<String>(GugaEvent.GetPlayers(), 15);
-					Iterator<String> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
+					DataPager<String> pager = new DataPager<String>(GugaEvent.GetPlayers(), 15);
+					Iterator<String> i = pager.getPage(Integer.parseInt(args[2])).iterator();
 					sender.sendMessage("PLAYER LIST:");
-					sender.sendMessage("PAGE " + args[2] + "/" + pager.GetPagesCount());
+					sender.sendMessage("PAGE " + args[2] + "/" + pager.getPageCount());
 					while (i.hasNext())
 					{
 						sender.sendMessage(i.next());
@@ -1903,124 +1476,127 @@ public abstract class GugaCommands
 	public static void CommandHelper(Player sender, String args[])
 	{
 		GameMaster gm;
-		if((gm = GameMasterHandler.GetGMByName(sender.getName())) != null)
-		{
-			if(gm.GetRank() == Rank.HELPER)
-			{
-				Player []players = plugin.getServer().getOnlinePlayers();
-				String command = "/gm ";
-				int r=0;
-				while(r < args.length)
-				{
-					command += args[r] + " ";
-					r++;
-				}
-				r = 0;
-				while(r < players.length)
-				{
-					if(GameMasterHandler.IsAtleastGM(players[r].getName()))
-					{
-						players[r].sendMessage(ChatColor.GRAY+sender.getName() + " used command: " + command);
-					}
-					r++;
-				}
-				if(args.length == 0)
-				{
-					sender.sendMessage("**************MENU HELPERU**************");
-					sender.sendMessage("/helper mute - Zobrazi podmenu.");
-					sender.sendMessage("/helper kick <hrac> - Vykopne hrace ze serveru kvuli zadanemu duvodu.");
-					sender.sendMessage("/helper tp - Zobrazi podmenu.");
-				}
-				else if(args[0].toLowerCase().matches("tp"))
-				{
-					if(args.length == 1)
-					{
-						sender.sendMessage("/helper tp <hrac> - teleportuje Vas k zadanemu hraci.");
-						sender.sendMessage("/helper tp back - teteportuje Vas zpet.");
-					}
-					else if(args.length == 2)
-					{
-						if(args[1].toLowerCase().matches("back"))
-						{
-							if(backTeleport.containsKey(sender.getName()))
-							{
-								sender.teleport(backTeleport.get(sender.getName()));
-								ChatHandler.SuccessMsg(sender, "Byl jste teleportovan.");
-							}
-							else
-								ChatHandler.FailMsg(sender, "Nikam jste se jeste neteleportoval.");
-						}
-						else
-						{
-							Player p = plugin.getServer().getPlayer(args[1]);
-							if(p != null)
-							{
-								String name = sender.getName();
-								if(backTeleport.containsKey(name))
-								{
-									backTeleport.remove(name);
-									backTeleport.put(name, sender.getLocation());
-								}
-								else
-									backTeleport.put(name, sender.getLocation());
-								sender.teleport(p);
-								ChatHandler.SuccessMsg(sender, "Byl jste teleportovan.");
-							}
-							else
-								ChatHandler.FailMsg(sender, "Hrac je offline.");
-						}
-					}
-				}
-				else if(args[0].toLowerCase().matches("mute"))
-				{
-					if(args.length == 1)
-					{
-						sender.sendMessage("/helper mute add <name> <time> - Ztlumi hrace na urcity cas v minutach.");
-						sender.sendMessage("/helper mute list - Zorazi seznam ztlumenych hracu.");
-					}
-					else if(args.length == 2)
-					{
-						if(args[1].toLowerCase().matches("list"))
-						{
-							GugaMute.printPlayers(sender);
-						}
-					}
-					else if(args.length == 4)
-					{
-						if(args[1].toLowerCase().matches("add"))
-						{
-							GugaMute.addPlayer(args[2], Integer.parseInt(args[3]));
-							ChatHandler.SuccessMsg(sender, "Hrac byl ztlumen.");
-						}
-					}
-				}
-				else if(args[0].toLowerCase().matches("kick"))
-				{
-					if(args.length == 2)
-					{
-						Player p;
-						if((p = plugin.getServer().getPlayer(args[1])) != null)
-						{
-							p.kickPlayer("Byl jste vykopnut helperem.");
-							ChatHandler.SuccessMsg(sender, "Hrac byl vykopnut");
-						}
-						else
-							ChatHandler.FailMsg(sender, "Tento hrac neni online");
-					}
-				}
-			}
-		}
-	}
+	    if ((gm = GameMasterHandler.GetGMByName(sender.getName())) != null)
+	    {
+	      if (gm.GetRank() == GameMaster.Rank.HELPER)
+	      {
+	        Player[] players = plugin.getServer().getOnlinePlayers();
+	        String command = "/gm ";
+	        int r = 0;
+	        while (r < args.length)
+	        {
+	          command = command + args[r] + " ";
+	          r++;
+	        }
+	        r = 0;
+	        while (r < players.length)
+	        {
+	          if (GameMasterHandler.IsAtleastGM(players[r].getName()))
+	          {
+	            players[r].sendMessage(ChatColor.GRAY + sender.getName() + " used command: " + command);
+	          }
+	          r++;
+	        }
+	        if (args.length == 0)
+	        {
+	          sender.sendMessage("**************MENU HELPERU**************");
+	          sender.sendMessage("/helper mute - Zobrazi podmenu.");
+	          sender.sendMessage("/helper kick <hrac> - Vykopne hrace ze serveru kvuli zadanemu duvodu.");
+	          sender.sendMessage("/helper tp - Zobrazi podmenu.");
+	        }
+	        else if (args[0].toLowerCase().matches("tp"))
+	        {
+	          if (args.length == 1)
+	          {
+	            sender.sendMessage("/helper tp <hrac> - teleportuje Vas k zadanemu hraci.");
+	            sender.sendMessage("/helper tp back - teteportuje Vas zpet.");
+	          }
+	          else if (args.length == 2)
+	          {
+	            if (args[1].toLowerCase().matches("back"))
+	            {
+	              if (backTeleport.containsKey(sender.getName()))
+	              {
+	                sender.teleport((Location)backTeleport.get(sender.getName()));
+	                ChatHandler.SuccessMsg(sender, "Byl jste teleportovan.");
+	              }
+	              else {
+	                ChatHandler.FailMsg(sender, "Nikam jste se jeste neteleportoval.");
+	              }
+	            }
+	            else {
+	              Player p = plugin.getServer().getPlayer(args[1]);
+	              if (p != null)
+	              {
+	                String name = sender.getName();
+	                if (backTeleport.containsKey(name))
+	                {
+	                  backTeleport.remove(name);
+	                  backTeleport.put(name, sender.getLocation());
+	                }
+	                else {
+	                  backTeleport.put(name, sender.getLocation());
+	                }sender.teleport(p);
+	                ChatHandler.SuccessMsg(sender, "Byl jste teleportovan.");
+	              }
+	              else {
+	                ChatHandler.FailMsg(sender, "Hrac je offline.");
+	              }
+	            }
+	          }
+	        } else if (args[0].toLowerCase().matches("mute"))
+	        {
+	          if (args.length == 1)
+	          {
+	            sender.sendMessage("/helper mute add <name> <time> - Ztlumi hrace na urcity cas v minutach.");
+	            sender.sendMessage("/helper mute list - Zorazi seznam ztlumenych hracu.");
+	          }
+	          else if (args.length == 2)
+	          {
+	            if (args[1].toLowerCase().matches("list"))
+	            {
+	              GugaMute.printPlayers(sender);
+	            }
+	          }
+	          else if (args.length == 4)
+	          {
+	            if (args[1].toLowerCase().matches("add"))
+	            {
+	              GugaMute.addPlayer(args[2], Integer.parseInt(args[3]));
+	              ChatHandler.SuccessMsg(sender, "Hrac byl ztlumen.");
+	            }
+	          }
+	        }
+	        else if (args[0].toLowerCase().matches("kick"))
+	        {
+	          if (args.length == 2)
+	          {
+	            Player p;
+	            if ((p = plugin.getServer().getPlayer(args[1])) != null)
+	            {
+	              p.kickPlayer("Byl jste vykopnut helperem.");
+	              ChatHandler.SuccessMsg(sender, "Hrac byl vykopnut");
+	            }
+	            else {
+	              ChatHandler.FailMsg(sender, "Tento hrac neni online");
+	            }
+	          }
+	        }
+	      }
+	    }
+	}		
+					
 	public static void CommandGM(Player sender, String args[])
 	{
 		if (!(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER)))
 			return;
 		Player []players = plugin.getServer().getOnlinePlayers();
-		String command = "/gm ";
+		StringBuilder command = new StringBuilder("/gm ");
 		int r=0;
 		while(r < args.length)
 		{
-			command += args[r] + " ";
+			command.append(args[r]);
+			command.append(" ");
 			r++;
 		}
 		if(GameMasterHandler.IsAdmin(sender.getName()))
@@ -2059,11 +1635,15 @@ public abstract class GugaCommands
 				i++;
 			}
 		}
-		if (!plugin.acc.UserIsLogged(sender))
+		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
 			sender.sendMessage("Musite byt prihlaseny, aby jste mohl pouzit tento prikaz!");
 			return;
 		}
+		String subCommand = (args.length>0) ? args[0] : "";
+		String arg1 = (args.length>=2) ? args[1] : "";
+		String arg2 = (args.length>=3) ? args[2] : "";
+		String arg3 = (args.length>=4) ? args[3] : "";
 		if (args.length == 0)
 		{
 			sender.sendMessage("GM MENU:");
@@ -2109,248 +1689,13 @@ public abstract class GugaCommands
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 		}
-		else if (args.length == 1)
+		else if (subCommand.matches("log"))
 		{
-			String subCommand = args[0];
-			if (subCommand.matches("log"))
+			if(args.length==1)
 			{
 				plugin.logger.PrintLogData(sender, sender.getTargetBlock(null, 20));
 			}
-			else if(subCommand.matches("rsdebug") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(plugin.bListener.redStoneDebug.contains(sender))
-				{
-					plugin.bListener.redStoneDebug.remove(sender);
-					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned off!");
-				}
-				else
-				{
-					plugin.bListener.redStoneDebug.add(sender);
-					ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned on!");
-				}
-			}
-			else if(subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
-				sender.sendMessage("/gm home set <player> - Sets home of certain player to your position.");
-			}
-			else if(subCommand.matches("rank") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm rank add <player> <rank> - Adds rank (EVENTER/BUILDER) for a certain player.");
-				sender.sendMessage("/gm rank remove <player> - Removes rank for a certain player");
-			}
-			else if (subCommand.matches("mute") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm mute all - Toggle all chat messages on/off");
-				sender.sendMessage("/gm mute add <name> <time> - Mute players chat messages for certain time");
-				sender.sendMessage("/gm mute list - Shows list of muted players");
-			}
-			else if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName())) 
-			{
-				sender.sendMessage("/gm spawn add <spawnName> - Adds spawn to your position.");
-				sender.sendMessage("/gm spawn remove <spawnName> - Removes certain spawn.");
-			}
-			else if (subCommand.matches("bw") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm bw join - Teleports you to BasicWorld.");
-				sender.sendMessage("/gm bw leave - Teleports you Spawn of main world.");
-			}
-			else if (subCommand.matches("time") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm time <world> <value> - Sets time for certain world.");
-			}
-			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm arena add <name> - Adds new arena spawn at your location.");
-				sender.sendMessage("/gm arena remove <name> - Removes specified arena.");
-				sender.sendMessage("/gm arena list - List of all arenas.");
-				sender.sendMessage("/gm arena next - Changes actual arena to next one.");
-			}
-			else if (subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				Location pLoc = sender.getLocation();
-				sender.getWorld().setSpawnLocation((int)pLoc.getX(), (int)pLoc.getY(), (int)pLoc.getZ());
-				sender.sendMessage("New World Spawn has been set!");
-			}
-			else if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm announce print - Prints messages and indexes.");
-				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
-				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
-			}
-			else if (subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
-				sender.sendMessage("/gm ban remove <player> - Removes a ban.");
-				sender.sendMessage("/gm ban whitelist - Whitelist sub-menu.");
-				sender.sendMessage("/gm ban list <page>  -  Shows all banned players.");
-			}
-			else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm speed fly <name> <speed> - Sets fly speed of a certain player.");
-				sender.sendMessage("/gm speed walk <name> <speed> - Sets walk speed of a certain player.");
-			}
-			else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm credits add <player> <amount>  -  Add credits to a player.");
-				sender.sendMessage("/gm credits remove <player> <amount>  -  Remove credits to a player.");
-				sender.sendMessage("/gm credits balance <player>  -  Shows credits of a player.");
-			}
-			
-			else if (subCommand.matches("spectate") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm spectate player <name> - Start spectating certain player.");
-				sender.sendMessage("/gm spectate stop - Stop spectating.");
-			}
-			else if(subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm places list <page>  - Show list of all places.");	
-				sender.sendMessage("/gm places add <name> <owner> - Adds actual position to places (owner all = public).");	
-				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");	
-			}
-			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm regions list <page>  - Show list of all places.");	
-				sender.sendMessage("/gm regions add <name> <world> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
-				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
-				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");	
-			}
-			else if (subCommand.matches("enderchest") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				sender.sendMessage("/gm enderchest show <playerName> - Shows enderchest of certain player.");
-			}
-			else if (subCommand.matches("save-all") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				AutoSaver.SaveWorldStructures();
-				ChatHandler.SuccessMsg(sender, "Successfully saved!");
-			}
-			else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm book copy - Copies book in your hand.");
-			}
-			else if (subCommand.matches("on") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(disabledGMs.contains(sender.getName()))
-				{
-					disabledGMs.remove(sender.getName());
-					ChatHandler.InitializeDisplayName(sender);
-					sender.setGameMode(GameMode.CREATIVE);
-					sender.sendMessage("GM state succesfully turned on!");
-				}
-			}
-			else if (subCommand.matches("off") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(!disabledGMs.contains(sender.getName()))
-				{
-					disabledGMs.add(sender.getName());
-					ChatHandler.InitializeDisplayName(sender);
-					sender.setGameMode(GameMode.SURVIVAL);
-					sender.sendMessage("GM state succesfully turned off!");
-				}
-			}
-			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				sender.sendMessage("/gm enchant <name> <level> - Enchants item in your hand to certain enchantment level.");
-				sender.sendMessage("/gm enchant all - Enchants item in your to maximal natural level and all enchantments.");
-				sender.sendMessage("/gm enchant rikubstyle - Enchants item in your hand to level 127 and all enchantments.");
-			}
-		}
-		else if (args.length == 2)
-		{
-			String subCommand = args[0];
-			String arg1 = args[1];
-			Player p;
-			if (subCommand.matches("ip") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if ((p = plugin.getServer().getPlayer(arg1)) != null)
-				{
-					sender.sendMessage("Players IP:" + p.getAddress());
-				}
-				else
-				{
-					sender.sendMessage("This player is not online!");
-				}
-			}
-			else if(subCommand.matches("mute") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(args[1].matches("list"))
-				{
-					GugaMute.printPlayers(((Player)sender));
-				}
-				if(arg1.matches("all"))
-				{
-					boolean status = GugaMute.toggleChatMute();
-					if(status==true)
-						sender.sendMessage("Mute for all players is on.");
-					else
-						sender.sendMessage("Mute for all players is off.");	
-				}
-			}
-			else if (subCommand.matches("fly") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				Player target = plugin.getServer().getPlayer(arg1);
-				if (target == null)
-				{
-					sender.sendMessage("Hrac neni online!");
-					return;
-				}
-				if (target.getAllowFlight())
-				{
-					target.setAllowFlight(false);
-					target.setFlying(false);
-					fly.remove(target.getName().toLowerCase());
-					target.sendMessage("Fly mode byl vypnut!");
-					sender.sendMessage("Fly mode succesfuly turned off.");
-				}
-				else
-				{
-					target.setAllowFlight(true);
-					target.setFlying(true);
-					fly.add(target.getName().toLowerCase());
-					target.sendMessage("Fly mode byl zapnut!");
-					sender.sendMessage("Fly mode succesfuly turned on.");
-				}
-			}
-			else if (subCommand.matches("bw") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(args[1].matches("join"))
-				{
-					BasicWorld.BasicWorldJoin(sender);
-				}
-				else if(args[1].matches("leave"))					
-				{
-					BasicWorld.BasicWorldLeave(sender);
-				}
-			}
-			else if (subCommand.matches("world") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(plugin.getServer().getWorld(args[1]) != null)
-				{
-					sender.teleport(plugin.getServer().getWorld(args[1]).getSpawnLocation());
-					ChatHandler.SuccessMsg(sender, "You have been teleported!");
-				}
-				else
-					ChatHandler.FailMsg(sender, "This world doesn't exist!");
-			}
-			
-			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if(args[1].matches("all"))
-					Enchantments.enchantAll(sender);
-				else if(args[1].matches("rikubstyle"))
-					Enchantments.enchantAllInRikubStyle(sender);
-				ChatHandler.SuccessMsg(sender, "Enchantments has been added.");
-			}
-			else if (subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				Homes home;
-				if((home = HomesHandler.getHomeByPlayer(args[1])) != null)
-				{
-					sender.teleport(HomesHandler.getLocation(home));
-					ChatHandler.SuccessMsg(sender, "You have been teleported to " + args[1] + " spawn!");
-				}
-			}
-			else if (subCommand.matches("log"))
+			else if(args.length==2)
 			{
 				if(args[1].matches("saveall"))
 				{
@@ -2360,35 +1705,228 @@ public abstract class GugaCommands
 					plugin.logger.SaveWrapperPlace();
 					sender.sendMessage("Save completed");
 				}
+				else if (args[1].equalsIgnoreCase("shop"))
+					plugin.logger.PrintShopData(sender, Integer.parseInt(args[2]));
 				else
 				{
-				ArrayList<String> data = plugin.logger.blockCache.get(sender);
-				if (data.size() == 0)
-				{
-					sender.sendMessage("You have no data saved! Use /gm log first");
-					return;
-				}
-				GugaDataPager<String> pager = new GugaDataPager<String>(data, 6);
-				Iterator<String> i = pager.GetPage(Integer.parseInt(arg1)).iterator();
-				sender.sendMessage("LIST OF BLOCK DATA:");
-				sender.sendMessage("PAGE " + Integer.parseInt(arg1) + "/" + pager.GetPagesCount());
-				while (i.hasNext())
-					sender.sendMessage(i.next());
-				}
-			}
-			else if (subCommand.matches("kill") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				Player target = plugin.getServer().getPlayer(args[1]);
-				if(target.isOnline())
-				{
-					target.setHealth(0);
-					target.sendMessage("Byl jste zabit adminem/GM!");
-					sender.sendMessage("Hrac "+target.getName()+" byl zabit!");
+					ArrayList<String> data = plugin.logger.blockCache.get(sender);
+					if (data.size() == 0)
+					{
+						sender.sendMessage("You have no data saved! Use /gm log first");
+						return;
+					}
+					DataPager<String> pager = new DataPager<String>(data, 6);
+					Iterator<String> i = pager.getPage(Integer.parseInt(args[1])).iterator();
+					sender.sendMessage("LIST OF BLOCK DATA:");
+					sender.sendMessage("PAGE " + Integer.parseInt(args[1]) + "/" + pager.getPageCount());
+					while (i.hasNext())
+						sender.sendMessage(i.next());
 				}
 			}
-			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
+		}
+		else if(subCommand.matches("rsdebug") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(plugin.bListener.redStoneDebug.contains(sender))
 			{
-				if (arg1.equalsIgnoreCase("list"))
+				plugin.bListener.redStoneDebug.remove(sender);
+				ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned off!");
+			}
+			else
+			{
+				plugin.bListener.redStoneDebug.add(sender);
+				ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned on!");
+			}
+		}
+		else if(subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				Homes home;
+				if((home = HomesHandler.getHomeByPlayer(args[1])) != null)
+				{
+					sender.teleport(HomesHandler.getLocation(home));
+					ChatHandler.SuccessMsg(sender, "You have been teleported to " + args[1] + " spawn!");
+				}
+			}
+			else if(args.length == 3 && args[1].matches("set"))
+			{
+				Location loc = sender.getLocation();
+				HomesHandler.addHome(new Homes(args[2], (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
+				ChatHandler.SuccessMsg(sender, "Home has been uccessfully set");
+			}
+			else
+			{
+				sender.sendMessage("Usage:");
+				sender.sendMessage("/gm home <player> - Teleports you to certain player's home");
+				sender.sendMessage("/gm home set <player> - Sets home of certain player to your current position.");
+			}
+		}
+		else if(subCommand.matches("rank") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 4)
+			{
+				if(arg1.matches("add"))
+				{
+					Player target = plugin.getServer().getPlayer(arg2);
+					if(target != null)
+					{
+						if(arg3.equalsIgnoreCase("helper")||arg3.equalsIgnoreCase("eventer")||arg3.equalsIgnoreCase("builder")||arg3.equalsIgnoreCase("admin")||arg3.equalsIgnoreCase("gamemaster"))
+						{
+							if(!GameMasterHandler.gameMasters.contains(GameMasterHandler.GetGMByName(target.getName())))
+							{
+								GameMasterHandler.AddGMIng(target.getName(), arg3.toUpperCase());
+								sender.sendMessage("User was succesfully added to GMs file!");
+							}
+							else
+							{
+								sender.sendMessage("User cannot be removed, because he already exists in GMs file. - Delete him to change rank.");
+							}
+						}
+						else
+						{
+							sender.sendMessage("This rank can't be added.");
+						}
+					}
+					else
+					{
+						sender.sendMessage("This player doesn't exist.");
+					}
+				}
+			}
+			else if(args.length == 3)
+			{
+				if(arg1.matches("remove"))
+				{
+					Player target = plugin.getServer().getPlayer(arg2);
+					if(target != null)
+					{
+						GameMasterHandler.RemoveGMIng(arg2);
+						sender.sendMessage("User was succesfully removed from GMs file!");
+					}
+					else
+					{
+						sender.sendMessage("This player doesn't exist.");
+					}
+				}
+			}
+			else
+			{
+				sender.sendMessage("/gm rank add <player> <rank> - Adds rank (EVENTER/BUILDER) for a certain player.");
+				sender.sendMessage("/gm rank remove <player> - Removes rank for a certain player");
+			}
+		}
+		else if (subCommand.matches("mute") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				if(args[1].matches("list"))
+				{
+					GugaMute.printPlayers(((Player)sender));
+				}
+				if(args[1].matches("all"))
+				{
+					boolean status = GugaMute.toggleChatMute();
+					if(status==true)
+						sender.sendMessage("Mute for all players is on.");
+					else
+						sender.sendMessage("Mute for all players is off.");	
+				}
+			}
+			else if(args.length==4)
+			{
+				if(args[1].matches("add"))
+				{
+					int i=0;
+					boolean isOnline=false;
+					Player []player=plugin.getServer().getOnlinePlayers();
+					while(i<player.length)
+					{
+						if(player[i].getName().equalsIgnoreCase(args[2]))
+						{
+							GugaMute.addPlayer(args[2],Integer.parseInt(args[3]));
+							player[i].sendMessage(ChatColor.RED+("Byl jste ztlumen na " + args[3]+" minut!"));
+							sender.sendMessage("Player " + player[i].getName() + " was muted!");
+							isOnline=true;
+						}
+						i++;
+					}
+					if(!(isOnline))
+					{
+						sender.sendMessage("This player is not online");
+					}
+				}
+			}
+			else
+			{
+				sender.sendMessage("/gm mute all - Toggle all chat messages on/off");
+				sender.sendMessage("/gm mute add <name> <time> - Mute players chat messages for certain time");
+				sender.sendMessage("/gm mute list - Shows list of muted players");
+			}
+		}
+		else if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName())) 
+		{
+			if(args.length == 3 && args[1].matches("add"))
+			{
+				SpawnsHandler.AddSpawn(args[2], sender.getLocation());
+				SpawnsHandler.SaveSpawns();
+				sender.sendMessage("Spawn was successfully added!");
+			}
+			else if(args.length == 3 && args[1].matches("remove"))
+			{
+				if(SpawnsHandler.GetSpawnByName(args[2]) != null)
+				{
+					SpawnsHandler.RemoveSpawn(args[2]);
+					SpawnsHandler.SaveSpawns();
+					sender.sendMessage("Spawn was successfully removed!");
+				}
+				else
+				{
+					sender.sendMessage("This spawn doesn't exist!");
+				}
+			}
+			else
+			{
+				sender.sendMessage("/gm spawn add <spawnName> - Adds spawn to your position.");
+				sender.sendMessage("/gm spawn remove <spawnName> - Removes certain spawn.");
+			}
+		}
+		else if (subCommand.matches("bw") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				if(arg1.matches("join"))
+				{
+					sender.teleport(BasicWorld.getSpawn());
+				}
+				else if(arg1.matches("leave"))					
+				{
+					sender.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
+				}
+			}
+			else
+			{
+				sender.sendMessage("/gm bw join - Teleports you to BasicWorld.");
+				sender.sendMessage("/gm bw leave - Teleports you Spawn of main world.");
+			}
+		}
+		else if (subCommand.matches("time") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 3)
+			{
+				if(plugin.getServer().getWorld(args[1]) != null)
+				{
+					plugin.getServer().getWorld(args[1]).setTime(Integer.parseInt(args[2]));
+					ChatHandler.SuccessMsg(sender, "Cas byl uspesne nastaven");
+				}
+			}
+			else
+				sender.sendMessage("Usage: /gm time <world> <value> - Sets time for certain world.");
+		}
+		else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(args.length==2)
+			{
+				if (args[1].equalsIgnoreCase("list"))
 				{
 					Iterator<ArenaSpawn> i = plugin.arena.GetArenaList().iterator();
 					sender.sendMessage("LIST OF ARENAS:");
@@ -2397,676 +1935,510 @@ public abstract class GugaCommands
 						sender.sendMessage(i.next().GetName());
 					}
 				}
-				else if (arg1.equalsIgnoreCase("next"))
+				else if (args[1].equalsIgnoreCase("next"))
 				{
 					plugin.arena.RotateArena();
-					sender.sendMessage("Actual Arena changed.");
+					sender.sendMessage("Current Arena changed.");
 				}
 			}
-			else if(subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
+			else if(args.length == 3)
 			{
-				if (arg1.matches("print"))
+				if (args[1].equalsIgnoreCase("add"))
 				{
-					int i = 0;
-					String msg;
-					while ( (msg = GugaAnnouncement.GetAnnouncement(i)) != null)
+					if (plugin.arena.IsArena(sender.getLocation()))
 					{
-						sender.sendMessage("[" + i + "]  -  " + msg);
-						i++;
-					}
-				}
-			}
-			else if (subCommand.matches("getvip") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				GugaVirtualCurrency vip = plugin.FindPlayerCurrency(arg1);
-				if (vip.IsVip())
-				{
-					sender.sendMessage("VIP Status for " + arg1 + " expires " + new Date(vip.GetExpirationDate()));
-				}
-				else
-				{
-					sender.sendMessage("This player is not a VIP");
-				}
-			}
-			else if (subCommand.matches("gmmode"))
-			{
-				if (!GameMasterHandler.IsAdmin(sender.getName()))
-					if (!arg1.equalsIgnoreCase(sender.getName()))
-					{
-						sender.sendMessage("You can only set gmmode to yourself!");
-						return;
-					}
-				if ((p = plugin.getServer().getPlayer(arg1)) != null)
-				{
-					GameMode mode = p.getGameMode();
-					if (mode == GameMode.CREATIVE)
-					{
-						p.setGameMode(GameMode.SURVIVAL);
-						sender.sendMessage("GM Mode for " + arg1 + " has been turned off");
+						plugin.arena.AddArena(args[2], sender.getLocation());
+						sender.sendMessage("Arena spawn succesfuly added.");
 					}
 					else
+						sender.sendMessage("You must be in arena world!");
+				}
+				else if (args[1].equalsIgnoreCase("remove"))
+				{
+					if (plugin.arena.ContainsArena(args[2]))
 					{
-						p.setGameMode(GameMode.CREATIVE);
-						sender.sendMessage("GM Mode for " + arg1 + " has been turned on");
+						plugin.arena.RemoveArena(args[2]);
+						sender.sendMessage("Arena succesfuly removed.");
 					}
+					else
+						sender.sendMessage("This arena doesnt exist!");
 				}
 			}
-			else if (subCommand.matches("godmode")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+			else
 			{
-				if (godMode.contains(arg1.toLowerCase()))
+				sender.sendMessage("/gm arena add <name> - Adds new arena spawn at your location.");
+				sender.sendMessage("/gm arena remove <name> - Removes specified arena.");
+				sender.sendMessage("/gm arena list - List of all arenas.");
+				sender.sendMessage("/gm arena next - Changes current arena to the next one.");
+			}
+		}
+		else if (subCommand.matches("setspawn") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			Location pLoc = sender.getLocation();
+			sender.getWorld().setSpawnLocation((int)pLoc.getX(), (int)pLoc.getY(), (int)pLoc.getZ());
+			sender.sendMessage("New World Spawn has been set!");
+		}
+		else if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(args.length == 2 && args[1].matches("print"))
+			{
+				int i = 0;
+				String msg;
+				while ( (msg = GugaAnnouncement.GetAnnouncement(i)) != null)
 				{
-					godMode.remove(arg1);
-					sender.sendMessage("Immortality for " + arg1 + " has been turned off");
+					sender.sendMessage("[" + i + "]  -  " + msg);
+					i++;
+				}
+			}
+			else if(args.length == 3 && args[1].matches("remove"))
+			{
+				int num = Integer.parseInt(args[2]);
+				if (GugaAnnouncement.RemoveAnnouncement(num))
+				{
+					sender.sendMessage("Announcement has been succesfuly removed.");
 				}
 				else
 				{
-					godMode.add(arg1.toLowerCase());
-					sender.sendMessage("Immortality for " + arg1 + " has been turned on");
+					sender.sendMessage("This announcement doesnt exist!");
 				}
 			}
-			else if(subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
+			else if(args.length > 3 && arg1.matches("add"))
 			{
-				if(args[1].matches("whitelist"))
-				{
-					sender.sendMessage("/gm ban whitelist add <playerName> - Adds player to whitelist.");
-					sender.sendMessage("/gm ban whitelist remove <playerName> - Removes player from whitelist");
-					sender.sendMessage("/gm ban whitelist - Prints acctualy whitelisted players");
-				}
-			}
-		}
-		else if (args.length > 2)
-		{
-			String subCommand = args[0];
-			if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if(args.length == 3)
-				{
-					if(args[1].matches("add"))
-					{
-						SpawnsHandler.AddSpawn(args[2], sender.getLocation());
-						SpawnsHandler.SaveSpawns();
-						sender.sendMessage("Spawn was successfully added!");
-					}
-					else if(args[1].matches("remove"))
-					{
-						if(SpawnsHandler.GetSpawnByName(args[2]) != null)
-						{
-							SpawnsHandler.RemoveSpawn(args[2]);
-							SpawnsHandler.SaveSpawns();
-							sender.sendMessage("Spawn was successfully removed!");
-						}
-						else
-						{
-							sender.sendMessage("This spawn doesn't exist!");
-						}
-					}
-				}
-			}
-			if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				String arg1 = args[1];
-				if (arg1.matches("remove"))
-				{
-					String arg2 = args[2];
-					if (arg2 != null)
-					{
-						int num = Integer.parseInt(arg2);
-						if (GugaAnnouncement.RemoveAnnouncement(num))
-						{
-							sender.sendMessage("Announcement has been succesfuly removed.");
-						}
-						else
-						{
-							sender.sendMessage("This announcement doesnt exist!");
-						}
-					}
-				}
-				else if (arg1.matches("add"))
-				{
-					String msg = "";
-					int i = 2;
-					while (i < args.length)
-					{
-						msg += args[i];
-						msg += " ";
-						i++;
-					}
-					GugaAnnouncement.AddAnnouncement(msg);
-					sender.sendMessage("Announcement succesfuly added! <" + msg + ">");
-				}
-			}
-			else if (subCommand.matches("time") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(args.length == 3)
-				{
-					if(plugin.getServer().getWorld(args[1]) != null)
-					{
-						plugin.getServer().getWorld(args[1]).setTime(Integer.parseInt(args[2]));
-						ChatHandler.SuccessMsg(sender, "Cas byl uspesne nastaven");
-					}
-				}
-			}
-			else if (subCommand.matches("home")  && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(args.length == 3)
-				{
-					if(args[1].matches("set"))
-					{
-						Location loc = sender.getLocation();
-						HomesHandler.addHome(new Homes(args[2], (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
-						ChatHandler.SuccessMsg(sender, "Home has been uccessfully set");
-					}
-				}
-			}
-			else if (subCommand.matches("mute")&& GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(args.length==4)
-				{
-					if(args[1].matches("add"))
-					{
-						int i=0;
-						boolean isOnline=false;
-						Player []player=plugin.getServer().getOnlinePlayers();
-						while(i<player.length)
-						{
-							if(player[i].getName().equalsIgnoreCase(args[2]))
-							{
-								GugaMute.addPlayer(args[2],Integer.parseInt(args[3]));
-								player[i].sendMessage(ChatColor.RED+("Byl jste ztlumen na " + args[3]+" minut!"));
-								sender.sendMessage("Player " + player[i].getName() + " was muted!");
-								isOnline=true;
-							}
-							i++;
-						}
-						if(!(isOnline))
-						{
-							sender.sendMessage("This player is not online");
-						}
-					}
-				}
-			}
-			else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if (args.length == 4)
-				{
-					Player target = plugin.getServer().getPlayer(args[2]);
-					if (target == null)
-					{
-						sender.sendMessage("Player is not online");
-						return;
-					}
-					if(!GameMasterHandler.IsAdmin(sender.getName()))
-					{
-						if(!args[2].equalsIgnoreCase(sender.getName()))
-						{
-							ChatHandler.FailMsg(sender, "You can set your speed only.");
-							return;
-						}
-					}
-					if(args[1].matches("fly"))
-					{
-						target.setFlySpeed(Float.parseFloat(args[3]));
-						ChatHandler.SuccessMsg(sender, "Fly speed has been succesfuly set.");
-					}
-					else if(args[1].matches("walk"))
-					{
-						target.setWalkSpeed(Float.parseFloat(args[3]));
-						ChatHandler.SuccessMsg(sender, "Walk speed has been succesfuly set.");
-					}
-				}
-			}
-			else if (subCommand.matches("log") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args[1].equalsIgnoreCase("shop"))
-					plugin.logger.PrintShopData(sender, Integer.parseInt(args[2]));
-			}
-			else if (subCommand.matches("cmd") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				String cmd = args[1];
+				String msg = "";
 				int i = 2;
 				while (i < args.length)
 				{
-					cmd += " " + args[i++];
+					msg += args[i];
+					msg += " ";
+					i++;
 				}
-				BukkitCommandParser.ParseCommand(sender, cmd);
+				GugaAnnouncement.AddAnnouncement(msg);
+				sender.sendMessage("Announcement succesfuly added! <" + msg + ">");				
 			}
-			else if (subCommand.matches("arena") && GameMasterHandler.IsAdmin(sender.getName()))
+			else if(args.length==0)
 			{
-				if (args.length == 3)
-				{
-					if (args[1].equalsIgnoreCase("add"))
-					{
-						if (plugin.arena.IsArena(sender.getLocation()))
-						{
-							plugin.arena.AddArena(args[2], sender.getLocation());
-							sender.sendMessage("Arena spawn succesfuly added.");
-						}
-						else
-							sender.sendMessage("You must be in arena world!");
-					}
-					else if (args[1].equalsIgnoreCase("remove"))
-					{
-						if (plugin.arena.ContainsArena(args[2]))
-						{
-							plugin.arena.RemoveArena(args[2]);
-							sender.sendMessage("Arena succesfuly removed.");
-						}
-						else
-							sender.sendMessage("This arena doesnt exist!");
-					}
-				}
-			}	
-			else if (subCommand.matches("ban")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+				sender.sendMessage("/gm announce print - Prints messages and indexes.");
+				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
+				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
+			}
+		}
+		else if (subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			switch(arg1)
 			{
-				if (args.length == 3)
-				{
-					String arg1 = args[1];
-					String arg2 = args[2];
-					if (arg1.matches("remove"))
+				case "add":
+					if(!(args.length >= 4))
 					{
-						GugaBanHandler.RemoveBan(arg2);
-						sender.sendMessage("Player unbanned!");
+						sender.sendMessage("Usage: /gm ban add <player> <hours>[ <reason>]");
+						break;
 					}
-					else if (arg1.equalsIgnoreCase("list"))
+					
+					String playerNameToBan = arg2;
+					long exp = Long.valueOf(arg3);
+					if(exp == 0)
 					{
-						GugaDataPager<GugaBan> pager = new GugaDataPager<GugaBan>(GugaBanHandler.GetBannedPlayers(), 15);
-						Iterator<GugaBan> i = pager.GetPage(Integer.parseInt(arg2)).iterator();
-						sender.sendMessage("LIST OF BANNED PLAYERS:");
-						sender.sendMessage("PAGE " + arg2 + "/" + pager.GetPagesCount());
-						while (i.hasNext())
-						{
-							GugaBan ban = i.next();
-							long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
-							sender.sendMessage(ban.GetPlayerName() + "  -  " + hours + " hours");
-						}
+						ChatHandler.FailMsg(sender, "Invalid ban duration");
+						return;
 					}
-					else if(arg1.matches("whitelist"))
+					long expiration = 0;
+					if(!(exp == -1L))
 					{
-						GugaDataPager<String> pager = new GugaDataPager<String>(GugaBanHandler.GetWhitelistedPlayers(), 15);
-						Iterator <String> i = pager.GetPage(Integer.parseInt(arg2)).iterator();
-						sender.sendMessage("WHITELISTED PLAYERS:");
-						sender.sendMessage("PAGE " + args[1] + "/" + pager.GetPagesCount());
-						while (i.hasNext())
-						{
-							sender.sendMessage(i.next());
-						}
+						expiration = Double.valueOf(arg3).longValue()*3600 + System.currentTimeMillis()/1000;
 					}
-				}
-				else if (args.length == 4)
-				{
-					String arg1 = args[1];
-					String arg2 = args[2];
-					String arg3 = args[3];
-					if (arg1.matches("add"))
+					
+					StringBuilder sb = new StringBuilder("");
+					for(int i=4;i<args.length;i++)
 					{
-						Calendar c = Calendar.getInstance();
-						c.setTime(new Date());
-						c.add(Calendar.HOUR, Integer.parseInt(arg3));
-						GugaBanHandler.AddBan(arg2, c.getTimeInMillis());
-						Player p = plugin.getServer().getPlayer(arg2);
+						sb.append(args[i]);
+						sb.append(" ");
+					}
+					String reason = sb.toString();
+					if(plugin.banHandler.banPlayer(playerNameToBan, expiration, reason,ChatHandler.getHonorableName(sender)))
+					{
+						sender.sendMessage("Player banned.");
+						Player p = plugin.getServer().getPlayerExact(playerNameToBan);
 						if (p != null)
-							p.kickPlayer("Vas ucet byl zabanovan na " + arg3 + " hodiny.");
-						sender.sendMessage("Player banned!");
+							p.kickPlayer("Vas ucet byl zabanovan. Ban vyprsi "+ new Date(expiration).toString());
 					}
-					else if(arg1.matches("whitelist"))
+					else
 					{
-						if(arg2.matches("add"))
+						sender.sendMessage("Unable to ban player.");
+					}
+					if(plugin.banHandler.isIPWhitelisted(playerNameToBan))
+					{
+						if(plugin.banHandler.removeIPWhitelist(playerNameToBan))
 						{
-							if(!GugaBanHandler.IsIpWhitelisted(arg3))
-							{
-								GugaBanHandler.WhiteListPlayer(arg3);
-								GugaBanHandler.SaveIpWhiteList();
-								ChatHandler.SuccessMsg(sender, "Player successully added to ban whitelist!");
-							}
+							sender.sendMessage("Player removed from whitelist");
+						}
+						else
+						{
+							sender.sendMessage("Unable to remove player from whitelist");
+						}
+					}
+					break;
+				case "remove":
+					if(!(args.length >=2))
+					{
+						sender.sendMessage("Usage: /gm ban remove <ban id>");
+						break;
+					}
+					
+					int banID = Integer.parseInt(args[2]);
+					if(plugin.banHandler.unbanPlayer(banID))
+					{
+						sender.sendMessage("Ban #"+args[2]+" cancelled.");
+					}
+					else
+					{
+						sender.sendMessage("Could not cancel ban.");
+					}
+					break;
+				case "whitelist":
+					String args2 = (args.length>=3)? args[2] : "";
+					switch(args2)
+					{
+						case "add":
+							if(plugin.banHandler.addIPWhitelist(args[3]))
+								sender.sendMessage("Player '"+args[3]+"' is now IPBan whitelisted.");
 							else
-							{
-								ChatHandler.FailMsg(sender, "Player is already whitelisted!");
-							}
-								
-						}
-						else if(arg2.matches("remove"))
-						{
-							if(GugaBanHandler.IsIpWhitelisted(arg3))
-							{
-								GugaBanHandler.RemovePlayerFromWhitelist(arg3);
-								GugaBanHandler.SaveIpWhiteList();
-								ChatHandler.SuccessMsg(sender, "Player successully removed from ban whitelist!");
-							}
+								sender.sendMessage("Could not whitelist player");
+							break;
+						case "remove":
+							if(plugin.banHandler.removeIPWhitelist(args[3]))
+								sender.sendMessage("Player '"+args[3]+"' is no longer IPBan whitelisted.");
 							else
-							{
-								ChatHandler.FailMsg(sender, "Player is not whitelisted!");
-							}
-						}
+								sender.sendMessage("Could not remove player from IPBan whitelist");
+						case "list":
+							ArrayList<String> whitelistedPlayers = plugin.banHandler.listIPWhitelisted();
+							sender.sendMessage("List of IPBan whitelisted players:");
+							if(whitelistedPlayers.isEmpty())
+								sender.sendMessage("There are no whitelisted players yet.");
+							else
+								sender.sendMessage(" "+whitelistedPlayers.toString());
+							break;
+						default:
+							sender.sendMessage("/gm ban whitelist add <playerName> - Adds player to whitelist.");
+							sender.sendMessage("/gm ban whitelist remove <playerName> - Removes player from whitelist");
+							sender.sendMessage("/gm ban whitelist list - Prints whitelisted players");
+							break;
 					}
-				}
-			}
-			else if (subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 3)
-				{
-					String arg1 = args[1];
-					String arg2 = args[2];
-					if (arg1.matches("remove"))
-					{
-						Places place;
-						if ( (place = PlacesHandler.getPlaceByName(arg2)) != null)
-						{
-							PlacesHandler.removePlace(place);
-							sender.sendMessage("Place successfully removed");
-						}
-						else
-						{
-							sender.sendMessage("This place doesnt exist!");
-						}
-					}
-					if (arg1.matches("list"))
-					{
-						if (Integer.parseInt(args[2]) < 1)
-							return;
-						GugaDataPager<Places> pager = new GugaDataPager<Places>(PlacesHandler.newPlaces, 15);
-						sender.sendMessage("LIST OF PLACES:");
-						sender.sendMessage("PAGE " + args[2] + "/" + pager.GetPagesCount());
-						Iterator<Places> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
-						while (i.hasNext())
-						{
-							Places e = i.next();
-							sender.sendMessage(" - " + e.getPortName() + "(" + e.getPortOwner() + ")");
-						}
-					}
-				}
-				else if (args.length == 4)
-				{
-					String arg1 = args[1];
-					String arg2 = args[2];
-					String arg3 = args[3];
-					if (arg1.matches("add"))
-					{
-						if (PlacesHandler.getPlaceByName(arg2) != null)
-						{
-							sender.sendMessage("This place already exists!");
-							return;
-						}
-						String[] owner = {arg3};
-						PlacesHandler.addPlace(new Places(arg2, arg3, owner, 
-								(int)sender.getLocation().getX(), (int)sender.getLocation().getY(), (int)sender.getLocation().getZ(), sender.getLocation().getWorld().getName(), "Vitejte na portu hrace " + arg3 + "!"));
-						sender.sendMessage("Place successfully added");
-					}
-				}
-			}
-			else if (subCommand.matches("enderchest") && GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				if(args.length == 3)
-				{
-					if(args[1].matches("show"))
-					{
-						Player target = plugin.getServer().getPlayer(args[2]);
-						if(target != null)
-						{
-							sender.openInventory(target.getEnderChest());
-						}
-						else
-							ChatHandler.FailMsg(sender, "Player is not online.");
-					}
-				}
-			}
-			else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 3)
-				{
-					String subCmd = args[1];
-					if (subCmd.matches("remove"))
-					{
-						String name = args[2];
-						GugaRegion region = GugaRegionHandler.GetRegionByName(name);
-						if (region == null)
-						{
-							sender.sendMessage("Region not found!");
-							return;
-						}
-						GugaRegionHandler.RemoveRegion(region);
-						sender.sendMessage("Region successfully removed!");
-					}
-					else if (subCmd.equalsIgnoreCase("list"))
-					{
-						GugaDataPager<GugaRegion> pager = new GugaDataPager<GugaRegion>(GugaRegionHandler.GetAllRegions(), 15);
-						sender.sendMessage("LIST OF REGIONS:");
-						sender.sendMessage("PAGE " + args[2] + pager.GetPagesCount());
-						Iterator<GugaRegion> i = pager.GetPage(Integer.parseInt(args[2])).iterator();
-						while (i.hasNext())
-						{
-							GugaRegion region = i.next();
-							String[] owners = region.GetOwners();
-							int[] coords = region.GetCoords();
-							sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
-						}
-					}
-				}
-				else if (args.length == 4)
-				{
-					String subCmd = args[1];
-					if (subCmd.matches("owners"))
-					{
-						String name = args[2];
-						String[] owners = args[3].split(",");
-						if (GugaRegionHandler.SetRegionOwners(name, owners))
-							sender.sendMessage("Owners successfuly set!");
-						else
-							sender.sendMessage("Region not found!");
-					}
-					else if (subCmd.matches("add"))
-					{
-						String name = args[2];
-						String world = sender.getWorld().getName();
-						if (GugaRegionHandler.GetRegionByName(name) != null)
-						{
-							sender.sendMessage("Region with this name already exists!");
-							return;
-						}
-						String[] owners = args[3].split(",");GugaRegionHandler.AddRegion(name, world, owners, GugaCommands.x1,  GugaCommands.x2,  GugaCommands.z1,  GugaCommands.z2);
-						sender.sendMessage("Region successfully added");
-					}
-				}
-				else if (args.length == 9)
-				{
-					String subCmd = args[1];
-					if (subCmd.matches("add"))
-					{
-						String name = args[2];
-						if (GugaRegionHandler.GetRegionByName(name) != null)
-						{
-							sender.sendMessage("Region with this name already exists!");
-							return;
-						}
-						String world = args[3];
-						String[] owners = args[4].split(",");
-						int x1 = Integer.parseInt(args[5]);
-						int x2 = Integer.parseInt(args[6]);
-						int z1 = Integer.parseInt(args[7]);
-						int z2 = Integer.parseInt(args[8]);
-						GugaRegionHandler.AddRegion(name, world, owners, x1, x2, z1, z2);
-						sender.sendMessage("Region successfully added");
-					}
-				}
-			}
-			else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 3)
-				{
-					String arg1 = args[1];
-					String name = args[2];
-					if (arg1.matches("balance"))
-					{
-						GugaVirtualCurrency p = plugin.FindPlayerCurrency(name);
-						if (p == null)
-						{
-							sender.sendMessage("This account doesnt have any credits.");
-							return;
-						}
-						sender.sendMessage("This account has " + p.GetCurrency() + " credits.");
-					}
-				}
-				else if (args.length == 4)
-				{
-					String arg1 = args[1];
-					String name = args[2];
-					int amount = Integer.parseInt(args[3]);
-					if (arg1.matches("add"))
-					{
-						if (amount > 1000)
-						{
-							sender.sendMessage("You cannot add that much!");
-							return;
-						}
-						if (amount <= 0)
-						{
-							sender.sendMessage("Amount has to be > 0!");
-							return;
-						}
-						GugaVirtualCurrency p = plugin.FindPlayerCurrency(name);
-						if (p == null)
-						{
-							sender.sendMessage("Couldnt find player with this name");
-							return;
-						}
-						p.AddCurrency(amount);
-						Player dest = plugin.getServer().getPlayer(name);
-						if (dest != null)
-							dest.sendMessage("You received +" + amount + " credits!");
-						sender.sendMessage("You added +" + amount + " credits to " + name);
-					}
-					else if (arg1.matches("remove"))
-					{
-						if (amount > 1000)
-						{
-							sender.sendMessage("You cannot remove that much!");
-							return;
-						}
-						if (amount <= 0)
-						{
-							sender.sendMessage("Amount has to be > 0!");
-							return;
-						}
-						GugaVirtualCurrency p = plugin.FindPlayerCurrency(name);
-						if (p == null)
-						{
-							sender.sendMessage("Couldnt find player with this name");
-							return;
-						}
-						p.RemoveCurrency(amount);
-						plugin.getServer().getPlayer(name).sendMessage("You lost +" + amount + " credits!");
-						sender.sendMessage("You removed +" + amount + " credits from " + name);
-					}
-				}
-			}
-			else if (subCommand.matches("genblock") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 5)
-				{
-					int typeID = Integer.parseInt(args[1]);
-					int x = Integer.parseInt(args[2]);
-					int y = Integer.parseInt(args[3]);
-					int z = Integer.parseInt(args[4]);
-					plugin.GenerateBlockType(sender, typeID, x, y, z);
-				}
-			}
-			else if (subCommand.matches("replace")&& GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 6)
-				{
-					int typeID1 = Integer.parseInt(args[1]);
-					int typeID2 = Integer.parseInt(args[2]);
-					int x = Integer.parseInt(args[3]);
-					int y = Integer.parseInt(args[4]);
-					int z = Integer.parseInt(args[5]);
-					plugin.GenerateBlockType2(sender, typeID1, typeID2, x, y, z);
-				}
-			}
-			else if (subCommand.matches("setvip") && GameMasterHandler.IsAdmin(sender.getName()))
-			{
-				if (args.length == 3)
-				{
-					String pName = args[1];
-					int months = Integer.parseInt(args[2]);
-					Calendar c = Calendar.getInstance();
-					c.setTime(new Date());
-					//int i = 0;
-					//while (i < months)
+					break;
+				case "list":
+					//GugaDataPager<GugaBan> pager = new GugaDataPager<GugaBan>(GugaBanHandler.GetBannedPlayers(), 15);
+					//Iterator<GugaBan> i = pager.GetPage(Integer.parseInt(arg2)).iterator();
+					//sender.sendMessage("LIST OF BANNED PLAYERS:");
+					//sender.sendMessage("PAGE " + arg2 + "/" + pager.GetPagesCount());
+					//while (i.hasNext())
 					//{
-						//c.roll(Calendar.MONTH, true);
-					c.add(Calendar.MONTH, months);
-						//i++;
+					//	GugaBan ban = i.next();
+					//	long hours = (ban.GetExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000);
+					//	sender.sendMessage(ban.GetPlayerName() + "  -  " + hours + " hours");
 					//}
-					GugaVirtualCurrency p = plugin.FindPlayerCurrency(pName);
-					p.SetExpirationDate(c.getTime());
-					sender.sendMessage("Vip Status for " + pName + " is active till " + c.getTime());
-				}
+					sender.sendMessage("This does not work yet, use web banlist.");
+					break;
+				default:
+					sender.sendMessage("/gm ban add <player> <hours> - Bans a player for number of hours.");
+					sender.sendMessage("/gm ban remove <player> - Removes a ban.");
+					sender.sendMessage("/gm ban whitelist - Whitelist sub-menu.");
+					sender.sendMessage("/gm ban list <page>  -  Shows all banned players.");
+					break;
 			}
-			else if (subCommand.matches("rank") && GameMasterHandler.IsAdmin(sender.getName()))
+		}
+		else if (subCommand.matches("speed") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if (args.length == 4)
 			{
-				if(args.length == 4)
+				Player target = plugin.getServer().getPlayer(args[2]);
+				if (target == null)
 				{
-					String arg1 = args[1];
-					String arg2 = args[2];
-					String arg3 = args[3];
-					if(arg1.matches("add"))
+					sender.sendMessage("Player is not online");
+					return;
+				}
+				if(!GameMasterHandler.IsAdmin(sender.getName()))
+				{
+					if(!args[2].equalsIgnoreCase(sender.getName()))
 					{
-						Player target = plugin.getServer().getPlayer(arg2);
-						if(target != null)
-						{
-							if(arg3.equalsIgnoreCase("helper")||arg3.equalsIgnoreCase("eventer")||arg3.equalsIgnoreCase("builder")||arg3.equalsIgnoreCase("admin")||arg3.equalsIgnoreCase("gamemaster"))
-							{
-								if(!GameMasterHandler.gameMasters.contains(GameMasterHandler.GetGMByName(target.getName())))
-								{
-									GameMasterHandler.AddGMIng(target.getName(), arg3.toUpperCase());
-									sender.sendMessage("User was succesfully added to GMs file!");
-								}
-								else
-								{
-									sender.sendMessage("User cannot be removed, because he already exists in GMs file. - Delete him to change rank.");
-								}
-							}
-							else
-							{
-								sender.sendMessage("This rank can't be added.");
-							}
-						}
-						else
-						{
-							sender.sendMessage("This player doesn't exist.");
-						}
+						ChatHandler.FailMsg(sender, "You can set your speed only.");
+						return;
 					}
 				}
-				else if(args.length == 3)
+				if(args[1].matches("fly"))
 				{
-					String arg1 = args[1];
-					String arg2 = args[2];
-					if(arg1.matches("remove"))
+					target.setFlySpeed(Float.parseFloat(args[3]));
+					ChatHandler.SuccessMsg(sender, "Fly speed has been succesfuly set.");
+				}
+				else if(args[1].matches("walk"))
+				{
+					target.setWalkSpeed(Float.parseFloat(args[3]));
+					ChatHandler.SuccessMsg(sender, "Walk speed has been succesfuly set.");
+				}
+			}
+			else
+			{
+				sender.sendMessage("/gm speed fly <name> <speed> - Sets fly speed of a certain player.");
+				sender.sendMessage("/gm speed walk <name> <speed> - Sets walk speed of a certain player.");
+			}
+		}
+		else if (subCommand.matches("credits") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(args.length==1)
+			{
+				sender.sendMessage("/gm credits add <player> <amount>  -  Add credits to a player.");
+				sender.sendMessage("/gm credits remove <player> <amount>  -  Remove credits to a player.");
+				sender.sendMessage("/gm credits balance <player>  -  Shows credits of a player.");
+			}
+			else if (args.length == 3)
+			{
+				String name = arg2;
+				if (arg1.matches("balance"))
+				{
+					sender.sendMessage("This account has " + plugin.currencyManager.getBalance(name) + " credits.");
+				}
+			}
+			else if (args.length == 4)
+			{
+				String name = args[2];
+				int amount = Integer.parseInt(args[3]);
+				if (arg1.matches("add"))
+				{
+					if (amount > 1000)
 					{
-						Player target = plugin.getServer().getPlayer(arg2);
-						if(target != null)
-						{
-							GameMasterHandler.RemoveGMIng(arg2);
-							sender.sendMessage("User was succesfully removed from GMs file!");
-						}
-						else
-						{
-							sender.sendMessage("This player doesn't exist.");
-						}
+						sender.sendMessage("You cannot add that much!");
+						return;
+					}
+					if (amount <= 0)
+					{
+						sender.sendMessage("Amount has to be > 0!");
+						return;
+					}
+					plugin.currencyManager.addCredits(name, amount);
+					Player dest = plugin.getServer().getPlayer(name);
+					if (dest != null)
+						dest.sendMessage("You received +" + amount + " credits!");
+					sender.sendMessage("You added +" + amount + " credits to " + name);
+				}
+				else if (arg1.matches("remove"))
+				{
+					if (amount > 1000)
+					{
+						sender.sendMessage("You cannot remove that much!");
+						return;
+					}
+					if (amount <= 0)
+					{
+						sender.sendMessage("Amount has to be > 0!");
+						return;
+					}
+					if(plugin.currencyManager.addCredits(name, -amount))
+					{
+						sender.sendMessage("You removed +" + amount + " credits from " + name);
+						Player p = null;
+						if((p = plugin.getServer().getPlayerExact(name))!=null)
+							p.sendMessage("You lost +" + amount + " credits!");
+					}
+					else
+						sender.sendMessage("Failed to remove credits from player.");					
+				}
+			}
+		}
+		else if(subCommand.matches("places") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if (arg1.matches("remove"))
+			{
+				if (plugin.placesManager.portalExists(arg2))
+				{
+					if(!plugin.placesManager.removeTeleport(arg2))
+					{
+						sender.sendMessage("Cannot remove place.");
+						return;
+					}
+					sender.sendMessage("Place successfully removed");
+				}
+				else
+				{
+					sender.sendMessage("This place doesnt exist!");
+				}
+			}
+			else if (arg1.matches("list"))
+			{
+				ArrayList<Place> placesList = plugin.placesManager.listAllPlaces();
+				DataPager<Place> pager = new DataPager<Place>(placesList,15);
+				ArrayList<Place> page = pager.getPage(Integer.parseInt(args[2]));
+				sender.sendMessage("List of places, page " + args[2] + " of " + pager.getPageCount());
+				if(page == null)
+				{
+					sender.sendMessage("There are no places on this page.");
+				}
+				else
+				{
+					for(Place place : page)
+					{
+						sender.sendMessage(String.format("-%d %s=%s", place.getId(),place.getName(),place.getType()));
 					}
 				}
 			}
-			else if (subCommand.matches("tp"))
+			else if (arg1.matches("add") && args.length == 5)
 			{
-				if (args.length == 4)
+				if(plugin.placesManager.portalExists(arg2))
 				{
-					int x = Integer.parseInt(args[1]);
-					int y = Integer.parseInt(args[2]);
-					int z = Integer.parseInt(args[3]);
-					Location loc = new Location(sender.getWorld(), x, y, z);
-					sender.teleport(loc);
+					sender.sendMessage("This place already exists!");
+					return;
+				}
+				if(!plugin.placesManager.addTeleport(arg2, arg3, sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), args[4]))
+				{
+					sender.sendMessage("Place not added.");
+					return;
+				}	
+				sender.sendMessage("Place successfully added");
+			}
+			else if(arg1.matches("move"))
+			{
+				if(!plugin.placesManager.portalExists(arg2))
+				{
+					sender.sendMessage("This place already exists!");
+					return;
+				}
+				if(plugin.placesManager.moveTeleport(arg2, sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName()))
+					ChatHandler.SuccessMsg(sender, "Place moved to our location");
+				else
+					ChatHandler.FailMsg(sender, "Unable to move");
+			}
+			else if(arg1.matches("mod") && args.length==6)
+			{
+				if(!plugin.placesManager.portalExists(arg2))
+				{
+					sender.sendMessage("This place already exists!");
+					return;
+				}
+				if(plugin.placesManager.modifyTeleport(arg2, arg3, args[4], args[5]))
+					ChatHandler.SuccessMsg(sender, "Place modified");
+				else
+					ChatHandler.FailMsg(sender, "Unable to modify");
+			}
+			else
+			{
+				sender.sendMessage("Usage:");
+				sender.sendMessage("/gm places list <page>  - Show list of all places.");	
+				sender.sendMessage("/gm places add <name> <owner> <type> - Adds current position to places type is 'public', 'private', 'vip'.");
+				sender.sendMessage("/gm places mod <name> <newname> <owner> <type>");
+				sender.sendMessage("/gm places move <name>");
+				sender.sendMessage("/gm places remove <name> - Removes a certain place from the list.");
+			}
+		}
+		else if (subCommand.matches("regions") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(args.length==1)
+			{
+				sender.sendMessage("/gm regions list <page>  - Show list of all places.");	
+				sender.sendMessage("/gm regions add <name> <world> <owner1,owner2> <x1> <x2> <z1> <z2> - Adds Region");	
+				sender.sendMessage("/gm regions owners <name> <owners> - Changes owners of certain region.");	
+				sender.sendMessage("/gm regions remove <name> - Removes a certain region from the list.");
+			}
+			else if (args.length == 3)
+			{
+				String subCmd = args[1];
+				if (subCmd.matches("remove"))
+				{
+					String name = args[2];
+					GugaRegion region = GugaRegionHandler.GetRegionByName(name);
+					if (region == null)
+					{
+						sender.sendMessage("Region not found!");
+						return;
+					}
+					GugaRegionHandler.RemoveRegion(region);
+					sender.sendMessage("Region successfully removed!");
+				}
+				else if (subCmd.equalsIgnoreCase("list"))
+				{
+					DataPager<GugaRegion> pager = new DataPager<GugaRegion>(GugaRegionHandler.GetAllRegions(), 15);
+					sender.sendMessage("LIST OF REGIONS:");
+					sender.sendMessage("PAGE " + args[2] + pager.getPageCount());
+					Iterator<GugaRegion> i = pager.getPage(Integer.parseInt(args[2])).iterator();
+					while (i.hasNext())
+					{
+						GugaRegion region = i.next();
+						String[] owners = region.GetOwners();
+						int[] coords = region.GetCoords();
+						sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
+					}
 				}
 			}
-			else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
+			else if (args.length == 4)
+			{
+				String subCmd = args[1];
+				if (subCmd.matches("owners"))
+				{
+					String name = args[2];
+					String[] owners = args[3].split(",");
+					if (GugaRegionHandler.SetRegionOwners(name, owners))
+						sender.sendMessage("Owners successfuly set!");
+					else
+						sender.sendMessage("Region not found!");
+				}
+			}
+			else if (args.length == 9)
+			{
+				String subCmd = args[1];
+				if (subCmd.matches("add"))
+				{
+					String name = args[2];
+					if (GugaRegionHandler.GetRegionByName(name) != null)
+					{
+						sender.sendMessage("Region with this name already exists!");
+						return;
+					}
+					String world = args[3];
+					String[] owners = args[4].split(",");
+					int x1 = Integer.parseInt(args[5]);
+					int x2 = Integer.parseInt(args[6]);
+					int z1 = Integer.parseInt(args[7]);
+					int z2 = Integer.parseInt(args[8]);
+					GugaRegionHandler.AddRegion(name, world, owners, x1, x2, z1, z2);
+					sender.sendMessage("Region successfully added");
+				}
+			}
+		}
+		else if (subCommand.matches("save-all") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			AutoSaver.SaveWorldStructures();
+			ChatHandler.SuccessMsg(sender, "Successfully saved!");
+		}
+		else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			sender.sendMessage("/gm book copy - Copies book in your hand.");
+		}
+		else if (subCommand.matches("on") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(disabledGMs.contains(sender.getName()))
+			{
+				disabledGMs.remove(sender.getName());
+				ChatHandler.InitializeDisplayName(sender);
+				sender.setGameMode(GameMode.CREATIVE);
+				sender.sendMessage("GM state succesfully turned on!");
+			}
+		}
+		else if (subCommand.matches("off") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(!disabledGMs.contains(sender.getName()))
+			{
+				disabledGMs.add(sender.getName());
+				ChatHandler.InitializeDisplayName(sender);
+				sender.setGameMode(GameMode.SURVIVAL);
+				sender.sendMessage("GM state succesfully turned off!");
+			}
+		}
+		else if (subCommand.matches("enchant") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(args.length==2)
+			{
+				if(args[1].matches("all"))
+					Enchantments.enchantAll(sender);
+				else if(args[1].matches("rikubstyle"))
+					Enchantments.enchantAllInRikubStyle(sender);
+				ChatHandler.SuccessMsg(sender, "Enchantments has been added.");
+			}
+			else if(args.length==3)
 			{
 				EnchantmentResult result = Enchantments.enchantItem(sender, args[1], Integer.parseInt(args[2]));
 				switch(result)
@@ -3093,11 +2465,253 @@ public abstract class GugaCommands
 					}
 				}
 			}
+			else
+			{
+				sender.sendMessage("/gm enchant <name> <level> - Enchants item in your hand to certain enchantment level.");
+				sender.sendMessage("/gm enchant all - Enchants item in your to maximal natural level and all enchantments.");
+				sender.sendMessage("/gm enchant rikubstyle - Enchants item in your hand to level 127 and all enchantments.");
+			}
 		}
+		if (subCommand.matches("ip") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				Player p;
+				if ((p = plugin.getServer().getPlayer(args[1])) != null)
+				{
+					sender.sendMessage("Players IP:" + p.getAddress());
+				}
+				else
+				{
+					sender.sendMessage("This player is not online!");
+				}
+			}
+			else
+			{
+				sender.sendMessage("Usage: /gm ip <player>");
+			}
+		}
+		else if (subCommand.matches("fly") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			Player target = plugin.getServer().getPlayer(args[1]);
+			if (target == null)
+			{
+				sender.sendMessage("Hrac neni online!");
+				return;
+			}
+			if (target.getAllowFlight())
+			{
+				target.setAllowFlight(false);
+				target.setFlying(false);
+				fly.remove(target.getName().toLowerCase());
+				target.sendMessage("Fly mode byl vypnut!");
+				sender.sendMessage("Fly mode succesfuly turned off.");
+			}
+			else
+			{
+				target.setAllowFlight(true);
+				target.setFlying(true);
+				fly.add(target.getName().toLowerCase());
+				target.sendMessage("Fly mode byl zapnut!");
+				sender.sendMessage("Fly mode succesfuly turned on.");
+			}
+		}
+		else if (subCommand.matches("world") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				if(plugin.getServer().getWorld(args[1]) != null)
+				{
+					sender.teleport(plugin.getServer().getWorld(args[1]).getSpawnLocation());
+					ChatHandler.SuccessMsg(sender, "You have been teleported!");
+				}
+				else
+					ChatHandler.FailMsg(sender, "This world doesn't exist!");
+			}
+			else
+			{
+				sender.sendMessage("Usage: /gm world <world_name>");
+			}
+		}
+		else if(subCommand.matches("kill") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length==2)
+			{
+				Player target = plugin.getServer().getPlayer(args[1]);
+				if(target.isOnline())
+				{
+					target.setHealth(0);
+					target.sendMessage("Byl jste zabit adminem/GM!");
+					sender.sendMessage("Hrac "+target.getName()+" byl zabit!");
+				}
+			}
+			else
+			{
+				sender.sendMessage("Usage: /gm kill <player name>");
+			}
+		}
+		else if (subCommand.matches("vip") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if(arg1.equalsIgnoreCase("add") && args.length == 4)
+			{
+				String userName = arg2;
+				double seconds = Double.valueOf(arg3)*2592000; //3600*24*30 - convert months to seconds
+				if(plugin.vipManager.addVip(userName, Double.valueOf(seconds).longValue()))
+					sender.sendMessage("Vip for user '"+userName+"' added.");
+				else
+					sender.sendMessage("Vip could not be added");
+			}
+			else if(arg1.equalsIgnoreCase("remove") && args.length==3)
+			{
+				if(plugin.vipManager.removeVip(arg2))
+					sender.sendMessage("User '"+arg2+"' is no londer VIP.");
+				else
+					sender.sendMessage("Could not remove VIP.");
+			}
+			else if(arg1.equalsIgnoreCase("get") && args.length==3)
+			{
+				VipUser vip = plugin.vipManager.getVip(arg2);
+				if(vip == null)
+					sender.sendMessage("User '"+arg2+"' is not vip.");
+				else if(vip.getExpiration() == -1)
+					sender.sendMessage("User '"+arg2+"' is permanent vip.");
+				else
+					sender.sendMessage("Vip for '"+arg2+"' expires "+new Date(vip.getExpiration()).toString());
+			}
+			else if(arg1.equalsIgnoreCase("set") && args.length==4)
+			{
+				String userName = arg2;
+				Double seconds = Double.parseDouble(arg3);
+				if(seconds != -1) // don't make permanent VIP to seconds
+					seconds = seconds*2592000; //3600*24*30 - convert months to seconds
+				if(plugin.vipManager.setVip(userName, seconds.longValue()))
+					sender.sendMessage("Vip for user '"+userName+"' updated.");
+				else
+					sender.sendMessage("Vip could not be updated");
+			}
+			else if(arg1.equalsIgnoreCase("list") && args.length==2)
+			{
+				sender.sendMessage("List of all VIP users:");
+				sender.sendMessage(plugin.vipManager.listAllVips().toString());
+			}
+			else
+			{
+				sender.sendMessage("Usage:");
+				sender.sendMessage("/gm vip add <user> <duration in months>");
+				sender.sendMessage("/gm vip remove <user>");
+				sender.sendMessage("/gm vip set <user <expiration in months from now>");
+				sender.sendMessage("/gm vip list");
+			}
+		}
+		else if (subCommand.matches("gmmode"))
+		{
+			if(args.length == 2)
+			{
+				if (!GameMasterHandler.IsAdmin(sender.getName()) && !args[1].equalsIgnoreCase(sender.getName()))
+				{
+					sender.sendMessage("You can only set gmmode to yourself!");
+					return;
+				}
+				Player p;
+				if ((p = plugin.getServer().getPlayer(args[1])) != null)
+				{
+					GameMode mode = p.getGameMode();
+					if (mode == GameMode.CREATIVE)
+					{
+						p.setGameMode(GameMode.SURVIVAL);
+						sender.sendMessage("GM Mode for " + args[1] + " has been turned off");
+					}
+					else
+					{
+						p.setGameMode(GameMode.CREATIVE);
+						sender.sendMessage("GM Mode for " + args[1] + " has been turned on");
+					}
+				}
+			}
+			else
+				sender.sendMessage("Usage: /gm gmmode <player name>");
+		}
+		else if (subCommand.matches("godmode")&&GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+				if (godMode.contains(args[1].toLowerCase()))
+				{
+					godMode.remove(args[1]);
+					sender.sendMessage("Immortality for " + args[1] + " has been turned off");
+				}
+				else
+				{
+					godMode.add(args[1].toLowerCase());
+					sender.sendMessage("Immortality for " + args[1] + " has been turned on");
+				}
+			else
+				sender.sendMessage("Usage: /gm godmode <player name>");
+		}
+		else if (subCommand.matches("cmd") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			String cmd = args[1];
+			int i = 2;
+			while (i < args.length)
+			{
+				cmd += " " + args[i++];
+			}
+			BukkitCommandParser.ParseCommand(sender, cmd);
+		}
+		else if (subCommand.matches("enderchest") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				Player target = plugin.getServer().getPlayer(args[1]);
+				if(target != null)
+				{
+					sender.openInventory(target.getEnderChest());
+				}
+				else
+					ChatHandler.FailMsg(sender, "Player is not offline.");
+			}
+			else
+				sender.sendMessage("Usage: /gm enderchest <player>");
+		}
+		else if (subCommand.matches("genblock") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if (args.length == 5)
+			{
+				int typeID = Integer.parseInt(args[1]);
+				int x = Integer.parseInt(args[2]);
+				int y = Integer.parseInt(args[3]);
+				int z = Integer.parseInt(args[4]);
+				plugin.GenerateBlockType(sender, typeID, x, y, z);
+			}
+		}
+		else if (subCommand.matches("replace")&& GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			if (args.length == 6)
+			{
+				int typeID1 = Integer.parseInt(args[1]);
+				int typeID2 = Integer.parseInt(args[2]);
+				int x = Integer.parseInt(args[3]);
+				int y = Integer.parseInt(args[4]);
+				int z = Integer.parseInt(args[5]);
+				plugin.GenerateBlockType2(sender, typeID1, typeID2, x, y, z);
+			}
+		}
+		else if (subCommand.matches("tp"))
+		{
+			if (args.length == 4)
+			{
+				int x = Integer.parseInt(args[1]);
+				int y = Integer.parseInt(args[2]);
+				int z = Integer.parseInt(args[3]);
+				Location loc = new Location(sender.getWorld(), x, y, z);
+				sender.teleport(loc);
+			}
+		}
+			
 	}
+	
 	public static void CommandWorld(Player sender)
 	{
-		if(plugin.professions.get(sender.getName()).GetLevel() >= 10)
+		if(plugin.userManager.getUser(sender.getName()).getProfession().GetLevel() >= 10)
 		{
 			if(BasicWorld.IsBasicWorld(sender.getLocation()))
 			{
@@ -3110,26 +2724,31 @@ public abstract class GugaCommands
 		}
 		else
 		{
-			ChatHandler.FailMsg(sender, "Jeste nemate level 10!");
+			ChatHandler.FailMsg(sender, "Jeste nemate GugaRPG level 10!");
 		}
 	}
 	
 	public static void CommandLogin(Player sender, String args[])
 	{
-		 String pass = args[0];
-		 if (plugin.acc.UserIsRegistered(sender))
+		 String pass = (args.length>=1) ? args[0] : "";
+		 if (plugin.userManager.userIsRegistered(sender.getName()))
 		 {
-			 if (!plugin.acc.UserIsLogged(sender))
+			 MinecraftPlayer player = plugin.userManager.getUser(sender.getName());
+			 if(player==null)
 			 {
-				 if (plugin.acc.LoginUser(sender, pass))
+				 sender.sendMessage("Unable to login you.");
+				 return;
+			 }
+			 if (!(player.getState() == ConnectionState.AUTHENTICATED))
+			 {
+				 player.login(pass);
+				 if (player.getState() == ConnectionState.AUTHENTICATED)
 				 {
-					plugin.acc.tpTask.remove(sender.getName());
-					sender.teleport(plugin.acc.playerStart.get(sender.getName()));
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
-					if(plugin.professions.get(sender.getName()).GetLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
+					GugaProfession2 prof = player.getProfession();
+					if(prof!=null && prof.GetXp() == 0 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
 						BasicWorld.BasicWorldEnter(sender);
-						ChatHandler.SuccessMsg(sender, "Vitejte ve svete pro novacky!");
 					}
 				 }
 				 else
@@ -3137,16 +2756,6 @@ public abstract class GugaCommands
 					 ChatHandler.FailMsg(sender, "Prihlaseni se nezdarilo!");
 					 return;
 				 }
-				 if(!GugaBanHandler.IsIpWhitelisted(sender.getName()))
-						 GugaBanHandler.UpdateBanAddr(sender.getName());
-				/* GugaProfession prof;
-					if ((prof = plugin.professions.get(sender.getName())) != null)
-					{
-						if (prof instanceof GugaHunter)
-						{
-							((GugaHunter)prof).StartRegenHp();
-						}
-					}*/
 			 }
 			 else
 			 {
@@ -3158,6 +2767,56 @@ public abstract class GugaCommands
 			 ChatHandler.FailMsg(sender, "Nejdrive se zaregistrujte!");
 		 }
 	}
+	
+	public static void CommandRegister(Player sender, String[] args)
+	{
+		if(plugin.userManager.userIsRegistered(sender.getName()))
+		{
+			ChatHandler.FailMsg(sender, "Uz jste zaregistrovan!");
+			return;
+		}
+		
+		if(args.length == 3)
+		{
+			String pwd1 = args[0];
+			String pwd2 = args[1];
+			String email = args[2];
+			if(!pwd1.equals(pwd2))
+			{
+				ChatHandler.FailMsg(sender, "Zadana hesla musi byt stejna.");
+				return;
+			}
+			if(!email.matches("^([a-zA-Z0-9_\\-\\.]+@[a-zA-Z0-9_\\-\\.\\+]+\\.[a-zA-Z0-9_\\-\\.]+)$"))
+			{
+				ChatHandler.FailMsg(sender, "Vas email neni platny nebo neni podporovan");
+				return;
+			}
+			if(plugin.userManager.register(sender,pwd1,email))
+			{
+				MinecraftPlayer player = plugin.userManager.getUser(sender.getName());
+				ChatHandler.SuccessMsg(sender, "Byl jste uspesne zaregistrovan!");
+				if(player.login(pwd1))
+				{
+					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
+					ChatHandler.InitializeDisplayName(sender);
+					GugaProfession2 prof = player.getProfession();
+					if(prof!=null && prof.GetLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
+					{
+						BasicWorld.BasicWorldEnter(sender);
+					}
+				}
+				else
+					ChatHandler.FailMsg(sender, "Nepodarilo se vas prihlasit, zkuste se odpojit a znovu pripojit.");
+			}
+			else
+				ChatHandler.FailMsg(sender, "Registrace se nezdarila.");
+		}
+		else
+		{
+			sender.sendMessage("Pouziti: /register <heslo> <heslo znovu> <email>");
+		}
+	}
+
 	public static void CommandDebug()
 	{
 		plugin.debug = !plugin.debug;
@@ -3165,74 +2824,56 @@ public abstract class GugaCommands
 	}
 	public static void CommandWhisper(CommandSender sender, String[]args)
 	{
+		if(args.length < 2)
+		{
+			sender.sendMessage("Usage: /tell <player> <message>");
+			return;
+		}
+		
 		Player p = plugin.getServer().getPlayer(args[0]);
 		if(sender instanceof ConsoleCommandSender)
 		{
 			if(p == null)
 			{
 				plugin.log.info("This player is not online!");
+				return;
 			}
-			else
+
+			StringBuilder msg = new StringBuilder();
+			for(int i=1;i<args.length;i++)
 			{
-				int i = 1;
-				String msg = "";
-				while(i<args.length)
-				{
-					msg += " " + args[i];
-					i++;
-				}
-				p.sendMessage(ChatColor.DARK_AQUA + "[" + "CONSOLE septa" + "]" + msg);
+				msg.append(" ");
+				msg.append(args[i]);
 			}
+			p.sendMessage(ChatColor.DARK_AQUA + "[" + "CONSOLE septa" + "]" + msg);
 		}
 		else
 		{
 			Player playerSender = (Player)sender;
-			if(GugaMute.getPlayerStatus(playerSender.getName()))
-			{
-				ChatHandler.FailMsg(playerSender, "Jste ztlumen. Nemuzete pouzit tento prikaz!");
-			}
 			if(p == null)
-				ChatHandler.FailMsg(playerSender, "Tento hrac je offline!");
-			else
 			{
-				int i = 1;
-				String msg = "";
-				while(i<args.length)
-				{
-					msg += " " + args[i];
-					i++;
-				}
-				playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getName() + "]" + msg);
-				p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa" + "]" + msg);
-				GugaCommands.reply.put(p, playerSender);
+				ChatHandler.FailMsg(playerSender, "Tento hrac je offline!");
+				return;
 			}
+			if(ChatHandler.isBlockedBy(playerSender.getName(),p.getName()))
+			{
+				sender.sendMessage("Tento hrac vas ma v blocklistu.");
+				return;
+			}
+			
+			StringBuilder msg = new StringBuilder();
+			for(int i=1;i<args.length;i++)
+			{
+				msg.append(" ");
+				msg.append(args[i]);
+			}
+			playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getName() + "]" + msg);
+			p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa" + "]" + msg);
+			GugaCommands.reply.put(p, playerSender);
 		}
 	}
-	/*public static void CommandPassword(Player sender, String args[])
-	{
-		if (plugin.acc.UserIsRegistered(sender))
-		{
-			if (plugin.acc.UserIsLogged(sender))
-			{
-				if (args.length == 2)
-				{
-					plugin.acc.ChangePassword(sender, args[0], args[1]);
-				}
-				else
-				{
-					sender.sendMessage("Prosim vlozte vase stare a nove heslo");
-				}
-			}
-			else
-			{
-				sender.sendMessage("Nejdrive se musite prihlasit!");
-			}
-		}
-		else
-		{
-			sender.sendMessage("Nejdrive se musite zaregistrovat!");
-		}
-	}*/
+
+	
 	private static void Teleport(Player sender,String name)
 	{
 		if (plugin.arena.IsArena(sender.getLocation()))
@@ -3245,29 +2886,45 @@ public abstract class GugaCommands
 			sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /places!");
 			return;
 		}
-		Places place;
-		if ( (place = PlacesHandler.getPlaceByName(name)) != null)
-		{
-			if (PlacesHandler.CanTeleport(place.getPortName(), sender.getName()) || GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				PlacesHandler.teleport(sender, place);
-				return;
-			}
-		}
-		sender.sendMessage("Toto misto neexistuje!");
+		plugin.placesManager.handlePlayerTeleport(sender,name);
 	}
 
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
-	public static HashMap<String, Location> backTeleport = new HashMap<String, Location>();
 	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static ArrayList<String> fly = new ArrayList<String>();
-	public static int x1 = 0;
-	public static int x2 = 0;
-	public static int z1 = 0;
-	public static int z2 = 0;
+	public static HashMap<String, Location> backTeleport = new HashMap<String,Location>();
 	public static ArrayList<String> disabledGMs = new ArrayList<String>();
 	public static String FeedbackFile = "plugins/MineAndCraft_plugin/FeedbackFile.dat";
 	private static Guga_SERVER_MOD plugin;
-
+	
+	public static void CommandFriend(Player sender, String[] args)
+	{
+		sender.sendMessage("Friendlist does not work yet.");
+	}
+	
+	public static void CommandBlock(Player sender, String[] args)
+	{
+		if(args.length == 1 && args[0].equalsIgnoreCase("list"))
+		{
+			sender.sendMessage("You have currently blocklisted these players:");
+			sender.sendMessage(String.format("  %s",ChatHandler.listBlocklistedFor(sender).toString()));
+		}
+		else if(args.length == 1)
+		{
+			if(ChatHandler.addBlocklist(sender,args[0]))
+				sender.sendMessage("User blocklisted");
+			else
+				sender.sendMessage("Cannot blocklist user.");
+		}
+		else if(args.length == 2 && args[0].equalsIgnoreCase("remove"))
+		{
+			if(ChatHandler.removeBlocklist(sender,args[1]))
+				sender.sendMessage("User no longer blocklisted");
+			else
+				sender.sendMessage("Cannot remove user from blocklist.");
+		}
+		else
+			sender.sendMessage("Usage:\n  /block <user>\n  /block list\n  /block remove <user>");
+	}
 }

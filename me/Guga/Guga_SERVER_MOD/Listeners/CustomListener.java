@@ -2,7 +2,6 @@ package me.Guga.Guga_SERVER_MOD.Listeners;
 
 import java.util.ArrayList;
 
-import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
@@ -26,11 +25,10 @@ public class CustomListener implements Listener
 	{
 		Vote vote = event.getVote();
 		String player = vote.getUsername();
-		GugaVirtualCurrency curr;
 		Player p;
-		if((curr = plugin.FindPlayerCurrency(player)) != null)
+		if(plugin.userManager.userIsRegistered(player))
 		{
-			curr.AddCurrency(5);
+			plugin.currencyManager.addCredits(player, 5);
 			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "Hrac " + ChatColor.LIGHT_PURPLE + player + ChatColor.DARK_GREEN +" ziskava 5 kreditu, 3 diamanty a 1 emerald za hlasovani. Hlasuj take.");
 			if((p = plugin.getServer().getPlayer(player)) != null)
 			{

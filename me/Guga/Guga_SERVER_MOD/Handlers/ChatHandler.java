@@ -1,13 +1,19 @@
 package me.Guga.Guga_SERVER_MOD.Handlers;
 
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.Guga.Guga_SERVER_MOD.DatabaseManager;
 import me.Guga.Guga_SERVER_MOD.GugaMute;
-import me.Guga.Guga_SERVER_MOD.GugaVirtualCurrency;
+import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 
 public class ChatHandler 
 {
@@ -26,12 +32,11 @@ public class ChatHandler
 		{
 			FailMsg(sender, "Chat je nyni dostupny pouze pro ADMINy/GM");
 		}
-		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(sender.getName());
 		if(GameMasterHandler.IsAdmin(sender.getName()))
 		{
 			if(GugaCommands.disabledGMs.contains(sender.getName()))
 			{
-				if(curr.IsVip())
+				if(plugin.vipManager.isVip(sender.getName()))
 				{
 					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
 				}
@@ -49,7 +54,7 @@ public class ChatHandler
 		{
 			if(GugaCommands.disabledGMs.contains(sender.getName()))
 			{
-				if(curr.IsVip())
+				if(plugin.vipManager.isVip(sender.getName()))
 				{
 					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
 				}
@@ -71,7 +76,7 @@ public class ChatHandler
 		{
 			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.BLUE + message);
 		}
-		else if(curr.IsVip())
+		else if(plugin.vipManager.isVip(sender.getName()))
 		{
 			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
 		}
@@ -89,14 +94,12 @@ public class ChatHandler
 		p.sendMessage(ChatColor.RED + message);
 	}
 	public static void InitializeDisplayName(Player p)
-	{
-		GugaVirtualCurrency curr = plugin.FindPlayerCurrency(p.getName());
-		
+	{		
 		if(GameMasterHandler.IsAdmin(p.getName()))
 		{
 			if(GugaCommands.disabledGMs.contains(p.getName()))
 			{
-				if(curr.IsVip())
+				if(plugin.vipManager.isVip(p.getName()))
 				{
 					ChatHandler.SetPrefix(p, "vip");
 					p.setPlayerListName(ChatColor.GOLD+p.getName());
@@ -117,7 +120,7 @@ public class ChatHandler
 		{
 			if(GugaCommands.disabledGMs.contains(p.getName()))
 			{
-				if(curr.IsVip())
+				if(plugin.vipManager.isVip(p.getName()))
 				{
 					ChatHandler.SetPrefix(p, "vip");
 					p.setPlayerListName(ChatColor.GOLD+p.getName());
@@ -144,19 +147,21 @@ public class ChatHandler
 			ChatHandler.SetPrefix(p, "helper");
 			p.setPlayerListName(ChatColor.BLUE+p.getName());
 		}
-		else if(curr.IsVip())
+		else if(plugin.vipManager.isVip(p.getName()))
 		{
 			ChatHandler.SetPrefix(p, "vip");
 			p.setPlayerListName(ChatColor.GOLD+p.getName());
 		}
-		else if(plugin.professions.get(p.getName()).GetLevel() < 10)
-		{
-			ChatHandler.SetPrefix(p, "new");
-			p.setPlayerListName(ChatColor.GRAY + p.getName());
-		}
 		else
 		{
-			//do nothing
+			GugaProfession prof=null;
+			MinecraftPlayer pl = plugin.userManager.getUser(p.getName());
+			if(pl!=null) prof = pl.getProfession();
+			if(prof!=null && prof.GetLevel() < 10)
+			{
+				ChatHandler.SetPrefix(p, "new");
+				p.setPlayerListName(ChatColor.GRAY + p.getName());
+			}
 		}
 	}
 	public static void SetPrefix(Player p, String prefix)
@@ -168,63 +173,128 @@ public class ChatHandler
 		InitializeDisplayName(p);
 	}
 	
-	public static void PerformCharChatCommand(Player sender, String message)
+	public static boolean PerformChatCommand(Player sender, String message)
 	{
-		char[] messageInChar;
 		if(message.startsWith("@"))
 		{
-			if(message.split(" ").length > 0)
-			{
-				String[] splittedMessage;
-				String messageToSend = "";
-				messageInChar = message.split(" ")[0].toCharArray();
-				splittedMessage = message.split(" ");
-				String playerName = "";
-				int i = 1;
-				while(i < messageInChar.length)
-				{
-					playerName += messageInChar[i];
-					i++;
-				}
-				i = 1;
-				while(i < splittedMessage.length)
-				{
-					if(i == 1)
-					{
-						messageToSend += splittedMessage[i];
-					}
-					else
-					{
-						messageToSend += " " + splittedMessage[i];
-					}
-					i++;
-				}
-				sender.chat("/tell " + playerName + " " + messageToSend);
-			}
-			else
-			{
-				ChatHandler.FailMsg(sender, "Spatny pocet argumentu.");
-			}
+			sender.chat("/tell "+message.substring(1));
+			return true;
 		}
-		else if(message.startsWith("*"))
+		return false;
+	}
+	
+	private static String _getPrefixString(Player player,String prefix)
+	{
+		return prefix.toUpperCase() + "'" + player.getName();
+	}
+	
+	public static void systemInfo(Player player, String message)
+	{
+		if(player == null)
+			return;
+		player.sendMessage(String.format("%s[info] %s", ChatColor.GRAY,message));
+	}
+	
+	public static String getHonorableName(Player player)
+	{
+		//NOTE: this works only for Admin and GM team members
+		String name=null;
+		if(GameMasterHandler.IsAdmin(player.getName()))
 		{
-			if(message.split(" ").length == 1)
-			{
-				messageInChar = message.toCharArray();
-				String portName = "";
-				int i = 1;
-				while(i < messageInChar.length)
-				{
-					portName += messageInChar[i];
-					i++;
-				}
-				sender.chat("/pp " + portName);
-			}
-			else
-			{
-				ChatHandler.FailMsg(sender, "Spatny pocet argumentu.");
-			}
+			name = _getPrefixString(player,"admin");
 		}
+		else if(GameMasterHandler.IsAtleastGM(player.getName()))
+		{
+			name = _getPrefixString(player,"gm");
+		}
+		else
+		{
+			name = player.getName();
+		}
+		return name;
 	}
 	public static Guga_SERVER_MOD plugin;
+	
+	public static void Chat(Player player, String message)
+	{
+		if(PerformChatCommand(player,message))
+		{
+			
+		}
+		else
+			SendChatMessage(player, message);	
+	}
+	
+	public static boolean addBlocklist(Player sender, String blocked)
+	{
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO mnc_chat_blocklist (user_id,blocked_id) SELECT ?,`id` FROM mnc_users WHERE username_clean = ?;");)
+		{
+			MinecraftPlayer pl = plugin.userManager.getUser(sender.getName());
+			if(pl == null || pl.getId() == 0)
+				return false;
+			stat.setInt(1, pl.getId());
+			stat.setString(2, blocked);
+			return stat.executeUpdate()==1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static ArrayList<String> listBlocklistedFor(Player sender)
+	{
+		ArrayList<String> blocked = new ArrayList<String>();
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT u.username as username FROM mnc_chat_blocklist bl LEFT JOIN mnc_users u ON u.id=bl.blocked_id WHERE bl.user_id = ?");)
+		{
+			MinecraftPlayer pl = plugin.userManager.getUser(sender.getName());
+			if(pl == null || pl.getId() == 0)
+				return new ArrayList<String>();
+			stat.setInt(1, pl.getId());
+			try(ResultSet result = stat.executeQuery();)
+			{
+				while(result.next())
+					blocked.add(result.getString("username"));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return blocked;
+	}
+	public static boolean removeBlocklist(Player sender, String blocked)
+	{
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_chat_blocklist WHERE user_id = ? AND blocked_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		{
+			MinecraftPlayer pl = plugin.userManager.getUser(sender.getName());
+			if(pl == null || pl.getId() == 0)
+				return false;
+			stat.setInt(1, pl.getId());
+			stat.setString(2, blocked);
+			return stat.executeUpdate()==1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static boolean isBlockedBy(String blocked, String blocker)
+	{
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*)=1 as is_blocked FROM mnc_chat_blocklist WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1) AND blocked_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		{
+			stat.setString(1, blocker.toLowerCase());
+			stat.setString(2, blocked.toLowerCase());
+			try(ResultSet result = stat.executeQuery();)
+			{
+				if(result.next())
+					return result.getBoolean("is_blocked");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

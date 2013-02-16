@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
+import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 
 import org.bukkit.Location;
@@ -104,31 +106,28 @@ public class GugaEntityListener implements Listener
 			if (event.getDamager() instanceof Player)
 			{
 				Player damager = (Player)event.getDamager();
-				if (!plugin.acc.UserIsLogged(damager))
+				if (!plugin.userManager.userIsLogged(damager.getName()))
+				{
+					e.setCancelled(true);
+					return;
+				}
+				MinecraftPlayer player = plugin.userManager.getUser(damager.getName());
+				if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(damager.getLocation()))
 				{
 					e.setCancelled(true);
 					return;
 				}
 			}
 		}
-		if (plugin.config.accountsModule)
+
+		if (e.getEntity() instanceof Player)
 		{
-			Player p[] = e.getEntity().getServer().getOnlinePlayers();
-			int i=0;
-			while (i < p.length)
-			{
-				if (e.getEntity().getEntityId() == p[i].getEntityId())
-				{	
-					if (!plugin.acc.UserIsLogged(p[i]))
-					{
-						e.setCancelled(true);
-					}
-					break;
-				}
-				i++;
-			}
+			Player player = (Player)e.getEntity();
+			if(!plugin.userManager.userIsLogged(player.getName()))
+				e.setCancelled(true);
 		}
 	}
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e)
 	{
@@ -185,7 +184,6 @@ public class GugaEntityListener implements Listener
 					e.getDrops().clear();
 					Player target = (Player)event.getEntity();
 					plugin.arena.ArenaKill(damager, target);
-					//((PlayerDeathEvent)e).setDeathMessage(ChatColor.AQUA + damager.getName() + " zabil " + target.getName() + " v Arene!");
 					((PlayerDeathEvent)e).setDeathMessage(null);
 				}
 			}
@@ -202,67 +200,31 @@ public class GugaEntityListener implements Listener
 			if (ent instanceof Player)
 			{
 				Player damager = (Player)ent;
-				GugaProfession prof = plugin.professions.get(damager.getName());
-				/*if (prof instanceof GugaMiner)
+				GugaProfession prof = plugin.userManager.getUser(damager.getName()).getProfession();
+				if (target instanceof Creeper)
 				{
-					if (target instanceof Creeper)
-					{
-							prof.GainExperience(20);
-					}
-					else if(target instanceof Spider)
-					{
-						prof.GainExperience(15);
-					}
-					else if(target instanceof Skeleton)
-					{
-						prof.GainExperience(15);
-					}
-					else if(target instanceof Zombie)
-					{
-						prof.GainExperience(10);
-					}
-					else if (target instanceof Player)
-					{
-						prof.GainExperience(200);
-						damager.getWorld().dropItem(e.getEntity().getLocation(), new ItemStack(262,20));
-					}
-					else
-					{
-						prof.GainExperience(5);
-					}
+					prof.GainExperience(75);
 				}
-				else if (prof instanceof GugaHunter)
-				{*/
-					if (target instanceof Creeper)
-					{
-						prof.GainExperience(75);
-					}
-					else if(target instanceof Spider)
-					{
-						prof.GainExperience(50);
-					}
-					else if(target instanceof Skeleton)
-					{
-						prof.GainExperience(50);
-					}
-					else if(target instanceof Zombie)
-					{
-						prof.GainExperience(25);
-					}
-					else if (target instanceof Pig)
-					{
-						prof.GainExperience(5);
-					}
-					else if (target instanceof Player)
-					{
-						prof.GainExperience(200);
-						damager.getWorld().dropItem(e.getEntity().getLocation(), new ItemStack(262,20));
-					}
-					else
-					{
-						prof.GainExperience(15);
-					}
-				//}
+				else if(target instanceof Spider)
+				{
+					prof.GainExperience(50);
+				}
+				else if(target instanceof Skeleton)
+				{
+					prof.GainExperience(50);
+				}
+				else if(target instanceof Zombie)
+				{
+					prof.GainExperience(25);
+				}
+				else if (target instanceof Pig)
+				{
+					prof.GainExperience(5);
+				}
+				else
+				{
+					prof.GainExperience(15);
+				}
 			}
 		}
 	}

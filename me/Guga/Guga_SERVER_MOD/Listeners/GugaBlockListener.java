@@ -6,17 +6,17 @@ import java.util.Iterator;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
 import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
-import me.Guga.Guga_SERVER_MOD.GugaProfession;
+import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
-import net.minecraft.server.v1_4_6.Material;
+import org.bukkit.Material;
 
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -24,9 +24,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaBlockListener implements Listener
@@ -38,15 +40,25 @@ public class GugaBlockListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBreak(BlockBreakEvent e)
 	{
-		if (plugin.debug == true)
-		{
-			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
-		}
-		if(e.getPlayer().getItemInHand().getTypeId() == ID_SELECT_ITEM && GameMasterHandler.IsAdmin(e.getPlayer().getName()))
+		MinecraftPlayer player = plugin.userManager.getUser(e.getPlayer().getName());
+		if (!player.isAuthenticated())
 		{
 			e.setCancelled(true);
 			return;
 		}
+		
+		if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(e.getBlock().getLocation()))
+		{
+			e.getPlayer().sendMessage("Jste novacek. Novacci smi kopat jenom ve svete pro novacky.  Dostanete se tam /pp bw");
+			e.setCancelled(true);
+			return;
+		}
+		
+		if (plugin.debug == true)
+		{
+			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
+		}
+		
 		//plugin.logger.LogBlockBreak(e, e.getBlock().getTypeId());
 		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
@@ -78,107 +90,27 @@ public class GugaBlockListener implements Listener
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 		        p.sendMessage(ChatColor.BLUE+"[REGIONS]: "+ ChatColor.WHITE + "Tady nemuzes kopat! Nazev pozemku: " + region.GetName());
+		        if(region.GetWorld().equals("world_basic"))
+		        {
+		        	if(player.getProfession()!=null && player.getProfession().GetLevel() < 10)
+		        	{
+		        		BasicWorld.basicWorldRegionBlockBreak(region,e.getPlayer(),e.getBlock());
+		        	}
+		        }
 				return;
 			}
 		}
 		
-		if (!plugin.acc.UserIsLogged(p) && plugin.config.accountsModule)
-		{
-			e.setCancelled(true);
-			p.sendMessage("******************************");
-			if (plugin.acc.UserIsRegistered(p))
-			{
-				p.sendMessage("NEJSTE PRIHLASEN! Prihlaste se pomoci /login heslo");
-			}
-			else
-			{
-				p.sendMessage("NEJSTE ZAREGISTROVAN! Prosim zaregistrujte se /register heslo");
-			}
-			p.sendMessage("******************************");
-			return;
-		}
-		GugaProfession prof = plugin.professions.get(p.getName());
+		GugaProfession2 prof = player.getProfession();
 		int level = prof.GetLevel();
-		//boolean canBreak = false;
 		//*************************GRIEFING PROTECTION*************************
 		Block targetBlock;
 		targetBlock = e.getBlock();
-		/*if (prof == null)
-		{
-			int i = 0;
-			while (i < allowedBlocksTier1.length)
-			{
-				if (e.getBlock().getTypeId() == allowedBlocksTier1[i])
-				{
-					canBreak = true;
-					break;
-				}
-				i++;
-			}
-			if (canBreak)
-			{
-				Block blockAbove = targetBlock.getRelative(BlockFace.UP);
-				if (blockAbove.getTypeId() == 55)
-				{
-					canBreak = false;
-				}
-			}
-			if (GameMasterHandler.IsAtleastGM(p.getName()))
-			{
-				if(plugin.acc.UserIsLogged(p))
-				{
-					canBreak = true;
-				}
-			}
-			if (!canBreak)
-			{
-				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
-				e.setCancelled(true);
-				return;
-			}
-		}
-		else
-		{
-			level = prof.GetLevel();
-			if (level < 5)
-			{
-				int i = 0;
-				while (i < allowedBlocksTier1.length)
-				{
-					if (e.getBlock().getTypeId() == allowedBlocksTier1[i])
-					{
-						canBreak = true;
-						break;
-					}
-					i++;
-				}
-				if (canBreak)
-				{
-					Block blockAbove = targetBlock.getRelative(BlockFace.UP);
-					if (blockAbove.getTypeId() == 55)
-					{
-						canBreak = false;
-					}
-				}
-				if (GameMasterHandler.IsAtleastGM(p.getName()))
-				{
-					if(plugin.acc.UserIsLogged(p))
-					{
-						canBreak = true;
-					}
-				}
-				if (!canBreak)
-				{
-					p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Musite byt alespon level 5, aby jste mohl kopat tento druh bloku!");
-					e.setCancelled(true);
-					return;
-				}
-			}*/
 		if(level >= 10 && BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
-				e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/world");
+				e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/pp spawn");
 			}
 		}
 		//*************************************************************************
@@ -189,7 +121,7 @@ public class GugaBlockListener implements Listener
 			{
 				e.setCancelled(true);
 				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
-				if (owner == p.getName())
+				if (owner.equalsIgnoreCase(p.getName()))
 				{
 					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! Nejdrive ji odemknete.");
 				}
@@ -197,12 +129,12 @@ public class GugaBlockListener implements Listener
 				{
 					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! " + owner + " je vlastnikem teto truhly.");
 				}
+				return;
 			}
 		}
 		
 		int typeId = targetBlock.getTypeId();
-		prof.GainExperience(3);
-		//TODO: balance experience
+		prof.onBlockBreak(targetBlock);
 		if (typeId == 1)
 		{
 			GugaBonusDrop bonus = prof.CobbleStoneDrop();
@@ -230,50 +162,8 @@ public class GugaBlockListener implements Listener
 				prof.GainExperience(60);
 				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste emerald!");
 			}
-		}		
-		
-		/*else if ((typeId == 15) || (typeId == 14) || (typeId == 56))
-			{
-				int drops;
-				if (dropsCache.contains(targetBlock))
-				{
-					dropsCache.remove(dropsCache.indexOf(targetBlock));
-					return;
-				}
-				boolean bonusExp = false;
-				drops = ((GugaMiner)prof).BonusDrop(targetBlock);
-				int i = 0;
-				while (i< drops)
-				{
-					if (typeId ==56)
-					{
-						p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
-					}
-					else
-					{
-						p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(targetBlock.getTypeId(),1));
-					}
-					bonusExp = true;
-					if (i == 1)
-					{
-						i++;
-					}//**************ON BLOCK PLACE**************
-					i++;
-				}
-				if (bonusExp)
-				{
-					prof.GainExperience(25);
-				}
-			}
 		}
-		else if (prof instanceof GugaHunter)
-		{
-			int typeId = targetBlock.getTypeId();
-			if (!IsInstaBreakBlock(typeId))
-			{*/
-				prof.GainExperience(1);
-			//}
-		//}
+		
 		if (plugin.debug == true)
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000));
@@ -282,6 +172,20 @@ public class GugaBlockListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e)
 	{
+		MinecraftPlayer player = plugin.userManager.getUser(e.getPlayer().getName());
+		if (!player.isAuthenticated())
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
+		if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(e.getBlock().getLocation()))
+		{
+			e.getPlayer().sendMessage("Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw");
+			e.setCancelled(true);
+			return;
+		}
+		
 		if (plugin.debug)
 		{
 			plugin.log.info("BLOCK_PLACE_EVENT: typeID="+e.getBlock().getTypeId()+",PlayerName="+e.getPlayer().getName());
@@ -330,16 +234,11 @@ public class GugaBlockListener implements Listener
 				if(W.getTypeId() == 54 || E.getTypeId() == 54 || N.getTypeId() == 54 || S.getTypeId() == 54)
 				{
 					String username = e.getPlayer().getName();
-					String wo = plugin.blockLocker.GetBlockOwner(W);
-					String eo = plugin.blockLocker.GetBlockOwner(E);
-					String no = plugin.blockLocker.GetBlockOwner(N);
-					String so = plugin.blockLocker.GetBlockOwner(S);
-					if( (wo!=null && !username.matches(wo) && plugin.blockLocker.IsLocked(W)) ||
-						(eo!=null && !username.matches(eo) && plugin.blockLocker.IsLocked(E)) ||
-						(no!=null && !username.matches(no) && plugin.blockLocker.IsLocked(N)) ||
-						(so!=null && !username.matches(so) && plugin.blockLocker.IsLocked(S)))
+					if((plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(W,username)) ||
+						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(E,username)) ||
+						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(N,username)) ||
+						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(S,username)))
 					{
-						p.sendMessage(username+"><"+plugin.blockLocker.GetBlockOwner(S)+".."+plugin.blockLocker.IsLocked(S));
 						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
 						e.setCancelled(true);
 						return;
@@ -374,42 +273,31 @@ public class GugaBlockListener implements Listener
 				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen.");
 			}
 		}
-		if(block.getTypeId() == 19)
-		{
-			World world = block.getWorld();
-			int x = block.getX();
-			int y = block.getY();
-			int z = block.getZ();
-			this.clearWaterSponge(world, x, y, z, 3);
-			block.setTypeId(0);
-		}
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onBlockBurn(BlockBurnEvent e)
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBlockIgnite(BlockIgniteEvent e)
 	{
-		Block block = e.getBlock();
-		if (block.getTypeId() == 5)
+		//prevents fire from spreading
+		if(e.getCause() == IgniteCause.SPREAD)
 		{
-			Block relBlock;
-			BlockFace faceVals[] = BlockFace.values();
-			int i = 0;
-			while (i < faceVals.length)
-			{
-				relBlock = block.getRelative(faceVals[i]);
-				if (relBlock.getTypeId() == 51)
-				{
-					relBlock.setTypeId(0);
-				}
-				i++;
-			}
-			
 			e.setCancelled(true);
 			return;
 		}
 	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBlockSpread(BlockSpreadEvent e)
+	{
+		if(e.getBlock().getType() == Material.FIRE)
+		{
+			e.setCancelled(true);
+			return;
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onBlockRedstoneChange(BlockRedstoneEvent e)
+ 	public void onBlockRedstoneChange(BlockRedstoneEvent e)
 	{
 		Block block = e.getBlock();
 		int blockID = block.getTypeId();
@@ -426,27 +314,7 @@ public class GugaBlockListener implements Listener
 			}
 		}
 	}
-	
-	private void clearWaterSponge(World world, int x, int y, int z, int radius)
-	{
-		for (int cx = -radius; cx <= radius; cx++) 
-		{
-            for (int cy = -radius; cy <=radius; cy++) 
-            {
-                for (int cz = -radius; cz <= radius; cz++) 
-                {
-                    if (world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 8 || world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 9) //isWater?
-                    {
-                        world.getBlockAt(x + cx, y + cy, z + cz).setTypeId(0);
-                    }
-                }
-            }
-        }
-	}
-	private int ID_SELECT_ITEM = 269;
-	public int[] allowedBlocksTier1 = {1, 2, 3, 12, 13, 14, 15, 16, 17, 18, 24, 31, 32, 37, 38, 39, 40, 56, 78, 79, 81, 82};
-	public int[] instaBreakBlocks = {6, 18, 30, 31, 32, 37, 38, 39, 40, 50, 55, 59, 75, 76, 83};
-	public ArrayList<Block> dropsCache = new ArrayList<Block>();
+
 	public ArrayList<Player> redStoneDebug = new ArrayList<Player>();
 	public static Guga_SERVER_MOD plugin;
 }
