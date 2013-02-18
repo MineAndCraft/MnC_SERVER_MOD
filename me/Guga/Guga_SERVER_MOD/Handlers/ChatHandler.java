@@ -93,6 +93,10 @@ public class ChatHandler
 	{
 		p.sendMessage(ChatColor.RED + message);
 	}
+	public static void InfoMsg(Player p, String message)
+	{
+		p.sendMessage(ChatColor.YELLOW + message);
+	}
 	public static void InitializeDisplayName(Player p)
 	{		
 		if(GameMasterHandler.IsAdmin(p.getName()))
@@ -223,6 +227,9 @@ public class ChatHandler
 		}
 		else
 			SendChatMessage(player, message);	
+	}
+	public static void teamChat(String message)
+	{
 	}
 	
 	public static boolean addBlocklist(Player sender, String blocked)

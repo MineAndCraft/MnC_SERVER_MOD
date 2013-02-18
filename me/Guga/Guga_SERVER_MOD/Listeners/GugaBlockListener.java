@@ -12,6 +12,7 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
+import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import org.bukkit.Material;
@@ -49,7 +50,7 @@ public class GugaBlockListener implements Listener
 		
 		if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(e.getBlock().getLocation()))
 		{
-			e.getPlayer().sendMessage("Jste novacek. Novacci smi kopat jenom ve svete pro novacky.  Dostanete se tam /pp bw");
+			ChatHandler.FailMsg(player.getPlayerInstance(), "Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw.");
 			e.setCancelled(true);
 			return;
 		}
@@ -58,17 +59,15 @@ public class GugaBlockListener implements Listener
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
 		}
-		
-		//plugin.logger.LogBlockBreak(e, e.getBlock().getTypeId());
-		long timeStart = System.nanoTime();
 		Player p = e.getPlayer();
+		long timeStart = System.nanoTime();
 		if (plugin.arena.IsArena(p.getLocation()))
 		{
 			if (GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 			{
 				return;
 			}
-			p.sendMessage(ChatColor.BLUE+"[ARENA]: "+ChatColor.WHITE+"V arene nemuzes kopat!");
+			ChatHandler.FailMsg(p,"V arene nemuzete kopat.");
 			e.setCancelled(true);
 			return;
 		}
@@ -78,7 +77,7 @@ public class GugaBlockListener implements Listener
 			{
 				return;
 			}
-			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes kopat!");
+			ChatHandler.FailMsg(p, "V EventWorldu nemuzete kopat!");
 			e.setCancelled(true);
 			return;
 		}
@@ -89,7 +88,7 @@ public class GugaBlockListener implements Listener
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
-		        p.sendMessage(ChatColor.BLUE+"[REGIONS]: "+ ChatColor.WHITE + "Tady nemuzes kopat! Nazev pozemku: " + region.GetName());
+				ChatHandler.FailMsg(p, "Tady nemuzete kopat! Nazev pozemku: " + ChatColor.YELLOW + region.GetName());
 		        if(region.GetWorld().equals("world_basic"))
 		        {
 		        	if(player.getProfession()!=null && player.getProfession().GetLevel() < 10)
@@ -110,7 +109,7 @@ public class GugaBlockListener implements Listener
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
-				e.getPlayer().sendMessage("Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW + "/pp spawn");
+				ChatHandler.InfoMsg(p, "Pro opusteni zakladniho sveta napiste /pp spawn");
 			}
 		}
 		//*************************************************************************
@@ -123,11 +122,11 @@ public class GugaBlockListener implements Listener
 				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
 				if (owner.equalsIgnoreCase(p.getName()))
 				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! Nejdrive ji odemknete.");
+					ChatHandler.InfoMsg(p, "Nemuzete rozbit svoji zamcenou truhlu. Nejdrive ji odemknete.");
 				}
 				else
 				{
-					p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete rozbit zamcenou truhlu! " + owner + " je vlastnikem teto truhly.");
+					ChatHandler.FailMsg(p, "Nemuzete rozbit cizi zamcenou truhlu! " + ChatColor.YELLOW + owner + ChatColor.RED + " je vlastnikem teto truhly.");
 				}
 				return;
 			}
@@ -142,25 +141,25 @@ public class GugaBlockListener implements Listener
 			{
 				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
 				prof.GainExperience(50);
-				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste diamant!");
+				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.AQUA + "diamant" + ChatColor.YELLOW + "!");
 			}
 			else if (bonus == GugaBonusDrop.GOLD)
 			{
 				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
 				prof.GainExperience(40);
-				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zlato!");
+				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.GOLD + "zlato" + ChatColor.YELLOW + "!");
 			}
 			else if (bonus == GugaBonusDrop.IRON)
 			{
 				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
 				prof.GainExperience(30);
-				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste zelezo!");
+				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.GRAY + "zelezo" + ChatColor.YELLOW + "!");
 			}
 			else if (bonus == GugaBonusDrop.EMERALD)
 			{
 				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(388,1));
 				prof.GainExperience(60);
-				p.sendMessage(ChatColor.BLUE+"[RPG]: "+ChatColor.WHITE+"Nasel jste emerald!");
+				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.GREEN + "emerald" + ChatColor.YELLOW + "!");
 			}
 		}
 		
@@ -181,7 +180,7 @@ public class GugaBlockListener implements Listener
 		
 		if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(e.getBlock().getLocation()))
 		{
-			e.getPlayer().sendMessage("Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw");
+			ChatHandler.FailMsg(player.getPlayerInstance(), "Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw.");
 			e.setCancelled(true);
 			return;
 		}
@@ -206,7 +205,7 @@ public class GugaBlockListener implements Listener
 			{
 				return;
 			}
-			p.sendMessage(ChatColor.BLUE+"[EVENTWORLD]: "+ChatColor.WHITE+"V EventWorldu nemuzes pokladat blocky!");
+			ChatHandler.FailMsg(p, "V EventWorldu nemuzete pokladat blocky!");
 			e.setCancelled(true);
 			return;
 		}
@@ -217,7 +216,7 @@ public class GugaBlockListener implements Listener
 			{
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
-				e.getPlayer().sendMessage(ChatColor.BLUE+"[REGIONS]: "+ChatColor.WHITE+"Tady nemuzete stavet! Nazev pozemku: " + region.GetName());
+				ChatHandler.FailMsg(p, "Tady nemuzete stavet! Nazev pozemku: " + ChatColor.YELLOW  + region.GetName());
 			}
 		}
 		//54
@@ -239,38 +238,38 @@ public class GugaBlockListener implements Listener
 						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(N,username)) ||
 						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(S,username)))
 					{
-						p.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Nemuzete postavit truhlu vedle zamcene truhly!");
+						ChatHandler.FailMsg(p, "Nemuzete postavit truhlu vedle cizi zamcene!");
 						e.setCancelled(true);
 						return;
 					}
 					else
 					{
 						plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-						p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase dvojtruhla byla zamcena.");
+						ChatHandler.SuccessMsg(p, "Vase dvojita truhla byla zamcena.");
 						return;
 					}
 				}
 				else
 				{
 					plugin.blockLocker.LockBlock(block, e.getPlayer().getName());
-					p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase truhla byla zamcena.");
+					ChatHandler.SuccessMsg(p, "Vase truhla byla zamcena.");
 					return;
 				}			
 			}
 			else if(block.getTypeId() == Locker.LockableBlocks.FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase pec byla zamcena.");
+				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
 			}
 			else if(block.getTypeId() == Locker.LockableBlocks.BURNING_FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vase pec byla zamcena.");
+				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
 			}
 			else if(block.getTypeId() == Locker.LockableBlocks.DISPENSER.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-				p.sendMessage(ChatColor.BLUE + "[AUTOLOCKER]: " + ChatColor.WHITE+"Vas davkovac byl zamcen.");
+				ChatHandler.SuccessMsg(p, "Vas davkovac byl zamcen.");
 			}
 		}
 	}

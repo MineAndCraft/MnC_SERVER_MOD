@@ -234,12 +234,13 @@ public class GugaPlayerListener implements Listener
 			}
 			else
 			{
-				e.getPlayer().sendMessage("Nejdrive se prihlaste!");
+				ChatHandler.SuccessMsg(e.getPlayer(),"Nejdrive se prihlaste!");
 				e.setCancelled(true);
 				return;
 			}
 		}
-		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") || e.getMessage().equalsIgnoreCase("/me") || e.getMessage().equalsIgnoreCase("/w"))
+		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") 
+				|| e.getMessage().equalsIgnoreCase("/me") || e.getMessage().equalsIgnoreCase("/w"))
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
@@ -252,9 +253,9 @@ public class GugaPlayerListener implements Listener
 		{
 			e.setCancelled(true);
 		}
-		if(e.getMessage().toLowerCase().startsWith("/sg"))
+		if(e.getMessage().toLowerCase().startsWith("/sg") || e.getMessage().toLowerCase().startsWith("/survivalgames"))
 		{
-			if(e.getPlayer().getWorld().getName().matches("world_event"))
+			if(plugin.userManager.getUser(e.getPlayer().getName()).getProfession().GetLevel() < 10)
 			{
 				e.setCancelled(true);
 			}
@@ -454,7 +455,7 @@ public class GugaPlayerListener implements Listener
 					itemID = item.getTypeId();
 					if ( (itemID == 259) || (itemID == 327))
 					{
-						player.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
+						ChatHandler.FailMsg(player,"Musite byt alespon level 10, aby jste toto mohl pouzit!");
 						e.setCancelled(true);
 						return;
 					}
@@ -472,7 +473,7 @@ public class GugaPlayerListener implements Listener
 						itemID = item.getTypeId();
 						if ( (itemID == 259) || (itemID == 327))
 						{
-							player.sendMessage("Musite byt alespon level 10, aby jste toto mohl pouzit!");
+							ChatHandler.FailMsg(player,"Musite byt alespon level 10, aby jste toto mohl pouzit!");
 							e.setCancelled(true);
 							return;
 						}
@@ -486,7 +487,7 @@ public class GugaPlayerListener implements Listener
 				if(!(plugin.blockLocker.hasBlockAccess(player,block)|| GameMasterHandler.IsAtleastGM(player.getName()) ))
 				{
 					e.setCancelled(true);
-					player.sendMessage(ChatColor.BLUE+"[LOCKER] "+ChatColor.WHITE+"Tento blok je zamcen!");
+					ChatHandler.FailMsg(player,"Tento blok je zamcen!");
 				}
 			}
 		}
