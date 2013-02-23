@@ -108,7 +108,7 @@ public class GugaPlayerListener implements Listener
 		}
 		
 		String ipAddress = player.getAddress().getAddress().toString();
-		if(!plugin.banHandler.isIPWhitelisted(ipAddress))
+		if(!plugin.banHandler.isIPWhitelisted(player.getName()))
 		{
 			long ipBanExpiration = plugin.banHandler.ipBanExpiration(ipAddress);
 			if(ipBanExpiration != 0)
