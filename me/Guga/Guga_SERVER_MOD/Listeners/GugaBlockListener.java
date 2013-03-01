@@ -233,10 +233,10 @@ public class GugaBlockListener implements Listener
 				if(W.getTypeId() == 54 || E.getTypeId() == 54 || N.getTypeId() == 54 || S.getTypeId() == 54)
 				{
 					String username = e.getPlayer().getName();
-					if((plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(W,username)) ||
-						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(E,username)) ||
-						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(N,username)) ||
-						(plugin.blockLocker.IsLocked(W) && plugin.blockLocker.IsOwner(S,username)))
+					if((plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(W,username)) ||
+						(plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(E,username)) ||
+						(plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(N,username)) ||
+						(plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(S,username)))
 					{
 						ChatHandler.FailMsg(p, "Nemuzete postavit truhlu vedle cizi zamcene!");
 						e.setCancelled(true);

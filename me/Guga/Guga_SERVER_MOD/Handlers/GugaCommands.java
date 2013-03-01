@@ -2076,7 +2076,7 @@ public abstract class GugaCommands
 						ChatHandler.FailMsg(sender, "Invalid ban duration");
 						return;
 					}
-					long expiration = 0;
+					long expiration = exp;
 					if(!(exp == -1L))
 					{
 						expiration = Double.valueOf(arg3).longValue()*3600 + System.currentTimeMillis()/1000;
