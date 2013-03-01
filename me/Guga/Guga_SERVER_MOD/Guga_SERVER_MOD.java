@@ -37,13 +37,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		this.userManager.save();
 		GugaAnnouncement.SaveAnnouncements();
 		GugaRegionHandler.SaveRegions();
-		//GugaAuctionHandler.SaveAuctions();
-		//GugaAuctionHandler.SavePayments();
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
-		//logger.SaveWrapperBreak();
-		//logger.SaveWrapperPlace();
 		dbConfig.disconnectDb();
 	}
 
@@ -63,12 +59,10 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaAnnouncement.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
-		//GugaAuctionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
 		GugaTeams.SetPlugin(this);
-		//GugaFlyHandler.SetPlugin(this);
 		ChatHandler.SetPlugin(this);
 		BasicWorld.Init(this);
 		SpawnsHandler.SetPlugin(this);
@@ -76,7 +70,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 
 		if (getServer().getWorld("arena") == null)
 		{
-			//getServer().createWorld("arena", Environment.NORMAL);
 			getServer().createWorld(WorldCreator.name("arena").environment(Environment.NORMAL));
 		}
 		if(getServer().getWorld("world_event")==null)
@@ -116,8 +109,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		loadVIPCodes();
 		loadCreditsCodes();
 		GugaRegionHandler.LoadRegions();
-		//GugaAuctionHandler.LoadAuctions();
-		//GugaAuctionHandler.LoadPayments();
 		blockLocker = new Locker(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
@@ -126,8 +117,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
-		//this.socketServer = new GugaSocketServer(12451, this);
-		//this.socketServer.ListenStart();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by MineAndCraft team 2011 - 2013.");
 	}
@@ -168,11 +157,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandPlaces((Player)sender, args);
 			 return true;
-		 }
-		 else if (cmd.getName().equalsIgnoreCase("ah") && (sender instanceof Player))
-		 {
-			 //GugaCommands.CommandAH((Player)sender, args);
-			 return false;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("arena") && (sender instanceof Player))
 		 {
@@ -231,6 +215,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if ((cmd.getName().equalsIgnoreCase("helper")) && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandHelper((Player)sender, args);
+			 return true;
+		 }
+		 else if ((cmd.getName().equalsIgnoreCase("credits")) && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandCredits((Player)sender, args);
 			 return true;
 		 }
 		//*****************************************/help*****************************************

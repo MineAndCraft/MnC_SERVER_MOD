@@ -93,6 +93,17 @@ public class ChatHandler
 	{
 		p.sendMessage(ChatColor.RED + message);
 	}
+	public static void printCommand(Player p, String commandLabel, String args[], String description)
+	{
+		int i = 0;
+		String argsString = ChatColor.GRAY + "";
+		while(i < args.length)
+		{
+			argsString += "<" + args[i] + "> ";
+			i++;
+		}
+		p.sendMessage(ChatColor.AQUA + commandLabel + " " + argsString + ChatColor.WHITE + description);
+	}
 	public static void InfoMsg(Player p, String message)
 	{
 		p.sendMessage(ChatColor.YELLOW + message);

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -85,8 +86,9 @@ public class ShopManager
 			plugin.currencyManager.addCredits(playerName,-price);
 		}
 		
-		player.sendMessage("Koupil jste " + amount + "x " + item.getName() + " za " + price*bought + " kreditu.");
-		player.sendMessage("Zbyva kreditu: " + plugin.currencyManager.getBalance(playerName));
+		ChatHandler.SuccessMsg(player, "Koupil jste " + ChatColor.YELLOW + amount + "x " + item.getName() + 
+				ChatColor.GREEN +" za " + ChatColor.YELLOW +price*bought + ChatColor.GREEN + " kreditu.");
+		ChatHandler.InfoMsg(player, "Zbyva kreditu: " + ChatColor.GOLD + plugin.currencyManager.getBalance(playerName));
 		return 0;
 	}
 

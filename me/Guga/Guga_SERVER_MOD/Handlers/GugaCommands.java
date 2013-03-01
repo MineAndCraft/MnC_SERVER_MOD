@@ -105,22 +105,19 @@ public abstract class GugaCommands
 		sender.sendMessage("GUGA MINECRAFT SERVER MOD "+Guga_SERVER_MOD.version);
 		sender.sendMessage("******************************");
 		sender.sendMessage("Seznam prikazu:");
-		sender.sendMessage(ChatColor.AQUA + " /lock " + ChatColor.WHITE + "- Zamkne block (info v /locker).");
-		sender.sendMessage(ChatColor.AQUA + " /unlock  " + ChatColor.WHITE + "- Odemkne block (info v /locker).");
-		sender.sendMessage(ChatColor.AQUA + " /who  " + ChatColor.WHITE + "-  Seznam online hracu.");
 		sender.sendMessage(ChatColor.AQUA + " /login " + ChatColor.GRAY + "<heslo>  " + ChatColor.WHITE + "-  Prihlasi zaregistrovaneho hrace.");
-		sender.sendMessage(ChatColor.AQUA + " /register " + ChatColor.GRAY + "<pass>  " + ChatColor.WHITE + "-  Zaregistruje noveho hrace.");
+		sender.sendMessage(ChatColor.AQUA + " /lock " + ChatColor.WHITE + "- Zamkne block.");
+		sender.sendMessage(ChatColor.AQUA + " /unlock  " + ChatColor.WHITE + "- Odemkne block.");
+		sender.sendMessage(ChatColor.AQUA + " /who  " + ChatColor.WHITE + "-  Seznam online hracu.");
 		sender.sendMessage(ChatColor.AQUA + " /password " + ChatColor.GRAY + "<stare_heslo> <nove_heslo>  " + ChatColor.WHITE + "-  Zmeni heslo.");
-		sender.sendMessage(ChatColor.AQUA + " /rpg  " + ChatColor.WHITE + "-  Menu Profesi.");
+		sender.sendMessage(ChatColor.AQUA + " /rpg  " + ChatColor.WHITE + "-  Informace o Vasem RPG.");
+		sender.sendMessage(ChatColor.AQUA + " /credits " + ChatColor.WHITE + "- Menu ekonomiky.");
 		sender.sendMessage(ChatColor.AQUA + " /arena  " + ChatColor.WHITE + "-  Menu areny.");
 		sender.sendMessage(ChatColor.AQUA + " /eventworld  " + ChatColor.WHITE + "-  Menu EventWorldu.");
 		sender.sendMessage(ChatColor.AQUA + " /shop  " + ChatColor.WHITE + "-  Menu Obchodu.");
 		sender.sendMessage(ChatColor.AQUA + " /vip  " + ChatColor.WHITE + "-  VIP menu.");
 		sender.sendMessage(ChatColor.AQUA + " /places " + ChatColor.WHITE + "- Menu mist, kam se da teleportovat.");
-		sender.sendMessage(ChatColor.AQUA + " /party " + ChatColor.WHITE + "- Prikazy pro party");
-		//sender.sendMessage(ChatColor.AQUA + " /ah " + ChatColor.WHITE + "- Menu Aukce.");
 		sender.sendMessage(ChatColor.AQUA + " /r " + ChatColor.GRAY + "<message> " + ChatColor.WHITE + "-  Odpoved na whisper.");
-		sender.sendMessage(ChatColor.AQUA + " /feedback " + ChatColor.GRAY + "<text> " + ChatColor.WHITE + "-  Odesle zpetny odkaz administratorum serveru. Napr. bugy/napady na vylepseni.");
 		if (GameMasterHandler.IsAdmin(sender.getName()))
 		{
 			sender.sendMessage(ChatColor.AQUA + " /gm " + ChatColor.WHITE + "- GameMaster's menu.");
@@ -194,16 +191,16 @@ public abstract class GugaCommands
 			if (!plugin.blockLocker.IsLocked(chest))
 			{
 				plugin.blockLocker.LockBlock(chest,sender.getName());
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Vas blok byl zamcen.");
+				ChatHandler.SuccessMsg(sender, "Vas block byl zamcen.");
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Blok jiz nekdo zamkl!");
+				ChatHandler.FailMsg(sender, "Tento block jiz nekdo zamknul");
 			}
 		}	
 		else
 		{
-			sender.sendMessage(ChatColor.BLUE+"[LOCKER]:"+ChatColor.WHITE+" Tento block nelze zamcit!");
+			ChatHandler.FailMsg(sender, "Tento block nelze zamcit!");
 		}
 	}
 	public static void CommandConfirm(Player sender, String args[])
@@ -214,24 +211,24 @@ public abstract class GugaCommands
 		{
 			if (GugaEvent.ContainsPlayer(p.getName()))
 			{
-				sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac se nemuze teleportovat v prubehu Eventu!");
-				p.sendMessage(ChatColor.GREEN + "[TELEPORT]: Nemuzete se teleportovat v prubehu Eventu!");
+				ChatHandler.FailMsg(sender, "Hrac se nemuze teleportovat v prubehu Eventu!");
+				ChatHandler.FailMsg(p, "Nemuzete se teleportovat v prubehu Eventu!");
 				return;
 			}
 			if (plugin.arena.IsArena(p.getLocation()))
 			{
-				sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac nemuze pouzit teleport v Arene!");
-				p.sendMessage(ChatColor.GREEN + "[TELEPORT]: Nemuzete pouzit teleport v Arene!");
+				ChatHandler.FailMsg(sender, "Hrac nemuze pouzit teleport v Arene!");
+				ChatHandler.FailMsg(p, "Nemuzete pouzit teleport v Arene!");
 				return;
 			}
 			plugin.vipManager.SetLastTeleportLoc(p.getName(),p.getLocation());
 			p.teleport(sender);
 			vipTeleports.remove(sender);
 			
-			sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Teleport prijmut!");
+			ChatHandler.InfoMsg(sender, "Teleport prijat!");
 		}
 		else
-			sender.sendMessage("Nemate zadny pozadavek na teleport!");
+			ChatHandler.FailMsg(sender, "Nemate zadny pozadavek na teleport!");
 	}
 	public static void CommandUnlock(Player sender)
 	{
@@ -243,42 +240,85 @@ public abstract class GugaCommands
 			if (plugin.blockLocker.IsOwner(chest, sender.getName()) || GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				plugin.blockLocker.UnlockBlock(chest);
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Vas blok byl odemcen.");
+				ChatHandler.SuccessMsg(sender, "Vas blok byl odemcen.");
 			}
 			else
 			{
-				sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tento blok nemuzete odemknout!");
+				ChatHandler.FailMsg(sender, "Tento blok nemuzete odemknout!");
 			}
 		}
 		else
 		{
-			sender.sendMessage(ChatColor.BLUE+"[LOCKER]: "+ChatColor.WHITE+"Tento block nelze odemcit!");
+			ChatHandler.FailMsg(sender, "Tento block nelze odemknout!");
 		}
 		
 	}
 	
+	public static void CommandCredits(Player sender, String args[])
+	{
+		if (args.length == 0)
+		{
+			sender.sendMessage("/credits send <hrac> <pocet> - Posle zadany pocet kreditu danemu hraci.");
+			sender.sendMessage("/credits balance - Zjisti stav Vasich kreditu.");
+		}
+		else if (args.length == 1)
+		{
+			String subCommand = args[0];
+			if(subCommand.matches("balance"))
+			{
+				sender.sendMessage("Vas ucet:");
+				sender.sendMessage("Kredity: " + ChatColor.GOLD + plugin.currencyManager.getBalance(sender.getName()));
+			}
+		}
+		else if(args.length == 3)
+		{
+			String subCommand = args[0];
+			String player = args[1];
+			int amount = Integer.parseInt(args[2]);
+			if(subCommand.matches("send"))
+			{
+				if(plugin.currencyManager.getBalance(sender.getName()) >= amount)
+				{
+					if(plugin.currencyManager.addCredits(player, amount))
+					{
+						plugin.currencyManager.addCredits(sender.getName(), -amount);
+						ChatHandler.SuccessMsg(sender, "Kredity byly uspesne odeslany");
+						Player reciever;
+						if((reciever = plugin.getServer().getPlayer(player)) != null)
+						{
+							ChatHandler.InfoMsg(reciever, "Na ucet Vam prisly kredity od hrace " + ChatColor.GRAY + 
+									sender.getName() + ChatColor.YELLOW + " o hodnote " + ChatColor.GRAY + amount);
+						}
+					}
+					else
+						ChatHandler.FailMsg(sender, "Kredity se nepodarilo poslat. Zkontrolujte prosim spravnost zadaneho nicku.");
+				}
+				else
+					ChatHandler.FailMsg(sender, "Na tuto akci nemate dostatek kreditu");
+			}
+		}
+	}
 	public static void CommandShop(Player sender, String args[])
 	{
 		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
-			sender.sendMessage("Nejdrive se prihlaste!");
+			ChatHandler.FailMsg(sender, "Nejdrive se prihlaste!");
 			return;
 		}
 		if (plugin.arena.IsArena(sender.getLocation()))
 		{
-			sender.sendMessage("V arene nemuzete pouzit prikaz /shop!");
+			ChatHandler.FailMsg(sender, "V arene nemuzete pouzit prikaz /shop!");
 			return;
 		}
 		if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
 		{
-			sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /shop!");
+			ChatHandler.FailMsg(sender, "V EventWorldu nemuzete pouzit prikaz /shop!");
 			return;
 		}
 		
 		if (args.length == 0)
 		{
 			sender.sendMessage("Shop Menu:");
-			sender.sendMessage("/shop info  -  Info o Obchodu.");
 			sender.sendMessage("/shop buy <nazev>  -  Koupi dany item (1).");
 			sender.sendMessage("/shop balance  -  Zobrazi vase kredity.");
 			sender.sendMessage("/shop items <strana>  -  Seznam itemu, ktere se daji koupit.");
@@ -286,11 +326,7 @@ public abstract class GugaCommands
 		else if (args.length == 1)
 		{
 			String subCommand = args[0];
-			if (subCommand.matches("info"))
-			{
-				sender.sendMessage("not yet");
-			}
-			else if (subCommand.matches("balance"))
+			if (subCommand.matches("balance"))
 			{
 				sender.sendMessage("Vas ucet:");
 				sender.sendMessage("Kredity: " + plugin.currencyManager.getBalance(sender.getName()));
@@ -324,18 +360,18 @@ public abstract class GugaCommands
 	{
 		if (!plugin.userManager.userIsLogged(sender.getName()))
 		{
-			sender.sendMessage("Nejprve se musite prihlasit!");
+			ChatHandler.FailMsg(sender, "Nejprve se musite prihlasit!");
 			return;
 		}
 		VipUser vip = plugin.vipManager.getVip(sender.getName());
 		if (vip == null)
 		{
-			sender.sendMessage("Pouze VIP mohou pouzivat tento prikaz!");
+			ChatHandler.FailMsg(sender, "Pouze VIP mohou pouzivat tento prikaz!");
 			return;
 		}
 		if (GugaEvent.ContainsPlayer(sender.getName()))
 		{
-			sender.sendMessage("Nemuzete pouzivat VIP prikazy v prubehu eventu!");
+			ChatHandler.FailMsg(sender, "Nemuzete pouzivat VIP prikazy v prubehu eventu!");
 			return;
 		}
 		if (plugin.arena.IsArena(sender.getLocation()))
@@ -421,7 +457,7 @@ public abstract class GugaCommands
 					Location tpLoc = plugin.vipManager.GetLastTeleportLoc(sender.getName());
 					if (tpLoc == null)
 					{
-						sender.sendMessage("Nejdrive se musite nekam teleportovat!");
+						ChatHandler.FailMsg(sender, "Nejdrive se musite nekam teleportovat!");
 						return;
 					}
 					sender.teleport(tpLoc);
@@ -494,10 +530,10 @@ public abstract class GugaCommands
 					if (!sender.isPlayerTimeRelative())
 					{
 						sender.resetPlayerTime();
-						sender.sendMessage("Cas byl restartovan");
+						ChatHandler.SuccessMsg(sender, "Cas byl restartovan");
 					}
 					else
-						sender.sendMessage("Vas cas nepotrebuje restartovat!");
+						ChatHandler.FailMsg(sender, "Vas cas nepotrebuje restartovat!");
 				}
 			}
 			else if (subCommand.matches("fly"))
@@ -546,21 +582,15 @@ public abstract class GugaCommands
 					}
 					if (p.getLocation().getWorld().getName().matches("world_event"))
 					{
-						ChatHandler.FailMsg(sender, "Tento hrac je v EW!");
+						ChatHandler.FailMsg(sender, "Tento hrac je v EventWorldu!");
 						return;
 					}
-					plugin.getServer().getPlayer(arg2).sendMessage(ChatColor.GREEN + "[TELEPORT]: Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijmuti napiste prikaz /y");
+					ChatHandler.InfoMsg(plugin.getServer().getPlayer(arg2), "Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijeti napiste prikaz /y");
 					vipTeleports.put(p, sender);
-					sender.sendMessage(ChatColor.GREEN + "[TELEPORT]: Pozadavek odeslan");
+					ChatHandler.SuccessMsg(sender, "Pozadavek odeslan");
 				}
 			}
-			else if (subCommand.matches("item"))
-			{
-				if (arg1.matches("add"))
-				{
-					ChatHandler.FailMsg(sender, "Tento prikaz byl nahrazen! Viz prikaz /vip");
-				}
-			}
+
 			else if (subCommand.matches("time"))
 			{
 				if (arg1.matches("set"))
@@ -609,11 +639,11 @@ public abstract class GugaCommands
 			int lvl = prof.GetLevel();
 			int xp = prof.GetXp();
 			int xpNeeded = prof.GetXpNeeded();
-			sender.sendMessage("**************************");
+			sender.sendMessage(ChatColor.YELLOW + "**************************");
 			sender.sendMessage("*Guga RPG version 1 stats*");
 			sender.sendMessage("**Level:" + lvl);
 			sender.sendMessage("**XP:" + xp + "/" + xpNeeded);
-			sender.sendMessage("**************************");
+			sender.sendMessage(ChatColor.YELLOW + "**************************");
 			int chance[] = prof.GetChances();
 			int iron = chance[plugin.IRON];
 			int gold = chance[plugin.GOLD];
@@ -623,12 +653,12 @@ public abstract class GugaCommands
 			double chanceGold = ( (double)gold / (double)1000 )  * (double)100;
 			double chanceDiamond = ( (double)diamond/ (double)1000 )  * (double)100;
 			double chanceEmerald = ( (double)emerald/ (double)1000 )  * (double)100;
-			sender.sendMessage("**Sance na nalezeni ve stonu:");
-			sender.sendMessage("**Iron: " + chanceIron + "% (+0.1% kazdych 10 levelu)");
-			sender.sendMessage("**Gold: " + chanceGold + "% (+0.1% kazdych 20 levelu)");
-			sender.sendMessage("**Diamond: " + chanceDiamond + "% (+0.1% kazdych 50 levelu)");
-			sender.sendMessage("**Emerald: " + chanceEmerald + "% (+0.1% kazdych 100 levelu)");
-			sender.sendMessage("**************************");
+			sender.sendMessage(ChatColor.GOLD + "***Sance na nalezeni ve stonu***");
+			sender.sendMessage(ChatColor.GRAY + "ZELEZO: " + ChatColor.WHITE + chanceIron + "% (+0.1% kazdych 10 levelu)");
+			sender.sendMessage(ChatColor.GOLD + "ZLATO: " + ChatColor.WHITE  + chanceGold + "% (+0.1% kazdych 20 levelu)");
+			sender.sendMessage(ChatColor.AQUA + "DIAMANT: " + ChatColor.WHITE + chanceDiamond + "% (+0.1% kazdych 50 levelu)");
+			sender.sendMessage(ChatColor.GREEN + "EMERALD: " + ChatColor.WHITE + chanceEmerald + "% (+0.1% kazdych 100 levelu)");
+			sender.sendMessage(ChatColor.YELLOW + "**************************");
 		}
 		else 
 		{
@@ -640,11 +670,13 @@ public abstract class GugaCommands
 	{
 		if (args.length == 0)
 		{
-			sender.sendMessage("PLACES MENU:");
-			sender.sendMessage("/places list <strana>  -  Seznam vsech moznych mist.");
-			sender.sendMessage("/pp <jmeno>  -  Teleportuje hrace na dane misto.");
-			sender.sendMessage("/places me - Zobrazi vase mista.");
-			sender.sendMessage("/places set - Zobrazi dostupna nastaveni.");
+			sender.sendMessage(ChatColor.YELLOW + "**********PLACES menu**********");
+			sender.sendMessage(ChatColor.AQUA + "/places create " + ChatColor.GRAY + "<jmeno> " + ChatColor.WHITE + "- Vytvori Vam novy place na miste, kde stojite.");
+			sender.sendMessage(ChatColor.AQUA + "/places list " + ChatColor.GRAY + "<strana> " + ChatColor.WHITE + "-  Seznam vsech dostupnych mist.");
+			sender.sendMessage(ChatColor.AQUA + "/pp " + ChatColor.GRAY + "<jmeno> " + ChatColor.WHITE + "- Teleportuje Vas na dany place.");
+			sender.sendMessage(ChatColor.AQUA + "/places me " + ChatColor.WHITE + "- Zobrazi vase places.");
+			sender.sendMessage(ChatColor.AQUA + "/places set " + ChatColor.WHITE + "- Zobrazi dostupna nastaveni.");
+			sender.sendMessage(ChatColor.YELLOW + "*******************************");
 		}
 		else
 		{
@@ -657,7 +689,7 @@ public abstract class GugaCommands
 			{
 				if (BasicWorld.isNew(sender))
 				{
-					sender.sendMessage("PP Prikazy nemuzete pouzivat ve svete pro novacky!");
+					ChatHandler.FailMsg(sender, "Teleportacni prikazy nemuzete pouzivat ve svete pro novacky!");
 					return;
 				}
 				ArrayList<Place> places = plugin.placesManager.getPlacesByOwner(sender.getName());
@@ -667,20 +699,21 @@ public abstract class GugaCommands
 				}
 				else
 				{
-					sender.sendMessage("VASE MISTA:");
+					sender.sendMessage(ChatColor.YELLOW + "**********Vase PLACES:*********");
 					Iterator<Place> it = places.iterator();
 					while (it.hasNext())
 					{
 						Place current = it.next();
-						sender.sendMessage("* " + current.getName());
+						sender.sendMessage(ChatColor.GOLD + "* " + current.getName());
 					}
+					sender.sendMessage(ChatColor.YELLOW + "*******************************");
 				}
 			}
 			else if (subCommand.matches("set"))
 			{
 				if (BasicWorld.isNew(sender))
 				{
-					sender.sendMessage("PP Prikazy nemuzete pouzivat ve svete pro novacky!");
+					ChatHandler.FailMsg(sender, "Teleportacni prikazy nemuzete pouzivat ve svete pro novacky!");
 					return;
 				}
 				if(args1.matches("players"))
@@ -763,7 +796,7 @@ public abstract class GugaCommands
 						}
 						else
 						{
-							ChatHandler.FailMsg(sender, "Nepodarilo se nastavit uvitaci zpravu");
+							ChatHandler.FailMsg(sender, "Nepodarilo se nastavit uvitaci zpravu.");
 						}
 					}
 					else
@@ -796,11 +829,13 @@ public abstract class GugaCommands
 				}	
 				else
 				{
-					sender.sendMessage(" /places set players add <jmenoPortu> <player> - Nastavi uzivatele, ktery muze pouzivat port.");
-					sender.sendMessage(" /places set players remove <jmenoPortu> <player> - Odebere uzivatele, ktery muze pouzivat port.");
-					sender.sendMessage(" /places set players list <jmenoPortu> <player> - Vypise uzivatele, kteri mohou pouzivat port.");
-					sender.sendMessage(" /places set welcome <jmenoPortu> <zprava> - Nastavi zpravu pro navstevniky Vaseho portu");
-					sender.sendMessage(" /places set type <jmenoPortu> public|private - nastavi typ portu");
+					sender.sendMessage(ChatColor.YELLOW + "*******Nastaveni PLACES:*******");
+					sender.sendMessage(ChatColor.AQUA + "/places set players add " + ChatColor.GRAY + "<jmenoPortu> <player> " + ChatColor.WHITE + "- Nastavi uzivatele, ktery muze pouzivat port.");
+					sender.sendMessage(ChatColor.AQUA + "/places set players remove " + ChatColor.GRAY + " <jmenoPortu> <player> " + ChatColor.WHITE + " - Odebere uzivatele, ktery muze pouzivat port.");
+					sender.sendMessage(ChatColor.AQUA + "/places set players list " + ChatColor.GRAY + " <jmenoPortu> <player> " + ChatColor.WHITE + " - Vypise uzivatele, kteri mohou pouzivat port.");
+					sender.sendMessage(ChatColor.AQUA + "/places set welcome " + ChatColor.GRAY + " <jmenoPortu> <zprava> " + ChatColor.WHITE + " - Nastavi zpravu pro navstevniky Vaseho portu.");
+					sender.sendMessage(ChatColor.AQUA + "/places set type " + ChatColor.GRAY + " <jmenoPortu> public|private " + ChatColor.WHITE + " - Nastavi typ portu public nebo private. (verejny/soukromy)");
+					sender.sendMessage(ChatColor.YELLOW + "*******************************");
 				}
 			}
 			else if(subCommand.matches("list"))
@@ -815,7 +850,7 @@ public abstract class GugaCommands
 					pageNum =1;
 				}
 				Iterator <Place> i = pager.getPage(pageNum).iterator();
-				sender.sendMessage("SEZNAM DOSTUPNYCH MIST:");
+				sender.sendMessage(ChatColor.YELLOW + "***Seznam dostupnych PLACES:***");
 				sender.sendMessage("STRANA " + args[1] + "/" + pager.getPageCount());
 				Place placeData=null;
 				while (i.hasNext())
@@ -823,23 +858,24 @@ public abstract class GugaCommands
 					placeData = i.next();
 					sender.sendMessage(String.format("* %d - %s",placeData.getId(),placeData.getName()));
 				}
+				sender.sendMessage(ChatColor.YELLOW + "*******************************");
 			}
 			else if(subCommand.equalsIgnoreCase("create"))
 			{
 				long balance = plugin.currencyManager.getBalance(sender.getName());
 				if(balance < 550)
 				{
-					ChatHandler.FailMsg(sender, "Nemate dost kreditu. Port stoji 550.");
+					ChatHandler.FailMsg(sender, "Nemate dost kreditu. Place stoji 550.");
 					return;
 				}
 				if(plugin.placesManager.addTeleport(args1, sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), "private"))
 				{
 					plugin.currencyManager.addCredits(sender.getName(), -550);
-					ChatHandler.SuccessMsg(sender, "Port byl vytvoren");
+					ChatHandler.SuccessMsg(sender, "Place byl vytvoren");
 				}
 				else
 				{
-					ChatHandler.FailMsg(sender, "Port se nepodarilo vytvorit.");
+					ChatHandler.FailMsg(sender, "Place se nepodarilo vytvorit.");
 				}
 			}
 		}

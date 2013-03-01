@@ -430,17 +430,6 @@ public class GugaPlayerListener implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		try{
-		if(pl.getProfession() == null 
-		|| (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(block.getLocation())))
-		{
-			e.setCancelled(true);
-			return;
-		}
-		}catch(Exception x){
-			e.setCancelled(true);
-			return;
-		}
 		
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
