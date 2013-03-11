@@ -230,11 +230,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				 GugaCommands.CommandHelp((Player) sender);
 				 return true;
 			 }
-			 else if (sender instanceof ConsoleCommandSender)
-			 {
-				 log.info("module	-	enables or disables specified module");
-				 return true;
-			 }
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("r"))
 		 {
@@ -276,6 +271,16 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandLock((Player)sender);
+			 return true;
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("gc") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandGMChat((Player)sender, args);
+			 return true;
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("region") && (sender instanceof Player))
+		 {
+			 GugaCommands.CommandRegion((Player)sender, args);
 			 return true;
 		 }
 		//*****************************************/unlock*****************************************

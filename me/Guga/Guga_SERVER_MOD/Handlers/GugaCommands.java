@@ -28,6 +28,7 @@ import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
+import me.Guga.Guga_SERVER_MOD.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.ShopManager.ShopItem;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipItems;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipUser;
@@ -868,7 +869,7 @@ public abstract class GugaCommands
 					ChatHandler.FailMsg(sender, "Nemate dost kreditu. Place stoji 550.");
 					return;
 				}
-				if(plugin.placesManager.addTeleport(args1, sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), "private"))
+				if(plugin.placesManager.addTeleport(args1.trim(), sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), "private"))
 				{
 					plugin.currencyManager.addCredits(sender.getName(), -550);
 					ChatHandler.SuccessMsg(sender, "Place byl vytvoren");
@@ -2745,6 +2746,33 @@ public abstract class GugaCommands
 			
 	}
 	
+	public static void CommandGMChat(CommandSender sender, String[] args)
+	{
+		if(!(GameMasterHandler.IsAtleastGM(sender.getName()) || sender instanceof ConsoleCommandSender))
+		{
+			return;
+		}
+		
+		Player[] players = plugin.getServer().getOnlinePlayers();
+		StringBuilder message = new StringBuilder(args[0]);
+		int r=1;
+		while(r < args.length)
+		{
+			message.append(" ");
+			message.append(args[r]);
+			r++;
+		}
+		int i = 0;
+		while(i < players.length)
+		{
+			if(GameMasterHandler.IsAtleastGM(players[i].getName()))
+			{
+				players[i].sendMessage(String.format("%sTM[%s]:",ChatColor.DARK_BLUE,sender.getName(),message));
+			}
+			i++;
+		}
+	}
+	
 	public static void CommandWorld(Player sender)
 	{
 		if(plugin.userManager.getUser(sender.getName()).getProfession().GetLevel() >= 10)
@@ -2909,6 +2937,87 @@ public abstract class GugaCommands
 		}
 	}
 
+	public static void CommandRegion(Player sender, String[] args)
+	{
+		if(args.length == 0)
+		{
+			sender.sendMessage("/region create <name>\n/region c1\n/region c2\n/region list\n/region access\n/region remove <name>");
+		}
+		else if(args[0].equalsIgnoreCase("create"))
+		{
+			if(args.length >= 2)
+				ResidenceHandler.createResidence(sender, args[1].trim());
+			else
+				sender.sendMessage("Usage: /region create <name>");
+		}
+		else if(args[0].equalsIgnoreCase("list"))
+		{
+			ArrayList<String> list = ResidenceHandler.getResidencesOf(sender.getName());
+			sender.sendMessage("Your residences:\n "+list);
+		}
+		else if(args[0].equalsIgnoreCase("c1"))
+		{
+			ResidenceHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
+		}
+		else if(args[0].equalsIgnoreCase("c2"))
+		{
+			ResidenceHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
+		}
+		else if(args[0].equalsIgnoreCase("access"))
+		{
+			if(args.length < 3)
+			{
+				sender.sendMessage("/region access <region> list");
+				sender.sendMessage("/region access <region> add <player>");
+				sender.sendMessage("/region access <region> remove <player>");
+			}
+			else
+			{
+				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
+				{
+					sender.sendMessage(String.format("Residence %s does not exist or is not yours",args[1]));
+					return;
+				}
+				
+				if(args[2].equalsIgnoreCase("list"))
+				{
+					sender.sendMessage(String.format("Folowing players can dig in %s residence:\n  %s",args[1],ResidenceHandler.getAllowedPlayers(args[1])));
+				}
+				else if(args[2].equalsIgnoreCase("add") && args.length==4)
+				{
+					if(ResidenceHandler.addResidenceAccess(args[1],args[3]))
+					{
+						ChatHandler.SuccessMsg(sender, "Access added");
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Failed to add access");
+					}
+				}
+				else if(args[2].equalsIgnoreCase("remove"))
+				{
+					if(ResidenceHandler.removeResidenceAccess(args[1],args[3]))
+					{
+						ChatHandler.SuccessMsg(sender, "Access removed");
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Failed to remove access");
+					}
+				}
+			}
+		}
+		else if(args[0].equalsIgnoreCase("remove"))
+		{
+			if(args.length >= 2)
+				if(ResidenceHandler.removeResidence(args[1]))
+					ChatHandler.SuccessMsg(sender, "Region removed.");
+				else
+					ChatHandler.FailMsg(sender, "Failed to remove region.");
+			else
+				sender.sendMessage("Usage: /region remove <name>");
+		}
+	}
 	
 	private static void Teleport(Player sender,String name)
 	{

@@ -17,10 +17,13 @@ import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 
 public class ChatHandler 
 {
+	public static Guga_SERVER_MOD plugin;
+	
 	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
+	
 	public static void SendChatMessage(Player sender, String message)
 	{
 		if(GugaMute.getPlayerStatus(sender.getName()))
@@ -32,67 +35,53 @@ public class ChatHandler
 		{
 			FailMsg(sender, "Chat je nyni dostupny pouze pro ADMINy/GM");
 		}
-		if(GameMasterHandler.IsAdmin(sender.getName()))
+		
+		ChatColor messageColor = ChatColor.WHITE;
+		
+		if(GameMasterHandler.IsAtleastRank(sender.getName(),Rank.HELPER) && !GugaCommands.disabledGMs.contains(sender.getName()))
 		{
-			if(GugaCommands.disabledGMs.contains(sender.getName()))
+			if(GameMasterHandler.IsRank(sender.getName(), Rank.GAMEMASTER))
 			{
-				if(plugin.vipManager.isVip(sender.getName()))
-				{
-					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
-				}
-				else
-				{
-					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  message);
-				}
+				messageColor = ChatColor.GREEN;
 			}
-			else
+			else if(GameMasterHandler.IsRank(sender.getName(), Rank.BUILDER))
 			{
-				plugin.getServer().broadcastMessage("<" + sender.getDisplayName() + "> " + ChatColor.AQUA + message);
+				messageColor = ChatColor.GOLD;
 			}
-		}
-		else if(GameMasterHandler.IsAtleastGM(sender.getName()))
-		{
-			if(GugaCommands.disabledGMs.contains(sender.getName()))
+			else if(GameMasterHandler.IsRank(sender.getName(), Rank.HELPER))
 			{
-				if(plugin.vipManager.isVip(sender.getName()))
-				{
-					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
-				}
-				else
-				{
-					plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  message);
-				}
+				messageColor = ChatColor.BLUE;
 			}
-			else
+			else if(GameMasterHandler.IsRank(sender.getName(), Rank.ADMIN))
 			{
-				plugin.getServer().broadcastMessage("<" + sender.getDisplayName() + "> " + ChatColor.GREEN + message);
+				messageColor = ChatColor.AQUA;
 			}
-		}
-		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.BUILDER))
-		{
-			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.GOLD + message);
-		}
-		else if(GameMasterHandler.IsAtleastRank(sender.getName(), Rank.HELPER))
-		{
-			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> " + ChatColor.BLUE + message);
 		}
 		else if(plugin.vipManager.isVip(sender.getName()))
 		{
-			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  ChatColor.GOLD + message);
+			 messageColor = ChatColor.GOLD;
 		}
 		else
 		{
-			plugin.getServer().broadcastMessage("<" +sender.getDisplayName()+ "> "  +  message);
+			messageColor = ChatColor.WHITE;
 		}
+		
+		if(message.matches("[A-Z]{5,}") && GameMasterHandler.IsAtleastRank(sender.getName(), Rank.GAMEMASTER));
+			message = message.toLowerCase();
+		
+		plugin.getServer().broadcastMessage(String.format("<%s> %s%s",sender.getDisplayName(),messageColor.toString(),message));	
 	}
+	
 	public static void SuccessMsg(Player p, String message)
 	{
 		p.sendMessage(ChatColor.GREEN + message);
 	}
+	
 	public static void FailMsg(Player p, String message)
 	{
 		p.sendMessage(ChatColor.RED + message);
 	}
+	
 	public static void printCommand(Player p, String commandLabel, String args[], String description)
 	{
 		int i = 0;
@@ -104,10 +93,12 @@ public class ChatHandler
 		}
 		p.sendMessage(ChatColor.AQUA + commandLabel + " " + argsString + ChatColor.WHITE + description);
 	}
+	
 	public static void InfoMsg(Player p, String message)
 	{
 		p.sendMessage(ChatColor.YELLOW + message);
 	}
+	
 	public static void InitializeDisplayName(Player p)
 	{		
 		if(GameMasterHandler.IsAdmin(p.getName()))
@@ -179,10 +170,12 @@ public class ChatHandler
 			}
 		}
 	}
+	
 	public static void SetPrefix(Player p, String prefix)
 	{
 		p.setDisplayName(ChatColor.RED + prefix.toUpperCase() + "'" + ChatColor.WHITE + p.getName());
 	}
+	
 	public static void SetDefault(Player p)
 	{
 		InitializeDisplayName(p);
@@ -228,7 +221,6 @@ public class ChatHandler
 		}
 		return name;
 	}
-	public static Guga_SERVER_MOD plugin;
 	
 	public static void Chat(Player player, String message)
 	{
@@ -239,6 +231,7 @@ public class ChatHandler
 		else
 			SendChatMessage(player, message);	
 	}
+	
 	public static void teamChat(String message)
 	{
 	}
@@ -282,6 +275,7 @@ public class ChatHandler
 		}
 		return blocked;
 	}
+
 	public static boolean removeBlocklist(Player sender, String blocked)
 	{
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_chat_blocklist WHERE user_id = ? AND blocked_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
@@ -314,5 +308,4 @@ public class ChatHandler
 		}
 		return false;
 	}
-
 }

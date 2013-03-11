@@ -12,9 +12,12 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
+import me.Guga.Guga_SERVER_MOD.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
+
 import org.bukkit.Material;
 
 import org.bukkit.ChatColor;
@@ -38,6 +41,7 @@ public class GugaBlockListener implements Listener
 	{
 		plugin = gugaSM;
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBreak(BlockBreakEvent e)
 	{
@@ -100,6 +104,12 @@ public class GugaBlockListener implements Listener
 			}
 		}
 		
+		if(e.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world")&&!ResidenceHandler.checkCanDigPlace(p,e.getBlock().getX(), e.getBlock().getZ(),true))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
 		GugaProfession2 prof = player.getProfession();
 		int level = prof.GetLevel();
 		//*************************GRIEFING PROTECTION*************************
@@ -107,7 +117,7 @@ public class GugaBlockListener implements Listener
 		targetBlock = e.getBlock();
 		if(level >= 10 && BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
 		{
-			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName())||!HomesHandler.getHomeByPlayer(e.getPlayer().getName()).getWorld().equalsIgnoreCase("world_basic"))
 			{
 				ChatHandler.InfoMsg(p, "Pro opusteni zakladniho sveta napiste /pp spawn");
 			}
@@ -219,6 +229,13 @@ public class GugaBlockListener implements Listener
 				ChatHandler.FailMsg(p, "Tady nemuzete stavet! Nazev pozemku: " + ChatColor.YELLOW  + region.GetName());
 			}
 		}
+		
+		if(e.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world")&&!ResidenceHandler.checkCanDigPlace(p,e.getBlock().getX(), e.getBlock().getZ(),true))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
 		//54
 		Block block = e.getBlockPlaced();
 		if(Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
@@ -234,9 +251,9 @@ public class GugaBlockListener implements Listener
 				{
 					String username = e.getPlayer().getName();
 					if((plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(W,username)) ||
-						(plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(E,username)) ||
-						(plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(N,username)) ||
-						(plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(S,username)))
+						(plugin.blockLocker.IsLocked(E) && !plugin.blockLocker.IsOwner(E,username)) ||
+						(plugin.blockLocker.IsLocked(N) && !plugin.blockLocker.IsOwner(N,username)) ||
+						(plugin.blockLocker.IsLocked(S) && !plugin.blockLocker.IsOwner(S,username)))
 					{
 						ChatHandler.FailMsg(p, "Nemuzete postavit truhlu vedle cizi zamcene!");
 						e.setCancelled(true);

@@ -18,8 +18,6 @@ commands:
         description: Locks targeted chest 
     unlock:
         description: Unlocks targeted chest 
-    module:
-        description: Toggles on/off a specified module
     y:
         description: Confirms an action
     rpg:
@@ -48,8 +46,6 @@ commands:
         description: Event menu
     team:
         description: Teams menu
-    ew:
-        description: EventWorld menu
     pp:
         description: Alias for places port
     feedback:
@@ -72,3 +68,7 @@ commands:
         description: Friendlist commands
     block:
         description: Blocklist commands
+    gc:
+        description: Writes into GM chat
+    regions:
+        description: Residence management
