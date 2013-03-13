@@ -66,8 +66,10 @@ public class ChatHandler
 			messageColor = ChatColor.WHITE;
 		}
 		
-		if(message.matches("[A-Z]{5,}") && GameMasterHandler.IsAtleastRank(sender.getName(), Rank.GAMEMASTER));
+		if(message.replaceAll(" ","").matches("[A-Z]{5,}") && !GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
 			message = message.toLowerCase();
+		}
 		
 		plugin.getServer().broadcastMessage(String.format("<%s> %s%s",sender.getDisplayName(),messageColor.toString(),message));	
 	}
@@ -307,5 +309,11 @@ public class ChatHandler
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	
+	public static void broadcast(String message)
+	{
+		plugin.getServer().broadcastMessage(message);		
 	}
 }

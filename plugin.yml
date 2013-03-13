@@ -12,6 +12,8 @@ commands:
         description: Logs a player
     register:
         description: Registers a new player
+    logout:
+        description: Logs a player out
     locker:
         description: Info about how to lock or unlock chest
     lock:
@@ -70,5 +72,5 @@ commands:
         description: Blocklist commands
     gc:
         description: Writes into GM chat
-    regions:
-        description: Residence management
+    announce:
+        description: Announces a message server-wide

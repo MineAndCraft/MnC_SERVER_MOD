@@ -41,11 +41,13 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		dbConfig.disconnectDb();
+		_enabled = false;
 	}
 
 	public void onEnable() 
 	{
 		_instance = this;
+		_enabled = true;
 		
 		PluginManager pManager = this.getServer().getPluginManager();
 		pManager.registerEvents(pListener, this);
@@ -278,11 +280,15 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 GugaCommands.CommandGMChat((Player)sender, args);
 			 return true;
 		 }
-		 else if(cmd.getName().equalsIgnoreCase("region") && (sender instanceof Player))
+		 else if(cmd.getName().equalsIgnoreCase("announce") && (sender.isOp() || GameMasterHandler.IsAtleastGM(sender.getName())))
 		 {
-			 GugaCommands.CommandRegion((Player)sender, args);
-			 return true;
+			 GugaCommands.CommandAnnounce(sender,args);
 		 }
+		//else if(cmd.getName().equalsIgnoreCase("region") && (sender instanceof Player))
+		//{
+		//	 GugaCommands.CommandRegion((Player)sender, args);
+		//	 return true;
+		//}
 		//*****************************************/unlock*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("unlock") && (sender instanceof Player))
 		 {
@@ -293,6 +299,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if(cmd.getName().equalsIgnoreCase("login") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandLogin((Player)sender, args);
+			 return true;
+		 }
+		 else if(cmd.getName().equalsIgnoreCase("logout") && sender instanceof Player)
+		 {
+			 ((Player)sender).kickPlayer("Goodbye");
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("getcoords") && (sender instanceof Player))
@@ -566,10 +577,15 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final BanHandler banHandler = new BanHandler(this);
 	
 	private static Guga_SERVER_MOD _instance;
+	private static boolean _enabled=false;
 	
 	public static Guga_SERVER_MOD getInstance()
 	{
 		return _instance;
 	}
-	
+
+	public static boolean is_enabled()
+	{
+		return _enabled;
+	}
 }

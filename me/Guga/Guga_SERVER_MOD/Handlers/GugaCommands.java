@@ -2064,6 +2064,7 @@ public abstract class GugaCommands
 			switch(arg1)
 			{
 				case "add":
+				{
 					if(!(args.length >= 4))
 					{
 						sender.sendMessage("Usage: /gm ban add <player> <hours>[ <reason>]");
@@ -2112,6 +2113,7 @@ public abstract class GugaCommands
 							sender.sendMessage("Unable to remove player from whitelist");
 						}
 					}
+				}
 					break;
 				case "remove":
 					if(!(args.length >=2))
@@ -2129,6 +2131,43 @@ public abstract class GugaCommands
 					{
 						sender.sendMessage("Could not cancel ban.");
 					}
+					break;
+				case "mod":
+				{
+					if(!(args.length >= 4))
+					{
+						sender.sendMessage("Usage: /gm ban mod <ban id> <new duration>[ new description]");
+						return;
+					}
+					int banId = Integer.parseInt(arg2);
+					long exp = Long.valueOf(arg3);
+					if(exp == 0)
+					{
+						ChatHandler.FailMsg(sender, "Invalid ban duration");
+						return;
+					}
+					long expiration = exp;
+					if(!(exp == -1L))
+					{
+						expiration = Double.valueOf(arg3).longValue()*3600 + System.currentTimeMillis()/1000;
+					}
+					
+					StringBuilder sb = new StringBuilder("");
+					for(int i=4;i<args.length;i++)
+					{
+						sb.append(args[i]);
+						sb.append(" ");
+					}
+					String reason = sb.toString();
+					if(plugin.banHandler.modifyBan(banId, expiration, reason))
+					{
+						sender.sendMessage("Ban modified.");
+					}
+					else
+					{
+						sender.sendMessage("Unable to modify ban.");
+					}
+				}
 					break;
 				case "whitelist":
 					String args2 = (args.length>=3)? args[2] : "";
@@ -2748,26 +2787,28 @@ public abstract class GugaCommands
 	
 	public static void CommandGMChat(CommandSender sender, String[] args)
 	{
-		if(!(GameMasterHandler.IsAtleastGM(sender.getName()) || sender instanceof ConsoleCommandSender))
+		if(!(GameMasterHandler.IsAtleastGM(sender.getName()) || sender instanceof ConsoleCommandSender && sender.isOp()))
 		{
 			return;
 		}
 		
 		Player[] players = plugin.getServer().getOnlinePlayers();
-		StringBuilder message = new StringBuilder(args[0]);
-		int r=1;
-		while(r < args.length)
+		StringBuilder message = new StringBuilder();
+		if(args.length > 0)
 		{
-			message.append(" ");
-			message.append(args[r]);
-			r++;
+			message.append(args[0]);
+			for(int i = 1;i<args.length;i++)
+			{
+				message.append(" ");
+				message.append(args[i]);
+			}
 		}
 		int i = 0;
 		while(i < players.length)
 		{
 			if(GameMasterHandler.IsAtleastGM(players[i].getName()))
 			{
-				players[i].sendMessage(String.format("%sTM[%s]:",ChatColor.DARK_BLUE,sender.getName(),message));
+				players[i].sendMessage(String.format("%sTC[%s]:%s%s",ChatColor.DARK_AQUA,sender.getName(),ChatColor.WHITE,message));
 			}
 			i++;
 		}
@@ -2937,6 +2978,7 @@ public abstract class GugaCommands
 		}
 	}
 
+	@Deprecated
 	public static void CommandRegion(Player sender, String[] args)
 	{
 		if(args.length == 0)
@@ -3071,5 +3113,21 @@ public abstract class GugaCommands
 		}
 		else
 			sender.sendMessage("Usage:\n  /block <user>\n  /block list\n  /block remove <user>");
+	}
+	
+	public static void CommandAnnounce(CommandSender sender, String[] args)
+	{
+		StringBuilder sb = new StringBuilder();
+		if(args.length > 0)
+		{
+			sb.append(args[0]);
+			for(int i = 1;i<args.length;i++)
+			{
+				sb.append(" ");
+				sb.append(args[i]);
+			}
+		}
+		
+		ChatHandler.broadcast(String.format("%s[ANNOUNCEMENT] %s",ChatColor.DARK_AQUA, sb.toString()));
 	}
 }

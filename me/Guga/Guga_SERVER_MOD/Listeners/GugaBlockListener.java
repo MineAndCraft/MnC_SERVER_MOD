@@ -12,7 +12,6 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
-import me.Guga.Guga_SERVER_MOD.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -102,12 +101,6 @@ public class GugaBlockListener implements Listener
 		        }
 				return;
 			}
-		}
-		
-		if(e.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world")&&!ResidenceHandler.checkCanDigPlace(p,e.getBlock().getX(), e.getBlock().getZ(),true))
-		{
-			e.setCancelled(true);
-			return;
 		}
 		
 		GugaProfession2 prof = player.getProfession();
@@ -228,12 +221,6 @@ public class GugaBlockListener implements Listener
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 				ChatHandler.FailMsg(p, "Tady nemuzete stavet! Nazev pozemku: " + ChatColor.YELLOW  + region.GetName());
 			}
-		}
-		
-		if(e.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world")&&!ResidenceHandler.checkCanDigPlace(p,e.getBlock().getX(), e.getBlock().getZ(),true))
-		{
-			e.setCancelled(true);
-			return;
 		}
 		
 		//54

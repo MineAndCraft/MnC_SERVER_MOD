@@ -74,7 +74,7 @@ public class UserManager
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {}
 				int remainingTriesBeforeKick = 6;
-				while(remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
+				while(Guga_SERVER_MOD.is_enabled() && remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
 				{
 					remainingTriesBeforeKick--;
 					if(userIsRegistered(playerName))

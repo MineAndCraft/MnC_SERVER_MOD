@@ -9,6 +9,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 
 import org.bukkit.entity.Player;
 
+@Deprecated
 public class ResidenceHandler
 {
 	public static class ResidenceMark

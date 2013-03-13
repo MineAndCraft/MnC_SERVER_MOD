@@ -242,4 +242,42 @@ public class BanHandler
 		}
 		return players;
 	}
+
+	
+	public boolean modifyBan(int banId, long expiration, String reason)
+	{
+		if(expiration == 0)
+			return false;
+		
+		if(reason==null || reason.length() == 0)
+		{
+			try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET expiration = ? WHERE id = ? LIMIT 1;");)
+			{		    
+			    stat.setLong(1, expiration);
+			    stat.setInt(2, banId);
+			    return stat.executeUpdate() == 1;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			if(reason.equals("-"))
+				reason = "";
+			try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET expiration = ?, reason = ? WHERE id = ? LIMIT 1;");)
+			{		    
+			    stat.setLong(1, expiration);
+			    stat.setString(2, reason);
+			    stat.setInt(3, banId);
+			    return stat.executeUpdate() == 1;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
 }
