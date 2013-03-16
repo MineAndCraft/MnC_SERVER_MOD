@@ -18,6 +18,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -27,7 +28,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.inventory.ItemStack;
@@ -186,7 +186,7 @@ public class GugaBlockListener implements Listener
 			return;
 		}
 		
-		if(player.getProfession() == null || player.getProfession().GetLevel() < 50)
+		if(e.getBlock().getType() == Material.TNT && (player.getProfession() == null || player.getProfession().GetLevel() < 50))
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Nemate lvl 50, nemuzete pouzit TNT.");
 			e.setCancelled(true);
@@ -287,7 +287,7 @@ public class GugaBlockListener implements Listener
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockIgnite(BlockIgniteEvent e)
 	{
-		IgniteCause cause = e.getCause();
+		BlockIgniteEvent.IgniteCause cause = e.getCause();
 
 		if (cause == BlockIgniteEvent.IgniteCause.LIGHTNING)
 		{
