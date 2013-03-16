@@ -2752,7 +2752,7 @@ public abstract class GugaCommands
 		{
 			if(GameMasterHandler.IsAtleastGM(players[i].getName()))
 			{
-				players[i].sendMessage(String.format("%sTC[%s]:%s%s",ChatColor.DARK_AQUA,sender.getName(),ChatColor.WHITE,message));
+				players[i].sendMessage(String.format("%sGMC[%s]: %s%s",ChatColor.DARK_AQUA,sender.getName(),ChatColor.WHITE,message));
 			}
 			i++;
 		}
