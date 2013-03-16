@@ -2923,7 +2923,12 @@ public abstract class GugaCommands
 	}
 
 	public static void CommandRegion(Player sender, String[] args)
-	{		
+	{
+		if(!sender.isOp())
+		{
+			return;
+		}
+		
 		if(args.length == 0)
 		{
 			sender.sendMessage("/region create <name>\n/region c1\n/region c2\n/region list\n/region access\n/region remove <name>");
