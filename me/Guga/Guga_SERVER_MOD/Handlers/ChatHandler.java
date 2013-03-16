@@ -81,7 +81,7 @@ public class ChatHandler
 	
 	public static void FailMsg(Player p, String message)
 	{
-		p.sendMessage(ChatColor.RED + message);
+		p.sendMessage(ChatColor.DARK_RED + message);
 	}
 	
 	public static void printCommand(Player p, String commandLabel, String args[], String description)
@@ -311,7 +311,6 @@ public class ChatHandler
 		return false;
 	}
 
-	
 	public static void broadcast(String message)
 	{
 		plugin.getServer().broadcastMessage(message);		
