@@ -27,7 +27,7 @@ import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
-import me.Guga.Guga_SERVER_MOD.ResidenceHandler;
+import me.Guga.Guga_SERVER_MOD.Extensions.Residences.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.ShopManager.ShopItem;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipItems;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipUser;
@@ -2922,7 +2922,6 @@ public abstract class GugaCommands
 		}
 	}
 
-	@Deprecated
 	public static void CommandRegion(Player sender, String[] args)
 	{		
 		if(args.length == 0)

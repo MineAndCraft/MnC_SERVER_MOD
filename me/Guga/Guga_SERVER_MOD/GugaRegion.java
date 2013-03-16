@@ -62,6 +62,19 @@ public class GugaRegion
 	private int z1;
 	private int z2;
 	
+	public int getX1(){
+		return x1;
+	}
+	public int getX2(){
+		return x2;
+	}
+	public int getZ1(){
+		return z1;
+	}
+	public int getZ2(){
+		return z2;
+	}
+	
 	public static int X1 = 0;
 	public static int X2 = 1;
 	public static int Z1 = 2;

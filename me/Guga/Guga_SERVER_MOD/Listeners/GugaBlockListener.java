@@ -12,6 +12,7 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
+import me.Guga.Guga_SERVER_MOD.Extensions.Residences.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -80,6 +81,13 @@ public class GugaBlockListener implements Listener
 			}
 			ChatHandler.FailMsg(p, "V EventWorldu nemuzete kopat!");
 			e.setCancelled(true);
+			return;
+		}
+		
+		if(e.getBlock().getWorld().getName().equalsIgnoreCase("world") && !ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		{
+			e.setCancelled(true);
+			ChatHandler.FailMsg(e.getPlayer(), "Tady nemuzete kopat. Je tu pozemek jineho hrace.");
 			return;
 		}
 		
@@ -190,6 +198,13 @@ public class GugaBlockListener implements Listener
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Nemate lvl 50, nemuzete pouzit TNT.");
 			e.setCancelled(true);
+			return;
+		}
+		
+		if(e.getBlock().getWorld().getName().equalsIgnoreCase("world") && !ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		{
+			e.setCancelled(true);
+			ChatHandler.FailMsg(e.getPlayer(), "Tady nemuzete stavet. Je tu pozemek jineho hrace.");
 			return;
 		}
 		
