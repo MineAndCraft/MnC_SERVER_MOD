@@ -46,8 +46,6 @@ commands:
         description: Replies to a whisper
     event:
         description: Event menu
-    team:
-        description: Teams menu
     pp:
         description: Alias for places port
     feedback:

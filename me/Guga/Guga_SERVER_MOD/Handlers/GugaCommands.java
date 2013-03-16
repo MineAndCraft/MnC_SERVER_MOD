@@ -21,7 +21,6 @@ import me.Guga.Guga_SERVER_MOD.GugaMute;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
-import me.Guga.Guga_SERVER_MOD.GugaTeams;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.Locker;
@@ -1121,62 +1120,7 @@ public abstract class GugaCommands
 			sender.sendMessage("Nemate komu odpovedet!");
 		}
 	}
-	public static void CommandTeam(Player sender, String args[])
-	{
-		if(!plugin.userManager.userIsLogged(sender.getName()))
-		{
-			sender.sendMessage("Nejprve se musite prihlasit!");
-			return;
-		}
-		if(!GameMasterHandler.IsAtleastGM(sender.getName()))
-		{
-			return;
-		}
-		if(args.length == 0)
-		{
-			sender.sendMessage("/team blue:red add <player1,player2> - Adds player to blue or red team");
-			sender.sendMessage("/team blue:red add itemID, ammount - Adds items to certain team");
-			sender.sendMessage("/team blue:red remove <player> - Removes player from blue or red team");
-			sender.sendMessage("/team clear - Clears all teams");
-		}
-		else if(args.length == 1)
-		{
-			if(args[0].equalsIgnoreCase("clear"))
-			{
-				GugaTeams.deleteTeams();
-				sender.sendMessage("Cleared!");
-			}
-		}
-		else if(args.length == 3)
-		{
-			if(args[0].equalsIgnoreCase("blue") || args[0].equalsIgnoreCase("red"))
-			{
-				if(args[1].equalsIgnoreCase("add"))
-				{
-					GugaTeams.addToTeam(args[2].split(","), args[0]);
-					sender.sendMessage("Player was successfuly added to " + args[0] + " team.");
-				}
-				else if(args[1].equalsIgnoreCase("remove"))
-				{
-					GugaTeams.removePlayer(args[2]);
-					sender.sendMessage("Player was successfully removed");
-				}
-			}
-		}
-		else if(args.length == 4)
-		{
-			if(args[0].equalsIgnoreCase("blue") || args[0].equalsIgnoreCase("red"))
-			{
-				if(args[1].equalsIgnoreCase("add"))
-				{
-					int itemID = Integer.parseInt(args[2]);
-					int ammount = Integer.parseInt(args[3]);
-					GugaTeams.AddItemToPlayers(itemID, ammount,args[0]);
-					sender.sendMessage("Items successfully added!");
-				}
-			}
-		}
-	}
+
 	public static void CommandFeedback(Player sender, String args[])
 	{
 		if (!plugin.userManager.userIsLogged(sender.getName()))
@@ -2980,13 +2924,18 @@ public abstract class GugaCommands
 
 	@Deprecated
 	public static void CommandRegion(Player sender, String[] args)
-	{
+	{		
 		if(args.length == 0)
 		{
 			sender.sendMessage("/region create <name>\n/region c1\n/region c2\n/region list\n/region access\n/region remove <name>");
 		}
 		else if(args[0].equalsIgnoreCase("create"))
 		{
+			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
+			{
+				ChatHandler.FailMsg(sender,"Regiony muzete vytvaret a upravovat jenom ve stavebnim svete.");
+				return;
+			}
 			if(args.length >= 2)
 				ResidenceHandler.createResidence(sender, args[1].trim());
 			else
@@ -2995,14 +2944,24 @@ public abstract class GugaCommands
 		else if(args[0].equalsIgnoreCase("list"))
 		{
 			ArrayList<String> list = ResidenceHandler.getResidencesOf(sender.getName());
-			sender.sendMessage("Your residences:\n "+list);
+			sender.sendMessage("Your regions:\n "+list);
 		}
 		else if(args[0].equalsIgnoreCase("c1"))
 		{
+			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
+			{
+				ChatHandler.FailMsg(sender,"Regiony muzete vytvaret a upravovat jenom ve stavebnim svete.");
+				return;
+			}
 			ResidenceHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
 		}
 		else if(args[0].equalsIgnoreCase("c2"))
 		{
+			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
+			{
+				ChatHandler.FailMsg(sender,"Regiony muzete vytvaret a upravovat jenom ve stavebnim svete.");
+				return;
+			}
 			ResidenceHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
 		}
 		else if(args[0].equalsIgnoreCase("access"))

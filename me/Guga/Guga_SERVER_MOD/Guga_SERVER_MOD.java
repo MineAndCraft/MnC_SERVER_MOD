@@ -64,7 +64,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GameMasterHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
-		GugaTeams.SetPlugin(this);
 		ChatHandler.SetPlugin(this);
 		BasicWorld.Init(this);
 		SpawnsHandler.SetPlugin(this);
@@ -134,11 +133,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if (cmd.getName().equalsIgnoreCase("event") && (sender instanceof Player))
 		 {
 			 GugaCommands.CommandEvent((Player)sender, args);
-			 return true;
-		 }
-		 else if (cmd.getName().equalsIgnoreCase("team") && (sender instanceof Player))
-		 {
-			 GugaCommands.CommandTeam((Player)sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("socket"))
