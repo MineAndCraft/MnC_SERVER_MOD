@@ -17,8 +17,6 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 
-import org.bukkit.Material;
-
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -27,11 +25,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GugaBlockListener implements Listener
@@ -181,9 +179,16 @@ public class GugaBlockListener implements Listener
 			return;
 		}
 		
-		if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(e.getBlock().getLocation()))
+		if(player.getProfession() == null || player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(e.getBlock().getLocation()))
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw.");
+			e.setCancelled(true);
+			return;
+		}
+		
+		if(player.getProfession() == null || player.getProfession().GetLevel() < 50)
+		{
+			ChatHandler.FailMsg(player.getPlayerInstance(), "Nemate lvl 50, nemuzete pouzit TNT.");
 			e.setCancelled(true);
 			return;
 		}
@@ -220,6 +225,7 @@ public class GugaBlockListener implements Listener
 				e.setCancelled(true);
 				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 				ChatHandler.FailMsg(p, "Tady nemuzete stavet! Nazev pozemku: " + ChatColor.YELLOW  + region.GetName());
+				return;
 			}
 		}
 		
@@ -281,8 +287,21 @@ public class GugaBlockListener implements Listener
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockIgnite(BlockIgniteEvent e)
 	{
-		//prevents fire from spreading
-		if(e.getCause() == IgniteCause.SPREAD)
+		IgniteCause cause = e.getCause();
+
+		if (cause == BlockIgniteEvent.IgniteCause.LIGHTNING)
+		{
+			e.setCancelled(true);
+			return;
+		}
+
+		if (cause == BlockIgniteEvent.IgniteCause.LAVA)
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
+		if (cause == BlockIgniteEvent.IgniteCause.SPREAD)
 		{
 			e.setCancelled(true);
 			return;
@@ -290,13 +309,9 @@ public class GugaBlockListener implements Listener
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onBlockSpread(BlockSpreadEvent e)
+	public void onBlockBurn(BlockBurnEvent e)
 	{
-		if(e.getBlock().getType() == Material.FIRE)
-		{
-			e.setCancelled(true);
-			return;
-		}
+		e.setCancelled(true);
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
