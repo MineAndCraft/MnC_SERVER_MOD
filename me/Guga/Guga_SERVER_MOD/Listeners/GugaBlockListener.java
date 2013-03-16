@@ -177,6 +177,7 @@ public class GugaBlockListener implements Listener
 			plugin.log.info("BLOCK_BREAK_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e)
 	{
@@ -244,8 +245,20 @@ public class GugaBlockListener implements Listener
 			}
 		}
 		
-		//54
+		
 		Block block = e.getBlockPlaced();
+		
+		if(block.getTypeId() == 154) //hopper cannot be placed under a locked block
+		{
+			Block up = block.getRelative(BlockFace.UP);
+			if(Locker.LockableBlocks.isLockableBlock(up.getTypeId()) && plugin.blockLocker.IsLocked(up))
+			{
+				e.setCancelled(true);
+				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper pod zamcenou truhlu");
+				return;
+			}
+		}
+		
 		if(Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
 		{
 			if(block.getTypeId() == Locker.LockableBlocks.CHEST.getID() && !plugin.blockLocker.IsLocked(block))
