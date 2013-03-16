@@ -851,12 +851,12 @@ public abstract class GugaCommands
 				}
 				Iterator <Place> i = pager.getPage(pageNum).iterator();
 				sender.sendMessage(ChatColor.YELLOW + "***Seznam dostupnych PLACES:***");
-				sender.sendMessage("STRANA " + args[1] + "/" + pager.getPageCount());
+				sender.sendMessage(String.format("STRANA %d/%d",pageNum,pager.getPageCount()));
 				Place placeData=null;
 				while (i.hasNext())
 				{
 					placeData = i.next();
-					sender.sendMessage(String.format("* %d - %s",placeData.getId(),placeData.getName()));
+					sender.sendMessage(String.format("* %s - x:%d, z: %d",placeData.getName(),placeData.getX(),placeData.getZ()));
 				}
 				sender.sendMessage(ChatColor.YELLOW + "*******************************");
 			}
