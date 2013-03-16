@@ -320,14 +320,14 @@ public class PlacesManager
 	/**
 	 * Deletes teleport 
 	 * @param portName
-	 * @return
+	 * @return true on success, false on failure
 	 */
 	public boolean removeTeleport(String portName)
 	{
 		boolean success = false;
 		PreparedStatement stat = null;
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE mnc_places, mnc_places_permissions FROM mnc_places INNER JOIN mnc_places_permissions WHERE mnc_places.id=mnc_places_permissions.place_id AND mnc_places.id = ?");
+			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE mnc_places, mnc_places_permissions FROM mnc_places INNER JOIN mnc_places_permissions WHERE mnc_places.name=mnc_places_permissions.place_id AND mnc_places.name = ?");
 			stat.setString(1, portName.toLowerCase());
 			success = stat.executeUpdate()==1;
 		}catch(Exception e)
