@@ -63,10 +63,9 @@ public class ShopManager
 	{
 		int itemId = item.getInt("ID",0);
 		int price = item.getInt("Price",0);
-		int itemAmount = item.getInt("Amount",0);
 		int type = item.getInt("Type", 0);
 		
-		if(itemId == 0|| itemAmount==0)
+		if(itemId == 0|| amount==0)
 			return -1;
 		
 		long balance = plugin.currencyManager.getBalance(playerName);
@@ -80,7 +79,7 @@ public class ShopManager
 		int bought = 0;
 		for(;bought<amount;bought++)
 		{
-			ItemStack purchase = new ItemStack(itemId, itemAmount, (short)type);
+			ItemStack purchase = new ItemStack(itemId, 1, (short)type);
 			player.getInventory().addItem(purchase);
 			plugin.logger.LogShopTransaction(this.getItemNameByItem(item), amount, playerName);
 			plugin.currencyManager.addCredits(playerName,-price);
@@ -114,7 +113,6 @@ public class ShopManager
 				continue;
 			items.add(new ShopItem(name,
 					itemData.getInt("Price",0),
-					itemData.getInt("Amount",0),
 					itemData.getInt("ID",0),
 					itemData.getInt("Type",0)));
 		}
@@ -126,15 +124,13 @@ public class ShopManager
 	{
 		private String name;
 		private int price;
-		private int amount;
 		private int id;
 		private int type;
 
-		ShopItem(String name,int price,int amount,int id,int type)
+		ShopItem(String name,int price,int id,int type)
 		{
 			this.name = name;
 			this.price = price;
-			this.amount = amount;
 			this.id = id;
 			this.type = type;
 		}
@@ -145,10 +141,6 @@ public class ShopManager
 
 		public int getId() {
 			return id;
-		}
-
-		public int getAmount() {
-			return amount;
 		}
 
 		public int getPrice() {

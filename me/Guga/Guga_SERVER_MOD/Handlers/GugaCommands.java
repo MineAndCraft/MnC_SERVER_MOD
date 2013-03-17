@@ -350,7 +350,7 @@ public abstract class GugaCommands
 				while (i.hasNext())
 				{
 					ShopItem item = i.next();
-					sender.sendMessage(String.format("%s - %s - cena: %d "+ChatColor.YELLOW+"po: %d", item.getName(),item.getIdString(),item.getPrice(),item.getAmount()));
+					sender.sendMessage(String.format("%s - %s - cena za kus: %d ", item.getName(),item.getIdString(),item.getPrice()));
 				}
 			}
 		}
