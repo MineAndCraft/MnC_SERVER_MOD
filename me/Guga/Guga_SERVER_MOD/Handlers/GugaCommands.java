@@ -354,6 +354,16 @@ public abstract class GugaCommands
 				}
 			}
 		}
+		else if (args.length == 3)
+		{
+			String subCommand = args[0];
+			String arg1 = args[1];
+			int arg2 = Integer.parseInt(args[2]);
+			if (subCommand.matches("buy"))
+			{
+				plugin.shopManager.buyItem(sender.getName(),arg1, arg2);
+			}
+		}
 	}
 	
 	public static void CommandVIP(Player sender, String args[])
