@@ -19,6 +19,8 @@ public class ExtensionManager
 	{
 		_initialized = true;
 		smsparser = new SmsParser();
+		smsparser.start();
+		
 		plugin.log.info("[GSM.ExtensionManager] initialized");
 	}
 	

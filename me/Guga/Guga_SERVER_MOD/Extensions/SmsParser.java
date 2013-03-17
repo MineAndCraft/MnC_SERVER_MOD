@@ -31,11 +31,25 @@ public class SmsParser extends Thread
 							if(service.equalsIgnoreCase("MNCKRE"))
 							{
 								int credits = getCreditAmount(res.getString("target_number"));
-								Guga_SERVER_MOD.getInstance().currencyManager.addCredits(player, credits);
-								try{
-									ChatHandler.InfoMsg(Guga_SERVER_MOD.getInstance().getServer().getPlayerExact(player),String.format("Bylo vam pricteno %d kreditu.",credits));
+								if(credits > 0 && Guga_SERVER_MOD.getInstance().currencyManager.addCredits(player, credits))
+								{
+									try{
+										Guga_SERVER_MOD.getInstance().log.info(String.format("[GSM_Extensions.SmsParser] Player %s got %d credits", player,credits));
+										ChatHandler.InfoMsg(Guga_SERVER_MOD.getInstance().getServer().getPlayerExact(player),String.format("Bylo vam pricteno %d kreditu.",credits));
+									}
+									catch(Exception e){}
 								}
-								catch(Exception e){}
+							}
+							else if(service.equalsIgnoreCase("MNCVIP"))
+							{
+								if(Guga_SERVER_MOD.getInstance().vipManager.addVip(player, 2592000))
+								{
+									try{
+										Guga_SERVER_MOD.getInstance().log.info(String.format("[GSM_Extensions.SmsParser] Player %s got VIP extended by 30 days", player));
+										ChatHandler.InfoMsg(Guga_SERVER_MOD.getInstance().getServer().getPlayerExact(player),String.format("Bylo vam prodlouzeno VIP o 30 dnu."));
+									}
+									catch(Exception e){}
+								}
 							}
 							try(PreparedStatement stat2 = DatabaseManager.getConnection().prepareStatement("UPDATE sms_log SET processed = 1 WHERE id = ? LIMIT 1");)
 							{
@@ -58,7 +72,9 @@ public class SmsParser extends Thread
 					e.printStackTrace();
 				}
 				_processing = false;
-				Thread.sleep(10000);
+				try{
+					Thread.sleep(30000);
+				}catch(Exception e){}
 			}
 			catch(Exception e)
 			{
