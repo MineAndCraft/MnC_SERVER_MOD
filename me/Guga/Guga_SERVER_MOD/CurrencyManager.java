@@ -47,11 +47,11 @@ public class CurrencyManager
 		return balance;
 	}
 	
-	private boolean setBalance(String playerName, int newBalance)
-	{	
-		try(PreparedStatement stat=plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_currency` curr SET curr.balance = ? WHERE curr.user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+	public synchronized boolean addCredits(String playerName, int amount)
+	{
+		try(PreparedStatement stat=plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_currency` curr SET curr.balance = (curr.balance + (?)) WHERE curr.user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
 		{
-		    stat.setLong(1, newBalance);
+		    stat.setLong(1, amount);
 		    stat.setString(2, playerName.toLowerCase());
 		    return stat.executeUpdate()==1;
 		}
@@ -60,12 +60,6 @@ public class CurrencyManager
 			e.printStackTrace();
 		}
 		return false;
-	}
-
-	public synchronized boolean addCredits(String playerName, int amount)
-	{
-		int newBalance = this.getBalance(playerName)+amount;
-		return this.setBalance(playerName, newBalance);
 	}
 
 	public void onPlayerJoin(Player p)
