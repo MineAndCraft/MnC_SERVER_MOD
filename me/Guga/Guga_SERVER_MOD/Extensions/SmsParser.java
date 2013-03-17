@@ -111,7 +111,7 @@ public class SmsParser extends Thread
 				case 50:
 					return 750;
 				case 99:
-					return 1250;
+					return 1600;
 				default:
 					return 0;
 			}
