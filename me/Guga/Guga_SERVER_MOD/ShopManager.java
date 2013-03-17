@@ -27,68 +27,61 @@ public class ShopManager
 		this.itemConfig = YamlConfiguration.loadConfiguration(configFile);
 	}
 	
-	public int buyItem(String playerName,String itemName,int amount)
+	public void buyItem(String playerName,String itemName,int amount)
 	{
 		Player player = plugin.getServer().getPlayerExact(playerName);
 		if (!(amount > 0))
 		{
-			player.sendMessage("Pocet musi byt vyssi nez 0!");
-			return -1;
+			ChatHandler.FailMsg(player,"Pocet musi byt vyssi nez 0!");
+			return;
 		}
 		if(!itemName.matches("^[a-zA-Z0-9_]+$"))
 		{
-			player.sendMessage("Nazev itemu neni platny.");
-			return -1;
+			ChatHandler.FailMsg(player,"Nazev itemu neni platny.");
+			return;
 		}
 		
 		ConfigurationSection item = null;
 		try
 		{
 			item = this.itemConfig.getConfigurationSection("Items."+itemName);
-		}catch(Exception x){
-			plugin.log.info("Cannot find item '"+itemName+"'.");
-		}
+		}catch(Exception x){}
 		
 		if (item == null)
 		{
-			player.sendMessage("Item nenalezen");
-			return -1;
+			ChatHandler.FailMsg(player,"Item nenalezen");
+			return;
 		}
 		
-		int purchaseResult = handlePurchase(player,playerName,item,amount);
-		return purchaseResult;
+		handlePurchase(player,playerName,item,amount);
 	}
 	
-	private synchronized int handlePurchase(Player player, String playerName, ConfigurationSection item, int amount)
+	private synchronized boolean handlePurchase(Player player, String playerName, ConfigurationSection item, int amount)
 	{
 		int itemId = item.getInt("ID",0);
 		int price = item.getInt("Price",0);
 		int type = item.getInt("Type", 0);
 		
 		if(itemId == 0|| amount==0)
-			return -1;
+			return false;
 		
-		long balance = plugin.currencyManager.getBalance(playerName);
-		long totalPrice = (price*amount);
+		int balance = plugin.currencyManager.getBalance(playerName);
+		int totalPrice = (price*amount);
 		if(balance < totalPrice)
 		{
 			ChatHandler.FailMsg(player,"Nemate dostatecne mnozstvi kreditu!");
-			return -2;
+			return false;
 		}
 		
-		int bought = 0;
-		for(;bought<amount;bought++)
-		{
-			ItemStack purchase = new ItemStack(itemId, 1, (short)type);
-			player.getInventory().addItem(purchase);
-			plugin.logger.LogShopTransaction(this.getItemNameByItem(item), amount, playerName);
-			plugin.currencyManager.addCredits(playerName,-price);
-		}
+		ItemStack purchase = new ItemStack(itemId, amount, (short)type);
+		player.getInventory().addItem(purchase);
+		plugin.logger.LogShopTransaction(this.getItemNameByItem(item), amount, playerName);
+		plugin.currencyManager.addCredits(playerName,-totalPrice);
 		
 		ChatHandler.SuccessMsg(player, "Koupil jste " + ChatColor.YELLOW + amount + "x " + item.getName() + 
-				ChatColor.GREEN +" za " + ChatColor.YELLOW +price*bought + ChatColor.GREEN + " kreditu.");
+				ChatColor.GREEN +" za " + ChatColor.YELLOW +totalPrice + ChatColor.GREEN + " kreditu.");
 		ChatHandler.InfoMsg(player, "Zbyva kreditu: " + ChatColor.GOLD + plugin.currencyManager.getBalance(playerName));
-		return 0;
+		return true;
 	}
 
 	private String getItemNameByItem(ConfigurationSection item)

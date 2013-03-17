@@ -332,37 +332,29 @@ public abstract class GugaCommands
 				sender.sendMessage("Kredity: " + plugin.currencyManager.getBalance(sender.getName()));
 			}
 		}
-		else if (args.length == 2)
+		else if(args.length >= 1 && args[0].equals("items"))
 		{
-			String subCommand = args[0];
-			String arg1 = args[1];
-			
-			if (subCommand.matches("buy"))
+			int page = 1;
+			if(args.length >= 2)
+				page = Integer.parseInt(args[1]);
+			DataPager<ShopItem> pager = new DataPager<ShopItem>(plugin.shopManager.getShopItemList(), 15);
+			Iterator<ShopItem> i = pager.getPage(page).iterator();
+
+			sender.sendMessage("SEZNAM ITEMU:");
+			sender.sendMessage("STRANA " + page + "/" + pager.getPageCount());
+			while (i.hasNext())
 			{
-				plugin.shopManager.buyItem(sender.getName(),arg1, 1);
-			}
-			else if(subCommand.matches("items"))
-			{
-				DataPager<ShopItem> pager = new DataPager<ShopItem>(plugin.shopManager.getShopItemList(), 15);
-				Iterator<ShopItem> i = pager.getPage(Integer.parseInt(args[1])).iterator();
-				sender.sendMessage("SEZNAM ITEMU:");
-				sender.sendMessage("STRANA " + args[1] + "/" + pager.getPageCount());
-				while (i.hasNext())
-				{
-					ShopItem item = i.next();
-					sender.sendMessage(String.format("%s - %s - cena za kus: %d ", item.getName(),item.getIdString(),item.getPrice()));
-				}
+				ShopItem item = i.next();
+				sender.sendMessage(String.format("%s - %s - cena za kus: %d ", item.getName(),item.getIdString(),item.getPrice()));
 			}
 		}
-		else if (args.length == 3)
+		else if (args[0].equals("buy") && (args.length == 3 || args.length == 2))
 		{
-			String subCommand = args[0];
 			String arg1 = args[1];
-			int arg2 = Integer.parseInt(args[2]);
-			if (subCommand.matches("buy"))
-			{
-				plugin.shopManager.buyItem(sender.getName(),arg1, arg2);
-			}
+			int arg2 = 1;
+			if(args.length == 3)
+				arg2 = Integer.parseInt(args[2]);
+			plugin.shopManager.buyItem(sender.getName(),arg1, arg2);
 		}
 	}
 	
