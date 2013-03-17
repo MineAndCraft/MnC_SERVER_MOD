@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
@@ -35,6 +36,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
 		GugaEvent.ClearAllGroups();
 		this.userManager.save();
+		this.extensionManager.disable();
 		GugaAnnouncement.SaveAnnouncements();
 		GugaRegionHandler.SaveRegions();
 		SpawnsHandler.SaveSpawns();
@@ -569,6 +571,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final CurrencyManager currencyManager = new CurrencyManager(this);
 	public final PlacesManager placesManager = new PlacesManager(this);
 	public final BanHandler banHandler = new BanHandler(this);
+	public final ExtensionManager extensionManager = new ExtensionManager(this);
 	
 	private static Guga_SERVER_MOD _instance;
 	private static boolean _enabled=false;
