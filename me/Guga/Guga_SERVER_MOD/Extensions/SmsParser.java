@@ -107,11 +107,11 @@ public class SmsParser extends Thread
 			switch(payed)
 			{
 				case 20:
-					return 250;
+					return 200;
 				case 50:
-					return 750;
+					return 600;
 				case 99:
-					return 1600;
+					return 1400;
 				default:
 					return 0;
 			}
