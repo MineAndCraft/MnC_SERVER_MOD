@@ -33,7 +33,7 @@ public abstract class GugaAnnouncement
 						position = 0;
 					}
 					msg=messages.get(position);
-					plugin.getServer().broadcastMessage(ChatColor.RED + msg);
+					plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + msg);
 					position++;
 				}
 			}
