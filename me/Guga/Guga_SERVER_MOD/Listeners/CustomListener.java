@@ -28,8 +28,8 @@ public class CustomListener implements Listener
 		Player p;
 		if(plugin.userManager.userIsRegistered(player))
 		{
-			plugin.currencyManager.addCredits(player, 5);
-			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "Hrac " + ChatColor.LIGHT_PURPLE + player + ChatColor.DARK_GREEN +" ziskava 5 kreditu, 3 diamanty a 1 emerald za hlasovani. Hlasuj take.");
+			plugin.currencyManager.addCredits(player, 1);
+			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "Hrac " + ChatColor.LIGHT_PURPLE + player + ChatColor.DARK_GREEN +" ziskava po 1 kreditu, 1 diamantu a 1 emeraldu za hlasovani. Hlasuj take.");
 			if((p = plugin.getServer().getPlayer(player)) != null)
 			{
 				give(p);
@@ -39,11 +39,11 @@ public class CustomListener implements Listener
 	}
 	public void give(Player p)
 	{
-		p.getInventory().addItem(new ItemStack(264, 3));
+		p.getInventory().addItem(new ItemStack(264, 1));
 		p.getInventory().addItem(new ItemStack(388, 1));
 	}
 	public ArrayList<String> notGifted= new ArrayList<String>();
-	public ItemStack gift_DIAMOND = new ItemStack(264, 3);
-	public ItemStack gift_EMERALD = new ItemStack(388, 3);
+	public ItemStack gift_DIAMOND = new ItemStack(264, 1);
+	public ItemStack gift_EMERALD = new ItemStack(388, 1);
 	private Guga_SERVER_MOD plugin;
 }
