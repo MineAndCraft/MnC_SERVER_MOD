@@ -2879,6 +2879,7 @@ public abstract class GugaCommands
 		}
 	}
 
+	@Deprecated
 	public static void CommandRegion(Player sender, String[] args)
 	{
 		if(!sender.isOp())

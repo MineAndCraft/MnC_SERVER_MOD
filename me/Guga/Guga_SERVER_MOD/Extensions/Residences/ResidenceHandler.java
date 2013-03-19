@@ -11,7 +11,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 
 import org.bukkit.entity.Player;
-
+@Deprecated
 public class ResidenceHandler
 {	
 	private static HashMap<String,ResidenceMark> markers = new HashMap<String,ResidenceMark>();
