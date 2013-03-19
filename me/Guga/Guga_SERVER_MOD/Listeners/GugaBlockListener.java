@@ -257,6 +257,13 @@ public class GugaBlockListener implements Listener
 				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper pod zamcenou truhlu");
 				return;
 			}
+			Block down = block.getRelative(BlockFace.DOWN);
+			if(Locker.LockableBlocks.isLockableBlock(down.getTypeId()) && plugin.blockLocker.IsLocked(down))
+			{
+				e.setCancelled(true);
+				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper nad zamcenou truhlu");
+				return;
+			}
 		}
 		
 		if(Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
