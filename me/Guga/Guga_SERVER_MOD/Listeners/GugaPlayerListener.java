@@ -469,7 +469,8 @@ public class GugaPlayerListener implements Listener
 					}
 				}
 			}
-			if(e.getItem().getTypeId() == 407 && (plugin.userManager.getUser(player.getName()).getProfession() == null || plugin.userManager.getUser(player.getName()).getProfession().GetLevel() < 50))
+			
+			if(e.getItem() != null && e.getItem().getTypeId() == 407 && (plugin.userManager.getUser(player.getName()).getProfession() == null || plugin.userManager.getUser(player.getName()).getProfession().GetLevel() < 50))
 			{
 				ChatHandler.FailMsg(player, "Nemate lvl 50, nemuzete pouzit TNT.");
 				e.setCancelled(true);
