@@ -411,7 +411,8 @@ public abstract class GugaCommands
 			String subCommand = args[0];
 			if (subCommand.matches("expiration"))
 			{
-				sender.sendMessage("Vase VIP vyprsi: " + new Date(vip.getExpiration()));
+				//TODO: use better time handler
+				sender.sendMessage("Vase VIP vyprsi: " + new Date(vip.getExpiration()*1000));
 			}
 			else if (subCommand.matches("tp"))
 			{
