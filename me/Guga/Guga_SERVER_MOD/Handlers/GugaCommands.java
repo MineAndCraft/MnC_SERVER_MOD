@@ -12,7 +12,6 @@ import me.Guga.Guga_SERVER_MOD.Enchantments;
 import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
-import me.Guga.Guga_SERVER_MOD.GugaAnnouncement;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
@@ -1639,7 +1638,6 @@ public abstract class GugaCommands
 				sender.sendMessage("/gm credits - Credits sub-menu.");
 				sender.sendMessage("/gm setvip <name> <months>  -  Set VIP to certain player for (now + months)");
 				sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
-				sender.sendMessage("/gm announce  - Announcements sub-menu.");
 				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
 				sender.sendMessage("/gm replace <typeID> <typeID2> <reltiveX> <relativeY> <relativeZ> - Replaces a blocks from block you point at.");
 				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
@@ -1961,50 +1959,6 @@ public abstract class GugaCommands
 			Location pLoc = sender.getLocation();
 			sender.getWorld().setSpawnLocation((int)pLoc.getX(), (int)pLoc.getY(), (int)pLoc.getZ());
 			sender.sendMessage("New World Spawn has been set!");
-		}
-		else if (subCommand.matches("announce") && GameMasterHandler.IsAdmin(sender.getName()))
-		{
-			if(args.length == 2 && args[1].matches("print"))
-			{
-				int i = 0;
-				String msg;
-				while ( (msg = GugaAnnouncement.GetAnnouncement(i)) != null)
-				{
-					sender.sendMessage("[" + i + "]  -  " + msg);
-					i++;
-				}
-			}
-			else if(args.length == 3 && args[1].matches("remove"))
-			{
-				int num = Integer.parseInt(args[2]);
-				if (GugaAnnouncement.RemoveAnnouncement(num))
-				{
-					sender.sendMessage("Announcement has been succesfuly removed.");
-				}
-				else
-				{
-					sender.sendMessage("This announcement doesnt exist!");
-				}
-			}
-			else if(args.length > 3 && arg1.matches("add"))
-			{
-				String msg = "";
-				int i = 2;
-				while (i < args.length)
-				{
-					msg += args[i];
-					msg += " ";
-					i++;
-				}
-				GugaAnnouncement.AddAnnouncement(msg);
-				sender.sendMessage("Announcement succesfuly added! <" + msg + ">");				
-			}
-			else if(args.length==0)
-			{
-				sender.sendMessage("/gm announce print - Prints messages and indexes.");
-				sender.sendMessage("/gm announce remove <index> - Removes a message from the list.");
-				sender.sendMessage("/gm announce add <message> - Adds new message to the list.");
-			}
 		}
 		else if (subCommand.matches("ban") && GameMasterHandler.IsAtleastGM(sender.getName()))
 		{

@@ -38,10 +38,7 @@ public abstract class AutoSaver
 	public static void SaveAll()
 	{
 		plugin.userManager.save();
-		GugaAnnouncement.SaveAnnouncements();
 		GugaRegionHandler.SaveRegions();
-		//GugaAuctionHandler.SaveAuctions();
-		//GugaAuctionHandler.SavePayments();
 		SpawnsHandler.SaveSpawns();
 		plugin.arena.SavePvpStats();
 		plugin.arena.SaveArenas();

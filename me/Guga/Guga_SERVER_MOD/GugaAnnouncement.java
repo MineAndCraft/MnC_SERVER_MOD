@@ -67,42 +67,7 @@ public abstract class GugaAnnouncement
 		}
 		return false;
 	}
-	public static void SaveAnnouncements()
-	{
-		plugin.log.info("Saving Announcement Data...");
-		File ann = new File(announcementFile);
-		if (!ann.exists())
-		{
-			try 
-			{
-				ann.createNewFile();
-				
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-		}
-		try 
-		{
-			FileWriter fStream = new FileWriter(ann, false);
-			BufferedWriter bWriter;
-			bWriter = new BufferedWriter(fStream);
-			String line;
-			Iterator<String> i = messages.iterator();
-			while (i.hasNext())
-			{
-				line = i.next();
-				bWriter.write(line);
-				bWriter.newLine();
-			}
-			
-			bWriter.close();
-			fStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+
 	public static void LoadAnnouncements()
 	{
 		plugin.log.info("Loading Announcement Data...");
@@ -149,6 +114,6 @@ public abstract class GugaAnnouncement
 	private static ArrayList<String> messages = new ArrayList<String>();
 	private static int position = 0;
 	private static int taskID;
-	private static String announcementFile = "plugins/MineAndCraft_plugin/Announcements.dat";
+	private static String announcementFile = "plugins/MineAndCraft_plugin/Announcements.ini";
 	private static Guga_SERVER_MOD plugin;
 }

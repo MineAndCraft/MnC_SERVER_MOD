@@ -37,7 +37,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaEvent.ClearAllGroups();
 		this.userManager.save();
 		this.extensionManager.disable();
-		GugaAnnouncement.SaveAnnouncements();
 		GugaRegionHandler.SaveRegions();
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
