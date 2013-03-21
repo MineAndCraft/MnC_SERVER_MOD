@@ -2704,15 +2704,17 @@ public abstract class GugaCommands
 				message.append(args[i]);
 			}
 		}
+		String msg = String.format("%sGMC[%s]: %s%s",ChatColor.DARK_AQUA,sender.getName(),ChatColor.WHITE,message);
 		int i = 0;
 		while(i < players.length)
 		{
 			if(GameMasterHandler.IsAtleastGM(players[i].getName()))
 			{
-				players[i].sendMessage(String.format("%sGMC[%s]: %s%s",ChatColor.DARK_AQUA,sender.getName(),ChatColor.WHITE,message));
+				players[i].sendMessage(msg);
 			}
 			i++;
 		}
+		plugin.getServer().getConsoleSender().sendMessage(msg);
 	}
 	
 	public static void CommandWorld(Player sender)
