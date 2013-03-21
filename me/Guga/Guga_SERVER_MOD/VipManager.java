@@ -48,7 +48,7 @@ public class VipManager
 	public void onVipLogOn(String name)
 	{
 		VipUser vip = getVip(name);
-		if(vip.getExpiration() < System.currentTimeMillis()/1000)
+		if(vip.getExpiration() < System.currentTimeMillis()/1000 && vip.getExpiration() != VIP_PERMANENT)
 		{
 			removeVip(name);
 			return;
