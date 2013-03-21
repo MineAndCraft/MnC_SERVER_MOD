@@ -103,7 +103,7 @@ public class GugaBlockListener implements Listener
 		}
 		
 		//UserRegions
-		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
 			ChatHandler.FailMsg(p, "You cannot dig here, there is an estate of another user.");
@@ -239,7 +239,7 @@ public class GugaBlockListener implements Listener
 		}
 		
 		//UserRegions
-		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
 			ChatHandler.FailMsg(p, "You cannot place here, there is an estate of another user.");
