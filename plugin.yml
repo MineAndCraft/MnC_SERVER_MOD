@@ -72,5 +72,5 @@ commands:
         description: Writes into GM chat
     announce:
         description: Announces a message server-wide
-    region:
+    estate:
         description: Command for user regions

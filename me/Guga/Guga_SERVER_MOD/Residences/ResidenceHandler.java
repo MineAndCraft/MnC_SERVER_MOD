@@ -1,24 +1,25 @@
-package me.Guga.Guga_SERVER_MOD.Extensions.Residences;
+package me.Guga.Guga_SERVER_MOD.Residences;
 
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.Guga.Guga_SERVER_MOD.DatabaseManager;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 
 import org.bukkit.entity.Player;
-@Deprecated
+
 public class ResidenceHandler
 {	
 	private static HashMap<String,ResidenceMark> markers = new HashMap<String,ResidenceMark>();
 	
 	public static int getResidenceId(int x,int z)
 	{
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT r.id as id FROM mnc_residences r WHERE r.x1 >= ? AND ? <= r.x2 AND r.z1 <= ? AND ? <= r.z2 LIMIT 1");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT r.id as id FROM mnc_residences r WHERE r.x1 <= ? AND ? <= r.x2 AND r.z1 <= ? AND ? <= r.z2 LIMIT 1");)
 		{
 			stat.setInt(1, x);
 			stat.setInt(2, x);
@@ -45,12 +46,14 @@ public class ResidenceHandler
 			m = new ResidenceMark();
 			m.x1 = x;
 			m.z1 = z;
+			m.p1 = true;
 			markers.put(playername.toLowerCase(), m);
 		}
 		else
 		{
 			m.x1 = x;
 			m.z1 = z;
+			m.p1 = true;
 		}
 	}
 	
@@ -62,63 +65,85 @@ public class ResidenceHandler
 			m = new ResidenceMark();
 			m.x2 = x;
 			m.z2 = z;
+			m.p2 = true;
 			markers.put(playername.toLowerCase(), m);
 		}
 		else
 		{
-			m.x1 = x;
-			m.z1 = z;
+			m.x2 = x;
+			m.z2 = z;
+			m.p2 = true;
 		}
 	}
 
 	public static void createResidence(Player player,String residence_name)
 	{
 		ResidenceMark m = markers.get(player.getName().toLowerCase());
-		if(m==null || m.x1 == null || m.x2 == null || m.z1 == null || m.z2 == null)
+		if(m==null || m.p1 == false || m.p2 == false)
 		{
-			ChatHandler.FailMsg(player, "[REGION] you have not selected residence");
+			ChatHandler.FailMsg(player, "[ESTATE] You have not selected the area for your new estate.");
 			return;
 		}
 		
-		int x1 = m.x1;
-		int x2 = m.x2;
-		int z1 = m.z1;
-		int z2 = m.z2;
+		residence_name = residence_name.trim().toLowerCase();
 		
-		if(x1 > x2)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*) as count FROM mnc_residences WHERE name = ?");)
 		{
-			int c = x1;
-			x1 = x2;
-			x2 = c;
+			stat.setString(1,residence_name);
+			try(ResultSet res = stat.executeQuery();)
+			{
+				if(res.next())
+				{
+					if(res.getInt("count") > 0)
+					{
+						ChatHandler.FailMsg(player, "[ESTATE] Estate with this name already exists, please choose a different name.");
+						return;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		if(z1 > z2)
+		int left = m.x1;
+		int right = m.x2;
+		int bottom = m.z1;
+		int top = m.z2;
+		
+		if(left > right)
 		{
-			int c = z1;
-			z1 = z2;
-			z2 = c;
+			int c = left;
+			left = right;
+			right = c;
 		}
 		
-		int width = Math.abs(Math.abs(x1)-Math.abs(x2)); 
-		int depth = Math.abs(Math.abs(z1)-Math.abs(z2));
+		if(bottom > top)
+		{
+			int c = bottom;
+			bottom = top;
+			top = c;
+		}
+		
+		int width = Math.abs(Math.abs(left)-Math.abs(right)); 
+		int depth = Math.abs(Math.abs(bottom)-Math.abs(top));
 		int size = width * depth;
 		
 		if(width > 60 || depth > 60)
 		{
-			ChatHandler.FailMsg(player, "[REGION] Zadny rozmer pozemku nesmi presahovat 60 bloku");
+			ChatHandler.FailMsg(player, "[ESTATE] None of the dimensions of your estate can excede 60 blocks.");
 			return;
 		}
 		
 		
 		if(size > 1000)
 		{
-			ChatHandler.FailMsg(player, "[REGION] Celkova velikost pozemku nesmi presahovat 1000 bloku");
+			ChatHandler.FailMsg(player, "[ESTATE] The area of your estate cannot be higher than 1000 blocks.");
 			return;
 		}
 		
 		if(size < 20)
 		{
-			ChatHandler.FailMsg(player, "[RGION] Celkova velikost pozemku musi byt vetsi nez 20 bloku");
+			ChatHandler.FailMsg(player, "[ESTATE] The area of your estate cannot be lower than 20 blocks.");
 			return;
 		}
 		
@@ -126,7 +151,7 @@ public class ResidenceHandler
 		
 		if(ratio > 6)
 		{
-			ChatHandler.FailMsg(player, "[RGION] Pomer stran musi byt mensi nez 1:6.");
+			ChatHandler.FailMsg(player, "[ESTATE] The ratio between two sides cannot be higher than 6:1 or lower than 1:6 respectively.");
 			return;
 		}
 		
@@ -146,7 +171,7 @@ public class ResidenceHandler
 		
 		if(!(available_residence_blocks > 0))
 		{
-			ChatHandler.FailMsg(player, "[REGION] Nemate uz zadne residence dostupne");
+			ChatHandler.FailMsg(player, "[ESTATE] You have no more blocks available for protection with estate system.");
 			return;
 		}
 		
@@ -154,39 +179,26 @@ public class ResidenceHandler
 		{
 			if(!r.GetWorld().equalsIgnoreCase("world"))
 				continue;
-			if( ((r.getX1() <= x1 && x1 <= r.getX2()) || (r.getX1() <= x2 && x2 <= r.getX2()) || (x1 <= r.getX1() && r.getX1() <= x2) || (x1 <= r.getX2() && r.getX2() <= x2))
-					&& ((r.getZ1() <= x1 && x1 <= r.getZ2()) || (r.getZ1() <= x2 && x2 <= r.getZ2()) || (x1 <= r.getZ1() && r.getZ1() <= x2) || (x1 <= r.getZ2() && r.getZ2() <= x2)) )
+			if( !( r.getX1() > right || r.getX2() < left || r.getZ2() < bottom || r.getZ1() > top))
 			{
-				ChatHandler.FailMsg(player, String.format("Vas pozemek nesmi protinat zadny region. Protina region %s",r.GetName()));
+				ChatHandler.FailMsg(player, String.format("[ESTATE] Your estate cannot colide with any of the GugaRegion protected areas. It colides with %s.",r.GetName()));
 				return;
 			}
 		}
 		
-		//check for colisions with existing regions
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*) as colision_count FROM mnc_residences WHERE ((? <= x1 AND x1 <= ?) OR (? <= x2 AND x2 <= ?) OR (x1 <= ? AND ? <= x2) OR (x1 <= ? AND ? <= x2)) AND ((? <= z1 AND z1 <= ?) OR (? <= z2 AND z2 <= ?) OR (z1 <= ? AND ? <= z2) OR (z1 <= ? AND ? <= z2))");)
+		//check for colisions with existing estates
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT name FROM mnc_residences WHERE NOT (x1 > ? OR x2 < ? OR z2 < ? OR z1 > ?)");)
 		{
-			stat.setInt(1, x1);
-			stat.setInt(2, x2);
-			stat.setInt(3, x1);
-			stat.setInt(4, x2);
-			stat.setInt(5, x1);
-			stat.setInt(6, x2);
-			
-			stat.setInt(7, x1);
-			stat.setInt(8, x2);
-			stat.setInt(9, x1);
-			stat.setInt(10, x2);
-			stat.setInt(11, x1);
-			stat.setInt(12, x2);
+			stat.setInt(1, right);
+			stat.setInt(2, left);
+			stat.setInt(3, bottom);
+			stat.setInt(4, top);
 			
 			ResultSet result = stat.executeQuery();
 			if(result.next())
 			{
-				if(result.getInt("colision_count") > 0)
-				{
-					ChatHandler.FailMsg(player, "Vas pozemek nesmi protinat uz existujici pozemek");
-					return;
-				}
+				ChatHandler.FailMsg(player, String.format("[ESTATE] Your estate cannot colide with another estate. It colides with %s",result.getString("name")));
+				return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -195,10 +207,10 @@ public class ResidenceHandler
 		
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_residences (owner_id,x1,x2,z1,z2,name) SELECT `id`,?,?,?,?,? FROM mnc_users WHERE username_clean = ?");)
 		{
-			stat.setInt(1, x1);
-			stat.setInt(2, x2);
-			stat.setInt(3, z1);
-			stat.setInt(4, z2);
+			stat.setInt(1, left);
+			stat.setInt(2, right);
+			stat.setInt(3, bottom);
+			stat.setInt(4, top);
 			stat.setString(5, residence_name);
 			stat.setString(6, player.getName().toLowerCase());
 			stat.executeUpdate();
@@ -207,11 +219,9 @@ public class ResidenceHandler
 			return;
 		}
 		
-		available_residence_blocks -= size;
-		
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_playermetadata SET available_residences = ? WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_playermetadata SET available_residence_blocks = (available_residence_blocks - (?)) WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
 		{
-			stat.setInt(1, available_residence_blocks);
+			stat.setInt(1, size);
 			stat.setString(2, player.getName().toLowerCase());
 			stat.executeUpdate();
 		} catch (Exception e) {
@@ -221,12 +231,8 @@ public class ResidenceHandler
 		
 		markers.remove(player.getName().toLowerCase());
 		
-		ChatHandler.SuccessMsg(player, "Pozemek vytvorena.");
-	}
-	
-	public static void playerLeaveCleanup(String playername)
-	{
-		markers.remove(playername.toLowerCase());
+		ChatHandler.SuccessMsg(player, "Your estate was created.");
+		Guga_SERVER_MOD.getInstance().log.info(String.format("Player '%s' created estate named '%s' with coordinates %d,%d,%d,%d",player.getName(),residence_name,left,top,right,bottom));
 	}
 
 	public static ArrayList<String> getResidencesOf(String playerName)
@@ -250,7 +256,7 @@ public class ResidenceHandler
 
 	public static String getResidenceOwner(String string)
 	{
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT u.username FROM mnc_user u LEFT JOIN mnc_residences r ON u.id = r.owner_id WHERE r.name = ? LIMIT 1");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT u.username FROM mnc_users u LEFT JOIN mnc_residences r ON u.id = r.owner_id WHERE r.name = ? LIMIT 1");)
 		{
 			stat.setString(1, string.toLowerCase());
 			ResultSet result = stat.executeQuery();
@@ -287,7 +293,7 @@ public class ResidenceHandler
 
 	public static boolean addResidenceAccess(String residence, String username)
 	{
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO mnc_residences_accesses (SELECT `id` FROM mnc_residences WHERE name = ?),(SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO mnc_residences_accesses VALUES((SELECT `id` FROM mnc_residences WHERE name = ? LIMIT 1),(SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1))");)
 		{
 			stat.setString(1, residence.toLowerCase());
 			stat.setString(2, username.toLowerCase());
@@ -306,7 +312,8 @@ public class ResidenceHandler
 		{
 			stat.setString(1, residence.toLowerCase());
 			stat.setString(2, username.toLowerCase());
-			return stat.executeUpdate()>0;
+			stat.executeUpdate();
+			return true;
 		}
 		catch(Exception e)
 		{
@@ -317,7 +324,7 @@ public class ResidenceHandler
 	
 	public static boolean hasGrantedAccess(String username, int residence_id)
 	{
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT '1' as permission FROM mnc_residences_accesses WHERE residence_id = ? AND user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT '1' as permission FROM mnc_residences_accesses ra JOIN mnc_users u ON u.id = ra.user_id WHERE ra.residence_id = ? AND u.username_clean = ? LIMIT 1");)
 		{
 			stat.setInt(1, residence_id);
 			stat.setString(2, username.toLowerCase());
@@ -336,11 +343,37 @@ public class ResidenceHandler
 
 	public static boolean removeResidence(String residence)
 	{
-		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_residences_accesses WHERE residence_id = (SELECT `id` FROM mnc_residences WHERE name = ? LIMIT 1);DELETE FROM mnc_residences WHERE name = ?");)
+		try
 		{
-			stat.setString(1, residence.toLowerCase());
-			stat.setString(2, residence.toLowerCase());
-			return stat.executeUpdate()>0;
+			int width=0;
+			int height=0;
+			int owner_id;
+			PreparedStatement stat1 = DatabaseManager.getConnection().prepareStatement("SELECT x1,x2,z1,z2,owner_id FROM mnc_residences WHERE name = ? LIMIT 1");
+			stat1.setString(1, residence.toLowerCase());
+			try(ResultSet rs = stat1.executeQuery();)
+			{
+				if(!rs.next())
+					return false;
+				width = Math.abs(Math.abs(rs.getInt("x1"))-Math.abs(rs.getInt("x2")));
+				height = Math.abs(Math.abs(rs.getInt("z1"))-Math.abs(rs.getInt("z2")));
+				owner_id = rs.getInt("owner_id");
+			}
+			
+			PreparedStatement stat2 = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_residences_accesses WHERE residence_id = (SELECT `id` FROM mnc_residences WHERE name = ? LIMIT 1)");
+			stat2.setString(1, residence.toLowerCase());
+			stat2.executeUpdate();
+			
+			PreparedStatement stat3 = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_residences WHERE name = ?");
+			stat3.setString(1, residence.toLowerCase());
+			stat3.executeUpdate();
+			
+			PreparedStatement stat4 = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_playermetadata SET available_residence_blocks = (available_residence_blocks + (?)) WHERE user_id = ?");
+			stat4.setInt(1, (int)Math.round(width*height*0.95));
+			stat4.setInt(2, owner_id);
+			stat4.executeUpdate();
+			
+			return true;
+			
 		}
 		catch(Exception e)
 		{

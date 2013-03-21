@@ -279,11 +279,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandAnnounce(sender,args);
 		 }
-		 //else if(cmd.getName().equalsIgnoreCase("region") && (sender instanceof Player))
-		 //{
-		 //	 GugaCommands.CommandRegion((Player)sender, args);
-		 //	 return true;
-		 //}
+		 else if(cmd.getName().equalsIgnoreCase("estate") && (sender instanceof Player))
+		 {
+		 	 GugaCommands.CommandEstate((Player)sender, args);
+		 	 return true;
+		 }
 		//*****************************************/unlock*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("unlock") && (sender instanceof Player))
 		 {

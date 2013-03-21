@@ -12,6 +12,7 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
+import me.Guga.Guga_SERVER_MOD.Residences.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -99,6 +100,13 @@ public class GugaBlockListener implements Listener
 		        }
 				return;
 			}
+		}
+		
+		//UserRegions
+		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		{
+			e.setCancelled(true);
+			ChatHandler.FailMsg(p, "You cannot dig here, there is an estate of another user.");
 		}
 		
 		GugaProfession2 prof = player.getProfession();
@@ -230,6 +238,12 @@ public class GugaBlockListener implements Listener
 			}
 		}
 		
+		//UserRegions
+		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()))
+		{
+			e.setCancelled(true);
+			ChatHandler.FailMsg(p, "You cannot place here, there is an estate of another user.");
+		}
 		
 		Block block = e.getBlockPlaced();
 		

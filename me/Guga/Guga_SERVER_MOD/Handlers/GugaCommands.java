@@ -26,7 +26,7 @@ import me.Guga.Guga_SERVER_MOD.Locker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
-import me.Guga.Guga_SERVER_MOD.Extensions.Residences.ResidenceHandler;
+import me.Guga.Guga_SERVER_MOD.Residences.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.ShopManager.ShopItem;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipItems;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipUser;
@@ -2879,72 +2879,68 @@ public abstract class GugaCommands
 		}
 	}
 
-	@Deprecated
-	public static void CommandRegion(Player sender, String[] args)
-	{
-		if(!sender.isOp())
-		{
-			return;
-		}
-		
+	public static void CommandEstate(Player sender, String[] args)
+	{		
 		if(args.length == 0)
 		{
-			sender.sendMessage("/region create <name>\n/region c1\n/region c2\n/region list\n/region access\n/region remove <name>");
+			sender.sendMessage("/estate create <name>\n/estate c1\n/estate c2\n/estate list\n/estate access\n/estate remove <name>");
 		}
 		else if(args[0].equalsIgnoreCase("create"))
 		{
 			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
 			{
-				ChatHandler.FailMsg(sender,"Regiony muzete vytvaret a upravovat jenom ve stavebnim svete.");
+				ChatHandler.FailMsg(sender,"You can create/edit estates only in the building world.");
 				return;
 			}
 			if(args.length >= 2)
 				ResidenceHandler.createResidence(sender, args[1].trim());
 			else
-				sender.sendMessage("Usage: /region create <name>");
+				sender.sendMessage("Usage: /estate create <name>");
 		}
 		else if(args[0].equalsIgnoreCase("list"))
 		{
 			ArrayList<String> list = ResidenceHandler.getResidencesOf(sender.getName());
-			sender.sendMessage("Your regions:\n "+list);
+			sender.sendMessage("Your estates:\n "+list);
 		}
 		else if(args[0].equalsIgnoreCase("c1"))
 		{
 			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
 			{
-				ChatHandler.FailMsg(sender,"Regiony muzete vytvaret a upravovat jenom ve stavebnim svete.");
+				ChatHandler.FailMsg(sender,"You can create/edit estates only in the building world.");
 				return;
 			}
 			ResidenceHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
+			sender.sendMessage(String.format("Position 1 marked %d,%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("c2"))
 		{
 			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
 			{
-				ChatHandler.FailMsg(sender,"Regiony muzete vytvaret a upravovat jenom ve stavebnim svete.");
+				ChatHandler.FailMsg(sender,"You can create/edit estates only in the building world.");
 				return;
 			}
 			ResidenceHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
+			sender.sendMessage(String.format("Position 2 marked %d,%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("access"))
 		{
 			if(args.length < 3)
 			{
-				sender.sendMessage("/region access <region> list");
-				sender.sendMessage("/region access <region> add <player>");
-				sender.sendMessage("/region access <region> remove <player>");
+				sender.sendMessage("/estate access <region> list");
+				sender.sendMessage("/estate access <region> add <player>");
+				sender.sendMessage("/estate access <region> remove <player>");
 			}
 			else
 			{
 				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
-					sender.sendMessage(String.format("Residence %s does not exist or is not yours",args[1]));
+					sender.sendMessage(String.format("Estate %s does not exist or is not yours",args[1]));
 					return;
 				}
 				
 				if(args[2].equalsIgnoreCase("list"))
 				{
-					sender.sendMessage(String.format("Folowing players can dig in %s residence:\n  %s",args[1],ResidenceHandler.getAllowedPlayers(args[1])));
+					sender.sendMessage(String.format("Following players can dig/place in %s estate:\n  %s",args[1],ResidenceHandler.getAllowedPlayers(args[1])));
 				}
 				else if(args[2].equalsIgnoreCase("add") && args.length==4)
 				{
@@ -2973,12 +2969,20 @@ public abstract class GugaCommands
 		else if(args[0].equalsIgnoreCase("remove"))
 		{
 			if(args.length >= 2)
+			{
+
+				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
+				{
+					sender.sendMessage(String.format("Estate %s does not exist or is not yours",args[1]));
+					return;
+				}
 				if(ResidenceHandler.removeResidence(args[1]))
-					ChatHandler.SuccessMsg(sender, "Region removed.");
+					ChatHandler.SuccessMsg(sender, "Estate removed.");
 				else
-					ChatHandler.FailMsg(sender, "Failed to remove region.");
+				ChatHandler.FailMsg(sender, "Failed to remove estate.");
+			}
 			else
-				sender.sendMessage("Usage: /region remove <name>");
+				sender.sendMessage("Usage: /estate remove <name>");
 		}
 	}
 	
