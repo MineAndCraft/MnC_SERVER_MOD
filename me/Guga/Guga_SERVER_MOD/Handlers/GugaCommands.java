@@ -2887,89 +2887,102 @@ public abstract class GugaCommands
 		}
 	}
 
-	public static void CommandEstate(Player sender, String[] args)
+	public static void CommandEstates(Player sender, String[] args)
 	{		
 		if(args.length == 0)
 		{
-			sender.sendMessage("/estate create <name>\n/estate c1\n/estate c2\n/estate list\n/estate access\n/estate remove <name>");
+			sender.sendMessage(ChatColor.YELLOW + "**********ESTATES menu**********");
+			sender.sendMessage(ChatColor.AQUA + "/estates c1 "+ ChatColor.WHITE + "- Oznaci prvni roh budouciho pozemku.");
+			sender.sendMessage(ChatColor.AQUA + "/estates c2 "+ ChatColor.WHITE + "- Oznaci druhy roh budouciho pozemku.");
+			sender.sendMessage(ChatColor.AQUA + "/estates create " + ChatColor.GRAY + "<jmeno> " + ChatColor.WHITE + "- Vytvori Vam novy pozemek na oznacenem uzemi.");
+			sender.sendMessage(ChatColor.AQUA + "/estates access "+ ChatColor.WHITE + "- Zobrazi nastaveni residenci.");
+			sender.sendMessage(ChatColor.AQUA + "/estates list "+ ChatColor.WHITE + "- Zobrazi seznam Vasich residenci.");
+			sender.sendMessage(ChatColor.AQUA + "/estates remove " + ChatColor.GRAY + "<jmeno> "+ ChatColor.WHITE + "- Smaze residenci a vrati 95% blocku.");
+			sender.sendMessage(ChatColor.AQUA + "/estates buy " + ChatColor.GRAY + "<pocetBlocku> " + ChatColor.WHITE + "- Dokoupi blocky, ktere muzete zamknout pomoci pozemku.");
+			sender.sendMessage(ChatColor.YELLOW + "********************************");
 		}
 		else if(args[0].equalsIgnoreCase("create"))
 		{
 			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
 			{
-				ChatHandler.FailMsg(sender,"You can create/edit estates only in the building world.");
+				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
 			if(args.length >= 2)
 				ResidenceHandler.createResidence(sender, args[1].trim());
 			else
-				sender.sendMessage("Usage: /estate create <name>");
+				sender.sendMessage("Pouziti: /estates create <jmeno>");
 		}
 		else if(args[0].equalsIgnoreCase("list"))
 		{
 			ArrayList<String> list = ResidenceHandler.getResidencesOf(sender.getName());
-			sender.sendMessage("Your estates:\n "+list);
+			sender.sendMessage(ChatColor.YELLOW + "**********Your ESTATES**********");
+			for(String estate : list)
+			{ 
+				sender.sendMessage(estate);
+			}
+			sender.sendMessage(ChatColor.YELLOW + "********************************");
 		}
 		else if(args[0].equalsIgnoreCase("c1"))
 		{
 			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
 			{
-				ChatHandler.FailMsg(sender,"You can create/edit estates only in the building world.");
+				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
 			ResidenceHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
-			sender.sendMessage(String.format("Position 1 marked %d,%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
+			sender.sendMessage(String.format("Pozice 1 ulozena X=%d, Z=%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("c2"))
 		{
 			if(!sender.getLocation().getWorld().getName().equalsIgnoreCase("world"))
 			{
-				ChatHandler.FailMsg(sender,"You can create/edit estates only in the building world.");
+				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
 			ResidenceHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
-			sender.sendMessage(String.format("Position 2 marked %d,%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
+			sender.sendMessage(String.format("Pozice 2 ulozena X=%d, Z=%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("access"))
 		{
 			if(args.length < 3)
 			{
-				sender.sendMessage("/estate access <region> list");
-				sender.sendMessage("/estate access <region> add <player>");
-				sender.sendMessage("/estate access <region> remove <player>");
+				sender.sendMessage("/estates access <region> list - Vypise seznam hracu s pravy na zadany pozemek.");
+				sender.sendMessage("/estates access <region> add <player> - Prida hraci prava na zadany pozemek.");
+				sender.sendMessage("/estates access <region> remove <player> - Odebere hraci prava na zadany pozemek.");
 			}
 			else
 			{
 				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
-					sender.sendMessage(String.format("Estate %s does not exist or is not yours",args[1]));
+					sender.sendMessage(String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
 					return;
 				}
 				
 				if(args[2].equalsIgnoreCase("list"))
 				{
-					sender.sendMessage(String.format("Following players can dig/place in %s estate:\n  %s",args[1],ResidenceHandler.getAllowedPlayers(args[1])));
+					sender.sendMessage(String.format("Tito hraci mohou kopat/pokladat blocky v %s estate:\n  %s",args[1],ResidenceHandler.getAllowedPlayers(args[1])));
 				}
 				else if(args[2].equalsIgnoreCase("add") && args.length==4)
 				{
 					if(ResidenceHandler.addResidenceAccess(args[1],args[3]))
 					{
-						ChatHandler.SuccessMsg(sender, "Access added");
+						ChatHandler.SuccessMsg(sender, "Hrac pridan.");
 					}
 					else
 					{
-						ChatHandler.FailMsg(sender, "Failed to add access");
+						ChatHandler.FailMsg(sender, "Nepodarilo se pridat prava.");
 					}
 				}
 				else if(args[2].equalsIgnoreCase("remove"))
 				{
 					if(ResidenceHandler.removeResidenceAccess(args[1],args[3]))
 					{
-						ChatHandler.SuccessMsg(sender, "Access removed");
+						ChatHandler.SuccessMsg(sender, "Hrac odebran.");
 					}
 					else
 					{
-						ChatHandler.FailMsg(sender, "Failed to remove access");
+						ChatHandler.FailMsg(sender, "Nepodarilo se odebrat prava.");
 					}
 				}
 			}
@@ -2981,16 +2994,34 @@ public abstract class GugaCommands
 
 				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
-					sender.sendMessage(String.format("Estate %s does not exist or is not yours",args[1]));
+					sender.sendMessage(String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
 					return;
 				}
 				if(ResidenceHandler.removeResidence(args[1]))
-					ChatHandler.SuccessMsg(sender, "Estate removed.");
+					ChatHandler.SuccessMsg(sender, "Pozemek odebran.");
 				else
-				ChatHandler.FailMsg(sender, "Failed to remove estate.");
+				ChatHandler.FailMsg(sender, "Nepodarilo se odebrat pozemek..");
 			}
 			else
-				sender.sendMessage("Usage: /estate remove <name>");
+				sender.sendMessage("Pouziti: /estates remove <jmeno>");
+		}
+		else if(args[0].equalsIgnoreCase("buy"))
+		{
+			if(args.length == 2)
+			{
+				int numberOfBlocks = Integer.parseInt(args[1]);
+				int price = (int)(numberOfBlocks * 0.2);
+				if(plugin.currencyManager.getBalance(sender.getName()) >= price)
+				{
+					ResidenceHandler.addAvailableResidenceBlocks(sender.getName(), numberOfBlocks);
+					plugin.currencyManager.addCredits(sender.getName(), -price);
+					ChatHandler.SuccessMsg(sender, "Blocky dokoupeny.");
+				}
+				else
+					ChatHandler.FailMsg(sender, "Nemate dostatek kreditu.");
+			}
+			else
+				sender.sendMessage("Pouziti: /estates buy <pocetBlocku>");
 		}
 	}
 	
