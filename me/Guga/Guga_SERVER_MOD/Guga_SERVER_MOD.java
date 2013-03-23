@@ -279,9 +279,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 GugaCommands.CommandAnnounce(sender,args);
 		 }
-		 else if(cmd.getName().equalsIgnoreCase("estate") && (sender instanceof Player))
+		 else if(cmd.getName().equalsIgnoreCase("estates") && (sender instanceof Player))
 		 {
-		 	 GugaCommands.CommandEstate((Player)sender, args);
+		 	 GugaCommands.CommandEstates((Player)sender, args);
 		 	 return true;
 		 }
 		//*****************************************/unlock*****************************************
