@@ -870,7 +870,13 @@ public abstract class GugaCommands
 					ChatHandler.FailMsg(sender, "Nemate dost kreditu. Place stoji 550.");
 					return;
 				}
-				if(plugin.placesManager.addTeleport(args1.trim(), sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), "private"))
+				String name = args1.trim();
+				if(!name.matches("[a-zA-Z][a-zA-Z0-9\\-\\_]+"))
+				{
+					ChatHandler.FailMsg(sender, "Jmeno portu musi byt minimalne 2 znaky dlouhe, muze obsahovat pouze pismena, cislice, znak '-', znak '_' a nesmi zacinat cislici.");
+					return;
+				}
+				if(plugin.placesManager.addTeleport(name, sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ(), sender.getLocation().getWorld().getName(), "private"))
 				{
 					plugin.currencyManager.addCredits(sender.getName(), -550);
 					ChatHandler.SuccessMsg(sender, "Place byl vytvoren");
