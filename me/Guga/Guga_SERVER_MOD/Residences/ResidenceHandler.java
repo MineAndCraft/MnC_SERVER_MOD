@@ -382,6 +382,33 @@ public class ResidenceHandler
 		return false;
 	}
 
+	public static int getAvailableResidenceBlocks(String username)
+	{
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT available_residence_blocks FROM mnc_playermetadata md JOIN mnc_users u ON u.id = md.user_id WHERE u.username_clean = ? LIMIT 1;");)
+		{
+			stat.setString(1, username.toLowerCase());
+			ResultSet res = stat.executeQuery();
+			if(res.next())
+				return res.getInt("available_residence_blocks");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public static boolean addAvailableResidenceBlocks(String username,int amount)
+	{
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_playermetadata SET available_residence_blocks = (available_residence_blocks + ( ? )) WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1) LIMIT 1");)
+		{
+			stat.setInt(1, amount);
+			stat.setString(2, username.toLowerCase());
+			return stat.executeUpdate()>0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @param playername Name of player
