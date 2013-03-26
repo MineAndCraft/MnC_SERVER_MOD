@@ -18,9 +18,14 @@ public final class Config
 	
 	public static String DATABASE_PASSWORD;
 	
-	
 	// other configuration files
 	public static String SHOP_CONFIG;
+	
+	
+	//chat configuration
+	public static long CHAT_ANNOUNCEMENTS_DELAY;
+	public static String CHAT_ANNOUNCEMENTS_FILE;
+	
 	
 	public void load(String config_path)
 	{
@@ -33,12 +38,16 @@ public final class Config
 			
 			//database config
 			DATABASE_DRIVER				= config.getProperty("DatabaseDriver", "com.mysql.jdbc.Driver");
-            DATABASE_URL				= config.getProperty("DatabaseURL", "jdbc:mysql://localhost/mineandcraft");
-            DATABASE_LOGIN				= config.getProperty("DatabaseLogin", "root");
-            DATABASE_PASSWORD			= config.getProperty("DatabasePassword", "");
-			
-            //other config files
-            SHOP_CONFIG					= config.getProperty("ShopConfigPath");
+			DATABASE_URL				= config.getProperty("DatabaseURL", "jdbc:mysql://localhost/mineandcraft");
+			DATABASE_LOGIN				= config.getProperty("DatabaseLogin", "root");
+			DATABASE_PASSWORD			= config.getProperty("DatabasePassword", "");
+
+			//other config files
+			SHOP_CONFIG					= config.getProperty("ShopConfigPath");
+
+			//chat config
+			CHAT_ANNOUNCEMENTS_DELAY 	= Long.parseLong(config.getProperty("ChatAnnouncementsDelay"));
+			CHAT_ANNOUNCEMENTS_FILE		= config.getProperty("ChatAnnouncementsFile");
 		}
 		catch(Exception e)
 		{
