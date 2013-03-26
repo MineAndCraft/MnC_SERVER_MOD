@@ -23,7 +23,7 @@ public class ShopManager
 	ShopManager(Guga_SERVER_MOD plugin)
 	{
 		this.plugin = plugin;
-		File configFile = new File(Guga_SERVER_MOD.shopItemConfigFilePath);
+		File configFile = new File(Config.SHOP_CONFIG);
 		this.itemConfig = YamlConfiguration.loadConfiguration(configFile);
 	}
 	
