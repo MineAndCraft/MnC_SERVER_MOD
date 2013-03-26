@@ -59,7 +59,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		dbConfig.connectDb();
 		
 		GugaCommands.SetPlugin(this);
-		GugaAnnouncement.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
@@ -113,8 +112,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaRegionHandler.LoadRegions();
 		blockLocker = new BlockLocker(this);
 		GameMasterHandler.LoadGMs();
-		GugaAnnouncement.LoadAnnouncements();
-		GugaAnnouncement.StartAnnouncing();
 		GugaPlayerListener.LoadCreativePlayers();
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
