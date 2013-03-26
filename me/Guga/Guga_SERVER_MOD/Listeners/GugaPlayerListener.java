@@ -15,7 +15,7 @@ import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
-import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
+import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;

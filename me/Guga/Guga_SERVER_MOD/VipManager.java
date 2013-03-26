@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TreeMap;
 
-import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
+import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

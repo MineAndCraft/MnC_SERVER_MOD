@@ -10,6 +10,7 @@ import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
+import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 
 public abstract class GameMasterHandler 
 {

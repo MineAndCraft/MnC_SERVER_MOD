@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
-import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
+import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 
 public class MessageListenerServer extends Thread
 {

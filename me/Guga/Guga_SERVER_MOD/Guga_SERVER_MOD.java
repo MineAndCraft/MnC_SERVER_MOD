@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
-import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
+import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;

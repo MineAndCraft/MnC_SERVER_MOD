@@ -1,4 +1,4 @@
-package me.Guga.Guga_SERVER_MOD.Handlers;
+package me.Guga.Guga_SERVER_MOD.chat;
 
 
 import java.sql.PreparedStatement;
@@ -14,6 +14,7 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
+import me.Guga.Guga_SERVER_MOD.Handlers.*;
 
 public class ChatHandler 
 {

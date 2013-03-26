@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
+import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.DataPager;
 import me.Guga.Guga_SERVER_MOD.Enchantments;
 import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
