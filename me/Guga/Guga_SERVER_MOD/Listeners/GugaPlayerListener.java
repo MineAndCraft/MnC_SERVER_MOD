@@ -13,7 +13,7 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
-import me.Guga.Guga_SERVER_MOD.Locker;
+import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.Handlers.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
@@ -477,7 +477,7 @@ public class GugaPlayerListener implements Listener
 				return;
 			}
 			
-			if (Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
+			if (BlockLocker.LockableBlocks.isLockableBlock(block.getTypeId()))
 			{
 				// *********************************CHEST OPENING*********************************
 				if(!(plugin.blockLocker.hasBlockAccess(player,block)|| GameMasterHandler.IsAtleastGM(player.getName()) ))

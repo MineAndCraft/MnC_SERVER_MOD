@@ -111,7 +111,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		loadVIPCodes();
 		loadCreditsCodes();
 		GugaRegionHandler.LoadRegions();
-		blockLocker = new Locker(this);
+		blockLocker = new BlockLocker(this);
 		GameMasterHandler.LoadGMs();
 		GugaAnnouncement.LoadAnnouncements();
 		GugaAnnouncement.StartAnnouncing();
@@ -557,7 +557,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final GugaEntityListener enListener = new GugaEntityListener(this);
 	public final GugaBlockListener bListener = new GugaBlockListener(this);
 	public final CustomListener customListener = new CustomListener(this);
-	public Locker blockLocker;
+	public BlockLocker blockLocker;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
 	public GugaEventWorld EventWorld = new GugaEventWorld(this);

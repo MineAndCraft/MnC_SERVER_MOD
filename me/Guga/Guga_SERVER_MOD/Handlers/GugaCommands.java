@@ -22,7 +22,7 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
-import me.Guga.Guga_SERVER_MOD.Locker;
+import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
@@ -185,7 +185,7 @@ public abstract class GugaCommands
 	{
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
-		if (Locker.LockableBlocks.isLockableBlock(blockType))
+		if (BlockLocker.LockableBlocks.isLockableBlock(blockType))
 		{
 			if (!plugin.blockLocker.IsLocked(chest))
 			{
@@ -234,7 +234,7 @@ public abstract class GugaCommands
 		Block chest = sender.getTargetBlock(null, 10);
 		int blockType = chest.getTypeId(); // chest = 54
 
-		if (Locker.LockableBlocks.isLockableBlock(blockType) && plugin.blockLocker.IsLocked(chest))
+		if (BlockLocker.LockableBlocks.isLockableBlock(blockType) && plugin.blockLocker.IsLocked(chest))
 		{ 
 			if (plugin.blockLocker.IsOwner(chest, sender.getName()) || GameMasterHandler.IsAtleastGM(sender.getName()))
 			{

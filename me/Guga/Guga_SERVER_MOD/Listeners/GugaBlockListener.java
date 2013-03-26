@@ -9,7 +9,7 @@ import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
 import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
-import me.Guga.Guga_SERVER_MOD.Locker;
+import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.Residences.ResidenceHandler;
@@ -123,7 +123,7 @@ public class GugaBlockListener implements Listener
 		}
 		//*************************************************************************
 		int blockType = targetBlock.getTypeId();
-		if (Locker.LockableBlocks.isLockableBlock(blockType))
+		if (BlockLocker.LockableBlocks.isLockableBlock(blockType))
 		{
 			if(plugin.blockLocker.IsLocked(targetBlock))
 			{
@@ -250,14 +250,14 @@ public class GugaBlockListener implements Listener
 		if(block.getTypeId() == 154) //hopper cannot be placed under a locked block
 		{
 			Block up = block.getRelative(BlockFace.UP);
-			if(Locker.LockableBlocks.isLockableBlock(up.getTypeId()) && plugin.blockLocker.IsLocked(up))
+			if(BlockLocker.LockableBlocks.isLockableBlock(up.getTypeId()) && plugin.blockLocker.IsLocked(up))
 			{
 				e.setCancelled(true);
 				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper pod zamcenou truhlu");
 				return;
 			}
 			Block down = block.getRelative(BlockFace.DOWN);
-			if(Locker.LockableBlocks.isLockableBlock(down.getTypeId()) && plugin.blockLocker.IsLocked(down))
+			if(BlockLocker.LockableBlocks.isLockableBlock(down.getTypeId()) && plugin.blockLocker.IsLocked(down))
 			{
 				e.setCancelled(true);
 				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper nad zamcenou truhlu");
@@ -265,9 +265,9 @@ public class GugaBlockListener implements Listener
 			}
 		}
 		
-		if(Locker.LockableBlocks.isLockableBlock(block.getTypeId()))
+		if(BlockLocker.LockableBlocks.isLockableBlock(block.getTypeId()))
 		{
-			if(block.getTypeId() == Locker.LockableBlocks.CHEST.getID() && !plugin.blockLocker.IsLocked(block))
+			if(block.getTypeId() == BlockLocker.LockableBlocks.CHEST.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				Block W=block.getRelative(BlockFace.WEST);
 				Block E=block.getRelative(BlockFace.EAST);
@@ -300,17 +300,17 @@ public class GugaBlockListener implements Listener
 					return;
 				}			
 			}
-			else if(block.getTypeId() == Locker.LockableBlocks.FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
+			else if(block.getTypeId() == BlockLocker.LockableBlocks.FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
 				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
 			}
-			else if(block.getTypeId() == Locker.LockableBlocks.BURNING_FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
+			else if(block.getTypeId() == BlockLocker.LockableBlocks.BURNING_FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
 				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
 			}
-			else if(block.getTypeId() == Locker.LockableBlocks.DISPENSER.getID() && !plugin.blockLocker.IsLocked(block))
+			else if(block.getTypeId() == BlockLocker.LockableBlocks.DISPENSER.getID() && !plugin.blockLocker.IsLocked(block))
 			{
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
 				ChatHandler.SuccessMsg(p, "Vas davkovac byl zamcen.");

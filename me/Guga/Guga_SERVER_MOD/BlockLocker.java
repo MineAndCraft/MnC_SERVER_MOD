@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class Locker 
+public class BlockLocker 
 {
-	Locker(Guga_SERVER_MOD plugin)
+	BlockLocker(Guga_SERVER_MOD plugin)
 	{
 		this.plugin = plugin;
 	}
@@ -155,7 +155,6 @@ public class Locker
 					e.printStackTrace();
 				}
 		}
-		//TODO: what about door? 
 		return uname;
 	}
 	
@@ -190,7 +189,6 @@ public class Locker
 					e.printStackTrace();
 				}
 		}
-		//TODO: what about door? 
 		return false;
 	}
 
@@ -233,7 +231,6 @@ public class Locker
 					e.printStackTrace();
 				}
 		}
-		//TODO: what about door? 
 		return false;
 	}
 }
