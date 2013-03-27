@@ -1,5 +1,9 @@
 package me.Guga.Guga_SERVER_MOD.chat;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
@@ -8,7 +12,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
+import me.Guga.Guga_SERVER_MOD.Config;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
@@ -18,6 +24,8 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
 public class Chat implements Listener
 {
 	final Guga_SERVER_MOD plugin = Guga_SERVER_MOD.getInstance();
+	
+	String motd = "";
 	
 	final HashMap<String,Long> chatMute = new HashMap<String,Long>();
 	boolean globalChatMute = false;
@@ -30,6 +38,7 @@ public class Chat implements Listener
 	
 	public void onEnable()
 	{
+		loadMOTD();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		this.announcer = new Announcements();
 	}
@@ -98,6 +107,32 @@ public class Chat implements Listener
 		}
 		return false;
 	}
+
+	public void loadMOTD()
+	{
+		plugin.log.info("[Chat] Loading MOTD.");
+		try
+		{
+			String newMOTD = "";
+			String line;
+			File file = new File(Config.CHAT_MOTD_FILE);
+			if(!file.exists())
+			{
+				plugin.log.info("[Chat] MOTD file '"+file.getCanonicalPath()+"' does not exist.");
+				return;
+			}
+			FileInputStream is = new FileInputStream(file);
+			BufferedReader input = new BufferedReader(new InputStreamReader(is));
+			while((line = input.readLine())!=null)
+				newMOTD += line;
+			this.motd = newMOTD;
+			plugin.log.info("[Chat] MOTD loaded.");
+		}
+		catch(Exception e)
+		{
+			plugin.log.info("[Chat] Loading MOTD failed: " + e.getMessage());
+		}
+	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event)
@@ -115,6 +150,13 @@ public class Chat implements Listener
 		}
 		else
 			this.sendChatMessage(player.getPlayerInstance(), event.getMessage());
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+	public void onPlayerJoin(PlayerJoinEvent event)
+	{
+		if(this.motd.length() > 0)
+			event.getPlayer().sendMessage(ChatColor.AQUA+"MOTD: "+motd);
 	}
 	
 	/**

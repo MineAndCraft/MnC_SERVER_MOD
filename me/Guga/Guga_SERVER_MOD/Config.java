@@ -25,6 +25,7 @@ public final class Config
 	//chat configuration
 	public static long CHAT_ANNOUNCEMENTS_DELAY;
 	public static String CHAT_ANNOUNCEMENTS_FILE;
+	public static String CHAT_MOTD_FILE;
 	
 	
 	public static void load(String config_path)
@@ -48,6 +49,7 @@ public final class Config
 			//chat config
 			CHAT_ANNOUNCEMENTS_DELAY 	= Long.parseLong(config.getProperty("ChatAnnouncementsDelay"));
 			CHAT_ANNOUNCEMENTS_FILE		= config.getProperty("ChatAnnouncementsFile");
+			CHAT_MOTD_FILE				= config.getProperty("ChatMotdFile");
 		}
 		catch(Exception e)
 		{
