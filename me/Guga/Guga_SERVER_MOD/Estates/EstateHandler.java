@@ -1,4 +1,4 @@
-package me.Guga.Guga_SERVER_MOD.Residences;
+package me.Guga.Guga_SERVER_MOD.Estates;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,9 +13,9 @@ import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 
 import org.bukkit.entity.Player;
 
-public class ResidenceHandler
+public class EstateHandler
 {	
-	private static HashMap<String,ResidenceMark> markers = new HashMap<String,ResidenceMark>();
+	private static HashMap<String,EstateMark> markers = new HashMap<String,EstateMark>();
 	
 	public static int getResidenceId(int x,int z)
 	{
@@ -40,10 +40,10 @@ public class ResidenceHandler
 	
 	public static void pos1(String playername,int x, int z)
 	{
-		ResidenceMark m = markers.get(playername.toLowerCase());
+		EstateMark m = markers.get(playername.toLowerCase());
 		if(m==null)
 		{
-			m = new ResidenceMark();
+			m = new EstateMark();
 			m.x1 = x;
 			m.z1 = z;
 			m.p1 = true;
@@ -59,10 +59,10 @@ public class ResidenceHandler
 	
 	public static void pos2(String playername,int x, int z)
 	{
-		ResidenceMark m = markers.get(playername.toLowerCase());
+		EstateMark m = markers.get(playername.toLowerCase());
 		if(m==null)
 		{
-			m = new ResidenceMark();
+			m = new EstateMark();
 			m.x2 = x;
 			m.z2 = z;
 			m.p2 = true;
@@ -78,7 +78,7 @@ public class ResidenceHandler
 
 	public static void createResidence(Player player,String residence_name)
 	{
-		ResidenceMark m = markers.get(player.getName().toLowerCase());
+		EstateMark m = markers.get(player.getName().toLowerCase());
 		if(m==null || m.p1 == false || m.p2 == false)
 		{
 			ChatHandler.FailMsg(player, "Nejdrive si vytycte oblast pro vas pozemek.");

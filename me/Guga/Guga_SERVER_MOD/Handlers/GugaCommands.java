@@ -11,6 +11,7 @@ import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.DataPager;
 import me.Guga.Guga_SERVER_MOD.Enchantments;
 import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
+import me.Guga.Guga_SERVER_MOD.Estates.EstateHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
@@ -26,7 +27,6 @@ import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
-import me.Guga.Guga_SERVER_MOD.Residences.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.ShopManager.ShopItem;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipItems;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipUser;
@@ -2910,13 +2910,13 @@ public abstract class GugaCommands
 				return;
 			}
 			if(args.length >= 2)
-				ResidenceHandler.createResidence(sender, args[1].trim());
+				EstateHandler.createResidence(sender, args[1].trim());
 			else
 				sender.sendMessage("Pouziti: /estates create <jmeno>");
 		}
 		else if(args[0].equalsIgnoreCase("list"))
 		{
-			ArrayList<String> list = ResidenceHandler.getResidencesOf(sender.getName());
+			ArrayList<String> list = EstateHandler.getResidencesOf(sender.getName());
 			sender.sendMessage(ChatColor.YELLOW + "**********Your ESTATES**********");
 			for(String estate : list)
 			{ 
@@ -2931,7 +2931,7 @@ public abstract class GugaCommands
 				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
-			ResidenceHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
+			EstateHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
 			sender.sendMessage(String.format("Pozice 1 ulozena X=%d, Z=%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("c2"))
@@ -2941,7 +2941,7 @@ public abstract class GugaCommands
 				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
-			ResidenceHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
+			EstateHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
 			sender.sendMessage(String.format("Pozice 2 ulozena X=%d, Z=%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("access"))
@@ -2954,7 +2954,7 @@ public abstract class GugaCommands
 			}
 			else
 			{
-				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
+				if(!EstateHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
 					sender.sendMessage(String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
 					return;
@@ -2962,11 +2962,11 @@ public abstract class GugaCommands
 				
 				if(args[2].equalsIgnoreCase("list"))
 				{
-					sender.sendMessage(String.format("Tito hraci mohou kopat/pokladat blocky v %s estate:\n  %s",args[1],ResidenceHandler.getAllowedPlayers(args[1])));
+					sender.sendMessage(String.format("Tito hraci mohou kopat/pokladat blocky v %s estate:\n  %s",args[1],EstateHandler.getAllowedPlayers(args[1])));
 				}
 				else if(args[2].equalsIgnoreCase("add") && args.length==4)
 				{
-					if(ResidenceHandler.addResidenceAccess(args[1],args[3]))
+					if(EstateHandler.addResidenceAccess(args[1],args[3]))
 					{
 						ChatHandler.SuccessMsg(sender, "Hrac pridan.");
 					}
@@ -2977,7 +2977,7 @@ public abstract class GugaCommands
 				}
 				else if(args[2].equalsIgnoreCase("remove"))
 				{
-					if(ResidenceHandler.removeResidenceAccess(args[1],args[3]))
+					if(EstateHandler.removeResidenceAccess(args[1],args[3]))
 					{
 						ChatHandler.SuccessMsg(sender, "Hrac odebran.");
 					}
@@ -2993,12 +2993,12 @@ public abstract class GugaCommands
 			if(args.length >= 2)
 			{
 
-				if(!ResidenceHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
+				if(!EstateHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
 					sender.sendMessage(String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
 					return;
 				}
-				if(ResidenceHandler.removeResidence(args[1]))
+				if(EstateHandler.removeResidence(args[1]))
 					ChatHandler.SuccessMsg(sender, "Pozemek odebran.");
 				else
 				ChatHandler.FailMsg(sender, "Nepodarilo se odebrat pozemek..");
@@ -3014,7 +3014,7 @@ public abstract class GugaCommands
 				int price = (int)(numberOfBlocks * 0.2);
 				if(plugin.currencyManager.getBalance(sender.getName()) >= price)
 				{
-					ResidenceHandler.addAvailableResidenceBlocks(sender.getName(), numberOfBlocks);
+					EstateHandler.addAvailableResidenceBlocks(sender.getName(), numberOfBlocks);
 					plugin.currencyManager.addCredits(sender.getName(), -price);
 					ChatHandler.SuccessMsg(sender, "Blocky dokoupeny.");
 				}

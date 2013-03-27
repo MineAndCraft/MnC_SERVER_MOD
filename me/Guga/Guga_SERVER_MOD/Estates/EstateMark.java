@@ -1,6 +1,6 @@
-package me.Guga.Guga_SERVER_MOD.Residences;
+package me.Guga.Guga_SERVER_MOD.Estates;
 
-class ResidenceMark
+class EstateMark
 {
 	public int x1 = 0;
 	public int x2 = 0;

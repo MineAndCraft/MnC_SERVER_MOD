@@ -10,9 +10,9 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
+import me.Guga.Guga_SERVER_MOD.Estates.EstateHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
-import me.Guga.Guga_SERVER_MOD.Residences.ResidenceHandler;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
@@ -103,7 +103,7 @@ public class GugaBlockListener implements Listener
 		}
 		
 		//UserRegions
-		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
+		if(!EstateHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
 			ChatHandler.FailMsg(p, "You cannot dig here, there is an estate of another user.");
@@ -239,7 +239,7 @@ public class GugaBlockListener implements Listener
 		}
 		
 		//UserRegions
-		if(!ResidenceHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
+		if(!EstateHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
 			ChatHandler.FailMsg(p, "You cannot place here, there is an estate of another user.");
