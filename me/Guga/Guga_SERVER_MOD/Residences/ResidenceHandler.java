@@ -81,7 +81,7 @@ public class ResidenceHandler
 		ResidenceMark m = markers.get(player.getName().toLowerCase());
 		if(m==null || m.p1 == false || m.p2 == false)
 		{
-			ChatHandler.FailMsg(player, "[ESTATE] You have not selected the area for your new estate.");
+			ChatHandler.FailMsg(player, "Nejdrive si vytycte oblast pro vas pozemek.");
 			return;
 		}
 		
@@ -96,7 +96,7 @@ public class ResidenceHandler
 				{
 					if(res.getInt("count") > 0)
 					{
-						ChatHandler.FailMsg(player, "[ESTATE] Estate with this name already exists, please choose a different name.");
+						ChatHandler.FailMsg(player, "Pozemek s timto jmenem jiz existuje.");
 						return;
 					}
 				}
@@ -130,20 +130,20 @@ public class ResidenceHandler
 		
 		if(width > 60 || depth > 60)
 		{
-			ChatHandler.FailMsg(player, "[ESTATE] None of the dimensions of your estate can excede 60 blocks.");
+			ChatHandler.FailMsg(player, "Zadna se stran pozemku nemuze byt vetsi nez 60 blocku.");
 			return;
 		}
 		
 		
 		if(size > 1000)
 		{
-			ChatHandler.FailMsg(player, "[ESTATE] The area of your estate cannot be higher than 1000 blocks.");
+			ChatHandler.FailMsg(player, "Plocha pozemku nemuze byt vetsi nez 1000 blocku.");
 			return;
 		}
 		
 		if(size < 20)
 		{
-			ChatHandler.FailMsg(player, "[ESTATE] The area of your estate cannot be lower than 20 blocks.");
+			ChatHandler.FailMsg(player, "Plocha pozemku nemuze byt mensi nez 20 blocku.");
 			return;
 		}
 		
@@ -151,7 +151,7 @@ public class ResidenceHandler
 		
 		if(ratio > 6)
 		{
-			ChatHandler.FailMsg(player, "[ESTATE] The ratio between two sides cannot be higher than 6:1 or lower than 1:6 respectively.");
+			ChatHandler.FailMsg(player, "Minimalni pomer stran cini 1:6.");
 			return;
 		}
 		
@@ -171,7 +171,7 @@ public class ResidenceHandler
 		
 		if(!(available_residence_blocks > 0))
 		{
-			ChatHandler.FailMsg(player, "[ESTATE] You have no more blocks available for protection with estate system.");
+			ChatHandler.FailMsg(player, "Nemate zakoupene dostatecne mnozstvi blocku na ochranu. Muzete je dokoupit prikazem /estates buy <pocet>");
 			return;
 		}
 		
@@ -181,7 +181,7 @@ public class ResidenceHandler
 				continue;
 			if( !( r.getX1() > right || r.getX2() < left || r.getZ2() < bottom || r.getZ1() > top))
 			{
-				ChatHandler.FailMsg(player, String.format("[ESTATE] Your estate cannot colide with any of the GugaRegion protected areas. It colides with %s.",r.GetName()));
+				ChatHandler.FailMsg(player, String.format("Pozemek koliduje s pozemkem serveru. Koliduje s %s.",r.GetName()));
 				return;
 			}
 		}
@@ -197,7 +197,7 @@ public class ResidenceHandler
 			ResultSet result = stat.executeQuery();
 			if(result.next())
 			{
-				ChatHandler.FailMsg(player, String.format("[ESTATE] Your estate cannot colide with another estate. It colides with %s",result.getString("name")));
+				ChatHandler.FailMsg(player, String.format("Pozemek koliduje s jinym pozemkem. Koliduje s %s",result.getString("name")));
 				return;
 			}
 		} catch (Exception e) {
@@ -231,7 +231,7 @@ public class ResidenceHandler
 		
 		markers.remove(player.getName().toLowerCase());
 		
-		ChatHandler.SuccessMsg(player, "Your estate was created.");
+		ChatHandler.SuccessMsg(player, "Pozemek byl vytvoren.");
 		Guga_SERVER_MOD.getInstance().log.info(String.format("Player '%s' created estate named '%s' with coordinates %d,%d,%d,%d",player.getName(),residence_name,left,top,right,bottom));
 	}
 
