@@ -31,7 +31,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Guga_SERVER_MOD extends JavaPlugin
-{	
+{
+	public Guga_SERVER_MOD()
+	{
+		_instance = this;
+	}
+	
 	public void onDisable() 
 	{
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
@@ -48,7 +53,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 
 	public void onEnable() 
 	{
-		_instance = this;
 		_enabled = true;
 		
 		PluginManager pManager = this.getServer().getPluginManager();
