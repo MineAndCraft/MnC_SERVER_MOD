@@ -84,9 +84,13 @@ public class ResidenceHandler
 			ChatHandler.FailMsg(player, "Nejdrive si vytycte oblast pro vas pozemek.");
 			return;
 		}
-		
+			
 		residence_name = residence_name.trim().toLowerCase();
-		
+		if(!residence_name.matches("[a-zA-Z][a-zA-Z0-9\\-\\_]+"))
+		{
+			ChatHandler.FailMsg(player, "Jmeno pozemku musi byt minimalne 2 znaky dlouhe, muze obsahovat pouze pismena, cislice, znak '-', znak '_' a nesmi zacinat cislici.");
+			return;
+		}
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*) as count FROM mnc_residences WHERE name = ?");)
 		{
 			stat.setString(1,residence_name);
