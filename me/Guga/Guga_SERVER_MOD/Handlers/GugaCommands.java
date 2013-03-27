@@ -17,7 +17,6 @@ import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
-import me.Guga.Guga_SERVER_MOD.GugaMute;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.GugaRegion;
@@ -1545,14 +1544,14 @@ public abstract class GugaCommands
 	          {
 	            if (args[1].toLowerCase().matches("list"))
 	            {
-	              GugaMute.printPlayers(sender);
+	              plugin.chat.printMutedPlayers(sender);
 	            }
 	          }
 	          else if (args.length == 4)
 	          {
 	            if (args[1].toLowerCase().matches("add"))
 	            {
-	              GugaMute.addPlayer(args[2], Integer.parseInt(args[3]));
+	              plugin.chat.mutePlayer(args[2], Integer.parseInt(args[3]));
 	              ChatHandler.SuccessMsg(sender, "Hrac byl ztlumen.");
 	            }
 	          }
@@ -1810,11 +1809,12 @@ public abstract class GugaCommands
 			{
 				if(args[1].matches("list"))
 				{
-					GugaMute.printPlayers(((Player)sender));
+					plugin.chat.printMutedPlayers(((Player)sender));
 				}
 				if(args[1].matches("all"))
 				{
-					boolean status = GugaMute.toggleChatMute();
+					boolean status = !plugin.chat.isGlobalMute();
+					plugin.chat.setGlobalMute(status);
 					if(status==true)
 						sender.sendMessage("Mute for all players is on.");
 					else
@@ -1832,7 +1832,7 @@ public abstract class GugaCommands
 					{
 						if(player[i].getName().equalsIgnoreCase(args[2]))
 						{
-							GugaMute.addPlayer(args[2],Integer.parseInt(args[3]));
+							plugin.chat.mutePlayer(args[2],Integer.parseInt(args[3]));
 							player[i].sendMessage(ChatColor.RED+("Byl jste ztlumen na " + args[3]+" minut!"));
 							sender.sendMessage("Player " + player[i].getName() + " was muted!");
 							isOnline=true;
