@@ -26,9 +26,12 @@ public class Chat implements Listener
 	
 	public Chat()
 	{
+	}
+	
+	public void onEnable()
+	{
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		this.announcer = new Announcements(); 
-		this.announcer.start();
+		this.announcer = new Announcements();
 	}
 	
 	public void onDisable()
