@@ -146,10 +146,6 @@ public class ChatHandler
 		return name;
 	}
 	
-	public static void teamChat(String message)
-	{
-	}
-	
 	public static boolean addBlocklist(Player sender, String blocked)
 	{
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO mnc_chat_blocklist (user_id,blocked_id) SELECT ?,`id` FROM mnc_users WHERE username_clean = ?;");)
