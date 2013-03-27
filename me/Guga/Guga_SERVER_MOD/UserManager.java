@@ -12,19 +12,25 @@ import org.bukkit.entity.Player;
 
 public class UserManager
 {
-	private static Guga_SERVER_MOD plugin;
-
-	private TreeMap<String,MinecraftPlayer> playerStorage = new TreeMap<String,MinecraftPlayer>();	
+	private static UserManager _instance;
 	
+	private Guga_SERVER_MOD plugin;
+
+	private TreeMap<String,MinecraftPlayer> players = new TreeMap<String,MinecraftPlayer>();	
 	
 	UserManager (Guga_SERVER_MOD gugaSM)
 	{
+		_instance = this;
 		plugin = gugaSM;
+	}
+	
+	public static UserManager getInstance(){
+		return _instance;
 	}
 	
 	public synchronized boolean userIsLogged(String playerName)
 	{
-		MinecraftPlayer pl = playerStorage.get(playerName.toLowerCase());
+		MinecraftPlayer pl = players.get(playerName.toLowerCase());
 		if(pl!=null && pl.isAuthenticated())
 			return true;
 		return false;
@@ -56,7 +62,7 @@ public class UserManager
 
 		MinecraftPlayer pl = null;
 		pl = new MinecraftPlayer(player);
-		this.playerStorage.put(player.getName().toLowerCase(), pl);
+		this.players.put(player.getName().toLowerCase(), pl);
 		final String playerName = player.getName();
 		if(pl.getRank() == PlayerRankState.REGISTERED)
 		{
@@ -100,7 +106,7 @@ public class UserManager
 	
 	public void logoutUser(String name)
 	{
-		MinecraftPlayer player = this.playerStorage.remove(name.toLowerCase());
+		MinecraftPlayer player = this.players.remove(name.toLowerCase());
 		if(player == null)
 			return;
 		if(player.getState() == ConnectionState.AUTHENTICATED)
@@ -115,7 +121,7 @@ public class UserManager
 
 	public MinecraftPlayer getUser(String name)
 	{
-		return this.playerStorage.get(name.toLowerCase());
+		return this.players.get(name.toLowerCase());
 	}
 	
 	public int getUserId(String name)
@@ -141,7 +147,7 @@ public class UserManager
 
 	public synchronized void save()
 	{
-		for(MinecraftPlayer p : this.playerStorage.values())
+		for(MinecraftPlayer p : this.players.values())
 			p.save();
 	}
 
@@ -197,9 +203,9 @@ public class UserManager
 		}
 		if(!s)
 			return false;
-		this.playerStorage.remove(sender.getName().toLowerCase());
+		this.players.remove(sender.getName().toLowerCase());
 		MinecraftPlayer pl = new MinecraftPlayer(sender);
-		this.playerStorage.put(sender.getName().toLowerCase(), pl);
+		this.players.put(sender.getName().toLowerCase(), pl);
 		return true;
 	}
 }
