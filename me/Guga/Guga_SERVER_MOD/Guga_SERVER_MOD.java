@@ -47,6 +47,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
+		chat.onDisable();
 		dbConfig.disconnectDb();
 		_enabled = false;
 	}
