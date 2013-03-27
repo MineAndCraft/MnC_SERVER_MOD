@@ -2,7 +2,6 @@ package me.Guga.Guga_SERVER_MOD;
 
 import java.security.MessageDigest;
 import java.util.Formatter;
-import java.util.concurrent.Callable;
 
 import org.bukkit.entity.Player;
 
@@ -34,13 +33,11 @@ public class Util
 
 	public static synchronized void threadSafeKickPlayer(final Player player,final String message)
 	{
-		Guga_SERVER_MOD.getInstance().getServer().getScheduler().callSyncMethod(Guga_SERVER_MOD.getInstance(), new Callable<Boolean>(){
-			@Override
-			public Boolean call(){
+		Guga_SERVER_MOD.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Guga_SERVER_MOD.getInstance(), new Runnable(){
+			public void run(){
 				try{
 					player.kickPlayer(message);
-				}catch(Exception e){}
-				return true;							
+				}catch(Exception e){}						
 			}
 		});
 	}
