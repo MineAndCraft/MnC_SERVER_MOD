@@ -1,6 +1,5 @@
 package me.Guga.Guga_SERVER_MOD.chat;
 
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -9,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.Guga.Guga_SERVER_MOD.DatabaseManager;
-import me.Guga.Guga_SERVER_MOD.GugaMute;
 import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
@@ -18,63 +16,8 @@ import me.Guga.Guga_SERVER_MOD.Handlers.*;
 
 public class ChatHandler 
 {
-	public static Guga_SERVER_MOD plugin;
-	
-	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
-	{
-		plugin = gugaSM;
-	}
-	
-	public static void SendChatMessage(Player sender, String message)
-	{
-		if(GugaMute.getPlayerStatus(sender.getName()))
-		{
-			FailMsg(sender, "Jste ztlumen! Nemuzete psat.");
-			return;
-		}
-		if(GugaMute.statusChatMute() && !GameMasterHandler.IsAtleastGM(sender.getName()))
-		{
-			FailMsg(sender, "Chat je nyni dostupny pouze pro ADMINy/GM");
-		}
-		
-		ChatColor messageColor = ChatColor.WHITE;
-		
-		if(GameMasterHandler.IsAtleastRank(sender.getName(),Rank.HELPER) && !GugaCommands.disabledGMs.contains(sender.getName()))
-		{
-			if(GameMasterHandler.IsRank(sender.getName(), Rank.GAMEMASTER))
-			{
-				messageColor = ChatColor.GREEN;
-			}
-			else if(GameMasterHandler.IsRank(sender.getName(), Rank.BUILDER))
-			{
-				messageColor = ChatColor.GOLD;
-			}
-			else if(GameMasterHandler.IsRank(sender.getName(), Rank.HELPER))
-			{
-				messageColor = ChatColor.BLUE;
-			}
-			else if(GameMasterHandler.IsRank(sender.getName(), Rank.ADMIN))
-			{
-				messageColor = ChatColor.AQUA;
-			}
-		}
-		else if(plugin.vipManager.isVip(sender.getName()))
-		{
-			 messageColor = ChatColor.GOLD;
-		}
-		else
-		{
-			messageColor = ChatColor.WHITE;
-		}
-		
-		if(message.replaceAll(" ","").matches("[A-Z]{5,}") && !GameMasterHandler.IsAtleastGM(sender.getName()))
-		{
-			message = message.toLowerCase();
-		}
-		
-		plugin.getServer().broadcastMessage(String.format("<%s> %s%s",sender.getDisplayName(),messageColor.toString(),message));	
-	}
-	
+	static Guga_SERVER_MOD plugin = Guga_SERVER_MOD.getInstance();
+			
 	public static void SuccessMsg(Player p, String message)
 	{
 		p.sendMessage(ChatColor.GREEN + message);
@@ -83,18 +26,6 @@ public class ChatHandler
 	public static void FailMsg(Player p, String message)
 	{
 		p.sendMessage(ChatColor.DARK_RED + message);
-	}
-	
-	public static void printCommand(Player p, String commandLabel, String args[], String description)
-	{
-		int i = 0;
-		String argsString = ChatColor.GRAY + "";
-		while(i < args.length)
-		{
-			argsString += "<" + args[i] + "> ";
-			i++;
-		}
-		p.sendMessage(ChatColor.AQUA + commandLabel + " " + argsString + ChatColor.WHITE + description);
 	}
 	
 	public static void InfoMsg(Player p, String message)
@@ -184,16 +115,6 @@ public class ChatHandler
 		InitializeDisplayName(p);
 	}
 	
-	public static boolean PerformChatCommand(Player sender, String message)
-	{
-		if(message.startsWith("@"))
-		{
-			sender.chat("/tell "+message.substring(1));
-			return true;
-		}
-		return false;
-	}
-	
 	private static String _getPrefixString(Player player,String prefix)
 	{
 		return prefix.toUpperCase() + "'" + player.getName();
@@ -223,16 +144,6 @@ public class ChatHandler
 			name = player.getName();
 		}
 		return name;
-	}
-	
-	public static void Chat(Player player, String message)
-	{
-		if(PerformChatCommand(player,message))
-		{
-			
-		}
-		else
-			SendChatMessage(player, message);	
 	}
 	
 	public static void teamChat(String message)

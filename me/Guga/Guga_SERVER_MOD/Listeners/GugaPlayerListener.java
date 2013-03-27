@@ -270,12 +270,6 @@ public class GugaPlayerListener implements Listener
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
 		}
-		e.setCancelled(true);
-		if (!plugin.userManager.userIsLogged(p.getName()))
-		{
-			return;
-		}
-		ChatHandler.Chat(p,e.getMessage());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

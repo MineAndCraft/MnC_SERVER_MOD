@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
+import me.Guga.Guga_SERVER_MOD.chat.Chat;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
@@ -64,7 +65,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GameMasterHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
-		ChatHandler.SetPlugin(this);
 		BasicWorld.Init(this);
 		SpawnsHandler.SetPlugin(this);
 		HomesHandler.setPlugin(this);
@@ -562,6 +562,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public ArrayList<String> vipCodes = new ArrayList<String>();
 
 	public final UserManager userManager = new UserManager(this);
+	public final Chat chat = new Chat();
 	public final VipManager vipManager = new VipManager(this);
 	public final ShopManager shopManager = new ShopManager(this);
 	public final CurrencyManager currencyManager = new CurrencyManager(this);
