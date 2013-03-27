@@ -35,6 +35,19 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public Guga_SERVER_MOD()
 	{
 		_instance = this;
+		
+		Config.load("plugins/MineAndCraft_plugin/config.properties");
+		
+		this.dbConfig.connectDb();
+		
+		userManager = new UserManager(this);
+		chat = new Chat();
+		vipManager = new VipManager(this);
+		shopManager = new ShopManager(this);
+		currencyManager = new CurrencyManager(this);
+		placesManager = new PlacesManager(this);
+		banHandler = new BanHandler(this);
+		extensionManager = new ExtensionManager(this);
 	}
 	
 	public void onDisable() 
@@ -62,8 +75,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvents(enListener, this);
 		pManager.registerEvents(customListener, this);
 		
-		dbConfig.connectDb();
-		
+		chat.onEnable();		
+
 		GugaCommands.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
@@ -566,14 +579,14 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public ArrayList<String> creditsCodes = new ArrayList<String>();
 	public ArrayList<String> vipCodes = new ArrayList<String>();
 
-	public final UserManager userManager = new UserManager(this);
-	public final Chat chat = new Chat();
-	public final VipManager vipManager = new VipManager(this);
-	public final ShopManager shopManager = new ShopManager(this);
-	public final CurrencyManager currencyManager = new CurrencyManager(this);
-	public final PlacesManager placesManager = new PlacesManager(this);
-	public final BanHandler banHandler = new BanHandler(this);
-	public final ExtensionManager extensionManager = new ExtensionManager(this);
+	public final UserManager userManager;
+	public final Chat chat;
+	public final VipManager vipManager;
+	public final ShopManager shopManager;
+	public final CurrencyManager currencyManager;
+	public final PlacesManager placesManager;
+	public final BanHandler banHandler;
+	public final ExtensionManager extensionManager;
 	
 	private static Guga_SERVER_MOD _instance;
 	private static boolean _enabled=false;

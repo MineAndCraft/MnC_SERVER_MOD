@@ -27,7 +27,7 @@ public final class Config
 	public static String CHAT_ANNOUNCEMENTS_FILE;
 	
 	
-	public void load(String config_path)
+	public static void load(String config_path)
 	{
 		_log.info("Loading config.");
 		try{
