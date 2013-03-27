@@ -69,10 +69,16 @@ public class GugaProfession2 extends GugaProfession
 	@Deprecated
 	public String GetPlayerName(){ return "";}
 	
+	/**
+	 * 
+	 * @param name Name of the player
+	 * @param playerId Id of the player (This is actually used to load the profession data)
+	 * @return null if there is no profession for player playerId, valid GugaProfession2 class instance otherwise 
+	 */
 	public static GugaProfession2 loadProfession(String name,int playerId)
 	{
 		if(playerId==0)
-			return new DummyGugaProfession();
+			return null;
 				
 		GugaProfession2 profession = null;
 		try(PreparedStatement stat = Guga_SERVER_MOD.getInstance().dbConfig.getConection().prepareStatement("SELECT experience FROM `mnc_profession` WHERE user_id=?");)
