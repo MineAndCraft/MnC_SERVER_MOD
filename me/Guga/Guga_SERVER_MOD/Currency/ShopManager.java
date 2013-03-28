@@ -1,9 +1,11 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Currency;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
+import me.Guga.Guga_SERVER_MOD.Config;
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 
 import org.bukkit.ChatColor;
@@ -20,7 +22,7 @@ public class ShopManager
 	private FileConfiguration itemConfig;
 	private Guga_SERVER_MOD plugin;
 	
-	ShopManager(Guga_SERVER_MOD plugin)
+	public ShopManager(Guga_SERVER_MOD plugin)
 	{
 		this.plugin = plugin;
 		File configFile = new File(Config.SHOP_CONFIG);

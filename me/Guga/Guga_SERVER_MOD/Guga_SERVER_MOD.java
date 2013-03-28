@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import me.Guga.Guga_SERVER_MOD.Currency.CurrencyHandler;
+import me.Guga.Guga_SERVER_MOD.Currency.ShopManager;
 import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
 import me.Guga.Guga_SERVER_MOD.chat.Chat;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
@@ -45,7 +47,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		chat = new Chat();
 		vipManager = new VipManager(this);
 		shopManager = new ShopManager(this);
-		currencyManager = new CurrencyManager(this);
+		currencyManager = new CurrencyHandler(this);
 		placesManager = new PlacesManager(this);
 		banHandler = new BanHandler(this);
 		extensionManager = new ExtensionManager(this);
@@ -344,7 +346,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 					 this.currencyManager.addCredits(sender.getName(),500);
 					 creditsCodes.remove(args[1]);
 					 saveCreditsCodes();
-					 logger.LogShopTransaction(Prices.ARROW.toString(), 1, sender.getName()+";CRAFTCON;CREDITS;"+args[1]);
+					 logger.LogShopTransaction("CRAFTCON", 1, sender.getName()+";CREDITS;"+args[1]);
 					 ChatHandler.SuccessMsg((Player)sender, "Vase kredity z Craftconu byly pripsany!");
 					 return true;
 				 }
@@ -355,7 +357,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				 {
 					int months=1;
 					this.vipManager.addVip(sender.getName(), months*2592000);
-					logger.LogShopTransaction(Prices.ARROW.toString(), 1, sender.getName()+";CRAFTCON;VIP;"+args[1]);
+					logger.LogShopTransaction("CRAFTCON", 1, sender.getName()+";VIP;"+args[1]);
 					vipCodes.remove(args[1]);
 					saveVIPCodes();
 					ChatHandler.SuccessMsg((Player)sender, "Vase VIP z Craftconu bylo aktivovano do " + new Date(System.currentTimeMillis() + 2592000000l) + "!");
@@ -369,6 +371,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	private void registerCommands()
 	{
 		getCommand("rpg").setExecutor(new RpgCommandExecutor());
+		getCommand("credits").setExecutor(new RpgCommandExecutor());
+		//getCommand("shop").setExecutor(executor)
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)
@@ -579,7 +583,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final Chat chat;
 	public final VipManager vipManager;
 	public final ShopManager shopManager;
-	public final CurrencyManager currencyManager;
+	public final CurrencyHandler currencyManager;
 	public final PlacesManager placesManager;
 	public final BanHandler banHandler;
 	public final ExtensionManager extensionManager;

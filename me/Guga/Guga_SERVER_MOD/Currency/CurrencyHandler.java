@@ -1,17 +1,19 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.Currency;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+
 import org.bukkit.entity.Player;
 
-public class CurrencyManager
+public class CurrencyHandler
 {
 	//needs table mnc_currency { user_id - int primary key, balance - long }
 	
 	private Guga_SERVER_MOD plugin;
 	
-	CurrencyManager(Guga_SERVER_MOD plugin)
+	public CurrencyHandler(Guga_SERVER_MOD plugin)
 	{
 		this.plugin = plugin;		
 	}
