@@ -102,7 +102,7 @@ public abstract class CommandsHandler
 	{
 		//log.info("<"+sender.getName() + " has used /help Command>");
 		sender.sendMessage("******************************");
-		sender.sendMessage("GUGA MINECRAFT SERVER MOD "+Guga_SERVER_MOD.version);
+		sender.sendMessage("MineAndCraft SERVER MOD "+Guga_SERVER_MOD.version);
 		sender.sendMessage("******************************");
 		sender.sendMessage("Seznam prikazu:");
 		sender.sendMessage(ChatColor.AQUA + " /login " + ChatColor.GRAY + "<heslo>  " + ChatColor.WHITE + "-  Prihlasi zaregistrovaneho hrace.");
@@ -124,7 +124,7 @@ public abstract class CommandsHandler
 			sender.sendMessage(ChatColor.AQUA + "/event " + ChatColor.WHITE + "- Event menu.");
 		}
 		sender.sendMessage("******************************");
-		sender.sendMessage("Created by Guga 2011");
+		sender.sendMessage("Created by MineAndCraft team 2011-2013");
 		sender.sendMessage("******************************");
 	}
 
