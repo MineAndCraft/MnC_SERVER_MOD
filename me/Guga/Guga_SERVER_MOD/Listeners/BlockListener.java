@@ -246,25 +246,6 @@ public class BlockListener implements Listener
 		}
 		
 		Block block = e.getBlockPlaced();
-		
-		if(block.getTypeId() == 154) //hopper cannot be placed under a locked block
-		{
-			Block up = block.getRelative(BlockFace.UP);
-			if(BlockLocker.LockableBlocks.isLockableBlock(up.getTypeId()) && plugin.blockLocker.IsLocked(up))
-			{
-				e.setCancelled(true);
-				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper pod zamcenou truhlu");
-				return;
-			}
-			Block down = block.getRelative(BlockFace.DOWN);
-			if(BlockLocker.LockableBlocks.isLockableBlock(down.getTypeId()) && plugin.blockLocker.IsLocked(down))
-			{
-				e.setCancelled(true);
-				ChatHandler.InfoMsg(p,"Nemuzete polozit hopper nad zamcenou truhlu");
-				return;
-			}
-		}
-		
 		if(BlockLocker.LockableBlocks.isLockableBlock(block.getTypeId()))
 		{
 			if(block.getTypeId() == BlockLocker.LockableBlocks.CHEST.getID() && !plugin.blockLocker.IsLocked(block))
