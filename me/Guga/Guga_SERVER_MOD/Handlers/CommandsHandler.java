@@ -253,65 +253,11 @@ public abstract class CommandsHandler
 		
 	}
 	
-	public static void CommandCredits(Player sender, String args[])
-	{
-		if (args.length == 0)
-		{
-			sender.sendMessage("/credits send <hrac> <pocet> - Posle zadany pocet kreditu danemu hraci.");
-			sender.sendMessage("/credits balance - Zjisti stav Vasich kreditu.");
-		}
-		else if (args.length == 1)
-		{
-			String subCommand = args[0];
-			if(subCommand.matches("balance"))
-			{
-				sender.sendMessage("Vas ucet:");
-				sender.sendMessage("Kredity: " + ChatColor.GOLD + plugin.currencyManager.getBalance(sender.getName()));
-			}
-		}
-		else if(args.length == 3)
-		{
-			String subCommand = args[0];
-			String player = args[1];
-			int amount = Integer.parseInt(args[2]);
-			if(subCommand.matches("send"))
-			{
-				if(plugin.currencyManager.getBalance(sender.getName()) >= amount)
-				{
-					if(plugin.currencyManager.addCredits(player, amount))
-					{
-						plugin.currencyManager.addCredits(sender.getName(), -amount);
-						ChatHandler.SuccessMsg(sender, "Kredity byly uspesne odeslany");
-						Player reciever;
-						if((reciever = plugin.getServer().getPlayer(player)) != null)
-						{
-							ChatHandler.InfoMsg(reciever, "Na ucet Vam prisly kredity od hrace " + ChatColor.GRAY + 
-									sender.getName() + ChatColor.YELLOW + " o hodnote " + ChatColor.GRAY + amount);
-						}
-					}
-					else
-						ChatHandler.FailMsg(sender, "Kredity se nepodarilo poslat. Zkontrolujte prosim spravnost zadaneho nicku.");
-				}
-				else
-					ChatHandler.FailMsg(sender, "Na tuto akci nemate dostatek kreditu");
-			}
-		}
-	}
 	public static void CommandShop(Player sender, String args[])
 	{
-		if (!plugin.userManager.userIsLogged(sender.getName()))
-		{
-			ChatHandler.FailMsg(sender, "Nejdrive se prihlaste!");
-			return;
-		}
 		if (plugin.arena.IsArena(sender.getLocation()))
 		{
 			ChatHandler.FailMsg(sender, "V arene nemuzete pouzit prikaz /shop!");
-			return;
-		}
-		if (plugin.EventWorld.IsEventWorld(sender.getLocation()))
-		{
-			ChatHandler.FailMsg(sender, "V EventWorldu nemuzete pouzit prikaz /shop!");
 			return;
 		}
 		

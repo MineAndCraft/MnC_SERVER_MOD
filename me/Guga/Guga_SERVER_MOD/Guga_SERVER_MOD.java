@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import me.Guga.Guga_SERVER_MOD.Currency.CurrencyCommandExecutor;
 import me.Guga.Guga_SERVER_MOD.Currency.CurrencyHandler;
 import me.Guga.Guga_SERVER_MOD.Currency.ShopManager;
 import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
@@ -234,11 +235,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 CommandsHandler.CommandHelper((Player)sender, args);
 			 return true;
 		 }
-		 else if ((cmd.getName().equalsIgnoreCase("credits")) && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandCredits((Player)sender, args);
-			 return true;
-		 }
 		//*****************************************/help*****************************************
 		 else if (cmd.getName().equalsIgnoreCase("help"))
 		 {
@@ -371,8 +367,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	private void registerCommands()
 	{
 		getCommand("rpg").setExecutor(new RpgCommandExecutor());
-		getCommand("credits").setExecutor(new RpgCommandExecutor());
-		//getCommand("shop").setExecutor(executor)
+		getCommand("credits").setExecutor(new CurrencyCommandExecutor());
+		getCommand("shop").setExecutor(new CurrencyCommandExecutor());
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)
