@@ -16,6 +16,7 @@ import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.GugaPlayerListener;
+import me.Guga.Guga_SERVER_MOD.RPG.RpgCommandExecutor;
 
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
@@ -68,6 +69,8 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public void onEnable() 
 	{
 		_enabled = true;
+		
+		this.registerCommands();
 		
 		PluginManager pManager = this.getServer().getPluginManager();
 		pManager.registerEvents(pListener, this);
@@ -258,14 +261,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 				 CommandsHandler.CommandGM((Player)sender,args);
 			 }
 		 }
-		 else if (cmd.getName().equalsIgnoreCase("rpg"))
-		 {
-			 if (sender instanceof Player)
-			 {
-				 CommandsHandler.CommandRpg((Player)sender,args);
-				 return true;
-			 }
-		 }
 		 else if (cmd.getName().equalsIgnoreCase("feedback") && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandFeedback((Player) sender, args);
@@ -369,6 +364,11 @@ public class Guga_SERVER_MOD extends JavaPlugin
 			 }
 		 }
 		return false;
+	}
+	
+	private void registerCommands()
+	{
+		getCommand("rpg").setExecutor(new RpgCommandExecutor());
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)
