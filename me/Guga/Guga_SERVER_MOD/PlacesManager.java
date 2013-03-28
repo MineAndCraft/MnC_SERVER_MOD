@@ -327,9 +327,9 @@ public class PlacesManager
 		boolean success = false;
 		PreparedStatement stat = null;
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE mnc_places, mnc_places_permissions FROM mnc_places INNER JOIN mnc_places_permissions WHERE mnc_places.name=mnc_places_permissions.place_id AND mnc_places.name = ?");
+			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE `mnc_places`, `mnc_places_permissions` FROM `mnc_places` LEFT JOIN `mnc_places_permissions` ON `mnc_places`.`name`=`mnc_places_permissions`.`place_id` WHERE `mnc_places`.`name` = ?");
 			stat.setString(1, portName.toLowerCase());
-			success = stat.executeUpdate()==1;
+			success = stat.executeUpdate()>0;
 		}catch(Exception e)
 		{
 			e.printStackTrace();
