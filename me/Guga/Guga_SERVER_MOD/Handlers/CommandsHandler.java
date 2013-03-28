@@ -2937,8 +2937,9 @@ public abstract class CommandsHandler
 				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
-			EstateHandler.pos1(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
-			sender.sendMessage(String.format("Pozice 1 ulozena X=%d, Z=%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
+			Location targetLoc = sender.getTargetBlock(null, 5).getLocation();
+			EstateHandler.pos1(sender.getName(), targetLoc.getBlockX(), targetLoc.getBlockZ());
+			sender.sendMessage(String.format("Pozice 1 ulozena X=%d, Z=%d",targetLoc.getBlockX(), targetLoc.getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("c2"))
 		{
@@ -2947,8 +2948,9 @@ public abstract class CommandsHandler
 				ChatHandler.FailMsg(sender,"Pozemek muzete vytvorit jen v profesionalnim svete.");
 				return;
 			}
-			EstateHandler.pos2(sender.getName(), sender.getLocation().getBlockX(), sender.getLocation().getBlockZ());
-			sender.sendMessage(String.format("Pozice 2 ulozena X=%d, Z=%d",sender.getLocation().getBlockX(), sender.getLocation().getBlockZ()));
+			Location targetLoc = sender.getTargetBlock(null, 5).getLocation();
+			EstateHandler.pos2(sender.getName(), targetLoc.getBlockX(), targetLoc.getBlockZ());
+			sender.sendMessage(String.format("Pozice 2 ulozena X=%d, Z=%d",targetLoc.getBlockX(), targetLoc.getBlockZ()));
 		}
 		else if(args[0].equalsIgnoreCase("access"))
 		{
