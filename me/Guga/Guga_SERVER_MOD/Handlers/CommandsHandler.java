@@ -2898,6 +2898,7 @@ public abstract class CommandsHandler
 			sender.sendMessage(ChatColor.AQUA + "/estates create " + ChatColor.GRAY + "<jmeno> " + ChatColor.WHITE + "- Vytvori Vam novy pozemek na oznacenem uzemi.");
 			sender.sendMessage(ChatColor.AQUA + "/estates access "+ ChatColor.WHITE + "- Zobrazi nastaveni residenci.");
 			sender.sendMessage(ChatColor.AQUA + "/estates list "+ ChatColor.WHITE + "- Zobrazi seznam Vasich residenci.");
+			sender.sendMessage(ChatColor.AQUA + "/estates blocks "+ ChatColor.WHITE + "- Zobrazi pocet blocku, ktere muzete ochranit.");
 			sender.sendMessage(ChatColor.AQUA + "/estates remove " + ChatColor.GRAY + "<jmeno> "+ ChatColor.WHITE + "- Smaze residenci a vrati 95% blocku.");
 			sender.sendMessage(ChatColor.AQUA + "/estates buy " + ChatColor.GRAY + "<pocetBlocku> " + ChatColor.WHITE + "- Dokoupi blocky, ktere muzete zamknout pomoci pozemku.");
 			sender.sendMessage(ChatColor.YELLOW + "********************************");
@@ -2923,6 +2924,11 @@ public abstract class CommandsHandler
 				sender.sendMessage(estate);
 			}
 			sender.sendMessage(ChatColor.YELLOW + "********************************");
+		}
+		else if(args[0].equalsIgnoreCase("blocks"))
+		{
+			ChatHandler.InfoMsg(sender, "Zbyva Vam " + ChatColor.GOLD + EstateHandler.getAvailableResidenceBlocks(sender.getName())
+					+ ChatColor.YELLOW + " blocku, ktere muzete ochranit.");
 		}
 		else if(args[0].equalsIgnoreCase("c1"))
 		{
