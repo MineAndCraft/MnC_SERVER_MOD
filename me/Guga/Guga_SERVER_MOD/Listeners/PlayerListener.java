@@ -47,9 +47,9 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GugaPlayerListener implements Listener 
+public class PlayerListener implements Listener 
 {
-	public GugaPlayerListener(Guga_SERVER_MOD gugaSM)
+	public PlayerListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
@@ -198,7 +198,7 @@ public class GugaPlayerListener implements Listener
 		player.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
 		if(!(GameMasterHandler.IsAtleastRank(player.getName(), Rank.BUILDER)))
 		{
-			if(GugaPlayerListener.IsCreativePlayer(player))
+			if(PlayerListener.IsCreativePlayer(player))
 			{
 				player.sendMessage("Jste uzivatel se zaregistorvanym creative modem!");
 			}

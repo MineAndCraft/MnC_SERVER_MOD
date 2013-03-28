@@ -35,9 +35,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GugaEntityListener implements Listener
+public class EntityListener implements Listener
 {
-	public GugaEntityListener(Guga_SERVER_MOD gugaSM)
+	public EntityListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}

@@ -30,7 +30,7 @@ import me.Guga.Guga_SERVER_MOD.PlacesManager.Place;
 import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipItems;
 import me.Guga.Guga_SERVER_MOD.VipManager.VipUser;
-import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.EntityListener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -445,9 +445,9 @@ public abstract class CommandsHandler
 				}
 				else if (arg1.matches("death"))
 				{
-					if(GugaEntityListener.playersDeaths.containsKey(sender.getName()))
+					if(EntityListener.playersDeaths.containsKey(sender.getName()))
 					{
-						sender.teleport(GugaEntityListener.playersDeaths.get(sender.getName()));
+						sender.teleport(EntityListener.playersDeaths.get(sender.getName()));
 						ChatHandler.SuccessMsg(sender, "Byl jsi uspesne teleportovan na misto posledni smrti!");
 					}
 					else

@@ -16,9 +16,9 @@ import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
-import me.Guga.Guga_SERVER_MOD.Listeners.GugaBlockListener;
-import me.Guga.Guga_SERVER_MOD.Listeners.GugaEntityListener;
-import me.Guga.Guga_SERVER_MOD.Listeners.GugaPlayerListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.BlockListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.EntityListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.PlayerListener;
 import me.Guga.Guga_SERVER_MOD.RPG.RpgCommandExecutor;
 
 import org.bukkit.Location;
@@ -136,7 +136,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		ServerRegionHandler.LoadRegions();
 		blockLocker = new BlockLocker(this);
 		GameMasterHandler.LoadGMs();
-		GugaPlayerListener.LoadCreativePlayers();
+		PlayerListener.LoadCreativePlayers();
 		SpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
@@ -564,9 +564,9 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public BukkitScheduler scheduler;
 	
 	public final DatabaseManager dbConfig = new DatabaseManager();
-	public final GugaPlayerListener pListener = new GugaPlayerListener(this);
-	public final GugaEntityListener enListener = new GugaEntityListener(this);
-	public final GugaBlockListener bListener = new GugaBlockListener(this);
+	public final PlayerListener pListener = new PlayerListener(this);
+	public final EntityListener enListener = new EntityListener(this);
+	public final BlockListener bListener = new BlockListener(this);
 	public final CustomListener customListener = new CustomListener(this);
 	public BlockLocker blockLocker;
 	public final GugaLogger logger = new GugaLogger(this);

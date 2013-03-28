@@ -34,9 +34,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class GugaBlockListener implements Listener
+public class BlockListener implements Listener
 {
-	public GugaBlockListener(Guga_SERVER_MOD gugaSM)
+	public BlockListener(Guga_SERVER_MOD gugaSM)
 	{
 		plugin = gugaSM;
 	}
