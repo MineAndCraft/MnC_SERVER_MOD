@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import me.Guga.Guga_SERVER_MOD.BasicWorld;
-import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
 import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
-import me.Guga.Guga_SERVER_MOD.GugaProfession2;
 import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
@@ -17,6 +15,8 @@ import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
+import me.Guga.Guga_SERVER_MOD.RPG.GugaBonusDrop;
+import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession2;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

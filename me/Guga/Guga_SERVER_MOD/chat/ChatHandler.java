@@ -8,11 +8,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.Guga.Guga_SERVER_MOD.DatabaseManager;
-import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.Handlers.*;
+import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession;
 
 public class ChatHandler 
 {

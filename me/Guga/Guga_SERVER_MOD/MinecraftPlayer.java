@@ -3,6 +3,8 @@ package me.Guga.Guga_SERVER_MOD;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession2;
+
 import org.bukkit.entity.Player;
 
 public class MinecraftPlayer

@@ -1,7 +1,9 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.RPG;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 
 import org.bukkit.block.Block;
 

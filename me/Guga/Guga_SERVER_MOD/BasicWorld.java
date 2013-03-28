@@ -3,6 +3,7 @@ package me.Guga.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
+import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
