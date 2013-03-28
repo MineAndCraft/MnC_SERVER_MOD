@@ -1,8 +1,8 @@
 package me.Guga.Guga_SERVER_MOD;
 
-public class GugaRegion 
+public class ServerRegion 
 {
-	public GugaRegion(String name, String world, String[] owners, int x1, int x2, int z1, int z2)
+	public ServerRegion(String name, String world, String[] owners, int x1, int x2, int z1, int z2)
 	{
 		this.name = name;
 		this.owners = owners;

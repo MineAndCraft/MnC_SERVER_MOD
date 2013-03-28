@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.Guga.Guga_SERVER_MOD.DatabaseManager;
-import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
 
 import org.bukkit.entity.Player;
 
@@ -179,7 +179,7 @@ public class EstateHandler
 			return;
 		}
 		
-		for(GugaRegion r : GugaRegionHandler.GetAllRegions())
+		for(ServerRegion r : ServerRegionHandler.GetAllRegions())
 		{
 			if(!r.GetWorld().equalsIgnoreCase("world"))
 				continue;

@@ -9,7 +9,7 @@ import me.Guga.Guga_SERVER_MOD.chat.Chat;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
@@ -56,7 +56,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaEvent.ClearAllGroups();
 		this.userManager.save();
 		this.extensionManager.disable();
-		GugaRegionHandler.SaveRegions();
+		ServerRegionHandler.SaveRegions();
 		SpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
@@ -79,7 +79,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 
 		CommandsHandler.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
-		GugaRegionHandler.SetPlugin(this);
+		ServerRegionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
@@ -127,7 +127,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		scheduler = getServer().getScheduler();
 		loadVIPCodes();
 		loadCreditsCodes();
-		GugaRegionHandler.LoadRegions();
+		ServerRegionHandler.LoadRegions();
 		blockLocker = new BlockLocker(this);
 		GameMasterHandler.LoadGMs();
 		GugaPlayerListener.LoadCreativePlayers();

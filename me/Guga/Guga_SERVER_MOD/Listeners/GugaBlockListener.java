@@ -7,7 +7,7 @@ import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.GugaBonusDrop;
 import me.Guga.Guga_SERVER_MOD.GugaEventWorld;
 import me.Guga.Guga_SERVER_MOD.GugaProfession2;
-import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.Estates.EstateHandler;
@@ -15,7 +15,7 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 
 import org.bukkit.ChatColor;
@@ -84,12 +84,12 @@ public class GugaBlockListener implements Listener
 			return;
 		}
 		
-		if (!GugaRegionHandler.CanInteract(p, e.getBlock().getX(), e.getBlock().getZ()))
+		if (!ServerRegionHandler.CanInteract(p, e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
-				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
+				ServerRegion region = ServerRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 				ChatHandler.FailMsg(p, "Tady nemuzete kopat! Nazev pozemku: " + ChatColor.YELLOW + region.GetName());
 		        if(region.GetWorld().equals("world_basic"))
 		        {
@@ -227,12 +227,12 @@ public class GugaBlockListener implements Listener
 			return;
 		}
 		
-		if (!GugaRegionHandler.CanInteract(e.getPlayer(), e.getBlock().getX(), e.getBlock().getZ()))
+		if (!ServerRegionHandler.CanInteract(e.getPlayer(), e.getBlock().getX(), e.getBlock().getZ()))
 		{
 			if (!GameMasterHandler.IsAtleastRank(e.getPlayer().getName(), Rank.BUILDER))
 			{
 				e.setCancelled(true);
-				GugaRegion region = GugaRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
+				ServerRegion region = ServerRegionHandler.GetRegionByCoords(e.getBlock().getX(), e.getBlock().getZ(), p.getWorld().getName());
 				ChatHandler.FailMsg(p, "Tady nemuzete stavet! Nazev pozemku: " + ChatColor.YELLOW  + region.GetName());
 				return;
 			}

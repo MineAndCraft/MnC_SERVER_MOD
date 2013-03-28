@@ -3,7 +3,7 @@ package me.Guga.Guga_SERVER_MOD;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
+import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 
 
@@ -38,7 +38,7 @@ public abstract class AutoSaver
 	public static void SaveAll()
 	{
 		plugin.userManager.save();
-		GugaRegionHandler.SaveRegions();
+		ServerRegionHandler.SaveRegions();
 		SpawnsHandler.SaveSpawns();
 		plugin.arena.SavePvpStats();
 		plugin.arena.SaveArenas();

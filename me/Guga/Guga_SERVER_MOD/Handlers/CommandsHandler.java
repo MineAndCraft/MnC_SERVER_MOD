@@ -20,7 +20,7 @@ import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.GugaProfession2;
-import me.Guga.Guga_SERVER_MOD.GugaRegion;
+import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Homes;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
@@ -2324,27 +2324,27 @@ public abstract class CommandsHandler
 				if (subCmd.matches("remove"))
 				{
 					String name = args[2];
-					GugaRegion region = GugaRegionHandler.GetRegionByName(name);
+					ServerRegion region = ServerRegionHandler.GetRegionByName(name);
 					if (region == null)
 					{
 						sender.sendMessage("Region not found!");
 						return;
 					}
-					GugaRegionHandler.RemoveRegion(region);
+					ServerRegionHandler.RemoveRegion(region);
 					sender.sendMessage("Region successfully removed!");
 				}
 				else if (subCmd.equalsIgnoreCase("list"))
 				{
-					DataPager<GugaRegion> pager = new DataPager<GugaRegion>(GugaRegionHandler.GetAllRegions(), 15);
+					DataPager<ServerRegion> pager = new DataPager<ServerRegion>(ServerRegionHandler.GetAllRegions(), 15);
 					sender.sendMessage("LIST OF REGIONS:");
 					sender.sendMessage("PAGE " + args[2] + pager.getPageCount());
-					Iterator<GugaRegion> i = pager.getPage(Integer.parseInt(args[2])).iterator();
+					Iterator<ServerRegion> i = pager.getPage(Integer.parseInt(args[2])).iterator();
 					while (i.hasNext())
 					{
-						GugaRegion region = i.next();
+						ServerRegion region = i.next();
 						String[] owners = region.GetOwners();
 						int[] coords = region.GetCoords();
-						sender.sendMessage(" - " + region.GetName() + " [" + GugaRegionHandler.OwnersToLine(owners) + "]   <" + coords[GugaRegion.X1] + "," + coords[GugaRegion.X2] + "," + coords[GugaRegion.Z1] + "," + coords[GugaRegion.Z2] + ">");
+						sender.sendMessage(" - " + region.GetName() + " [" + ServerRegionHandler.OwnersToLine(owners) + "]   <" + coords[ServerRegion.X1] + "," + coords[ServerRegion.X2] + "," + coords[ServerRegion.Z1] + "," + coords[ServerRegion.Z2] + ">");
 					}
 				}
 			}
@@ -2355,7 +2355,7 @@ public abstract class CommandsHandler
 				{
 					String name = args[2];
 					String[] owners = args[3].split(",");
-					if (GugaRegionHandler.SetRegionOwners(name, owners))
+					if (ServerRegionHandler.SetRegionOwners(name, owners))
 						sender.sendMessage("Owners successfuly set!");
 					else
 						sender.sendMessage("Region not found!");
@@ -2367,7 +2367,7 @@ public abstract class CommandsHandler
 				if (subCmd.matches("add"))
 				{
 					String name = args[2];
-					if (GugaRegionHandler.GetRegionByName(name) != null)
+					if (ServerRegionHandler.GetRegionByName(name) != null)
 					{
 						sender.sendMessage("Region with this name already exists!");
 						return;
@@ -2378,7 +2378,7 @@ public abstract class CommandsHandler
 					int x2 = Integer.parseInt(args[6]);
 					int z1 = Integer.parseInt(args[7]);
 					int z2 = Integer.parseInt(args[8]);
-					GugaRegionHandler.AddRegion(name, world, owners, x1, x2, z1, z2);
+					ServerRegionHandler.AddRegion(name, world, owners, x1, x2, z1, z2);
 					sender.sendMessage("Region successfully added");
 				}
 			}

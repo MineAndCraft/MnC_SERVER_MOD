@@ -54,7 +54,7 @@ public class BasicWorldBanRegionManager
 		}
 	}
 	
-	public boolean onRegionBlockBreakCheck(GugaRegion region,Player player,Block block)
+	public boolean onRegionBlockBreakCheck(ServerRegion region,Player player,Block block)
 	{
 		if(!GameMasterHandler.IsAtleastRank(player.getName(), Rank.BUILDER) //Allow Team Members to edit bw terrain freely
 				&& this.regions.contains(region.GetName()))

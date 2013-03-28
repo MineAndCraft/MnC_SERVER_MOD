@@ -70,7 +70,7 @@ public class BasicWorld
 	{
 		return plugin.getServer().getWorld("world_basic").getSpawnLocation();
 	}
-	public static boolean basicWorldRegionBlockBreak(GugaRegion region,Player player,Block block)
+	public static boolean basicWorldRegionBlockBreak(ServerRegion region,Player player,Block block)
 	{
 		return brm.onRegionBlockBreakCheck(region,player,block);
 	}
