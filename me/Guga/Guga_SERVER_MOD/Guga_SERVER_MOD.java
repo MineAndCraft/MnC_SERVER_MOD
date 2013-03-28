@@ -552,10 +552,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	
 	
 	// ************* chances *************
-	public int IRON = 0;
-	public int GOLD = 1;
-	public int DIAMOND = 2;
-	public int EMERALD = 3;
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
