@@ -4,8 +4,8 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 
-import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.basicworld.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 
 public class GugaProfession 

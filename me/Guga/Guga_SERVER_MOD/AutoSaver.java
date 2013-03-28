@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 
 import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
+import me.Guga.Guga_SERVER_MOD.basicworld.SpawnsHandler;
 
 
 public abstract class AutoSaver 
