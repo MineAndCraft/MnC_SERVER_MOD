@@ -1,7 +1,9 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.util;
 
 import java.security.MessageDigest;
 import java.util.Formatter;
+
+import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 
 import org.bukkit.entity.Player;
 

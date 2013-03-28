@@ -4,7 +4,8 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import me.Guga.Guga_SERVER_MOD.InventoryBackup;;
+
+import me.Guga.Guga_SERVER_MOD.util.InventoryBackup;
 
 public class GugaEventWorld 
 {

@@ -1,4 +1,4 @@
-package me.Guga.Guga_SERVER_MOD;
+package me.Guga.Guga_SERVER_MOD.util;
 
 import java.util.ArrayList;
 

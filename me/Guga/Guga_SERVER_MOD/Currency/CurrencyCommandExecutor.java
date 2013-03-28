@@ -2,10 +2,10 @@ package me.Guga.Guga_SERVER_MOD.Currency;
 
 import java.util.Iterator;
 
-import me.Guga.Guga_SERVER_MOD.DataPager;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.Currency.ShopManager.ShopItem;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
+import me.Guga.Guga_SERVER_MOD.util.DataPager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
