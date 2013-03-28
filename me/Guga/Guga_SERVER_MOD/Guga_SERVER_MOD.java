@@ -13,7 +13,8 @@ import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
+import me.Guga.Guga_SERVER_MOD.home.HomeCommandExecutor;
+import me.Guga.Guga_SERVER_MOD.home.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.BlockListener;
@@ -215,11 +216,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 CommandsHandler.CommandLocker((Player)sender);
 		 }
-		 else if ((cmd.getName().equalsIgnoreCase("home")) && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandHome((Player)sender, args);
-			 return true;
-		 }
 		 else if ((cmd.getName().equalsIgnoreCase("world")) && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandWorld((Player)sender);
@@ -364,6 +360,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getCommand("rpg").setExecutor(new RpgCommandExecutor());
 		getCommand("credits").setExecutor(new CurrencyCommandExecutor());
 		getCommand("shop").setExecutor(new CurrencyCommandExecutor());
+		getCommand("home").setExecutor(new HomeCommandExecutor());
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)

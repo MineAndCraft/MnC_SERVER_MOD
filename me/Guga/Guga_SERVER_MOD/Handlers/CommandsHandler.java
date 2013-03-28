@@ -21,7 +21,8 @@ import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
-import me.Guga.Guga_SERVER_MOD.Homes;
+import me.Guga.Guga_SERVER_MOD.home.Home;
+import me.Guga.Guga_SERVER_MOD.home.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer.ConnectionState;
@@ -125,50 +126,7 @@ public abstract class CommandsHandler
 		sender.sendMessage("Created by Guga 2011");
 		sender.sendMessage("******************************");
 	}
-	public static void CommandHome(Player p, String args[])
-	{
-		if(!(p.getWorld().getName().matches("world") || p.getWorld().getName().matches("world_basic")))
-		{
-			ChatHandler.FailMsg(p, "Tento prikaz zde nelze pouzit!");
-			return;
-		}
-		if(args.length == 0)
-		{
-			Homes home;
-			if((home = HomesHandler.getHomeByPlayer(p.getName())) != null)
-			{
-				p.teleport(HomesHandler.getLocation(home));
-				ChatHandler.SuccessMsg(p, "Byl jste teleportovan na home!");
-			}
-			else
-			{
-				ChatHandler.FailMsg(p, "Vas home jeste nebyl nastaven!");
-			}
-		}
-		else if(args.length == 1)
-		{
-			if(args[0].equalsIgnoreCase("set"))
-			{
-				if(HomesHandler.isWorldAllowedToSetHomeIn(p.getWorld().getName()))
-				{
-					HomesHandler.addHome(p);
-					ChatHandler.SuccessMsg(p, "Vas home byl nastaven!");
-				}
-				else
-				{
-					ChatHandler.FailMsg(p, "V tomto svete si nemuzete nastavit home!");
-				}
-			}
-			else
-			{
-				ChatHandler.FailMsg(p, "Prikaz home neprebira tento argument!");
-			}
-		}
-		else
-		{
-			ChatHandler.FailMsg(p, "Prikaz home neprebira dalsi argumenty!");
-		}
-	}
+
 	public static void CommandLocker(Player sender)
 	{
 		sender.sendMessage(ChatColor.BLUE+"***********");
@@ -1590,7 +1548,7 @@ public abstract class CommandsHandler
 		{
 			if(args.length == 2)
 			{
-				Homes home;
+				Home home;
 				if((home = HomesHandler.getHomeByPlayer(args[1])) != null)
 				{
 					sender.teleport(HomesHandler.getLocation(home));
@@ -1600,7 +1558,7 @@ public abstract class CommandsHandler
 			else if(args.length == 3 && args[1].matches("set"))
 			{
 				Location loc = sender.getLocation();
-				HomesHandler.addHome(new Homes(args[2], (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
+				HomesHandler.addHome(new Home(args[2], (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
 				ChatHandler.SuccessMsg(sender, "Home has been uccessfully set");
 			}
 			else

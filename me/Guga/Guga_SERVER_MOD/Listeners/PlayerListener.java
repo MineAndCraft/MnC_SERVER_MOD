@@ -10,14 +10,14 @@ import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
-import me.Guga.Guga_SERVER_MOD.Homes;
+import me.Guga.Guga_SERVER_MOD.home.Home;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
+import me.Guga.Guga_SERVER_MOD.home.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession2;
 
 import org.bukkit.ChatColor;
@@ -329,7 +329,7 @@ public class PlayerListener implements Listener
 			plugin.log.info("PLAYER_RESPAWN_EVENT: playerName=" + e.getPlayer().getName());
 		}
 		Player p = e.getPlayer();
-		Homes home;
+		Home home;
 		if(p.getBedSpawnLocation() != null)
 		{
 			e.setRespawnLocation(p.getBedSpawnLocation());

@@ -1,4 +1,4 @@
-package me.Guga.Guga_SERVER_MOD.Handlers;
+package me.Guga.Guga_SERVER_MOD.home;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
-import me.Guga.Guga_SERVER_MOD.Homes;
 
 public class HomesHandler 
 {
@@ -37,7 +36,7 @@ public class HomesHandler
 			y = Integer.parseInt(splittedLine[2]);
 			z = Integer.parseInt(splittedLine[3]);
 			world = splittedLine[4];
-			homes.add(new Homes(playerName, x, y, z, world));
+			homes.add(new Home(playerName, x, y, z, world));
 		}
 		file.Close();
 	}
@@ -53,8 +52,8 @@ public class HomesHandler
 		int y;
 		int z;
 		String world;
-		Iterator<Homes> i = HomesHandler.homes.iterator();
-		Homes home;
+		Iterator<Home> i = HomesHandler.homes.iterator();
+		Home home;
 		while(i.hasNext())
 		{
 			home = i.next();
@@ -75,10 +74,10 @@ public class HomesHandler
 		p.teleport(loc);
 	}
 	
-	public static Homes getHomeByPlayer(String playerName)
+	public static Home getHomeByPlayer(String playerName)
 	{
-		Iterator<Homes> i = HomesHandler.homes.iterator();
-		Homes home;
+		Iterator<Home> i = HomesHandler.homes.iterator();
+		Home home;
 		while(i.hasNext())
 		{
 			home = i.next();
@@ -88,43 +87,43 @@ public class HomesHandler
 		return null;
 	}
 	
-	public static Location getLocation(Homes home)
+	public static Location getLocation(Home home)
 	{
 		return new Location(plugin.getServer().getWorld(home.getWorld()), home.getX(), home.getY(), home.getZ());
 	}
 	
 	public static void addHome(Player p)
 	{
-		Homes actual = getHomeByPlayer(p.getName());
+		Home actual = getHomeByPlayer(p.getName());
 		if(actual == null)
 		{
-			homes.add(new Homes (p.getName(), (int)p.getLocation().getX(), (int)p.getLocation().getY(), (int)p.getLocation().getZ(), p.getLocation().getWorld().getName()));
+			homes.add(new Home (p.getName(), (int)p.getLocation().getX(), (int)p.getLocation().getY(), (int)p.getLocation().getZ(), p.getLocation().getWorld().getName()));
 		}
 		else
 		{
 			homes.remove(actual);
-			homes.add(new Homes (p.getName(), (int)p.getLocation().getX(), (int)p.getLocation().getY(), (int)p.getLocation().getZ(), p.getLocation().getWorld().getName()));
+			homes.add(new Home (p.getName(), (int)p.getLocation().getX(), (int)p.getLocation().getY(), (int)p.getLocation().getZ(), p.getLocation().getWorld().getName()));
 		}
 		saveHomes();
 	}
 	
 	public static void addHome(Player p, Location loc)
 	{
-		Homes actual = getHomeByPlayer(p.getName());
+		Home actual = getHomeByPlayer(p.getName());
 		if(actual == null)
 		{
-			homes.add(new Homes (p.getName(), (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
+			homes.add(new Home (p.getName(), (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
 		}
 		else
 		{
 			homes.remove(actual);
-			homes.add(new Homes (p.getName(), (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
+			homes.add(new Home (p.getName(), (int)loc.getX(), (int)loc.getY(), (int)loc.getZ(), loc.getWorld().getName()));
 		}
 		saveHomes();
 	}
-	public static void addHome(Homes home)
+	public static void addHome(Home home)
 	{
-		Homes actual = getHomeByPlayer(home.getPlayerName());
+		Home actual = getHomeByPlayer(home.getPlayerName());
 		if(actual == null)
 		{
 			homes.add(home);
@@ -140,6 +139,6 @@ public class HomesHandler
 		return world.matches("world") || world.matches("world_basic");
 	}
 	
-	public static ArrayList<Homes> homes = new ArrayList<Homes>();
-	public static Guga_SERVER_MOD plugin;
+	private static ArrayList<Home> homes = new ArrayList<Home>();
+	static Guga_SERVER_MOD plugin;
 }

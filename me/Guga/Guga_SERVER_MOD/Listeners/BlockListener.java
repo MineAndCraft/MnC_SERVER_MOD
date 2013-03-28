@@ -14,7 +14,6 @@ import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.ServerRegionHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.RPG.GugaBonusDrop;
 import me.Guga.Guga_SERVER_MOD.RPG.GugaProfession2;
 
@@ -117,7 +116,7 @@ public class BlockListener implements Listener
 		targetBlock = e.getBlock();
 		if(level >= 10 && BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
 		{
-			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName())||!HomesHandler.getHomeByPlayer(e.getPlayer().getName()).getWorld().equalsIgnoreCase("world_basic"))
+			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()) && !(level > 20))
 			{
 				ChatHandler.InfoMsg(p, "Pro opusteni zakladniho sveta napiste /pp spawn");
 			}
