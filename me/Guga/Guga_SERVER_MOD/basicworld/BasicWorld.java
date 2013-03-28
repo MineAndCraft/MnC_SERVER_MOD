@@ -60,7 +60,7 @@ public class BasicWorld
 	public static void BasicWorldLeaveToWorld(Player p)
 	{
 		brm.onPlayerBWLeave(p.getName());
-		Location loc = SpawnsHandler.getRandomSpawn();
+		Location loc = RandomSpawnsHandler.getRandomSpawn();
 		HomesHandler.addHome(p, loc);
 		p.teleport(loc);
 		ChatHandler.InitializeDisplayName(p);

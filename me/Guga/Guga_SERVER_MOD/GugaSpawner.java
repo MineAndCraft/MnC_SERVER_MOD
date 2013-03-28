@@ -1,6 +1,5 @@
-package me.Guga.Guga_SERVER_MOD.basicworld;
+package me.Guga.Guga_SERVER_MOD;
 
-import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

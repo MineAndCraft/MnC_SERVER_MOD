@@ -9,7 +9,7 @@ import me.Guga.Guga_SERVER_MOD.Currency.CurrencyHandler;
 import me.Guga.Guga_SERVER_MOD.Currency.ShopManager;
 import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
 import me.Guga.Guga_SERVER_MOD.basicworld.BasicWorld;
-import me.Guga.Guga_SERVER_MOD.basicworld.SpawnsHandler;
+import me.Guga.Guga_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.chat.Chat;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
@@ -64,7 +64,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		this.userManager.save();
 		this.extensionManager.disable();
 		ServerRegionHandler.SaveRegions();
-		SpawnsHandler.SaveSpawns();
+		RandomSpawnsHandler.SaveSpawns();
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		chat.onDisable();
@@ -94,7 +94,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		GugaEvent.SetPlugin(this);
 		GugaParty.SetPlugin(this);
 		BasicWorld.Init(this);
-		SpawnsHandler.SetPlugin(this);
+		RandomSpawnsHandler.SetPlugin(this);
 		HomesHandler.setPlugin(this);
 
 		if (getServer().getWorld("arena") == null)
@@ -141,7 +141,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		blockLocker = new BlockLocker(this);
 		GameMasterHandler.LoadGMs();
 		PlayerListener.LoadCreativePlayers();
-		SpawnsHandler.LoadSpawns();
+		RandomSpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");

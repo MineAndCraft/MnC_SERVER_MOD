@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 import me.Guga.Guga_SERVER_MOD.AutoSaver;
 import me.Guga.Guga_SERVER_MOD.basicworld.BasicWorld;
-import me.Guga.Guga_SERVER_MOD.basicworld.SpawnsHandler;
+import me.Guga.Guga_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Estates.EstateHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
@@ -1676,16 +1676,16 @@ public abstract class CommandsHandler
 		{
 			if(args.length == 3 && args[1].matches("add"))
 			{
-				SpawnsHandler.AddSpawn(args[2], sender.getLocation());
-				SpawnsHandler.SaveSpawns();
+				RandomSpawnsHandler.AddSpawn(args[2], sender.getLocation());
+				RandomSpawnsHandler.SaveSpawns();
 				sender.sendMessage("Spawn was successfully added!");
 			}
 			else if(args.length == 3 && args[1].matches("remove"))
 			{
-				if(SpawnsHandler.GetSpawnByName(args[2]) != null)
+				if(RandomSpawnsHandler.GetSpawnByName(args[2]) != null)
 				{
-					SpawnsHandler.RemoveSpawn(args[2]);
-					SpawnsHandler.SaveSpawns();
+					RandomSpawnsHandler.RemoveSpawn(args[2]);
+					RandomSpawnsHandler.SaveSpawns();
 					sender.sendMessage("Spawn was successfully removed!");
 				}
 				else
