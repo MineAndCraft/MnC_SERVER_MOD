@@ -10,7 +10,7 @@ import me.Guga.Guga_SERVER_MOD.GugaProfession;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.InventoryBackup;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -86,7 +86,7 @@ public class GugaEntityListener implements Listener
 				else
 					e.setCancelled(true);
 			}
-			if (GugaCommands.godMode.contains(((Player)e.getEntity()).getName().toLowerCase()))
+			if (CommandsHandler.godMode.contains(((Player)e.getEntity()).getName().toLowerCase()))
 			{
 				e.setCancelled(true);
 				return;

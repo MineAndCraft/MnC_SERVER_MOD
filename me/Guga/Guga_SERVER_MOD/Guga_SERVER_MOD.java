@@ -8,7 +8,7 @@ import me.Guga.Guga_SERVER_MOD.Extensions.ExtensionManager;
 import me.Guga.Guga_SERVER_MOD.chat.Chat;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GugaRegionHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
@@ -77,7 +77,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		
 		chat.onEnable();		
 
-		GugaCommands.SetPlugin(this);
+		CommandsHandler.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		GugaRegionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
@@ -143,95 +143,95 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	//*****************************************/who*****************************************
 		 if(cmd.getName().equalsIgnoreCase("who") && (sender instanceof Player))
 		 { 
-		   GugaCommands.CommandWho((Player)sender);
+		   CommandsHandler.CommandWho((Player)sender);
 		   return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("event") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandEvent((Player)sender, args);
+			 CommandsHandler.CommandEvent((Player)sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("socket"))
 		 {
-			 	GugaCommands.TestCommand(args);
+			 	CommandsHandler.TestCommand(args);
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("tell"))
 		 {
-			 GugaCommands.CommandWhisper(sender, args);
+			 CommandsHandler.CommandWhisper(sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("msg"))
 		 {
-			 GugaCommands.CommandWhisper(sender, args);
+			 CommandsHandler.CommandWhisper(sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandPlaces((Player)sender, args);
+			 CommandsHandler.CommandPlaces((Player)sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("arena") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandArena((Player) sender, args);
+			 CommandsHandler.CommandArena((Player) sender, args);
 			 return true;
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("ew") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandEventWorld((Player) sender, args);
+			 CommandsHandler.CommandEventWorld((Player) sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("debug") && (sender instanceof ConsoleCommandSender))
 		 {
-			 GugaCommands.CommandDebug();
+			 CommandsHandler.CommandDebug();
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("shop")) && (sender instanceof Player))		
 		 {
-			 GugaCommands.CommandShop((Player)sender,args);	 
+			 CommandsHandler.CommandShop((Player)sender,args);	 
 			 return true;
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("vip")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandVIP((Player)sender, args);
+			 CommandsHandler.CommandVIP((Player)sender, args);
 			 return true;
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("pp")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandPP((Player)sender, args);
+			 CommandsHandler.CommandPP((Player)sender, args);
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("invite")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandInvite((Player)sender, args);
+			 CommandsHandler.CommandInvite((Player)sender, args);
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("p")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandSendPartyMsg((Player)sender, args);
+			 CommandsHandler.CommandSendPartyMsg((Player)sender, args);
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("party")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandParty((Player)sender, args);
+			 CommandsHandler.CommandParty((Player)sender, args);
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("locker")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandLocker((Player)sender);
+			 CommandsHandler.CommandLocker((Player)sender);
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("home")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandHome((Player)sender, args);
+			 CommandsHandler.CommandHome((Player)sender, args);
 			 return true;
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("world")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandWorld((Player)sender);
+			 CommandsHandler.CommandWorld((Player)sender);
 			 return true;
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("helper")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandHelper((Player)sender, args);
+			 CommandsHandler.CommandHelper((Player)sender, args);
 			 return true;
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("credits")) && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandCredits((Player)sender, args);
+			 CommandsHandler.CommandCredits((Player)sender, args);
 			 return true;
 		 }
 		//*****************************************/help*****************************************
@@ -239,7 +239,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 if (sender instanceof Player)
 			 {
-				 GugaCommands.CommandHelp((Player) sender);
+				 CommandsHandler.CommandHelp((Player) sender);
 				 return true;
 			 }
 		 }
@@ -247,7 +247,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 if (sender instanceof Player)
 			 {
-				 GugaCommands.CommandReply((Player) sender, args);
+				 CommandsHandler.CommandReply((Player) sender, args);
 				 return true;
 			 }
 		 }
@@ -255,26 +255,26 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 if (sender instanceof Player)
 			 {
-				 GugaCommands.CommandGM((Player)sender,args);
+				 CommandsHandler.CommandGM((Player)sender,args);
 			 }
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("rpg"))
 		 {
 			 if (sender instanceof Player)
 			 {
-				 GugaCommands.CommandRpg((Player)sender,args);
+				 CommandsHandler.CommandRpg((Player)sender,args);
 				 return true;
 			 }
 		 }
 		 else if (cmd.getName().equalsIgnoreCase("feedback") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandFeedback((Player) sender, args);
+			 CommandsHandler.CommandFeedback((Player) sender, args);
 			 return true;
 		 }
 		 //*****************************************/status*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("y") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandConfirm((Player)sender,args);
+			 CommandsHandler.CommandConfirm((Player)sender,args);
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("book") && (sender instanceof Player))
 		 {
@@ -282,33 +282,33 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandLock((Player)sender);
+			 CommandsHandler.CommandLock((Player)sender);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("gc") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandGMChat((Player)sender, args);
+			 CommandsHandler.CommandGMChat((Player)sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("announce") && (sender.isOp() || GameMasterHandler.IsAtleastGM(sender.getName())))
 		 {
-			 GugaCommands.CommandAnnounce(sender,args);
+			 CommandsHandler.CommandAnnounce(sender,args);
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("estates") && (sender instanceof Player))
 		 {
-		 	 GugaCommands.CommandEstates((Player)sender, args);
+		 	 CommandsHandler.CommandEstates((Player)sender, args);
 		 	 return true;
 		 }
 		//*****************************************/unlock*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("unlock") && (sender instanceof Player))
 		 {
-				 GugaCommands.CommandUnlock((Player)sender);		
+				 CommandsHandler.CommandUnlock((Player)sender);		
 				 return true;
 		 }
 		//*****************************************/login*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("login") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandLogin((Player)sender, args);
+			 CommandsHandler.CommandLogin((Player)sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("logout") && sender instanceof Player)
@@ -327,15 +327,15 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("friend") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandFriend((Player)sender,args);
+			 CommandsHandler.CommandFriend((Player)sender,args);
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("block") && (sender instanceof Player))
 		 {
-			 GugaCommands.CommandBlock((Player)sender,args);
+			 CommandsHandler.CommandBlock((Player)sender,args);
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("register"))
 		 {
-			 GugaCommands.CommandRegister((Player)sender,args);
+			 CommandsHandler.CommandRegister((Player)sender,args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("activate") && (sender instanceof Player))

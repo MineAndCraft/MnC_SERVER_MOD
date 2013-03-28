@@ -41,7 +41,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-public abstract class GugaCommands 
+public abstract class CommandsHandler 
 {
 	public static void SetPlugin(Guga_SERVER_MOD gugaSM)
 	{
@@ -2884,7 +2884,7 @@ public abstract class GugaCommands
 			}
 			playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getName() + "]" + msg);
 			p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa" + "]" + msg);
-			GugaCommands.reply.put(p, playerSender);
+			CommandsHandler.reply.put(p, playerSender);
 		}
 	}
 

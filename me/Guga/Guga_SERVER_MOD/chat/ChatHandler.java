@@ -37,7 +37,7 @@ public class ChatHandler
 	{		
 		if(GameMasterHandler.IsAdmin(p.getName()))
 		{
-			if(GugaCommands.disabledGMs.contains(p.getName()))
+			if(CommandsHandler.disabledGMs.contains(p.getName()))
 			{
 				if(plugin.vipManager.isVip(p.getName()))
 				{
@@ -58,7 +58,7 @@ public class ChatHandler
 		}
 		else if(GameMasterHandler.IsAtleastGM(p.getName()))
 		{
-			if(GugaCommands.disabledGMs.contains(p.getName()))
+			if(CommandsHandler.disabledGMs.contains(p.getName()))
 			{
 				if(plugin.vipManager.isVip(p.getName()))
 				{

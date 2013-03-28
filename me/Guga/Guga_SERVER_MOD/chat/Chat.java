@@ -19,7 +19,7 @@ import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
 
 public class Chat implements Listener
 {
@@ -62,7 +62,7 @@ public class Chat implements Listener
 		
 		ChatColor messageColor = ChatColor.WHITE;
 		
-		if(GameMasterHandler.IsAtleastRank(sender.getName(),Rank.HELPER) && !GugaCommands.disabledGMs.contains(sender.getName()))
+		if(GameMasterHandler.IsAtleastRank(sender.getName(),Rank.HELPER) && !CommandsHandler.disabledGMs.contains(sender.getName()))
 		{
 			if(GameMasterHandler.IsRank(sender.getName(), Rank.GAMEMASTER))
 			{

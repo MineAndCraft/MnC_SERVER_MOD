@@ -17,7 +17,7 @@ import me.Guga.Guga_SERVER_MOD.BlockLocker;
 import me.Guga.Guga_SERVER_MOD.MinecraftPlayer;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.GameMasterHandler;
-import me.Guga.Guga_SERVER_MOD.Handlers.GugaCommands;
+import me.Guga.Guga_SERVER_MOD.Handlers.CommandsHandler;
 import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 
 import org.bukkit.ChatColor;
@@ -208,7 +208,7 @@ public class GugaPlayerListener implements Listener
 					player.setGameMode(GameMode.SURVIVAL);
 			}
 		}
-		if(GugaCommands.fly.contains(player.getName().toLowerCase()))
+		if(CommandsHandler.fly.contains(player.getName().toLowerCase()))
 		{
 			player.setAllowFlight(true);
 			player.setFlying(true);
