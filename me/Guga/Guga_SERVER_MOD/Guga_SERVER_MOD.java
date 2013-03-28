@@ -19,6 +19,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.SpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.Listeners.CustomListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.BlockListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.EntityListener;
+import me.Guga.Guga_SERVER_MOD.Listeners.InventoryListener;
 import me.Guga.Guga_SERVER_MOD.Listeners.PlayerListener;
 import me.Guga.Guga_SERVER_MOD.RPG.RpgCommandExecutor;
 
@@ -81,6 +82,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		pManager.registerEvents(bListener, this);
 		pManager.registerEvents(enListener, this);
 		pManager.registerEvents(customListener, this);
+		pManager.registerEvents(inventoryListener, this);
 		
 		chat.onEnable();		
 
@@ -560,6 +562,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public final EntityListener enListener = new EntityListener(this);
 	public final BlockListener bListener = new BlockListener(this);
 	public final CustomListener customListener = new CustomListener(this);
+	public final InventoryListener inventoryListener = new InventoryListener();
 	public BlockLocker blockLocker;
 	public final GugaLogger logger = new GugaLogger(this);
 	public GugaArena arena = new GugaArena(this);
