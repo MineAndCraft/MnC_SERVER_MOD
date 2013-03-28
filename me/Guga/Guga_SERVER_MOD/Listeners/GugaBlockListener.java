@@ -20,6 +20,7 @@ import me.Guga.Guga_SERVER_MOD.Handlers.HomesHandler;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -316,6 +317,15 @@ public class GugaBlockListener implements Listener
 				ChatHandler.SuccessMsg(p, "Vas davkovac byl zamcen.");
 			}
 		}
+		if(block.getTypeId() == 19)
+		{
+			World world = block.getWorld();
+			int x = block.getX();
+			int y = block.getY();
+			int z = block.getZ();
+			this.clearWaterSponge(world, x, y, z, 4);
+			block.setTypeId(12);
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
@@ -363,6 +373,22 @@ public class GugaBlockListener implements Listener
 			while(it.hasNext())
 			{
 				it.next().sendMessage("RS_EVENT: ID=" + blockID + ",x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ());
+			}
+		}
+	}
+	private void clearWaterSponge(World world, int x, int y, int z, int radius)
+	{
+		for (int cx = -radius; cx <= radius; cx++) 
+		{
+			for (int cy = -radius; cy <=radius; cy++) 
+			{
+				for (int cz = -radius; cz <= radius; cz++) 
+				{
+					if (world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 8 || world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 9) //isWater?
+					{
+						world.getBlockAt(x + cx, y + cy, z + cz).setTypeId(0);
+					}
+				}
 			}
 		}
 	}
