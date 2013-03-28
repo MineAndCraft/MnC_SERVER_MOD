@@ -10,7 +10,6 @@ import me.Guga.Guga_SERVER_MOD.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.DataPager;
 import me.Guga.Guga_SERVER_MOD.Enchantments;
-import me.Guga.Guga_SERVER_MOD.Currency.ShopManager.ShopItem;
 import me.Guga.Guga_SERVER_MOD.Enchantments.EnchantmentResult;
 import me.Guga.Guga_SERVER_MOD.Estates.EstateHandler;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
@@ -251,56 +250,6 @@ public abstract class CommandsHandler
 			ChatHandler.FailMsg(sender, "Tento block nelze odemknout!");
 		}
 		
-	}
-	
-	public static void CommandShop(Player sender, String args[])
-	{
-		if (plugin.arena.IsArena(sender.getLocation()))
-		{
-			ChatHandler.FailMsg(sender, "V arene nemuzete pouzit prikaz /shop!");
-			return;
-		}
-		
-		if (args.length == 0)
-		{
-			sender.sendMessage("Shop Menu:");
-			sender.sendMessage("/shop buy <nazev>  -  Koupi dany item (1).");
-			sender.sendMessage("/shop balance  -  Zobrazi vase kredity.");
-			sender.sendMessage("/shop items <strana>  -  Seznam itemu, ktere se daji koupit.");
-		}
-		else if (args.length == 1)
-		{
-			String subCommand = args[0];
-			if (subCommand.matches("balance"))
-			{
-				sender.sendMessage("Vas ucet:");
-				sender.sendMessage("Kredity: " + plugin.currencyManager.getBalance(sender.getName()));
-			}
-		}
-		else if(args.length >= 1 && args[0].equals("items"))
-		{
-			int page = 1;
-			if(args.length >= 2)
-				page = Integer.parseInt(args[1]);
-			DataPager<ShopItem> pager = new DataPager<ShopItem>(plugin.shopManager.getShopItemList(), 15);
-			Iterator<ShopItem> i = pager.getPage(page).iterator();
-
-			sender.sendMessage("SEZNAM ITEMU:");
-			sender.sendMessage("STRANA " + page + "/" + pager.getPageCount());
-			while (i.hasNext())
-			{
-				ShopItem item = i.next();
-				sender.sendMessage(String.format("%s - %s - cena za kus: %d ", item.getName(),item.getIdString(),item.getPrice()));
-			}
-		}
-		else if (args[0].equals("buy") && (args.length == 3 || args.length == 2))
-		{
-			String arg1 = args[1];
-			int arg2 = 1;
-			if(args.length == 3)
-				arg2 = Integer.parseInt(args[2]);
-			plugin.shopManager.buyItem(sender.getName(),arg1, arg2);
-		}
 	}
 	
 	public static void CommandVIP(Player sender, String args[])

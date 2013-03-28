@@ -190,11 +190,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 {
 			 CommandsHandler.CommandDebug();
 		 }
-		 else if ((cmd.getName().equalsIgnoreCase("shop")) && (sender instanceof Player))		
-		 {
-			 CommandsHandler.CommandShop((Player)sender,args);	 
-			 return true;
-		 }
 		 else if ((cmd.getName().equalsIgnoreCase("vip")) && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandVIP((Player)sender, args);
