@@ -10,8 +10,9 @@ import org.bukkit.entity.Player;
 
 public class RpgCommandExecutor implements CommandExecutor
 {
-	public RpgCommandExecutor()
-	{}
+	final Guga_SERVER_MOD plugin = Guga_SERVER_MOD.getInstance();
+	
+	public RpgCommandExecutor(){}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) 
@@ -20,7 +21,6 @@ public class RpgCommandExecutor implements CommandExecutor
 		{
 			if(command.getName().equalsIgnoreCase("rpg"))
 			{
-				Guga_SERVER_MOD plugin = Guga_SERVER_MOD.getInstance();
 				GugaProfession2 prof;
 				if ((prof = plugin.userManager.getUser(sender.getName()).getProfession()) != null)
 				{
@@ -47,6 +47,7 @@ public class RpgCommandExecutor implements CommandExecutor
 					sender.sendMessage(ChatColor.AQUA + "DIAMANT: " + ChatColor.WHITE + chanceDiamond + "% (+0.1% kazdych 50 levelu)");
 					sender.sendMessage(ChatColor.GREEN + "EMERALD: " + ChatColor.WHITE + chanceEmerald + "% (+0.1% kazdych 100 levelu)");
 					sender.sendMessage(ChatColor.YELLOW + "**************************");
+					return true;
 				}
 				else 
 				{
