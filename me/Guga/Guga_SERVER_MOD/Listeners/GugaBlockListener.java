@@ -106,7 +106,7 @@ public class GugaBlockListener implements Listener
 		if(!EstateHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
-			ChatHandler.FailMsg(p, "You cannot dig here, there is an estate of another user.");
+			ChatHandler.FailMsg(p, "Nemuzete kopat blocky na pozemku jineho hrace.");
 		}
 		
 		GugaProfession2 prof = player.getProfession();
@@ -242,7 +242,7 @@ public class GugaBlockListener implements Listener
 		if(!EstateHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
-			ChatHandler.FailMsg(p, "You cannot place here, there is an estate of another user.");
+			ChatHandler.FailMsg(p, "Nemuzete pokladat blocky na pozemku jineho hrace.");
 		}
 		
 		Block block = e.getBlockPlaced();
