@@ -125,6 +125,7 @@ public class Chat implements Listener
 			BufferedReader input = new BufferedReader(new InputStreamReader(is));
 			while((line = input.readLine())!=null)
 				newMOTD += line;
+			input.close();
 			this.motd = newMOTD;
 			plugin.log.info("[Chat] MOTD loaded.");
 		}
