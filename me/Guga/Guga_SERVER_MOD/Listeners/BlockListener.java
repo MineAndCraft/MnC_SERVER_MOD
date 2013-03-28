@@ -291,11 +291,6 @@ public class BlockListener implements Listener
 				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
 				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
 			}
-			else if(block.getTypeId() == BlockLocker.LockableBlocks.DISPENSER.getID() && !plugin.blockLocker.IsLocked(block))
-			{
-				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-				ChatHandler.SuccessMsg(p, "Vas davkovac byl zamcen.");
-			}
 		}
 		if(block.getTypeId() == 19)
 		{

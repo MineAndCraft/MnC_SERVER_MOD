@@ -18,8 +18,7 @@ public class BlockLocker
 	{
 		CHEST(54, "chest"),
 		FURNANCE(61, "furnance"),
-		BURNING_FURNANCE(62, "furnance"),
-		DISPENSER(23, "dispenser");
+		BURNING_FURNANCE(62, "furnance");
 
 		LockableBlocks(int blockID, String name)
 		{
