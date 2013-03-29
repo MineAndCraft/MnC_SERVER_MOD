@@ -7,10 +7,10 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import me.Guga.Guga_SERVER_MOD.GameMaster;
-import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
+import me.Guga.Guga_SERVER_MOD.util.GugaFile;
 
 public abstract class GameMasterHandler 
 {

@@ -6,8 +6,8 @@ import java.util.Random;
 
 import org.bukkit.Location;
 
-import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.util.GugaFile;
 
 public class RandomSpawnsHandler 
 {
