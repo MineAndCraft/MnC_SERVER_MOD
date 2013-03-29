@@ -7,7 +7,7 @@ commands:
     help:
         description: Prints all possible commands
     getcoords:
-        desctiption: Prints coordinates of target block
+        description: Prints coordinates of target block
     login:
         description: Logs a player
     register:
@@ -26,8 +26,6 @@ commands:
         description: RPG menu
     arena:
         description: Arena menu
-    fly:
-        description: Fly menu
     gm:
         description: GM Commands menu
     helper:
