@@ -34,6 +34,11 @@ public class Announcements
 	
 	public void start()
 	{
+		if(Config.CHAT_ANNOUNCEMENTS_DELAY == 0)
+			return;
+		
+		this.stop();
+		
 		long ticks = Config.CHAT_ANNOUNCEMENTS_DELAY/50l; // one tick is 1/20 s => 50 ms is one tick
 		taskID = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			public void run()
