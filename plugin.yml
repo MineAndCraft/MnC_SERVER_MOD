@@ -1,6 +1,7 @@
-name: Guga_SERVER_MOD
-main: me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD
-version: 4.0.0
+name: MnC_SERVER_MOD
+main: me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD
+version: 1.0.0
+authors: [rikub, hawkeye, Guga]
 commands:
     who:
         description: Gets Names of Online players
