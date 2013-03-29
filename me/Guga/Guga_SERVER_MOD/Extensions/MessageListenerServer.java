@@ -25,7 +25,7 @@ public class MessageListenerServer extends Thread
 		{
 			this.sock = null;
 			this.running = false;
-			e.printStackTrace();
+			Guga_SERVER_MOD.getInstance().log.warning("[GSM_Extensions.MSGL] Failed to bind socket: "+ e.getMessage());
 		}
 	}
 	
