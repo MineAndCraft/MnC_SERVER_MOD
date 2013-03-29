@@ -182,7 +182,7 @@ public class PlayerListener implements Listener
 		
 		long timeStart = System.nanoTime();
 		player.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
-		player.sendMessage("Pro zobrazeni prikazu napiste " + ChatColor.YELLOW +"/help.");
+		player.sendMessage("This bukkit server runs thanks to MineAndCraft_SERVER_MOD version "+Guga_SERVER_MOD.version);
 		Player[]players = plugin.getServer().getOnlinePlayers();
 		String toSend = "";
 		int i=0;
