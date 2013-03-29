@@ -90,7 +90,8 @@ public class UserManager
 					}
 					else
 					{
-						player.sendMessage("Nejste zaregistrovan. Zaregistrujte se prosim pomoci /register <heslo> <heslo znovu> <email>");
+						player.sendMessage("Nejste zaregistrovan! Zaregistrujte se prosim pomoci " + 
+								ChatColor.YELLOW +" /register <heslo> <heslo znovu> <email>"+ ChatColor.WHITE +"!");
 					}
 					try {
 						Thread.sleep(5000);
