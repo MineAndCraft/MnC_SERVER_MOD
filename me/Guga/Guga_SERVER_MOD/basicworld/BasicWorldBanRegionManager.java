@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import me.Guga.Guga_SERVER_MOD.Config;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
@@ -22,7 +23,6 @@ import org.bukkit.entity.Player;
 public class BasicWorldBanRegionManager
 {
 	private Guga_SERVER_MOD plugin;
-	private String configFile;
 	private ArrayList<String> regions = new ArrayList<String>(); 
 	
 	private HashMap<String,Integer> blockDeviations = new HashMap<String,Integer>(); 
@@ -31,7 +31,6 @@ public class BasicWorldBanRegionManager
 	public BasicWorldBanRegionManager(Guga_SERVER_MOD plugin)
 	{
 		this.plugin = plugin;
-		this.configFile = Guga_SERVER_MOD.basicWorldBanRegionsConfigFilePath;
 		this.reloadBanRegions();
 		this.loadDeviations();
 	}
@@ -40,7 +39,7 @@ public class BasicWorldBanRegionManager
 	{
 		this.regions.clear();
 		try{
-		    BufferedReader br = new BufferedReader(new FileReader(new File(this.configFile)));
+		    BufferedReader br = new BufferedReader(new FileReader(new File(Config.BW_BAN_REGIONS_CONFIG_FILE)));
 		    String line = null;
 		while((line = br.readLine())!=null)
 		{
@@ -140,7 +139,7 @@ public class BasicWorldBanRegionManager
 	private void saveDeviations()
 	{
 		try{
-			PrintWriter out = new PrintWriter(new FileWriter(Guga_SERVER_MOD.basicWorldBanRegionsDeviationsFilePath));
+			PrintWriter out = new PrintWriter(new FileWriter(Config.BW_BAN_REGIONS_DEVIATIONS_FILE));
 			for(Entry<String, Integer> d: this.blockDeviations.entrySet())
 			{
 				out.println(String.format("%s;%d",d.getKey(),d.getValue()));
@@ -157,7 +156,7 @@ public class BasicWorldBanRegionManager
 	private void loadDeviations()
 	{
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(Guga_SERVER_MOD.basicWorldBanRegionsDeviationsFilePath));
+			BufferedReader br = new BufferedReader(new FileReader(Config.BW_BAN_REGIONS_DEVIATIONS_FILE));
 		    String line = null;
 			this.blockDeviations.clear();
 			String[] split;

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import me.Guga.Guga_SERVER_MOD.Config;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.util.GugaFile;
 
@@ -19,7 +20,7 @@ public class HomesHandler
 	public static void loadHomes()
 	{
 		plugin.log.info("Loading Homes file...");
-		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/Homes.dat", GugaFile.READ_MODE);
+		GugaFile file = new GugaFile(Config.HOMES_FILE, GugaFile.READ_MODE);
 		file.Open();
 		String line;
 		String playerName;
@@ -44,7 +45,7 @@ public class HomesHandler
 	public static void saveHomes()
 	{
 		plugin.log.info("Saving Homes file...");
-		GugaFile file = new GugaFile("plugins/MineAndCraft_plugin/Homes.dat", GugaFile.WRITE_MODE);
+		GugaFile file = new GugaFile(Config.HOMES_FILE, GugaFile.WRITE_MODE);
 		file.Open();
 		String line;
 		String playerName;

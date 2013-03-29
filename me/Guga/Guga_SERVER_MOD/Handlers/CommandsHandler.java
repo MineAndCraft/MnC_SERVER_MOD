@@ -10,6 +10,7 @@ import me.Guga.Guga_SERVER_MOD.basicworld.BasicWorld;
 import me.Guga.Guga_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.Guga.Guga_SERVER_MOD.chat.ChatHandler;
 import me.Guga.Guga_SERVER_MOD.Estates.EstateHandler;
+import me.Guga.Guga_SERVER_MOD.Config;
 import me.Guga.Guga_SERVER_MOD.GameMaster;
 import me.Guga.Guga_SERVER_MOD.GameMaster.Rank;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
@@ -915,7 +916,7 @@ public abstract class CommandsHandler
 			feed += args[i];
 			i++;
 		}
-		GugaFile file = new GugaFile(FeedbackFile, GugaFile.APPEND_MODE);
+		GugaFile file = new GugaFile(Config.FEEDBACK_FILE, GugaFile.APPEND_MODE);
 		String line = "Feedback (" + sender.getName() + ") " + feed;
 		file.Open();
 		file.WriteLine(line);
@@ -2838,7 +2839,6 @@ public abstract class CommandsHandler
 	public static ArrayList<String> fly = new ArrayList<String>();
 	public static HashMap<String, Location> backTeleport = new HashMap<String,Location>();
 	public static ArrayList<String> disabledGMs = new ArrayList<String>();
-	public static String FeedbackFile = "plugins/MineAndCraft_plugin/FeedbackFile.dat";
 	private static Guga_SERVER_MOD plugin;
 	
 	public static void CommandFriend(Player sender, String[] args)

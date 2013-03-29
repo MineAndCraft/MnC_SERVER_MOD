@@ -27,8 +27,18 @@ public final class Config
 	public static String CHAT_ANNOUNCEMENTS_FILE;
 	public static String CHAT_MOTD_FILE;
 	
+	//feedback file
+	public static String FEEDBACK_FILE;
 	
-	public static void load(String config_path)
+	//homes file
+	public static String HOMES_FILE;
+	
+	
+	//basic world config
+	public static String BW_BAN_REGIONS_CONFIG_FILE;
+	public static String BW_BAN_REGIONS_DEVIATIONS_FILE;
+	
+ 	public static void load(String config_path)
 	{
 		_log.info("Loading config.");
 		try{
@@ -50,6 +60,16 @@ public final class Config
 			CHAT_ANNOUNCEMENTS_DELAY 	= Long.parseLong(config.getProperty("ChatAnnouncementsDelay"));
 			CHAT_ANNOUNCEMENTS_FILE		= config.getProperty("ChatAnnouncementsFile");
 			CHAT_MOTD_FILE				= config.getProperty("ChatMotdFile");
+			
+			//feedback file
+			FEEDBACK_FILE = config.getProperty("FeedbackFile","plugins/MineAndCraft_plugin/FeedbackFile.dat");
+			
+			//homes
+			HOMES_FILE = config.getProperty("HomesFile","plugins/MineAndCraft_plugin/Homes.dat");
+			
+			//basic world config
+			BW_BAN_REGIONS_CONFIG_FILE = config.getProperty("BasicWorldBanRegionsConfigFile", "plugins/MineAndCraft_plugin/BWBanRegions.dat");
+			BW_BAN_REGIONS_DEVIATIONS_FILE = config.getProperty("BasicWorldBanRegionsDeviationsFile", "plugins/MineAndCraft_plugin/BWBanDeviations.dat");
 		}
 		catch(Exception e)
 		{

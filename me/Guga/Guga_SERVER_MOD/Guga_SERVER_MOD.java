@@ -539,9 +539,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 	public boolean redstoneDebug = false;
 	
 	public static final String version = "4.0.0";
-	public static final String shopItemConfigFilePath = "plugins/MineAndCraft_plugin/Shop.cfg";
-	public static final String basicWorldBanRegionsConfigFilePath = "plugins/MineAndCraft_plugin/BWBanRegions.dat";
-	public static final String basicWorldBanRegionsDeviationsFilePath = "plugins/MineAndCraft_plugin/BWBanDeviations.dat";
 	
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
