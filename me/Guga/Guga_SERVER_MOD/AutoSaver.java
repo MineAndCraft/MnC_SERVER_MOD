@@ -1,5 +1,6 @@
 package me.Guga.Guga_SERVER_MOD;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 
@@ -37,6 +38,7 @@ public abstract class AutoSaver
 	}
 	public static void SaveAll()
 	{
+		Bukkit.savePlayers();
 		plugin.userManager.save();
 		ServerRegionHandler.SaveRegions();
 		RandomSpawnsHandler.SaveSpawns();
