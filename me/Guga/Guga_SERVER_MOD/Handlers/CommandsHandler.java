@@ -19,6 +19,7 @@ import me.Guga.Guga_SERVER_MOD.GugaFile;
 import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
+import me.Guga.Guga_SERVER_MOD.UserManager;
 import me.Guga.Guga_SERVER_MOD.home.Home;
 import me.Guga.Guga_SERVER_MOD.home.HomesHandler;
 import me.Guga.Guga_SERVER_MOD.util.DataPager;
@@ -2709,7 +2710,14 @@ public abstract class CommandsHandler
 	}
 
 	public static void CommandEstates(Player sender, String[] args)
-	{		
+	{
+		MinecraftPlayer player = UserManager.getInstance().getUser(sender.getName());
+		if(player == null || player.getProfession() == null || player.getProfession().GetLevel() < 30)
+		{
+			ChatHandler.FailMsg(sender, "Nemuzete pouzit command /estates. Nemate level 30.");
+			return;
+		}
+		
 		if(args.length == 0)
 		{
 			sender.sendMessage(ChatColor.YELLOW + "**********ESTATES menu**********");
@@ -2720,7 +2728,7 @@ public abstract class CommandsHandler
 			sender.sendMessage(ChatColor.AQUA + "/estates list "+ ChatColor.WHITE + "- Zobrazi seznam Vasich residenci.");
 			sender.sendMessage(ChatColor.AQUA + "/estates blocks "+ ChatColor.WHITE + "- Zobrazi pocet blocku, ktere muzete ochranit.");
 			sender.sendMessage(ChatColor.AQUA + "/estates remove " + ChatColor.GRAY + "<jmeno> "+ ChatColor.WHITE + "- Smaze residenci a vrati 95% blocku.");
-			sender.sendMessage(ChatColor.AQUA + "/estates buy " + ChatColor.GRAY + "<pocetBlocku> " + ChatColor.WHITE + "- Dokoupi blocky, ktere muzete zamknout pomoci pozemku.");
+			sender.sendMessage(ChatColor.AQUA + "/estates buy " + ChatColor.GRAY + "<pocetBlocku> " + ChatColor.WHITE + "- Dokoupi blocky, ktere muzete zamknout pomoci pozemku. Cena je 0.2 kreditu za block.");
 			sender.sendMessage(ChatColor.YELLOW + "********************************");
 		}
 		else if(args[0].equalsIgnoreCase("create"))
@@ -2776,21 +2784,21 @@ public abstract class CommandsHandler
 		{
 			if(args.length < 3)
 			{
-				sender.sendMessage("/estates access <region> list - Vypise seznam hracu s pravy na zadany pozemek.");
-				sender.sendMessage("/estates access <region> add <player> - Prida hraci prava na zadany pozemek.");
-				sender.sendMessage("/estates access <region> remove <player> - Odebere hraci prava na zadany pozemek.");
+				sender.sendMessage(ChatColor.AQUA + "/estates access <pozemek> list"+ ChatColor.WHITE + " - Vypise seznam hracu s pravy na zadany pozemek.");
+				sender.sendMessage(ChatColor.AQUA + "/estates access <pozemek> add <player>"+ ChatColor.WHITE + " - Prida hraci prava na zadany pozemek.");
+				sender.sendMessage(ChatColor.AQUA + "/estates access <pozemek> remove <player>"+ ChatColor.WHITE + " - Odebere hraci prava na zadany pozemek.");
 			}
 			else
 			{
 				if(!EstateHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
-					sender.sendMessage(String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
+					ChatHandler.FailMsg(sender,String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
 					return;
 				}
 				
 				if(args[2].equalsIgnoreCase("list"))
 				{
-					sender.sendMessage(String.format("Tito hraci mohou kopat/pokladat blocky v %s estate:\n  %s",args[1],EstateHandler.getAllowedPlayers(args[1])));
+					sender.sendMessage(String.format("Tito hraci mohou kopat/pokladat blocky v pozemku %s:\n  %s",args[1],EstateHandler.getAllowedPlayers(args[1])));
 				}
 				else if(args[2].equalsIgnoreCase("add") && args.length==4)
 				{
@@ -2823,7 +2831,7 @@ public abstract class CommandsHandler
 
 				if(!EstateHandler.getResidenceOwner(args[1]).equalsIgnoreCase(sender.getName()))
 				{
-					sender.sendMessage(String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
+					ChatHandler.FailMsg(sender,String.format("Pozemek %s neexistuje nebo neni Vas.",args[1]));
 					return;
 				}
 				if(EstateHandler.removeResidence(args[1]))
@@ -2838,7 +2846,13 @@ public abstract class CommandsHandler
 		{
 			if(args.length == 2)
 			{
-				int numberOfBlocks = Integer.parseInt(args[1]);
+				int numberOfBlocks = 0;
+				try{
+					numberOfBlocks = Integer.parseInt(args[1]);
+				}catch(Exception e){
+					sender.sendMessage("Pocet blocku musi byt cislo mensi nez 2147483648.");
+					return;
+				}
 				int price = (int)(numberOfBlocks * 0.2);
 				if(plugin.currencyManager.getBalance(sender.getName()) >= price)
 				{
