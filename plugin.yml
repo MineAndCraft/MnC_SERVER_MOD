@@ -74,3 +74,5 @@ commands:
         description: Announces a message server-wide
     estates:
         description: Command for user regions
+    book:
+        description: Economy command for copying books

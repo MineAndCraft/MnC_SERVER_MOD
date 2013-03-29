@@ -354,6 +354,7 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		getCommand("credits").setExecutor(new CurrencyCommandExecutor());
 		getCommand("shop").setExecutor(new CurrencyCommandExecutor());
 		getCommand("home").setExecutor(new HomeCommandExecutor());
+		getCommand("book").setExecutor(new CurrencyCommandExecutor());
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)

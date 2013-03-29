@@ -12,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class CurrencyCommandExecutor implements CommandExecutor
 {
@@ -126,6 +127,199 @@ public class CurrencyCommandExecutor implements CommandExecutor
 				plugin.shopManager.buyItem(sender.getName(),arg1, arg2);
 				return true;
 			}
+		}
+		else if(command.getName().equalsIgnoreCase("book"))
+		{
+			if(args.length == 0)
+			{
+				sender.sendMessage(ChatColor.RED + "Type: \"/book help\" for more informations.");
+				return true;
+			}
+
+			if(args[0].toLowerCase().matches("help"))
+			{
+				if(args.length == 1)
+				{
+					sender.sendMessage(ChatColor.AQUA + "BOOK COPIER PRIKAZY A INFORMACE!");
+					sender.sendMessage("<> - povinne argumenty");
+					sender.sendMessage("[] - dobrovolne argumenty");
+					sender.sendMessage(ChatColor.AQUA + "/book copy " + ChatColor.GRAY + "[value]" +ChatColor.WHITE+ " - Zkopiruje knihu ve vasi ruce. Cena za kus: 20 Kreditu");
+					sender.sendMessage(ChatColor.AQUA + "/book give " + ChatColor.GRAY +  "<player> [value]" +ChatColor.WHITE+ " - Zkopiruje a posle hraci Vasi knihu.. Cena za  kus: 30 kreditu");
+					/*sender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book save <fileName> - Saves book in your hand to file.");
+					sender.sendMessage(ChatColor.YELLOW + "* " + ChatColor.WHITE + "/book load <fileName> - Loads book from file to your inventory.");*/
+				}
+				return true;
+			}
+
+			else if(args[0].toLowerCase().matches("give"))
+			{
+				if(args.length == 2)
+				{
+					Player p;
+					if((p = plugin.getServer().getPlayer(args[1])) != null)
+					{
+						try
+						{
+							ItemStack item = new WritableBook(sender.getItemInHand()).createItem(1);
+							p.getInventory().addItem(item);
+							ChatHandler.InfoMsg(p, "Obdrzel jste knihu...");
+							plugin.currencyManager.addCredits(sender.getName(), -30);
+							ChatHandler.SuccessMsg(sender, "Kniha byla odeslana!");
+							return true;
+						}
+						catch(NumberFormatException e)
+						{
+							ChatHandler.FailMsg(sender, "Druhy parametr musi byt cislo.");
+							e.printStackTrace();
+							return false;
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Hrac je offline.");
+						return false;
+					}
+				}
+
+				else if(args.length == 3)
+				{
+					if(sender.getItemInHand().getTypeId() == 387)
+					{
+						Player p;
+						if((p = plugin.getServer().getPlayer(args[1])) != null)
+						{
+							try
+							{
+								int numberOfBooks = Integer.parseInt(args[2]);
+								ItemStack item = new WritableBook(sender.getItemInHand()).createItem(numberOfBooks);
+								item.setAmount(numberOfBooks);
+								p.getInventory().addItem(item);
+								ChatHandler.InfoMsg(sender, "Obdrzel jste knihy...");
+								plugin.currencyManager.addCredits(sender.getName(), -30*numberOfBooks);
+								ChatHandler.SuccessMsg(sender, "Knihy byla odeslany!");
+								return true;
+							}
+							catch(NumberFormatException e)
+							{
+								ChatHandler.FailMsg(sender, "Druhy parametr musi byt cislo.");
+								e.printStackTrace();
+								return false;
+							}
+						}
+						else
+						{
+							ChatHandler.FailMsg(sender, "Hrac je offline.");
+							return false;
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Toto neni kniha.");
+						return false;
+					}
+				}
+			}
+
+			else if(args[0].toLowerCase().matches("copy"))
+			{
+				if(args.length == 1)
+				{
+					if(sender.getItemInHand().getTypeId() == 387)
+					{
+						WritableBook book = new WritableBook(sender.getItemInHand());
+						sender.getInventory().addItem(book.createItem(1));
+						plugin.currencyManager.addCredits(sender.getName(), -20);
+						ChatHandler.SuccessMsg(sender, "Kniha byla zkopirovana!");
+						return true;
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Toto neni kniha.");
+						return false;
+					}
+				}
+				else if(args.length == 2)
+				{
+					if(sender.getItemInHand().getTypeId() == 387)
+					{
+						try
+						{
+							int numberOfBooks = Integer.parseInt(args[1]);
+							ItemStack item = new WritableBook(sender.getItemInHand()).createItem(numberOfBooks);
+							sender.getInventory().addItem(item);
+							plugin.currencyManager.addCredits(sender.getName(), -20*numberOfBooks);
+							ChatHandler.SuccessMsg(sender, "Knihy byly zkopirovany!");
+							return true;
+						}
+						catch(NumberFormatException e)
+						{
+							ChatHandler.FailMsg(sender, "Druhy parametr musi byt cislo.");
+							e.printStackTrace();
+							return false;
+						}
+					}
+					else
+					{
+						ChatHandler.FailMsg(sender, "Toto neni kniha.");
+						return false;
+					}
+				}
+			}
+
+			/*else if(args[0].toLowerCase().matches("load"))
+			{
+				if(args.length == 2)
+				{
+					String fileName = args[1];
+					if(!fileName.endsWith(".book"))
+					{
+						fileName += ".book";
+					}
+					String completePath = "plugins/MineAndCraft_plugin/Books/" + fileName;
+					File file = new File(completePath);
+					if(!file.exists())
+					{
+						sender.sendMessage(ChatColor.RED + "This file doesn't exist.");
+						return false;
+					}
+
+					WritableBook book = WritableBook.restoreObject(completePath);
+					sender.getInventory().addItem(book.createItem(1));
+					sender.sendMessage("Book has been loaded.");
+					return true;
+				}
+			}
+
+			else if(args[0].toLowerCase().matches("save"))
+			{
+				if(args.length == 2)
+				{
+					if(sender.getItemInHand().getTypeId() == 387)
+					{
+						String fileName = args[1];
+						if(!fileName.endsWith(".book"))
+						{
+							fileName += ".book";
+						}
+						String completePath = "plugins/MineAndCraft_plugin/Books/" + fileName;
+						File file = new File(completePath);
+						if(file.exists())
+						{
+							sender.sendMessage(ChatColor.RED + "This file already exists.");
+							return false;
+						}
+						WritableBook book = new WritableBook(sender.getItemInHand());
+						book.serialize(completePath);
+						sender.sendMessage("Book has been saved.");
+						return true;
+					}
+					else
+					{
+						sender.sendMessage("This isn't book! You need ID: 387.");
+						return false;
+					}
+				}
+			}*/
 		}
 		return false;
 	}
