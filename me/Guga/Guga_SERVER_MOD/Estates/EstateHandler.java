@@ -237,6 +237,8 @@ public class EstateHandler
 		
 		ChatHandler.SuccessMsg(player, "Pozemek byl vytvoren.");
 		Guga_SERVER_MOD.getInstance().log.info(String.format("Player '%s' created estate named '%s' with coordinates %d,%d,%d,%d",player.getName(),residence_name,left,top,right,bottom));
+		
+		EstatesDynMapHandler.reloadEstate(residence_name);
 	}
 
 	public static ArrayList<String> getResidencesOf(String playerName)
@@ -375,6 +377,8 @@ public class EstateHandler
 			stat4.setInt(1, (int)Math.round(width*height*0.95));
 			stat4.setInt(2, owner_id);
 			stat4.executeUpdate();
+			
+			EstatesDynMapHandler.removeEstate(residence);
 			
 			return true;
 			
