@@ -16,7 +16,6 @@ import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.Guga.Guga_SERVER_MOD.GugaArena.ArenaTier;
 import me.Guga.Guga_SERVER_MOD.GugaEvent;
 import me.Guga.Guga_SERVER_MOD.GugaFile;
-import me.Guga.Guga_SERVER_MOD.GugaParty;
 import me.Guga.Guga_SERVER_MOD.ServerRegion;
 import me.Guga.Guga_SERVER_MOD.Guga_SERVER_MOD;
 import me.Guga.Guga_SERVER_MOD.UserManager;
@@ -876,57 +875,7 @@ public abstract class CommandsHandler
 			}
 		}
 	}
-	public static void CommandParty(Player sender, String args[])
-	{
-		if(args.length==0)
-		{
-			sender.sendMessage(" /party <jmeno> - vytvori a prihlasi Vas do party");
-			sender.sendMessage(" /party q - opustite party");
-			sender.sendMessage(" /invite <jmeno hrace> - pozve hrace do Vasi party");
-			sender.sendMessage(" /invite - prijme pozvani do party");
-			sender.sendMessage(" /p - posle zpravu do party chatu");
-		}
-		else if(args.length==1)
-		{	
-			if(args[0].matches("q"))
-			{
-				GugaParty.removePlayer(sender);
-			}
-			else
-			{
-				GugaParty.addParty(sender, args[0]);
-			}
-		}
-	}
-	public static void CommandInvite(Player sender, String args[])
-	{
-		if(args.length==0)
-		{
-			GugaParty.inviteAccepted(sender);
-		}
-		else if(args.length==1)
-		{
-			GugaParty.invitePlayer(sender, args[0]);
-		}
-	}
-	public static void CommandSendPartyMsg(Player sender, String args[])
-	{
-		if(args.length!=0)
-		{
-			if(args.length!=0)
-			{
-				String text="";
-				for(int i=0;i<args.length;i++)
-				{
-					if(i==0)
-						text=text+args[i];
-					else
-						text=text+" "+args[i];
-				}
-				GugaParty.sendMessage(sender, text);
-			}
-		}
-	}
+
 	public static void CommandReply(Player sender, String args[])
 	{
 		if (args.length > 0)

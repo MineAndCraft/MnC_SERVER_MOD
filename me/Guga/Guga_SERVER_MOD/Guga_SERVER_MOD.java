@@ -94,7 +94,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		ServerRegionHandler.SetPlugin(this);
 		GameMasterHandler.SetPlugin(this);
 		GugaEvent.SetPlugin(this);
-		GugaParty.SetPlugin(this);
 		BasicWorld.Init(this);
 		RandomSpawnsHandler.SetPlugin(this);
 		HomesHandler.setPlugin(this);
@@ -204,18 +203,6 @@ public class Guga_SERVER_MOD extends JavaPlugin
 		 else if ((cmd.getName().equalsIgnoreCase("pp")) && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandPP((Player)sender, args);
-		 }
-		 else if ((cmd.getName().equalsIgnoreCase("invite")) && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandInvite((Player)sender, args);
-		 }
-		 else if ((cmd.getName().equalsIgnoreCase("p")) && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandSendPartyMsg((Player)sender, args);
-		 }
-		 else if ((cmd.getName().equalsIgnoreCase("party")) && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandParty((Player)sender, args);
 		 }
 		 else if ((cmd.getName().equalsIgnoreCase("locker")) && (sender instanceof Player))
 		 {
