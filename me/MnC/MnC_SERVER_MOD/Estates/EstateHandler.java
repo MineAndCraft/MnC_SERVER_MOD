@@ -2,6 +2,7 @@ package me.MnC.MnC_SERVER_MOD.Estates;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -454,5 +455,50 @@ public class EstateHandler
 			}
 		}
 		return true;
+	}
+	
+	public static boolean hasUserResidenceAccess(int residence_id,int user_id)
+	{
+		if(residence_id == 0) //there cannot be an estate with id 0 so just to be sure
+			return true;
+		
+		//check if the user is owner
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT owner_id FROM mnc_residences WHERE id=?");)
+		{
+			stat.setInt(1, residence_id);
+			try(ResultSet rset = stat.executeQuery();)
+			{
+				if(rset.next())
+				{
+					if(rset.getInt("owner_id") == user_id)
+						return true;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		//check if the user was granted access
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*)=1 as permission FROM mnc_residences_accesses WHERE user_id = ? AND residence_id = ? LIMIT 1");)
+		{
+			stat.setInt(1, user_id);
+			stat.setInt(2, residence_id);
+			try(ResultSet rset = stat.executeQuery();)
+			{
+				if(rset.next())
+				{
+					return rset.getBoolean("permission");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

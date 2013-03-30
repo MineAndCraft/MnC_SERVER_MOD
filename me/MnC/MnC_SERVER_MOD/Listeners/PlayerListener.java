@@ -10,6 +10,7 @@ import me.MnC.MnC_SERVER_MOD.GugaEvent;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
+import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
@@ -24,6 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -423,6 +425,30 @@ public class PlayerListener implements Listener
 		{
 			e.setCancelled(true);
 			return;
+		}
+		
+		int estate = EstateHandler.getResidenceId(block.getX(), block.getZ());
+		if(!EstateHandler.hasUserResidenceAccess(estate,pl.getId()))
+		{
+			boolean is_gm = GameMasterHandler.IsAtleastGM(player.getName());
+			
+			if(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)
+			{
+				if(block.getTypeId() == 64 || block.getType() == Material.FENCE_GATE)
+				{
+					if(is_gm)
+					{
+						ChatHandler.InfoMsg(player, "This is an estate #"+estate+". Make sure to close the door behind you.");
+					}
+				}
+			}
+			
+			if(!is_gm)
+			{
+				ChatHandler.FailMsg(player, "Toto je pozemek jineho hrace.");
+				e.setCancelled(true);
+				return;
+			}
 		}
 		
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
