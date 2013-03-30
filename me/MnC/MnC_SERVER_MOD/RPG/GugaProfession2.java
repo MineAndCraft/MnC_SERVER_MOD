@@ -25,13 +25,11 @@ public class GugaProfession2 extends GugaProfession
 	
 	public void onBlockBreak(Block block)
 	{
-		if(block.getTypeId() != 50 || //no experience for autoclicker torch breaking
-			block.getTypeId() != 78 ) //no experience for digging snow
+		if(block.getTypeId() == 50 || block.getTypeId() == 78 )
 			return;
 		
 		blocksBroken++;
-		this.GainExperience(4);
-		
+		this.GainExperience(4);	
 		if(blocksBroken>=100)
 		{
 			save();
