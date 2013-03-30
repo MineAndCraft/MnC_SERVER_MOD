@@ -361,8 +361,8 @@ public class EstateHandler
 			{
 				if(!rs.next())
 					return false;
-				width = Math.abs(Math.abs(rs.getInt("x1"))-Math.abs(rs.getInt("x2")));
-				height = Math.abs(Math.abs(rs.getInt("z1"))-Math.abs(rs.getInt("z2")));
+				width = Math.abs(Math.abs(rs.getInt("x1"))-Math.abs(rs.getInt("x2")))+1;
+				height = Math.abs(Math.abs(rs.getInt("z1"))-Math.abs(rs.getInt("z2")))+1;
 				owner_id = rs.getInt("owner_id");
 			}
 			
