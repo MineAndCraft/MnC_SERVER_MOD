@@ -427,8 +427,10 @@ public class PlayerListener implements Listener
 			return;
 		}
 		
-		int estate = EstateHandler.getResidenceId(block.getX(), block.getZ());
-		if(!EstateHandler.hasUserResidenceAccess(estate,pl.getId()))
+		int estate = 0;
+		if(block!=null)
+			estate = EstateHandler.getResidenceId(block.getX(), block.getZ());
+		if(estate > 0 && !EstateHandler.hasUserResidenceAccess(estate,pl.getId()))
 		{
 			boolean is_gm = GameMasterHandler.IsAtleastGM(player.getName());
 			
