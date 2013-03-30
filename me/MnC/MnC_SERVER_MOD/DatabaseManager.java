@@ -8,17 +8,10 @@ public class DatabaseManager
 {
 	public DatabaseManager()
 	{
-		this(false);
-	}
-	
-	public DatabaseManager(boolean connectAutomatically)
-	{
-		if(connectAutomatically)
-			this.connectDb();
 		_instance = this;
 	}
 	
-	public void connectDb()
+	public void connectDb() throws SQLException
 	{
 		try 
 		{
@@ -27,7 +20,7 @@ public class DatabaseManager
 		} 
 		catch (SQLException e) 
 		{
-			e.printStackTrace();
+			throw new SQLException(e);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

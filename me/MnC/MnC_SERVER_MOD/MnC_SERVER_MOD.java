@@ -1,4 +1,5 @@
 package me.MnC.MnC_SERVER_MOD;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import me.MnC.MnC_SERVER_MOD.home.HomeCommandExecutor;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
@@ -47,7 +49,14 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		
 		Config.load("plugins/MineAndCraft_plugin/config.properties");
 		
-		this.dbConfig.connectDb();
+		try{
+			this.dbConfig.connectDb();
+		}catch(SQLException e)
+		{
+			log.severe("Failed to connect to db:"+e.getMessage());
+			log.severe("Shutting server down.");
+			Bukkit.shutdown();
+		}
 		
 		userManager = new UserManager(this);
 		chat = new Chat();
