@@ -127,14 +127,14 @@ public class BlockListener implements Listener
 		{
 			if(plugin.blockLocker.IsLocked(targetBlock))
 			{
-				e.setCancelled(true);
 				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
 				if (owner.equalsIgnoreCase(p.getName()))
 				{
-					ChatHandler.InfoMsg(p, "Nemuzete rozbit svoji zamcenou truhlu. Nejdrive ji odemknete.");
+					ChatHandler.InfoMsg(p, "Vase zamcena truhla byla rozbyta.");
 				}
 				else
 				{
+					e.setCancelled(true);
 					ChatHandler.FailMsg(p, "Nemuzete rozbit cizi zamcenou truhlu! " + ChatColor.YELLOW + owner + ChatColor.RED + " je vlastnikem teto truhly.");
 				}
 				return;
