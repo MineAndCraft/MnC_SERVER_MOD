@@ -50,7 +50,7 @@ public abstract class GameMasterHandler
 		while (i.hasNext())
 		{
 			GameMaster gm = i.next();
-			if (gm.GetName().matches(name))
+			if (gm.GetName().equalsIgnoreCase(name))
 				return gm;
 		}
 		return null;
