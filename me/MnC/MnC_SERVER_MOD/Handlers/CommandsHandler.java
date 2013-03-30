@@ -391,7 +391,7 @@ public abstract class CommandsHandler
 			{
 				if(args[1].matches("on"))
 				{
-					if(sender.getWorld().getName().matches("world"))
+					if(sender.getWorld().getName().matches("world") || sender.getWorld().getName().matches("world_mine"))
 					{
 						plugin.vipManager.setFly(sender.getName(),true);
 						ChatHandler.SuccessMsg(sender, "Letani zapnuto!");
