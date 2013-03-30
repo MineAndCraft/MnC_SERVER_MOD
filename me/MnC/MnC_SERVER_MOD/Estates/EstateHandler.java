@@ -134,9 +134,9 @@ public class EstateHandler
 		int depth = Math.abs(Math.abs(bottom)-Math.abs(top))+1;
 		int size = width * depth;
 		
-		if(width > 60 || depth > 60)
+		if(width > Config.ESTATE_MAX_SIDE_SIZE || depth > Config.ESTATE_MAX_SIDE_SIZE)
 		{
-			ChatHandler.FailMsg(player, "Zadna se stran pozemku nemuze byt vetsi nez 60 blocku.");
+			ChatHandler.FailMsg(player, "Zadna se stran pozemku nemuze byt vetsi nez "+Config.ESTATE_MAX_SIDE_SIZE+" blocku.");
 			return;
 		}
 		

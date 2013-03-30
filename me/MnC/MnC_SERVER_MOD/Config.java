@@ -35,6 +35,7 @@ public final class Config
 	
 	//estates config
 	public static int ESTATE_MAX_SIZE;
+	public static int ESTATE_MAX_SIDE_SIZE;
 	
 	//basic world config
 	public static String BW_BAN_REGIONS_CONFIG_FILE;
@@ -72,6 +73,9 @@ public final class Config
 			//estates config
 			try{
 				ESTATE_MAX_SIZE = Integer.parseInt(config.getProperty("EstateMaxSize","2000"));
+			}catch(Exception e){}
+			try{
+				ESTATE_MAX_SIDE_SIZE = Integer.parseInt(config.getProperty("EstateMaxSideSize","60"));
 			}catch(Exception e){}
 			
 			//basic world config
