@@ -129,8 +129,8 @@ public class EstateHandler
 			top = c;
 		}
 		
-		int width = Math.abs(Math.abs(left)-Math.abs(right)); 
-		int depth = Math.abs(Math.abs(bottom)-Math.abs(top));
+		int width = Math.abs(Math.abs(left)-Math.abs(right))+1; 
+		int depth = Math.abs(Math.abs(bottom)-Math.abs(top))+1;
 		int size = width * depth;
 		
 		if(width > 60 || depth > 60)
