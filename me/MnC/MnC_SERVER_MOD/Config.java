@@ -33,6 +33,8 @@ public final class Config
 	//homes file
 	public static String HOMES_FILE;
 	
+	//estates config
+	public static int ESTATE_MAX_SIZE;
 	
 	//basic world config
 	public static String BW_BAN_REGIONS_CONFIG_FILE;
@@ -66,6 +68,11 @@ public final class Config
 			
 			//homes
 			HOMES_FILE = config.getProperty("HomesFile","plugins/MineAndCraft_plugin/Homes.dat");
+			
+			//estates config
+			try{
+				ESTATE_MAX_SIZE = Integer.parseInt(config.getProperty("EstateMaxSize","2000"));
+			}catch(Exception e){}
 			
 			//basic world config
 			BW_BAN_REGIONS_CONFIG_FILE = config.getProperty("BasicWorldBanRegionsConfigFile", "plugins/MineAndCraft_plugin/BWBanRegions.dat");

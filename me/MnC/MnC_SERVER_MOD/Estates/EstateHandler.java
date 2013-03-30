@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import me.MnC.MnC_SERVER_MOD.Config;
 import me.MnC.MnC_SERVER_MOD.DatabaseManager;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.ServerRegion;
@@ -139,9 +140,9 @@ public class EstateHandler
 		}
 		
 		
-		if(size > 1000)
+		if(size > Config.ESTATE_MAX_SIZE)
 		{
-			ChatHandler.FailMsg(player, "Plocha pozemku nemuze byt vetsi nez 1000 blocku.");
+			ChatHandler.FailMsg(player, "Plocha pozemku nemuze byt vetsi nez "+Config.ESTATE_MAX_SIZE+" blocku.");
 			return;
 		}
 		
