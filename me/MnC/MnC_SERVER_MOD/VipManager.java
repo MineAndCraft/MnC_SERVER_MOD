@@ -2,7 +2,6 @@ package me.MnC.MnC_SERVER_MOD;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TreeMap;
@@ -18,18 +17,15 @@ public class VipManager
 {
 	//needs table mnc_vip{ id - int auto increment primary key, user_id - int unique, expiration - long}
 	
-	private MnC_SERVER_MOD plugin;
-	
 	public static final int VIP_PERMANENT = -1;
 	
-	public VipManager(MnC_SERVER_MOD plugin)
+	public VipManager()
 	{
-		this.plugin = plugin;
 	}
 
 	public void setVipPrefix(String name)
 	{		
-		Player p = plugin.getServer().getPlayerExact(name);
+		Player p = MnC_SERVER_MOD.getInstance().getServer().getPlayerExact(name);
 		if (p==null)
 			return;
 		
@@ -58,57 +54,36 @@ public class VipManager
 	
 	/**
 	 * 
-	 * @param name user name
-	 * @param duration Duration to be added in seconds
+	 * @param name the name of the player
+	 * @param duration duration to be added in seconds
 	 * @return true on success, false on failure
 	 */
-	public boolean addVip(String name,long duration)
+	public boolean addVip(String playername,long duration)
 	{
-		VipUser vip = this.getVip(name);
+		VipUser vip = this.getVip(playername);
 		if(vip !=null && vip.getExpiration() == VIP_PERMANENT)
 		{
 			return true; // let infinity + |anything| = infinity 
 		}
 		else
 		{
-			return _addVip(name,duration);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param name name of the player
-	 * @param duration duration in seconds
-	 * @return
-	 */
-	private boolean _addVip(String name,long duration)
-	{
-		PreparedStatement stat=null;
-		try
-		{
-		    stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(?),INTERVAL ? SECOND))) ON DUPLICATE KEY UPDATE expiration = UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(expiration),INTERVAL ? SECOND))");
-		    stat.setInt(1, plugin.userManager.getUserId(name));
-		    stat.setLong(2, System.currentTimeMillis()/1000); // current time in seconds is supplied from minecraft server
-		    stat.setLong(3, duration);
-		    stat.setLong(4, duration);
-		    stat.executeUpdate();
-		    return stat.getUpdateCount()>=1;
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (SQLException e) {
+			try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(?),INTERVAL ? SECOND))) ON DUPLICATE KEY UPDATE expiration = UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(expiration),INTERVAL ? SECOND))");)
+			{
+				stat.setInt(1, UserManager.getInstance().getUserId(playername));
+				stat.setLong(2, System.currentTimeMillis()/1000); // current time in seconds is supplied from minecraft server
+				stat.setLong(3, duration);
+				stat.setLong(4, duration);
+				stat.executeUpdate();
+				return stat.getUpdateCount()>=1;
+			}
+			catch(Exception e)
+			{
 				e.printStackTrace();
 			}
 		}
 		return false;
 	}
+
 	
 	public boolean isVip(String name)
 	{
@@ -171,7 +146,7 @@ public class VipManager
 	
 	public synchronized void setFly(String name,boolean fly)
 	{
-		Player p = plugin.getServer().getPlayerExact(name);
+		Player p = MnC_SERVER_MOD.getInstance().getServer().getPlayerExact(name);
 		if(p==null)
 			return;
 		p.setAllowFlight(fly);
@@ -280,7 +255,7 @@ public class VipManager
 	{
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,?) ON DUPLICATE KEY UPDATE expiration = ?");)
 		{
-		    stat.setInt(1, plugin.userManager.getUserId(name));
+		    stat.setInt(1, UserManager.getInstance().getUserId(name));
 		    stat.setLong(2, expiration);
 		    stat.setLong(3, expiration);
 		    stat.executeUpdate();

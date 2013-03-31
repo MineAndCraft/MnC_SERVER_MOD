@@ -15,14 +15,13 @@ public class UserManager
 {
 	private static UserManager _instance;
 	
-	private MnC_SERVER_MOD plugin;
+	private final MnC_SERVER_MOD plugin = MnC_SERVER_MOD.getInstance();
 
 	private TreeMap<String,MinecraftPlayer> players = new TreeMap<String,MinecraftPlayer>();	
 	
-	UserManager (MnC_SERVER_MOD gugaSM)
+	UserManager()
 	{
 		_instance = this;
-		plugin = gugaSM;
 	}
 	
 	public static UserManager getInstance(){

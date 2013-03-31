@@ -58,9 +58,9 @@ public class MnC_SERVER_MOD extends JavaPlugin
 			Bukkit.shutdown();
 		}
 		
-		userManager = new UserManager(this);
+		userManager = new UserManager();
 		chat = new Chat();
-		vipManager = new VipManager(this);
+		vipManager = new VipManager();
 		shopManager = new ShopManager(this);
 		currencyManager = new CurrencyHandler();
 		placesManager = new PlacesManager(this);
