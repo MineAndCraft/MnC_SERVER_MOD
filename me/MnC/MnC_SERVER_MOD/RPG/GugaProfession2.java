@@ -45,10 +45,8 @@ public class GugaProfession2 extends GugaProfession
 	public synchronized void save()
 	{
 		blocksBroken = 0;
-		PreparedStatement stat=null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_profession` prof SET prof.experience = ? WHERE prof.user_id = ?");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_profession` prof SET prof.experience = ? WHERE prof.user_id = ?");
 		    stat.setInt(1, this.xp);
 		    stat.setInt(2, this.userId);
 		    stat.executeUpdate();
@@ -56,14 +54,6 @@ public class GugaProfession2 extends GugaProfession
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

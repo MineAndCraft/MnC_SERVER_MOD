@@ -112,10 +112,8 @@ public class VipManager
 	
 	public boolean isVip(String name)
 	{
-		PreparedStatement stat=null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*)=1 AS is_vip FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id = u.id WHERE u.username_clean = ?");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*)=1 AS is_vip FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id = u.id WHERE u.username_clean = ?");
 		    stat.setString(1, name.toLowerCase());
 		    ResultSet result = stat.executeQuery();
 		    if(result.next())
@@ -127,36 +125,19 @@ public class VipManager
 		{
 			e.printStackTrace();
 		}
-		finally{
-			try {
-				stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return false;
 	}
 	
 	public boolean removeVip(String name)
 	{
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_vip WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_vip WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		{
 			stat.setString(1, name.toLowerCase());
 			stat.executeUpdate();
 			return stat.getUpdateCount() == 1;
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return false;
 	}
@@ -247,10 +228,8 @@ public class VipManager
 	public VipUser getVip(String name)
 	{
 		VipUser vip = null;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT vip.expiration as expiration, u.username as name " +
-				"FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id WHERE u.username_clean = ?");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT vip.expiration as expiration, u.username as name FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id WHERE u.username_clean = ?");)
+		{
 			stat.setString(1, name.toLowerCase());
 			ResultSet result = stat.executeQuery();
 			if(result.next())
@@ -262,15 +241,6 @@ public class VipManager
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return vip;
 	}
@@ -308,10 +278,8 @@ public class VipManager
 	
 	public boolean setVip(String name, long expiration)
 	{
-		PreparedStatement stat=null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,?) ON DUPLICATE KEY UPDATE expiration = ?");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,?) ON DUPLICATE KEY UPDATE expiration = ?");
 		    stat.setInt(1, plugin.userManager.getUserId(name));
 		    stat.setLong(2, expiration);
 		    stat.setLong(3, expiration);
@@ -322,15 +290,6 @@ public class VipManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
 		return false;
 	}
 
@@ -338,10 +297,8 @@ public class VipManager
 	public ArrayList<VipUser> listAllVips()
 	{
 		ArrayList<VipUser> vips = new ArrayList<VipUser>();
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT vip.expiration as expiration, u.username as name " +
-				"FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT vip.expiration as expiration, u.username as name FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id");)
+		{
 			ResultSet result = stat.executeQuery();
 			while(result.next())
 			{
@@ -350,15 +307,6 @@ public class VipManager
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return vips;
 	}

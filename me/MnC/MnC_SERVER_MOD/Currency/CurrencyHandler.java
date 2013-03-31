@@ -20,12 +20,9 @@ public class CurrencyHandler
 	
 	public int getBalance(String playerName)
 	{
-		PreparedStatement stat=null;
 		int balance = 0;
-		try
-		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT curr.balance as balance " +
-				"FROM `mnc_currency` curr LEFT JOIN mnc_users u ON curr.user_id=u.id WHERE u.username_clean = ?");
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT curr.balance as balance FROM `mnc_currency` curr LEFT JOIN mnc_users u ON curr.user_id=u.id WHERE u.username_clean = ?");)
+		{ 
 		    stat.setString(1, playerName.toLowerCase());
 		    ResultSet result = stat.executeQuery();
 		    if(result.next())
@@ -36,15 +33,6 @@ public class CurrencyHandler
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		return balance;
 	}

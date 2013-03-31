@@ -172,9 +172,8 @@ public class PlacesManager
 	public boolean portalExists(String portalName)
 	{
 		boolean exists = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `name` = ? LIMIT 1;");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `name` = ? LIMIT 1;");)
+		{
 			stat.setString(1, portalName);
 			ResultSet result = stat.executeQuery();
 			if(result.next())
@@ -184,15 +183,6 @@ public class PlacesManager
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return exists;
 	}
@@ -206,9 +196,8 @@ public class PlacesManager
 	protected boolean isUserAllowedToTeleportTo(MinecraftPlayer player,Place port)
 	{
 		boolean permission = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT 1 as permission FROM `mnc_places_permissions` pp WHERE pp.place_id = ? AND pp.user_id = ? LIMIT 1");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT 1 as permission FROM `mnc_places_permissions` pp WHERE pp.place_id = ? AND pp.user_id = ? LIMIT 1");)
+		{
 			stat.setString(1, port.getName());
 			stat.setInt(2, player.getId());
 			ResultSet result = stat.executeQuery();
@@ -219,15 +208,6 @@ public class PlacesManager
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return permission;
 	}
@@ -243,9 +223,8 @@ public class PlacesManager
 		String type = "";
 		int owner_id = 0;
 		int id = 0;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE `name` = ? LIMIT 1");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE `name` = ? LIMIT 1");)
+		{ 
 			stat.setString(1, port);
 			ResultSet result = stat.executeQuery();
 			if(result.next())
@@ -265,15 +244,6 @@ public class PlacesManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
 		return place;
 	}
 
@@ -290,9 +260,8 @@ public class PlacesManager
 				return false;
 		}
 		boolean success = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("INSERT INTO `mnc_places` (name,owner_id,x,y,z,type,world) SELECT ?,`id`,?,?,?,?,? FROM `mnc_users` WHERE username_clean=?");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("INSERT INTO `mnc_places` (name,owner_id,x,y,z,type,world) SELECT ?,`id`,?,?,?,?,? FROM `mnc_users` WHERE username_clean=?");)
+		{ 
 			stat.setString(1, portName.toLowerCase());
 			stat.setString(7, portOwner.toLowerCase());
 			stat.setInt(2, x);
@@ -305,15 +274,6 @@ public class PlacesManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
 		return success;
 	}
 	
@@ -325,23 +285,13 @@ public class PlacesManager
 	public boolean removeTeleport(String portName)
 	{
 		boolean success = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE `mnc_places`, `mnc_places_permissions` FROM `mnc_places` LEFT JOIN `mnc_places_permissions` ON `mnc_places`.`name`=`mnc_places_permissions`.`place_id` WHERE `mnc_places`.`name` = ?");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE `mnc_places`, `mnc_places_permissions` FROM `mnc_places` LEFT JOIN `mnc_places_permissions` ON `mnc_places`.`name`=`mnc_places_permissions`.`place_id` WHERE `mnc_places`.`name` = ?");)
+		{
 			stat.setString(1, portName.toLowerCase());
 			success = stat.executeUpdate()>0;
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return success;
 	}
@@ -354,9 +304,8 @@ public class PlacesManager
 	 */
 	public boolean addTeleportAccess(String portName, String playerName)
 	{
-		PreparedStatement stat=null;
-		try{
-			stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_places_permissions` (user_id,place_id) (SELECT u.id,p.name FROM mnc_users u, mnc_places p WHERE p.name=? AND u.username_clean=? LIMIT 1)");
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_places_permissions` (user_id,place_id) (SELECT u.id,p.name FROM mnc_users u, mnc_places p WHERE p.name=? AND u.username_clean=? LIMIT 1)");)
+		{
 			stat.setString(1, portName.toLowerCase());
 			stat.setString(2, playerName.toLowerCase());
 			return stat.executeUpdate()==1;
@@ -364,15 +313,6 @@ public class PlacesManager
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e){
-					e.printStackTrace();
-				}
 		}
 		return false;
 	}
@@ -386,24 +326,14 @@ public class PlacesManager
 	public boolean removeTeleportAccess(String portName, String playerName)
 	{
 		boolean success = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM `mnc_places_permissions` WHERE `user_id` = (SELECT `id` FROM `mnc_users` WHERE username_clean=?) AND `place_id`=?");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM `mnc_places_permissions` WHERE `user_id` = (SELECT `id` FROM `mnc_users` WHERE username_clean=?) AND `place_id`=?");)
+		{
 			stat.setString(1, playerName.toLowerCase());
 			stat.setString(2, portName.toLowerCase());
 			success = stat.executeUpdate()==1;
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return success;
 	}
@@ -420,9 +350,8 @@ public class PlacesManager
 		String name = "";
 		int owner_id = 0;
 		int id = 0;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE owner_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE owner_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+		{
 			stat.setString(1, owner.toLowerCase());
 			ResultSet result = stat.executeQuery();
 			while(result.next())
@@ -442,15 +371,6 @@ public class PlacesManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
 		return places;
 	}
 
@@ -458,9 +378,8 @@ public class PlacesManager
 	{
 		int id = plugin.userManager.getUserId(name);
 		int count=0;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `owner_id` = ? AND `name`=?");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `owner_id` = ? AND `name`=?");)
+		{
 			stat.setInt(1,id);
 			stat.setString(2,portName);
 			ResultSet res = stat.executeQuery();
@@ -472,39 +391,20 @@ public class PlacesManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
 		return count > 0;
 	}
 
 	public boolean setWelcomeMessage(String portName, String message)
 	{
 		boolean success = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET welcome_message = ? WHERE `name`=? LIMIT 1");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET welcome_message = ? WHERE `name`=? LIMIT 1");)
+		{
 			stat.setString(2, portName.toLowerCase());
 			stat.setString(1, message);
 			success = stat.executeUpdate()==1;
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return success;
 	}
@@ -573,9 +473,8 @@ public class PlacesManager
 		String name = "";
 		int owner_id = 0;
 		int id = 0;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places`;");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places`;");)
+		{
 			ResultSet result = stat.executeQuery();
 			while(result.next())
 			{
@@ -594,25 +493,14 @@ public class PlacesManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
 		return places;
 	}
 
 	public ArrayList<String> listTeleportAccess(String name)
 	{
 		ArrayList<String> players = new ArrayList<String>();
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT u.username as username FROM `mnc_places` p JOIN `mnc_places_permissions` pp ON p.name = pp.place_id JOIN `mnc_users` u ON pp.user_id=u.id WHERE p.name = ?");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT u.username as username FROM `mnc_places` p JOIN `mnc_places_permissions` pp ON p.name = pp.place_id JOIN `mnc_users` u ON pp.user_id=u.id WHERE p.name = ?");
 		    stat.setString(1, name.toLowerCase());
 		    ResultSet result = stat.executeQuery();
 		    while(result.next())
@@ -623,14 +511,6 @@ public class PlacesManager
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		return players;
 	}
@@ -655,9 +535,8 @@ public class PlacesManager
 				return false;
 		}
 		boolean success = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET `name` = ?, owner_id = ?, type = ? WHERE `name` = ? LIMIT 1;");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET `name` = ?, owner_id = ?, type = ? WHERE `name` = ? LIMIT 1;");)
+		{
 			stat.setString(1, newname.toLowerCase());
 			stat.setInt(2, plugin.userManager.getUserId(owner));
 			stat.setString(3, type);
@@ -667,24 +546,14 @@ public class PlacesManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-		}
 		return success;
 	}
 	
 	public boolean moveTeleport(String name,int x, int y, int z, String world)
 	{
 		boolean success = false;
-		PreparedStatement stat = null;
-		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET x = ?, y = ?, z = ?, world = ? WHERE name = ? LIMIT 1;");
+		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET x = ?, y = ?, z = ?, world = ? WHERE name = ? LIMIT 1;");)
+		{
 			stat.setString(5, name.toLowerCase());
 			stat.setInt(1, x);
 			stat.setInt(2, y);
@@ -694,15 +563,6 @@ public class PlacesManager
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally
-		{
-			if(stat!=null)
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 		}
 		return success;
 	}

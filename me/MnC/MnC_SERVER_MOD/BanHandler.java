@@ -24,10 +24,8 @@ public class BanHandler
 	 */
 	public long ipBanExpiration(String ip)
 	{
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans LEFT OUTER JOIN mnc_ips ON mnc_ips.user_id = mnc_bans.user_id WHERE mnc_ips.ip_address = ? AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans LEFT OUTER JOIN mnc_ips ON mnc_ips.user_id = mnc_bans.user_id WHERE mnc_ips.ip_address = ? AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1");
 		    stat.setString(1, ip);
 		    stat.setLong(2, System.currentTimeMillis()/1000);
 		    ResultSet result = stat.executeQuery();
@@ -40,14 +38,6 @@ public class BanHandler
 		{
 			e.printStackTrace();
 		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return 0;
 	}
 	
@@ -58,10 +48,8 @@ public class BanHandler
 	 */
 	public long userBanExpiration(String userName)
 	{
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans WHERE mnc_bans.user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1) AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1;");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans WHERE mnc_bans.user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1) AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1;");
 		    stat.setString(1, userName.toLowerCase());
 		    stat.setLong(2, System.currentTimeMillis()/1000); // let the server provide current time
 		    ResultSet result = stat.executeQuery();
@@ -73,14 +61,6 @@ public class BanHandler
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		return 0;
 	}
@@ -116,10 +96,8 @@ public class BanHandler
 	
 	public boolean unbanPlayer(int banID)
 	{
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET canceled = 1 WHERE id = ? LIMIT 1;");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET canceled = 1 WHERE id = ? LIMIT 1;");
 		    stat.setInt(1, banID);
 		    return stat.executeUpdate() == 1;
 		}
@@ -127,23 +105,13 @@ public class BanHandler
 		{
 			e.printStackTrace();
 		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return false;
 	}
 
 	public boolean isIPWhitelisted(String player)
 	{
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");
 		    stat.setString(1, player.toLowerCase());
 		    ResultSet result = stat.executeQuery();
 		    if(result.next())
@@ -155,23 +123,13 @@ public class BanHandler
 		{
 			e.printStackTrace();
 		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return false;
 	}
 	
 	public boolean addIPWhitelist(String player)
 	{
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_ipwhitelist` (user_id) (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_ipwhitelist` (user_id) (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");
 		    // using INSERT IGNORE because command is successful if the player is whitelisted at the end 
 		    stat.setString(1, player.toLowerCase());
 		    return stat.executeUpdate()==1;
@@ -180,23 +138,13 @@ public class BanHandler
 		{
 			e.printStackTrace();
 		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return false;
 	}
 
 	public boolean removeIPWhitelist(String player)
 	{
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");
 		    stat.setString(1, player.toLowerCase());
 		    return stat.executeUpdate()==1;
 		}
@@ -204,24 +152,14 @@ public class BanHandler
 		{
 			e.printStackTrace();
 		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return false;
 	}
 
 	public ArrayList<String> listIPWhitelisted()
 	{
 		ArrayList<String> players = new ArrayList<String>();
-		PreparedStatement stat = null;
-		try
+		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT u.username as username FROM `mnc_ipwhitelist` wl JOIN `mnc_users` u ON wl.user_id = u.id;");)
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("SELECT u.username as username FROM `mnc_ipwhitelist` wl JOIN `mnc_users` u ON wl.user_id = u.id;");
 		    ResultSet result = stat.executeQuery();
 		    while(result.next())
 		    {
@@ -231,14 +169,6 @@ public class BanHandler
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		finally{
-			try {
-				if(stat!=null)
-					stat.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		return players;
 	}
