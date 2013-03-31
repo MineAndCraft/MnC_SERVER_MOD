@@ -2824,6 +2824,17 @@ public abstract class CommandsHandler
 			sender.sendMessage("V EventWorldu nemuzete pouzit prikaz /places!");
 			return;
 		}
+		//disable teleports for "new" players (lvl < 10) to different places than "bw"
+		//workaround of probably bukkit bug where a hacking player can pour out lava 
+		// without PlayerInteractEvent being sent
+		// - TODO chceck for events like BucketEmptyEvent
+		try{
+			if(UserManager.getInstance().getUser(sender.getName()).getProfession().GetLevel() < 10)
+				if(!name.equalsIgnoreCase("bw"))
+					return;
+		}catch(Exception e){
+			return;
+		}
 		plugin.placesManager.handlePlayerTeleport(sender,name);
 	}
 
