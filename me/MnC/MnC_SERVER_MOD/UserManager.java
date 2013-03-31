@@ -40,7 +40,7 @@ public class UserManager
 	public synchronized boolean userIsRegistered(String name)
 	{
 		
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*)=1 as is_registered FROM `mnc_users` WHERE username_clean=? LIMIT 1;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*)=1 as is_registered FROM `mnc_users` WHERE username_clean=? LIMIT 1;");)
 		{
 		    stat.setString(1, name.toLowerCase());
 		    ResultSet result = stat.executeQuery();
@@ -129,7 +129,7 @@ public class UserManager
 	public int getUserId(String name)
 	{
 		int id=0;
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT `id` FROM `mnc_users` WHERE username_clean=? LIMIT 1;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT `id` FROM `mnc_users` WHERE username_clean=? LIMIT 1;");)
 		{
 		    stat.setString(1, name.toLowerCase());
 		    try(ResultSet result = stat.executeQuery();)
@@ -156,7 +156,7 @@ public class UserManager
 		
 	public long getPlayerLastlogin(String name)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT UNIX_TIMESTAMP(lastlogin) as lastlogin FROM `mnc_users` WHERE username_clean=? LIMIT 1;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT UNIX_TIMESTAMP(lastlogin) as lastlogin FROM `mnc_users` WHERE username_clean=? LIMIT 1;");)
 		{
 		    stat.setString(1, name.toLowerCase());
 		    try(ResultSet result = stat.executeQuery();)
@@ -193,7 +193,7 @@ public class UserManager
 			e.printStackTrace();
 		}
 		
-		try(PreparedStatement stat = MnC_SERVER_MOD.getInstance().dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_profession` (user_id,experience) VALUES(?,0);");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO `mnc_profession` (user_id,experience) VALUES(?,0);");)
 		{
 			stat.setInt(1, this.getUserId(sender.getName()));
 			stat.executeUpdate();

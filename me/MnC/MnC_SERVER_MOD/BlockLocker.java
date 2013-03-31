@@ -71,7 +71,7 @@ public class BlockLocker
 			return false;
 		}
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("INSERT INTO `mnc_chests` (owner_id, x, y, z, world,type)" +
+			stat = this.plugin.db.getConection().prepareStatement("INSERT INTO `mnc_chests` (owner_id, x, y, z, world,type)" +
 					" SELECT  u.id, ?, ?, ?, ?, ?" +
 					" FROM `mnc_users` u WHERE u.username_clean = ? LIMIT 1;");
 			stat.setInt(1, block.getLocation().getBlockX());
@@ -103,7 +103,7 @@ public class BlockLocker
 	{
 		PreparedStatement stat = null;
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_chests WHERE mnc_chests.world = ? AND mnc_chests.x = ? AND mnc_chests.z = ? AND mnc_chests.y = ? LIMIT 1");
+			stat = this.plugin.db.getConection().prepareStatement("DELETE FROM mnc_chests WHERE mnc_chests.world = ? AND mnc_chests.x = ? AND mnc_chests.z = ? AND mnc_chests.y = ? LIMIT 1");
 			stat.setString(1, block.getLocation().getWorld().getName());
 			stat.setInt(2, block.getLocation().getBlockX());
 			stat.setInt(3, block.getLocation().getBlockZ());
@@ -129,7 +129,7 @@ public class BlockLocker
 		PreparedStatement stat = null;
 		String uname = "";
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(u.username) as count,u.username as username " +
+			stat = this.plugin.db.getConection().prepareStatement("SELECT count(u.username) as count,u.username as username " +
 					"FROM `mnc_chests` c LEFT JOIN `mnc_users` u ON c.owner_id=u.id " +
 					"WHERE c.world = ? AND c.x = ? AND c.z = ? AND c.y = ?");
 			stat.setString(1, block.getLocation().getWorld().getName());
@@ -161,7 +161,7 @@ public class BlockLocker
 	{
 		PreparedStatement stat = null;
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_chests` c " +
+			stat = this.plugin.db.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_chests` c " +
 					"WHERE c.world = ? AND c.x = ? AND c.z = ? AND c.y = ?");
 			stat.setString(1, block.getLocation().getWorld().getName());
 			stat.setInt(2, block.getLocation().getBlockX());
@@ -204,7 +204,7 @@ public class BlockLocker
 	{
 		PreparedStatement stat = null;
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(u.username) as count " +
+			stat = this.plugin.db.getConection().prepareStatement("SELECT count(u.username) as count " +
 					"FROM `mnc_chests` c LEFT JOIN `mnc_users` u ON c.owner_id=u.id " +
 					"WHERE u.username_clean = ? AND c.world = ? AND c.x = ? AND c.z = ? AND c.y = ?");
 			stat.setString(1,username.toLowerCase());

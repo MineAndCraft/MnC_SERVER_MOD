@@ -3,6 +3,7 @@ package me.MnC.MnC_SERVER_MOD.RPG;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import me.MnC.MnC_SERVER_MOD.DatabaseManager;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 
 import org.bukkit.block.Block;
@@ -45,7 +46,7 @@ public class GugaProfession2 extends GugaProfession
 	public synchronized void save()
 	{
 		blocksBroken = 0;
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_profession` prof SET prof.experience = ? WHERE prof.user_id = ?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE `mnc_profession` prof SET prof.experience = ? WHERE prof.user_id = ?");)
 		{
 		    stat.setInt(1, this.xp);
 		    stat.setInt(2, this.userId);
@@ -73,7 +74,7 @@ public class GugaProfession2 extends GugaProfession
 			return null;
 				
 		GugaProfession2 profession = null;
-		try(PreparedStatement stat = MnC_SERVER_MOD.getInstance().dbConfig.getConection().prepareStatement("SELECT experience FROM `mnc_profession` WHERE user_id=?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT experience FROM `mnc_profession` WHERE user_id=?");)
 		{
 			stat.setInt(1, playerId);
 			ResultSet result = stat.executeQuery();

@@ -3,7 +3,7 @@ package me.MnC.MnC_SERVER_MOD.Currency;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.DatabaseManager;
 
 import org.bukkit.entity.Player;
 
@@ -11,17 +11,14 @@ public class CurrencyHandler
 {
 	//needs table mnc_currency { user_id - int primary key, balance - long }
 	
-	private MnC_SERVER_MOD plugin;
-	
-	public CurrencyHandler(MnC_SERVER_MOD plugin)
-	{
-		this.plugin = plugin;		
+	public CurrencyHandler()
+	{	
 	}
 	
 	public int getBalance(String playerName)
 	{
 		int balance = 0;
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT curr.balance as balance FROM `mnc_currency` curr LEFT JOIN mnc_users u ON curr.user_id=u.id WHERE u.username_clean = ?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT curr.balance as balance FROM `mnc_currency` curr LEFT JOIN mnc_users u ON curr.user_id=u.id WHERE u.username_clean = ?");)
 		{ 
 		    stat.setString(1, playerName.toLowerCase());
 		    ResultSet result = stat.executeQuery();
@@ -39,7 +36,7 @@ public class CurrencyHandler
 	
 	public synchronized boolean addCredits(String playerName, int amount)
 	{
-		try(PreparedStatement stat=plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_currency` curr SET curr.balance = (curr.balance + (?)) WHERE curr.user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE `mnc_currency` curr SET curr.balance = (curr.balance + (?)) WHERE curr.user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
 		{
 		    stat.setLong(1, amount);
 		    stat.setString(2, playerName.toLowerCase());
@@ -54,7 +51,7 @@ public class CurrencyHandler
 
 	public void onPlayerJoin(Player p)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_currency` (user_id,balance) SELECT `id`,0 FROM `mnc_users` u WHERE u.username_clean = ?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO `mnc_currency` (user_id,balance) SELECT `id`,0 FROM `mnc_users` u WHERE u.username_clean = ?");)
 		{
 		    stat.setString(1, p.getName().toLowerCase());
 		    stat.executeUpdate();

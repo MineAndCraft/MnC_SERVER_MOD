@@ -10,11 +10,8 @@ public class BanHandler
 	//requires table `mnc_ips`
 	//requires table `mnc_ipwhitelist` {user_id - int primary key}
 	
-	private MnC_SERVER_MOD plugin;
-
-	public BanHandler(MnC_SERVER_MOD plugin)
+	public BanHandler()
 	{
-		this.plugin = plugin;
 	}
 
 	/**
@@ -24,7 +21,7 @@ public class BanHandler
 	 */
 	public long ipBanExpiration(String ip)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans LEFT OUTER JOIN mnc_ips ON mnc_ips.user_id = mnc_bans.user_id WHERE mnc_ips.ip_address = ? AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans LEFT OUTER JOIN mnc_ips ON mnc_ips.user_id = mnc_bans.user_id WHERE mnc_ips.ip_address = ? AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1");)
 		{
 		    stat.setString(1, ip);
 		    stat.setLong(2, System.currentTimeMillis()/1000);
@@ -48,7 +45,7 @@ public class BanHandler
 	 */
 	public long userBanExpiration(String userName)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans WHERE mnc_bans.user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1) AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT mnc_bans.expiration as expiration FROM mnc_bans WHERE mnc_bans.user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1) AND (mnc_bans.expiration > ? OR mnc_bans.expiration = -1) AND mnc_bans.canceled != 1 ORDER BY mnc_bans.expiration DESC LIMIT 1;");)
 		{
 		    stat.setString(1, userName.toLowerCase());
 		    stat.setLong(2, System.currentTimeMillis()/1000); // let the server provide current time
@@ -78,7 +75,7 @@ public class BanHandler
 		if(expiration == 0)
 			return false;
 		
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT INTO mnc_bans (user_id,expiration,reason,banningone,banned_date) (SELECT id,?,?,?,FROM_UNIXTIME(?) FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_bans (user_id,expiration,reason,banningone,banned_date) (SELECT id,?,?,?,FROM_UNIXTIME(?) FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{		    
 		    stat.setLong(1, expiration);
 		    stat.setString(2, reason);
@@ -96,7 +93,7 @@ public class BanHandler
 	
 	public boolean unbanPlayer(int banID)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET canceled = 1 WHERE id = ? LIMIT 1;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_bans SET canceled = 1 WHERE id = ? LIMIT 1;");)
 		{
 		    stat.setInt(1, banID);
 		    return stat.executeUpdate() == 1;
@@ -110,7 +107,7 @@ public class BanHandler
 
 	public boolean isIPWhitelisted(String player)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*) as count FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
 		    stat.setString(1, player.toLowerCase());
 		    ResultSet result = stat.executeQuery();
@@ -128,7 +125,7 @@ public class BanHandler
 	
 	public boolean addIPWhitelist(String player)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_ipwhitelist` (user_id) (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO `mnc_ipwhitelist` (user_id) (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
 		    // using INSERT IGNORE because command is successful if the player is whitelisted at the end 
 		    stat.setString(1, player.toLowerCase());
@@ -143,7 +140,7 @@ public class BanHandler
 
 	public boolean removeIPWhitelist(String player)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_ipwhitelist WHERE user_id = (SELECT id FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
 		    stat.setString(1, player.toLowerCase());
 		    return stat.executeUpdate()==1;
@@ -158,7 +155,7 @@ public class BanHandler
 	public ArrayList<String> listIPWhitelisted()
 	{
 		ArrayList<String> players = new ArrayList<String>();
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT u.username as username FROM `mnc_ipwhitelist` wl JOIN `mnc_users` u ON wl.user_id = u.id;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT u.username as username FROM `mnc_ipwhitelist` wl JOIN `mnc_users` u ON wl.user_id = u.id;");)
 		{
 		    ResultSet result = stat.executeQuery();
 		    while(result.next())
@@ -181,7 +178,7 @@ public class BanHandler
 		
 		if(reason==null || reason.length() == 0)
 		{
-			try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET expiration = ? WHERE id = ? LIMIT 1;");)
+			try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_bans SET expiration = ? WHERE id = ? LIMIT 1;");)
 			{		    
 			    stat.setLong(1, expiration);
 			    stat.setInt(2, banId);
@@ -196,7 +193,7 @@ public class BanHandler
 		{
 			if(reason.equals("-"))
 				reason = "";
-			try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("UPDATE mnc_bans SET expiration = ?, reason = ? WHERE id = ? LIMIT 1;");)
+			try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE mnc_bans SET expiration = ?, reason = ? WHERE id = ? LIMIT 1;");)
 			{		    
 			    stat.setLong(1, expiration);
 			    stat.setString(2, reason);

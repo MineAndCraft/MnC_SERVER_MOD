@@ -86,7 +86,7 @@ public class VipManager
 		PreparedStatement stat=null;
 		try
 		{
-		    stat = plugin.dbConfig.getConection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(?),INTERVAL ? SECOND))) ON DUPLICATE KEY UPDATE expiration = UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(expiration),INTERVAL ? SECOND))");
+		    stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(?),INTERVAL ? SECOND))) ON DUPLICATE KEY UPDATE expiration = UNIX_TIMESTAMP(DATE_ADD(FROM_UNIXTIME(expiration),INTERVAL ? SECOND))");
 		    stat.setInt(1, plugin.userManager.getUserId(name));
 		    stat.setLong(2, System.currentTimeMillis()/1000); // current time in seconds is supplied from minecraft server
 		    stat.setLong(3, duration);
@@ -112,7 +112,7 @@ public class VipManager
 	
 	public boolean isVip(String name)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*)=1 AS is_vip FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id = u.id WHERE u.username_clean = ?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*)=1 AS is_vip FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id = u.id WHERE u.username_clean = ?");)
 		{
 		    stat.setString(1, name.toLowerCase());
 		    ResultSet result = stat.executeQuery();
@@ -130,7 +130,7 @@ public class VipManager
 	
 	public boolean removeVip(String name)
 	{
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM mnc_vip WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("DELETE FROM mnc_vip WHERE user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1);");)
 		{
 			stat.setString(1, name.toLowerCase());
 			stat.executeUpdate();
@@ -228,7 +228,7 @@ public class VipManager
 	public VipUser getVip(String name)
 	{
 		VipUser vip = null;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT vip.expiration as expiration, u.username as name FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id WHERE u.username_clean = ?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT vip.expiration as expiration, u.username as name FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id WHERE u.username_clean = ?");)
 		{
 			stat.setString(1, name.toLowerCase());
 			ResultSet result = stat.executeQuery();
@@ -259,7 +259,7 @@ public class VipManager
 
 	public boolean isVip(int id)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT count(*)=1 AS is_vip FROM `mnc_vip` WHERE user_id = ? LIMIT 1;"))
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*)=1 AS is_vip FROM `mnc_vip` WHERE user_id = ? LIMIT 1;"))
 		{
 		    stat.setInt(1, id);
 		    ResultSet result = stat.executeQuery();
@@ -278,7 +278,7 @@ public class VipManager
 	
 	public boolean setVip(String name, long expiration)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,?) ON DUPLICATE KEY UPDATE expiration = ?");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT INTO mnc_vip (user_id,expiration) VALUES(?,?) ON DUPLICATE KEY UPDATE expiration = ?");)
 		{
 		    stat.setInt(1, plugin.userManager.getUserId(name));
 		    stat.setLong(2, expiration);
@@ -297,7 +297,7 @@ public class VipManager
 	public ArrayList<VipUser> listAllVips()
 	{
 		ArrayList<VipUser> vips = new ArrayList<VipUser>();
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT vip.expiration as expiration, u.username as name FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT vip.expiration as expiration, u.username as name FROM `mnc_vip` vip LEFT JOIN mnc_users u ON vip.user_id=u.id");)
 		{
 			ResultSet result = stat.executeQuery();
 			while(result.next())

@@ -50,7 +50,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		Config.load("plugins/MineAndCraft_plugin/config.properties");
 		
 		try{
-			this.dbConfig.connectDb();
+			this.db.connectDb();
 		}catch(SQLException e)
 		{
 			log.severe("Failed to connect to db:"+e.getMessage());
@@ -62,9 +62,9 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		chat = new Chat();
 		vipManager = new VipManager(this);
 		shopManager = new ShopManager(this);
-		currencyManager = new CurrencyHandler(this);
+		currencyManager = new CurrencyHandler();
 		placesManager = new PlacesManager(this);
-		banHandler = new BanHandler(this);
+		banHandler = new BanHandler();
 		extensionManager = new ExtensionManager(this);
 	}
 	
@@ -79,7 +79,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		chat.onDisable();
-		dbConfig.disconnectDb();
+		db.disconnectDb();
 		_enabled = false;
 	}
 
@@ -553,7 +553,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
 	
-	public final DatabaseManager dbConfig = new DatabaseManager();
+	public final DatabaseManager db = new DatabaseManager();
 	public final PlayerListener pListener = new PlayerListener(this);
 	public final EntityListener enListener = new EntityListener(this);
 	public final BlockListener bListener = new BlockListener(this);

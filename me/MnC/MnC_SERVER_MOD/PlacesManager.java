@@ -172,7 +172,7 @@ public class PlacesManager
 	public boolean portalExists(String portalName)
 	{
 		boolean exists = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `name` = ? LIMIT 1;");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `name` = ? LIMIT 1;");)
 		{
 			stat.setString(1, portalName);
 			ResultSet result = stat.executeQuery();
@@ -196,7 +196,7 @@ public class PlacesManager
 	protected boolean isUserAllowedToTeleportTo(MinecraftPlayer player,Place port)
 	{
 		boolean permission = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT 1 as permission FROM `mnc_places_permissions` pp WHERE pp.place_id = ? AND pp.user_id = ? LIMIT 1");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT 1 as permission FROM `mnc_places_permissions` pp WHERE pp.place_id = ? AND pp.user_id = ? LIMIT 1");)
 		{
 			stat.setString(1, port.getName());
 			stat.setInt(2, player.getId());
@@ -223,7 +223,7 @@ public class PlacesManager
 		String type = "";
 		int owner_id = 0;
 		int id = 0;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE `name` = ? LIMIT 1");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE `name` = ? LIMIT 1");)
 		{ 
 			stat.setString(1, port);
 			ResultSet result = stat.executeQuery();
@@ -260,7 +260,7 @@ public class PlacesManager
 				return false;
 		}
 		boolean success = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("INSERT INTO `mnc_places` (name,owner_id,x,y,z,type,world) SELECT ?,`id`,?,?,?,?,? FROM `mnc_users` WHERE username_clean=?");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("INSERT INTO `mnc_places` (name,owner_id,x,y,z,type,world) SELECT ?,`id`,?,?,?,?,? FROM `mnc_users` WHERE username_clean=?");)
 		{ 
 			stat.setString(1, portName.toLowerCase());
 			stat.setString(7, portOwner.toLowerCase());
@@ -285,7 +285,7 @@ public class PlacesManager
 	public boolean removeTeleport(String portName)
 	{
 		boolean success = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE `mnc_places`, `mnc_places_permissions` FROM `mnc_places` LEFT JOIN `mnc_places_permissions` ON `mnc_places`.`name`=`mnc_places_permissions`.`place_id` WHERE `mnc_places`.`name` = ?");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("DELETE `mnc_places`, `mnc_places_permissions` FROM `mnc_places` LEFT JOIN `mnc_places_permissions` ON `mnc_places`.`name`=`mnc_places_permissions`.`place_id` WHERE `mnc_places`.`name` = ?");)
 		{
 			stat.setString(1, portName.toLowerCase());
 			success = stat.executeUpdate()>0;
@@ -304,7 +304,7 @@ public class PlacesManager
 	 */
 	public boolean addTeleportAccess(String portName, String playerName)
 	{
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("INSERT IGNORE INTO `mnc_places_permissions` (user_id,place_id) (SELECT u.id,p.name FROM mnc_users u, mnc_places p WHERE p.name=? AND u.username_clean=? LIMIT 1)");)
+		try(PreparedStatement stat = plugin.db.getConection().prepareStatement("INSERT IGNORE INTO `mnc_places_permissions` (user_id,place_id) (SELECT u.id,p.name FROM mnc_users u, mnc_places p WHERE p.name=? AND u.username_clean=? LIMIT 1)");)
 		{
 			stat.setString(1, portName.toLowerCase());
 			stat.setString(2, playerName.toLowerCase());
@@ -326,7 +326,7 @@ public class PlacesManager
 	public boolean removeTeleportAccess(String portName, String playerName)
 	{
 		boolean success = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("DELETE FROM `mnc_places_permissions` WHERE `user_id` = (SELECT `id` FROM `mnc_users` WHERE username_clean=?) AND `place_id`=?");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("DELETE FROM `mnc_places_permissions` WHERE `user_id` = (SELECT `id` FROM `mnc_users` WHERE username_clean=?) AND `place_id`=?");)
 		{
 			stat.setString(1, playerName.toLowerCase());
 			stat.setString(2, portName.toLowerCase());
@@ -350,7 +350,7 @@ public class PlacesManager
 		String name = "";
 		int owner_id = 0;
 		int id = 0;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE owner_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places` WHERE owner_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
 		{
 			stat.setString(1, owner.toLowerCase());
 			ResultSet result = stat.executeQuery();
@@ -378,7 +378,7 @@ public class PlacesManager
 	{
 		int id = plugin.userManager.getUserId(name);
 		int count=0;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `owner_id` = ? AND `name`=?");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `owner_id` = ? AND `name`=?");)
 		{
 			stat.setInt(1,id);
 			stat.setString(2,portName);
@@ -397,7 +397,7 @@ public class PlacesManager
 	public boolean setWelcomeMessage(String portName, String message)
 	{
 		boolean success = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET welcome_message = ? WHERE `name`=? LIMIT 1");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("UPDATE `mnc_places` SET welcome_message = ? WHERE `name`=? LIMIT 1");)
 		{
 			stat.setString(2, portName.toLowerCase());
 			stat.setString(1, message);
@@ -424,7 +424,7 @@ public class PlacesManager
 		int num_id = 0;
 		PreparedStatement stat = null;
 		try{
-			stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT mnc_places.* FROM mnc_places WHERE mnc_places.type = 'public' OR `mnc_places`.`owner_id` = ? " +
+			stat = this.plugin.db.getConection().prepareStatement("SELECT mnc_places.* FROM mnc_places WHERE mnc_places.type = 'public' OR `mnc_places`.`owner_id` = ? " +
 " UNION SELECT mnc_places.* FROM mnc_places WHERE mnc_places.type = 'vip' AND (SELECT true FROM mnc_vip WHERE user_id = ? LIMIT 1) " +
 " UNION SELECT mnc_places.* FROM mnc_places LEFT JOIN mnc_places_permissions ON mnc_places.name = mnc_places_permissions.place_id WHERE mnc_places.type = 'private' AND `mnc_places_permissions`.`user_id` = ?");
 			int id = plugin.userManager.getUserId(playerName);
@@ -473,7 +473,7 @@ public class PlacesManager
 		String name = "";
 		int owner_id = 0;
 		int id = 0;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places`;");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT num_id,name,welcome_message,x,y,z,world,type,owner_id FROM `mnc_places`;");)
 		{
 			ResultSet result = stat.executeQuery();
 			while(result.next())
@@ -499,7 +499,7 @@ public class PlacesManager
 	public ArrayList<String> listTeleportAccess(String name)
 	{
 		ArrayList<String> players = new ArrayList<String>();
-		try(PreparedStatement stat = plugin.dbConfig.getConection().prepareStatement("SELECT u.username as username FROM `mnc_places` p JOIN `mnc_places_permissions` pp ON p.name = pp.place_id JOIN `mnc_users` u ON pp.user_id=u.id WHERE p.name = ?");)
+		try(PreparedStatement stat = plugin.db.getConection().prepareStatement("SELECT u.username as username FROM `mnc_places` p JOIN `mnc_places_permissions` pp ON p.name = pp.place_id JOIN `mnc_users` u ON pp.user_id=u.id WHERE p.name = ?");)
 		{
 		    stat.setString(1, name.toLowerCase());
 		    ResultSet result = stat.executeQuery();
@@ -535,7 +535,7 @@ public class PlacesManager
 				return false;
 		}
 		boolean success = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET `name` = ?, owner_id = ?, type = ? WHERE `name` = ? LIMIT 1;");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("UPDATE `mnc_places` SET `name` = ?, owner_id = ?, type = ? WHERE `name` = ? LIMIT 1;");)
 		{
 			stat.setString(1, newname.toLowerCase());
 			stat.setInt(2, plugin.userManager.getUserId(owner));
@@ -552,7 +552,7 @@ public class PlacesManager
 	public boolean moveTeleport(String name,int x, int y, int z, String world)
 	{
 		boolean success = false;
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET x = ?, y = ?, z = ?, world = ? WHERE name = ? LIMIT 1;");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("UPDATE `mnc_places` SET x = ?, y = ?, z = ?, world = ? WHERE name = ? LIMIT 1;");)
 		{
 			stat.setString(5, name.toLowerCase());
 			stat.setInt(1, x);
@@ -579,7 +579,7 @@ public class PlacesManager
 			default:
 				return false;
 		}
-		try(PreparedStatement stat = this.plugin.dbConfig.getConection().prepareStatement("UPDATE `mnc_places` SET type = ? WHERE `name` = ? LIMIT 1;");)
+		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("UPDATE `mnc_places` SET type = ? WHERE `name` = ? LIMIT 1;");)
 		{	
 			stat.setString(1, type);
 			stat.setString(2, name);
