@@ -90,7 +90,7 @@ public class Chat implements Listener
 			messageColor = ChatColor.WHITE;
 		}
 		
-		if(message.replaceAll(" ","").matches("[A-Z]{5,}") && !GameMasterHandler.IsAtleastGM(sender.getName()))
+		if(message.replaceAll("[^a-zA-Z0-9]","").matches(".*[A-Z]{5,}.*") && !GameMasterHandler.IsAtleastGM(sender.getName()))
 		{
 			message = message.toLowerCase();
 		}
