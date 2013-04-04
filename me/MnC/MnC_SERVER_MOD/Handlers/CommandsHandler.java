@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import me.MnC.MnC_SERVER_MOD.AutoSaver;
-import me.MnC.MnC_SERVER_MOD.BlockLocker;
 import me.MnC.MnC_SERVER_MOD.Config;
 import me.MnC.MnC_SERVER_MOD.GameMaster;
 import me.MnC.MnC_SERVER_MOD.GugaEvent;
@@ -37,7 +36,6 @@ import me.MnC.MnC_SERVER_MOD.util.Enchantments.EnchantmentResult;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -123,38 +121,6 @@ public abstract class CommandsHandler
 		sender.sendMessage("******************************");
 	}
 
-	public static void CommandLocker(Player sender)
-	{
-		sender.sendMessage(ChatColor.BLUE+"***********");
-		sender.sendMessage(ChatColor.BLUE+"LOCKER");
-		sender.sendMessage(ChatColor.BLUE+"***********");
-		sender.sendMessage("Zamcit muzete bednu, davkovac a pec!");
-		sender.sendMessage("Blocky se zamykaji automaticky pri polozeni!");
-		sender.sendMessage("PRIKAZY:");
-		sender.sendMessage(ChatColor.AQUA + "/lock " + ChatColor.WHITE + "- zamce block");
-		sender.sendMessage(ChatColor.AQUA + "/unlock " + ChatColor.WHITE + "- odemce block");
-	}
-	public static void CommandLock(Player sender)
-	{
-		Block chest = sender.getTargetBlock(null, 10);
-		int blockType = chest.getTypeId(); // chest = 54
-		if (BlockLocker.LockableBlocks.isLockableBlock(blockType))
-		{
-			if (!plugin.blockLocker.IsLocked(chest))
-			{
-				plugin.blockLocker.LockBlock(chest,sender.getName());
-				ChatHandler.SuccessMsg(sender, "Vas block byl zamcen.");
-			}
-			else
-			{
-				ChatHandler.FailMsg(sender, "Tento block jiz nekdo zamknul");
-			}
-		}	
-		else
-		{
-			ChatHandler.FailMsg(sender, "Tento block nelze zamcit!");
-		}
-	}
 	public static void CommandConfirm(Player sender, String args[])
 	{
 		Player p = vipTeleports.get(sender);
@@ -182,29 +148,7 @@ public abstract class CommandsHandler
 		else
 			ChatHandler.FailMsg(sender, "Nemate zadny pozadavek na teleport!");
 	}
-	public static void CommandUnlock(Player sender)
-	{
-		Block chest = sender.getTargetBlock(null, 10);
-		int blockType = chest.getTypeId(); // chest = 54
 
-		if (BlockLocker.LockableBlocks.isLockableBlock(blockType) && plugin.blockLocker.IsLocked(chest))
-		{ 
-			if (plugin.blockLocker.IsOwner(chest, sender.getName()) || GameMasterHandler.IsAtleastGM(sender.getName()))
-			{
-				plugin.blockLocker.UnlockBlock(chest);
-				ChatHandler.SuccessMsg(sender, "Vas blok byl odemcen.");
-			}
-			else
-			{
-				ChatHandler.FailMsg(sender, "Tento blok nemuzete odemknout!");
-			}
-		}
-		else
-		{
-			ChatHandler.FailMsg(sender, "Tento block nelze odemknout!");
-		}
-		
-	}
 	
 	public static void CommandVIP(Player sender, String args[])
 	{

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
-import me.MnC.MnC_SERVER_MOD.BlockLocker;
 import me.MnC.MnC_SERVER_MOD.GameMaster;
 import me.MnC.MnC_SERVER_MOD.GugaEvent;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
@@ -499,15 +498,6 @@ public class PlayerListener implements Listener
 				return;
 			}
 			
-			if (BlockLocker.LockableBlocks.isLockableBlock(block.getTypeId()))
-			{
-				// *********************************CHEST OPENING*********************************
-				if(!(plugin.blockLocker.hasBlockAccess(player,block)|| GameMasterHandler.IsAtleastGM(player.getName()) ))
-				{
-					e.setCancelled(true);
-					ChatHandler.FailMsg(player,"Tento blok je zamcen!");
-				}
-			}
 		}
 		if (plugin.debug == true)
 		{

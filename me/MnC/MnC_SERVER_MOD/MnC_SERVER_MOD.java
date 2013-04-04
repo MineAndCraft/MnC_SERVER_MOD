@@ -25,6 +25,7 @@ import me.MnC.MnC_SERVER_MOD.chat.Chat;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.HomeCommandExecutor;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
+import me.MnC.MnC_SERVER_MOD.locker.BlockLocker;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 
 import org.bukkit.Bukkit;
@@ -66,6 +67,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		placesManager = new PlacesManager(this);
 		banHandler = new BanHandler();
 		extensionManager = new ExtensionManager(this);
+		blockLocker = new BlockLocker();
 	}
 	
 	public void onDisable() 
@@ -96,6 +98,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		pManager.registerEvents(customListener, this);
 		pManager.registerEvents(inventoryListener, this);
 		pManager.registerEvents(pluginListener, this);
+		
+		pManager.registerEvents(blockLocker, this);
 		
 		chat.onEnable();		
 
@@ -149,7 +153,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		loadVIPCodes();
 		loadCreditsCodes();
 		ServerRegionHandler.LoadRegions();
-		blockLocker = new BlockLocker(this);
 		GameMasterHandler.LoadGMs();
 		PlayerListener.LoadCreativePlayers();
 		RandomSpawnsHandler.LoadSpawns();
@@ -214,10 +217,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		 {
 			 CommandsHandler.CommandPP((Player)sender, args);
 		 }
-		 else if ((cmd.getName().equalsIgnoreCase("locker")) && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandLocker((Player)sender);
-		 }
 		 else if ((cmd.getName().equalsIgnoreCase("world")) && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandWorld((Player)sender);
@@ -266,11 +265,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		 {
 			 //GugaCommands.commandCopy((Player)sender, args);
 		 }
-		 else if(cmd.getName().equalsIgnoreCase("lock") && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandLock((Player)sender);
-			 return true;
-		 }
 		 else if(cmd.getName().equalsIgnoreCase("gc") && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandGMChat((Player)sender, args);
@@ -284,12 +278,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		 {
 		 	 CommandsHandler.CommandEstates((Player)sender, args);
 		 	 return true;
-		 }
-		//*****************************************/unlock*****************************************
-		 else if(cmd.getName().equalsIgnoreCase("unlock") && (sender instanceof Player))
-		 {
-				 CommandsHandler.CommandUnlock((Player)sender);		
-				 return true;
 		 }
 		//*****************************************/login*****************************************
 		 else if(cmd.getName().equalsIgnoreCase("login") && (sender instanceof Player))
@@ -364,6 +352,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		getCommand("shop").setExecutor(new CurrencyCommandExecutor());
 		getCommand("home").setExecutor(new HomeCommandExecutor());
 		getCommand("book").setExecutor(new CurrencyCommandExecutor());
+		this.blockLocker.registerCommands();
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)
@@ -548,7 +537,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "1.0.0";
+	public static final String version = "1.0.2";
 	
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;

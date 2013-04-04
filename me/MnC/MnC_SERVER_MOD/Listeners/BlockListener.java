@@ -3,7 +3,6 @@ package me.MnC.MnC_SERVER_MOD.Listeners;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import me.MnC.MnC_SERVER_MOD.BlockLocker;
 import me.MnC.MnC_SERVER_MOD.GugaEventWorld;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
@@ -21,7 +20,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -119,25 +117,6 @@ public class BlockListener implements Listener
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()) && !(level > 20))
 			{
 				ChatHandler.InfoMsg(p, "Pro opusteni zakladniho sveta napiste /pp spawn");
-			}
-		}
-		//*************************************************************************
-		int blockType = targetBlock.getTypeId();
-		if (BlockLocker.LockableBlocks.isLockableBlock(blockType))
-		{
-			if(plugin.blockLocker.IsLocked(targetBlock))
-			{
-				String owner = plugin.blockLocker.GetBlockOwner(targetBlock);
-				if (owner.equalsIgnoreCase(p.getName()))
-				{
-					ChatHandler.InfoMsg(p, "Vase zamcena truhla byla rozbyta.");
-				}
-				else
-				{
-					e.setCancelled(true);
-					ChatHandler.FailMsg(p, "Nemuzete rozbit cizi zamcenou truhlu! " + ChatColor.YELLOW + owner + ChatColor.RED + " je vlastnikem teto truhly.");
-				}
-				return;
 			}
 		}
 		
@@ -246,52 +225,7 @@ public class BlockListener implements Listener
 		}
 		
 		Block block = e.getBlockPlaced();
-		if(BlockLocker.LockableBlocks.isLockableBlock(block.getTypeId()))
-		{
-			if(block.getTypeId() == BlockLocker.LockableBlocks.CHEST.getID() && !plugin.blockLocker.IsLocked(block))
-			{
-				Block W=block.getRelative(BlockFace.WEST);
-				Block E=block.getRelative(BlockFace.EAST);
-				Block N=block.getRelative(BlockFace.NORTH);
-				Block S=block.getRelative(BlockFace.SOUTH);
-				
-				if(W.getTypeId() == 54 || E.getTypeId() == 54 || N.getTypeId() == 54 || S.getTypeId() == 54)
-				{
-					String username = e.getPlayer().getName();
-					if((plugin.blockLocker.IsLocked(W) && !plugin.blockLocker.IsOwner(W,username)) ||
-						(plugin.blockLocker.IsLocked(E) && !plugin.blockLocker.IsOwner(E,username)) ||
-						(plugin.blockLocker.IsLocked(N) && !plugin.blockLocker.IsOwner(N,username)) ||
-						(plugin.blockLocker.IsLocked(S) && !plugin.blockLocker.IsOwner(S,username)))
-					{
-						ChatHandler.FailMsg(p, "Nemuzete postavit truhlu vedle cizi zamcene!");
-						e.setCancelled(true);
-						return;
-					}
-					else
-					{
-						plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-						ChatHandler.SuccessMsg(p, "Vase dvojita truhla byla zamcena.");
-						return;
-					}
-				}
-				else
-				{
-					plugin.blockLocker.LockBlock(block, e.getPlayer().getName());
-					ChatHandler.SuccessMsg(p, "Vase truhla byla zamcena.");
-					return;
-				}			
-			}
-			else if(block.getTypeId() == BlockLocker.LockableBlocks.FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
-			{
-				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
-			}
-			else if(block.getTypeId() == BlockLocker.LockableBlocks.BURNING_FURNANCE.getID() && !plugin.blockLocker.IsLocked(block))
-			{
-				plugin.blockLocker.LockBlock(block,e.getPlayer().getName());
-				ChatHandler.SuccessMsg(p, "Vase pec byla zamcena.");
-			}
-		}
+		
 		if(block.getTypeId() == 19)
 		{
 			World world = block.getWorld();

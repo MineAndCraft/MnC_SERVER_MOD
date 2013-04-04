@@ -3,7 +3,7 @@ package me.MnC.MnC_SERVER_MOD.Listeners;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 
 import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,8 +27,19 @@ public class InventoryListener implements Listener
 		//if chest is destination
 		if(destType == InventoryType.CHEST)
 		{
-			Chest chest = (Chest)dest;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.IsLocked(chest.getBlock()))
+			Chest chest = null;
+			try{
+				Chest ch = (Chest)dest;
+				chest = ch;
+			}catch(ClassCastException ex)
+			{
+				try{
+					DoubleChest ch = (DoubleChest)dest;
+					chest = (Chest)ch.getLeftSide();
+				}catch(Exception ex2){ return;}
+			}
+			
+			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(chest.getBlock()))
 			{
 				e.setCancelled(true);
 			}
@@ -36,24 +47,27 @@ public class InventoryListener implements Listener
 		else if(destType == InventoryType.FURNACE)
 		{
 			Furnace furnace = (Furnace)dest;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.IsLocked(furnace.getBlock()))
+			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(furnace.getBlock()))
 			{
 				e.setCancelled(true);
 			}
 		}
-		else if(destType == InventoryType.DISPENSER)
-		{
-			Dispenser dispenser = (Dispenser)dest;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.IsLocked(dispenser.getBlock()))
-			{
-				e.setCancelled(true);
-			}
-		}
+
 		//if chest is source
 		else if(sourceType == InventoryType.CHEST)
 		{
-			Chest chest = (Chest)source;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.IsLocked(chest.getBlock()))
+			Chest chest = null;
+			try{
+				Chest ch = (Chest)dest;
+				chest = ch;
+			}catch(ClassCastException ex)
+			{
+				try{
+					DoubleChest ch = (DoubleChest)dest;
+					chest = (Chest)ch.getLeftSide();
+				}catch(Exception ex2){ return;}
+			}
+			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(chest.getBlock()))
 			{
 				e.setCancelled(true);
 			}
@@ -61,15 +75,7 @@ public class InventoryListener implements Listener
 		else if(sourceType == InventoryType.FURNACE)
 		{
 			Furnace furnace = (Furnace)source;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.IsLocked(furnace.getBlock()))
-			{
-				e.setCancelled(true);
-			}
-		}
-		else if(sourceType == InventoryType.DISPENSER)
-		{
-			Dispenser dispenser = (Dispenser)source;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.IsLocked(dispenser.getBlock()))
+			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(furnace.getBlock()))
 			{
 				e.setCancelled(true);
 			}

@@ -21,6 +21,8 @@ commands:
         description: Locks targeted chest 
     unlock:
         description: Unlocks targeted chest 
+    lmod:
+        description: Modifies a chest lock
     y:
         description: Confirms an action
     rpg:
