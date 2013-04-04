@@ -166,7 +166,7 @@ public class Chat implements Listener
 	 */
 	public void mutePlayer(String playername,int expiration)
 	{
-		this.chatMute.put(playername.toLowerCase(), System.currentTimeMillis() + expiration*6000);
+		this.chatMute.put(playername.toLowerCase(), System.currentTimeMillis() + expiration*60000);
 	}
 	
 	public void unmutePlayer(String playername)
