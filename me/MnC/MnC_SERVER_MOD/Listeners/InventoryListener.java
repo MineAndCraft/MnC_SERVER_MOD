@@ -2,82 +2,75 @@ package me.MnC.MnC_SERVER_MOD.Listeners;
 
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.Hopper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 
 public class InventoryListener implements Listener
 {
-	public InventoryListener()
-	{}
+	public InventoryListener(){}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryMoveItemEvent(InventoryMoveItemEvent e)
 	{
-		InventoryHolder source = e.getSource().getHolder();
-		InventoryHolder dest = e.getDestination().getHolder();
-		InventoryType sourceType = source.getInventory().getType();
-		InventoryType destType = dest.getInventory().getType();
-		//if chest is destination
-		if(destType == InventoryType.CHEST)
+		InventoryHolder source = null;
+		
+		try{
+			source = e.getSource().getHolder();
+		}catch(Exception ex){}
+		
+		if(source ==  null)
+			return;
+		
+		Block block = null;
+		
+		if(source instanceof DoubleChest)
 		{
-			Chest chest = null;
-			try{
-				Chest ch = (Chest)dest;
-				chest = ch;
-			}catch(ClassCastException ex)
-			{
-				try{
-					DoubleChest ch = (DoubleChest)dest;
-					chest = (Chest)ch.getLeftSide();
-				}catch(Exception ex2){ return;}
-			}
-			
-			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(chest.getBlock()))
-			{
-				e.setCancelled(true);
-			}
+			Chest chest = ((Chest)((DoubleChest) source).getRightSide());
+			block = chest.getBlock();
 		}
-		else if(destType == InventoryType.FURNACE)
+		else if(source instanceof Chest)
 		{
-			Furnace furnace = (Furnace)dest;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(furnace.getBlock()))
-			{
-				e.setCancelled(true);
-			}
+			Chest chest = (Chest)source;
+			block = chest.getBlock();
 		}
-
-		//if chest is source
-		else if(sourceType == InventoryType.CHEST)
-		{
-			Chest chest = null;
-			try{
-				Chest ch = (Chest)dest;
-				chest = ch;
-			}catch(ClassCastException ex)
-			{
-				try{
-					DoubleChest ch = (DoubleChest)dest;
-					chest = (Chest)ch.getLeftSide();
-				}catch(Exception ex2){ return;}
-			}
-			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(chest.getBlock()))
-			{
-				e.setCancelled(true);
-			}
-		}
-		else if(sourceType == InventoryType.FURNACE)
+		else if(source instanceof Furnace)
 		{
 			Furnace furnace = (Furnace)source;
-			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(furnace.getBlock()))
+			block = furnace.getBlock();
+		}
+		
+		if(block != null)
+		{
+			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(block))
 			{
 				e.setCancelled(true);
+				// Is it a hopper? Break it.
+				try{
+					if(e.getInitiator().getHolder() instanceof Hopper)
+					{
+						Location loc = ((Hopper)e.getInitiator().getHolder()).getLocation();
+						final int x = loc.getBlockX();
+						final int y = loc.getBlockY();
+						final int z = loc.getBlockZ();
+						final String w = loc.getWorld().getName();
+						MnC_SERVER_MOD.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MnC_SERVER_MOD.getInstance(),new Runnable(){
+							public void run(){
+								try{
+									MnC_SERVER_MOD.getInstance().getServer().getWorld(w).getBlockAt(x, y, z).breakNaturally();
+								}catch(Exception e){}
+							}
+						});
+					}
+				}catch(Exception ex){}
 			}
 		}
 	}
