@@ -8,6 +8,7 @@ import me.MnC.MnC_SERVER_MOD.GameMaster;
 import me.MnC.MnC_SERVER_MOD.GugaEvent;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
+import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
@@ -33,6 +34,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -481,7 +483,7 @@ public class PlayerListener implements Listener
 					if ((item= e.getItem()) != null)
 					{
 						itemID = item.getTypeId();
-						if ( (itemID == 259) || (itemID == 327))
+						if (itemID == 259)
 						{
 							ChatHandler.FailMsg(player,"Musite byt alespon level 10, aby jste toto mohl pouzit!");
 							e.setCancelled(true);
@@ -502,6 +504,24 @@ public class PlayerListener implements Listener
 		if (plugin.debug == true)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
+	{
+		if(event.getBucket() == Material.LAVA_BUCKET)
+		{
+			int level = 0;
+			try{
+				level = UserManager.getInstance().getUser(event.getPlayer().getName()).getProfession().GetLevel();
+			}catch(Exception e){}
+			if (level<10)
+			{
+				ChatHandler.FailMsg(event.getPlayer(),"Musite byt alespon level 10, aby jste mohl pouzit lavu!");
+				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 	
