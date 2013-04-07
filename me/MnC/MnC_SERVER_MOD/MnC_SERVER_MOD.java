@@ -265,9 +265,9 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		 {
 			 //GugaCommands.commandCopy((Player)sender, args);
 		 }
-		 else if(cmd.getName().equalsIgnoreCase("gc") && (sender instanceof Player))
+		 else if(cmd.getName().equalsIgnoreCase("gc"))
 		 {
-			 CommandsHandler.CommandGMChat((Player)sender, args);
+			 CommandsHandler.CommandGMChat(sender, args);
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("announce") && (sender.isOp() || GameMasterHandler.IsAtleastGM(sender.getName())))
