@@ -172,7 +172,7 @@ public class PlacesManager
 	public boolean portalExists(String portalName)
 	{
 		boolean exists = false;
-		try(PreparedStatement stat = this.plugin.db.getConection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `name` = ? LIMIT 1;");)
+		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT count(*) as count FROM `mnc_places` WHERE `name` = ? LIMIT 1;");)
 		{
 			stat.setString(1, portalName);
 			ResultSet result = stat.executeQuery();
