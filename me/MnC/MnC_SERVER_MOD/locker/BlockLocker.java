@@ -113,6 +113,7 @@ public class BlockLocker implements Listener
 	
 	public boolean hasBlockAccess(int player_id, Block block)
 	{
+		//TODO: maybe remake to use less queries
 		int lock_id = findBlockLock(block);
 		
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT owner_id FROM mnc_blocklock_locks WHERE id=? LIMIT 1");)
@@ -321,7 +322,8 @@ public class BlockLocker implements Listener
 				
 				if(doubleChest != null)
 				{
-					if(!getLockOwner(doubleChest).equalsIgnoreCase(player.getName()))
+					int lock = getBlockLockId(doubleChest.getWorld().getName(),doubleChest.getX(),doubleChest.getY(),doubleChest.getZ());
+					if(lock != 0 && !getLockOwner(lock).equalsIgnoreCase(player.getName()))
 					{
 						ChatHandler.FailMsg(player, "Nemuzete postavit truhlu vedle cizi zamcene!");
 						event.setCancelled(true);
@@ -329,6 +331,7 @@ public class BlockLocker implements Listener
 					}
 					else
 					{
+						LockBlock(block, event.getPlayer().getName());
 						ChatHandler.SuccessMsg(player, "Vase dvojita truhla byla zamcena.");
 						return;
 					}
