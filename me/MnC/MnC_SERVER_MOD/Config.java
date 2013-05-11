@@ -41,6 +41,10 @@ public final class Config
 	public static String BW_BAN_REGIONS_CONFIG_FILE;
 	public static String BW_BAN_REGIONS_DEVIATIONS_FILE;
 	
+	//optimization - mob limiter
+	public static int MOB_LIMITER_RADIUS;
+	public static int MOB_LIMITER_LIMIT;
+	
  	public static void load(String config_path)
 	{
 		_log.info("Loading config.");
@@ -81,6 +85,12 @@ public final class Config
 			//basic world config
 			BW_BAN_REGIONS_CONFIG_FILE = config.getProperty("BasicWorldBanRegionsConfigFile", "plugins/MineAndCraft_plugin/BWBanRegions.dat");
 			BW_BAN_REGIONS_DEVIATIONS_FILE = config.getProperty("BasicWorldBanRegionsDeviationsFile", "plugins/MineAndCraft_plugin/BWBanDeviations.dat");
+			
+			//optimization - mob limiter
+			try{
+				MOB_LIMITER_RADIUS = Integer.parseInt(config.getProperty("MobRemoverRadius","30"));
+				MOB_LIMITER_LIMIT = Integer.parseInt(config.getProperty("MobRemoverLimit","100"));
+			}catch(Exception e){}
 		}
 		catch(Exception e)
 		{
