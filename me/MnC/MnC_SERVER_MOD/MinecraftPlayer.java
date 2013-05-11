@@ -3,9 +3,13 @@ package me.MnC.MnC_SERVER_MOD;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
+import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
+import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
 import me.MnC.MnC_SERVER_MOD.util.Util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class MinecraftPlayer
@@ -177,5 +181,48 @@ public class MinecraftPlayer
 	public boolean isAuthenticated()
 	{
 		return this.state == ConnectionState.AUTHENTICATED;
+	}
+
+	/**
+	 * @return What color player name is to have.
+	 */
+	public ChatColor getNameColor()
+	{
+		if(GameMasterHandler.IsAtleastGM(this.name))
+		{
+			if(CommandsHandler.disabledGMs.contains(this.name))
+			{
+				if(MnC_SERVER_MOD.getInstance().vipManager.isVip(this.name))
+				{
+					return ChatColor.GOLD;
+				}
+				else
+				{
+					return ChatColor.WHITE; 
+				}
+			}
+			
+			return ChatColor.BLUE;
+		}
+		else if(GameMasterHandler.IsAtleastRank(this.name, Rank.BUILDER))
+		{
+			return ChatColor.GOLD;
+		}
+		else if(MnC_SERVER_MOD.getInstance().vipManager.isVip(this.name))
+		{
+			return ChatColor.GOLD;
+		}
+		else
+		{
+			return ChatColor.WHITE;
+		}
+	}
+	
+	/**
+	 * @return The name of player entity for the player. Including color.
+	 */
+	public String getEntityName()
+	{
+		return getNameColor()+this.name;
 	}
 }
