@@ -26,6 +26,8 @@ import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.HomeCommandExecutor;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.locker.BlockLocker;
+import me.MnC.MnC_SERVER_MOD.optimization.AntiLag;
+//import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 
 import org.bukkit.Bukkit;
@@ -74,6 +76,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	{
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
 		GugaEvent.ClearAllGroups();
+		//Tagger.stop();
 		this.userManager.save();
 		this.extensionManager.disable();
 		ServerRegionHandler.SaveRegions();
@@ -81,6 +84,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		arena.SavePvpStats();
 		arena.SaveArenas();
 		chat.onDisable();
+		antilag.disable();
 		db.disconnectDb();
 		_enabled = false;
 	}
@@ -112,6 +116,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		RandomSpawnsHandler.SetPlugin(this);
 		HomesHandler.setPlugin(this);
 
+		antilag = new AntiLag();
+		
 		if (getServer().getWorld("arena") == null)
 		{
 			getServer().createWorld(WorldCreator.name("arena").environment(Environment.NORMAL));
@@ -158,6 +164,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		RandomSpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
+		//Tagger.start();
+		
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by MineAndCraft team 2011 - 2013.");
 	}
@@ -537,7 +545,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "1.0.2";
+	public static final String version = "1.0.3";
 	
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
@@ -565,6 +573,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public final PlacesManager placesManager;
 	public final BanHandler banHandler;
 	public final ExtensionManager extensionManager;
+	
+	private AntiLag antilag = null;
 	
 	private static MnC_SERVER_MOD _instance;
 	private static boolean _enabled=false;

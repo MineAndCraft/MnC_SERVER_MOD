@@ -1,6 +1,6 @@
 name: MnC_SERVER_MOD
 main: me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD
-version: 1.0.0
+version: 1.0.3
 authors: [rikub, hawkeye, Guga]
 commands:
     who:
