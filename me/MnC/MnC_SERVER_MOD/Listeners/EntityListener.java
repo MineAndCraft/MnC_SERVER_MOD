@@ -138,7 +138,7 @@ public class EntityListener implements Listener
 		if (e.getEntity() instanceof Player)
 		{
 			Player p = (Player) e.getEntity();
-			if(p.getLocation().getWorld().getName().equalsIgnoreCase("world"))
+			if(p.getLocation().getWorld().getName().equalsIgnoreCase("world") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_mine") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_basic") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_the_nether"))
 			{
 				if(playersDeaths.containsKey(p.getName()))
 				{
