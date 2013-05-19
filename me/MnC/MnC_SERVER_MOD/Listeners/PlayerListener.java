@@ -242,6 +242,19 @@ public class PlayerListener implements Listener
 				return;
 			}
 		}
+		
+		//Jail
+		if(plugin.jail.isJailed(e.getPlayer()))
+		{
+			String cmd = e.getMessage().toLowerCase();
+			if(!(cmd.startsWith("@") || cmd.startsWith("/help") || cmd.startsWith("/jailinfo") || cmd.startsWith("/tell")))
+			{
+				e.setCancelled(true);
+				e.getPlayer().sendMessage("Jailed players cannot use commands nor chat.");
+				return;
+			}
+		}
+		
 		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") 
 				|| e.getMessage().equalsIgnoreCase("/me") || e.getMessage().equalsIgnoreCase("/w"))
 		{
@@ -269,6 +282,19 @@ public class PlayerListener implements Listener
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
 	{
 		Player p = e.getPlayer();
+		
+		//Jail
+		if(plugin.jail.isJailed(e.getPlayer()))
+		{
+			String cmd = e.getMessage().toLowerCase();
+			if(!(cmd.startsWith("@") || cmd.startsWith("/help") || cmd.startsWith("/jailinfo") || cmd.startsWith("/tell")))
+			{
+				e.setCancelled(true);
+				e.getPlayer().sendMessage("Jailed players cannot use commands nor chat.");
+				return;
+			}
+		}
+		
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
@@ -365,6 +391,12 @@ public class PlayerListener implements Listener
 		{
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
+		
+		// Jail
+		if(plugin.jail.isJailed(p))
+		{
+			e.setRespawnLocation(plugin.jail.getSpawn());
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
@@ -388,6 +420,13 @@ public class PlayerListener implements Listener
 					e.setCancelled(true);
 				return;
 			}
+		}
+		
+		// Jail
+		if(plugin.jail.isJailed(player) && ! plugin.jail.isLocationInJail(player.getLocation()))
+		{
+			player.damage(9001); //the damage is just over 9000 he can't survive that
+			player.sendMessage("You have been killed for trying to escape the very unescapable jail.");
 		}
 		
 		//if (!GugaWorldSizeHandler.CanMove(player.getLocation()))

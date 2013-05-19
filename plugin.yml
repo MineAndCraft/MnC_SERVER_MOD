@@ -77,3 +77,5 @@ commands:
         description: Command for user regions
     book:
         description: Economy command for copying books
+    jailinfo:
+        description: Lets the player know when his/her jail expires

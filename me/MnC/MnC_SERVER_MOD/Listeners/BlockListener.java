@@ -55,6 +55,14 @@ public class BlockListener implements Listener
 			return;
 		}
 		
+		//Jail
+		if(plugin.jail.isJailed(e.getPlayer()))
+		{
+			e.setCancelled(true);
+			e.getPlayer().sendMessage("Jailed players cannot break blocks.");
+			return;
+		}
+		
 		if (plugin.debug == true)
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: playerName="+e.getPlayer().getName()+",typeID="+e.getBlock().getTypeId());
@@ -171,6 +179,14 @@ public class BlockListener implements Listener
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw.");
 			e.setCancelled(true);
+			return;
+		}
+		
+		//Jail
+		if(plugin.jail.isJailed(e.getPlayer()))
+		{
+			e.setCancelled(true);
+			e.getPlayer().sendMessage("Jailed players cannot place blocks.");
 			return;
 		}
 		

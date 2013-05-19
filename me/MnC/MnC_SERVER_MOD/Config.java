@@ -45,6 +45,15 @@ public final class Config
 	public static int MOB_LIMITER_RADIUS;
 	public static int MOB_LIMITER_LIMIT;
 	
+	// Jail Manager
+	public static int JAIL_SPAWN_X;
+	public static int JAIL_SPAWN_Y;
+	public static int JAIL_SPAWN_Z;
+	public static int JAIL_BORDER_LEFT;
+	public static int JAIL_BORDER_RIGHT;
+	public static int JAIL_BORDER_TOP;
+	public static int JAIL_BORDER_BOTTOM;
+	
  	public static void load(String config_path)
 	{
 		_log.info("Loading config.");
@@ -91,6 +100,15 @@ public final class Config
 				MOB_LIMITER_RADIUS = Integer.parseInt(config.getProperty("MobRemoverRadius","30"));
 				MOB_LIMITER_LIMIT = Integer.parseInt(config.getProperty("MobRemoverLimit","100"));
 			}catch(Exception e){}
+			
+			// Jail Manager
+			JAIL_SPAWN_X = Integer.parseInt(config.getProperty("JailSpawnX","0"));
+			JAIL_SPAWN_Y = Integer.parseInt(config.getProperty("JailSpawnY","62"));
+			JAIL_SPAWN_Z = Integer.parseInt(config.getProperty("JailSpawnZ","0"));
+			JAIL_BORDER_LEFT = Integer.parseInt(config.getProperty("JailBorderLeft","-25"));
+			JAIL_BORDER_RIGHT = Integer.parseInt(config.getProperty("JailBorderRight","25"));
+			JAIL_BORDER_BOTTOM = Integer.parseInt(config.getProperty("JailBorderBottom","-25"));
+			JAIL_BORDER_TOP = Integer.parseInt(config.getProperty("JailBorderTop","25"));
 		}
 		catch(Exception e)
 		{

@@ -1280,6 +1280,38 @@ public abstract class CommandsHandler
 	            }
 	          }
 	        }
+	        else if (args[0].equalsIgnoreCase("jail"))
+			{
+				if(args.length == 4 && args[1].equalsIgnoreCase("add"))
+				{
+					Player jailed = plugin.getServer().getPlayerExact(args[2]);
+					if(jailed == null)
+					{
+						sender.sendMessage("No such player here.");
+					}
+					else
+					{
+						double duration = Double.parseDouble(args[3]);
+						if(duration > 48)
+						{
+							sender.sendMessage("helpers can jail max for 2 days");
+							return;
+						}
+						plugin.jail.put(jailed, duration);
+						sender.sendMessage("Player '"+jailed.getName()+"' jailed");
+						if(GameMasterHandler.IsAdmin(jailed.getName()))
+							sender.sendMessage("Player was not accualy jailed since you can't jail an admin");
+					}
+				}
+				else if(args.length == 2 && args[1].equalsIgnoreCase("list"))
+				{
+					plugin.jail.listJailedPlayerTo(sender);
+				}
+				else
+				{
+					sender.sendMessage(ChatColor.YELLOW+"Usage: /gm jail add <player> <hours>\n     /gm jail list");
+				}
+			}
 	      }
 	    }
 	}		
@@ -1559,6 +1591,32 @@ public abstract class CommandsHandler
 				sender.sendMessage("/gm mute all - Toggle all chat messages on/off");
 				sender.sendMessage("/gm mute add <name> <time> - Mute players chat messages for certain time");
 				sender.sendMessage("/gm mute list - Shows list of muted players");
+			}
+		}
+		else if (subCommand.equalsIgnoreCase("jail") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 4 && args[1].equalsIgnoreCase("add"))
+			{
+				Player jailed = plugin.getServer().getPlayerExact(args[2]);
+				if(jailed == null)
+				{
+					sender.sendMessage("No such player here.");
+				}
+				else
+				{
+					plugin.jail.put(jailed, Double.parseDouble(args[3]));
+					sender.sendMessage("Player '"+jailed.getName()+"' jailed");
+					if(GameMasterHandler.IsAdmin(jailed.getName()))
+						sender.sendMessage("Player was not accualy jailed since you can't jail an admin");
+				}
+			}
+			else if(args.length == 2 && args[1].equalsIgnoreCase("list"))
+			{
+				plugin.jail.listJailedPlayerTo(sender);
+			}
+			else
+			{
+				sender.sendMessage(ChatColor.YELLOW+"Usage: /gm jail add <player> <hours>\n     /gm jail list");
 			}
 		}
 		else if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName())) 
