@@ -71,7 +71,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		extensionManager = new ExtensionManager(this);
 		blockLocker = new BlockLocker();
 		
-		jail = new JailManager("world_jail");
 	}
 	
 	public void onDisable() 
@@ -119,8 +118,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		HomesHandler.setPlugin(this);
 
 		antilag = new AntiLag();
-		
-		jail.load();
 		
 		if (getServer().getWorld("arena") == null)
 		{
@@ -324,13 +321,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 			 CommandsHandler.CommandRegister((Player)sender,args);
 			 return true;
 		 }
-		 //Jail
-		 else if(cmd.getName().equalsIgnoreCase("jailinfo"))
-		 {
-			 jail.CommandJailinfo((Player)sender);
-			 return true;
-		 }
-		 // end Jail
 		 else if(cmd.getName().equalsIgnoreCase("activate") && (sender instanceof Player))
 		 {
 			 if(args.length != 2)
@@ -584,8 +574,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public final PlacesManager placesManager;
 	public final BanHandler banHandler;
 	public final ExtensionManager extensionManager;
-	
-	public final JailManager jail;
 	
 	private AntiLag antilag = null;
 	

@@ -129,7 +129,8 @@ public class ChatHandler
 	
 	public static String getHonorableName(Player player)
 	{
-		//NOTE: this works only for Admin and GM team members
+		//NOTE: this works only for Admin and GM team members 
+		// and also helpers since they can give 2 day bans
 		String name=null;
 		if(GameMasterHandler.IsAdmin(player.getName()))
 		{
@@ -138,6 +139,10 @@ public class ChatHandler
 		else if(GameMasterHandler.IsAtleastGM(player.getName()))
 		{
 			name = _getPrefixString(player,"gm");
+		}
+		else if(GameMasterHandler.IsRank(player.getName(), Rank.HELPER))
+		{
+			name = _getPrefixString(player,"helper");
 		}
 		else
 		{

@@ -140,14 +140,7 @@ public class EntityListener implements Listener
 		{			
 			Player p = (Player) e.getEntity();
 			
-			//Jail
-			if(plugin.jail.isJailed(p))
-			{
-				// don't display death messages for people in jail so jailed can't spam the chat with them
-				if(e instanceof PlayerDeathEvent)
-					((PlayerDeathEvent) e).setDeathMessage(null);
-			}
-			
+	
 			if(p.getLocation().getWorld().getName().equalsIgnoreCase("world") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_mine") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_basic") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_the_nether"))
 			{
 				if(playersDeaths.containsKey(p.getName()))

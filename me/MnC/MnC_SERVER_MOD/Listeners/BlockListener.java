@@ -55,13 +55,6 @@ public class BlockListener implements Listener
 			return;
 		}
 		
-		//Jail
-		if(plugin.jail.isJailed(e.getPlayer()))
-		{
-			e.setCancelled(true);
-			e.getPlayer().sendMessage("Jailed players cannot break blocks.");
-			return;
-		}
 		
 		if (plugin.debug == true)
 		{
@@ -182,14 +175,7 @@ public class BlockListener implements Listener
 			return;
 		}
 		
-		//Jail
-		if(plugin.jail.isJailed(e.getPlayer()))
-		{
-			e.setCancelled(true);
-			e.getPlayer().sendMessage("Jailed players cannot place blocks.");
-			return;
-		}
-		
+	
 		if(e.getBlock().getType() == Material.TNT && (player.getProfession() == null || player.getProfession().GetLevel() < 50))
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Nemate lvl 50, nemuzete pouzit TNT.");

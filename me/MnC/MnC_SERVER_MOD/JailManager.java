@@ -1,5 +1,5 @@
 package me.MnC.MnC_SERVER_MOD;
-
+/*
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 
-
+/*
 public class JailManager
 {
 	private static final Logger _log = Logger.getLogger(JailManager.class.getName());
@@ -124,3 +124,4 @@ public class JailManager
 		
 	}
 }
+*/

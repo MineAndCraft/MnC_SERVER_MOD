@@ -1280,38 +1280,43 @@ public abstract class CommandsHandler
 	            }
 	          }
 	        }
-	        else if (args[0].equalsIgnoreCase("jail"))
-			{
-				if(args.length == 4 && args[1].equalsIgnoreCase("add"))
+	        else if(args[0].equalsIgnoreCase("ban"))
+	        {
+	        	if(!(args.length >= 3))
 				{
-					Player jailed = plugin.getServer().getPlayerExact(args[2]);
-					if(jailed == null)
-					{
-						sender.sendMessage("No such player here.");
-					}
-					else
-					{
-						double duration = Double.parseDouble(args[3]);
-						if(duration > 48)
-						{
-							sender.sendMessage("helpers can jail max for 2 days");
-							return;
-						}
-						plugin.jail.put(jailed, duration);
-						sender.sendMessage("Player '"+jailed.getName()+"' jailed");
-						if(GameMasterHandler.IsAdmin(jailed.getName()))
-							sender.sendMessage("Player was not accualy jailed since you can't jail an admin");
-					}
+					sender.sendMessage("Usage: /helper ban <player> <hours>[ <reason>]");
+					return;
 				}
-				else if(args.length == 2 && args[1].equalsIgnoreCase("list"))
+				
+				String playerNameToBan = args[1];
+				Double expiration = Double.valueOf(args[3]);
+				if(!(0 < expiration && expiration < 49))
 				{
-					plugin.jail.listJailedPlayerTo(sender);
+					ChatHandler.FailMsg(sender, "Invalid ban duration. Ban duration has to be in (0,48)");
+					return;
+				}
+				expiration *= 3600;
+				expiration = expiration + System.currentTimeMillis()/1000;
+				
+				StringBuilder sb = new StringBuilder("");
+				for(int i=4;i<args.length;i++)
+				{
+					sb.append(args[i]);
+					sb.append(" ");
+				}
+				String reason = sb.toString();
+				if(plugin.banHandler.banPlayer(playerNameToBan, expiration.longValue(), reason,ChatHandler.getHonorableName(sender)))
+				{
+					sender.sendMessage("Player banned.");
+					Player p = plugin.getServer().getPlayerExact(playerNameToBan);
+					if (p != null)
+						p.kickPlayer("Vas ucet byl zabanovan. Ban vyprsi "+ new Date(expiration.longValue()*1000).toString());
 				}
 				else
 				{
-					sender.sendMessage(ChatColor.YELLOW+"Usage: /gm jail add <player> <hours>\n     /gm jail list");
+					sender.sendMessage("Unable to ban player.");
 				}
-			}
+	        }
 	      }
 	    }
 	}		
@@ -1593,32 +1598,6 @@ public abstract class CommandsHandler
 				sender.sendMessage("/gm mute list - Shows list of muted players");
 			}
 		}
-		else if (subCommand.equalsIgnoreCase("jail") && GameMasterHandler.IsAtleastGM(sender.getName()))
-		{
-			if(args.length == 4 && args[1].equalsIgnoreCase("add"))
-			{
-				Player jailed = plugin.getServer().getPlayerExact(args[2]);
-				if(jailed == null)
-				{
-					sender.sendMessage("No such player here.");
-				}
-				else
-				{
-					plugin.jail.put(jailed, Double.parseDouble(args[3]));
-					sender.sendMessage("Player '"+jailed.getName()+"' jailed");
-					if(GameMasterHandler.IsAdmin(jailed.getName()))
-						sender.sendMessage("Player was not accualy jailed since you can't jail an admin");
-				}
-			}
-			else if(args.length == 2 && args[1].equalsIgnoreCase("list"))
-			{
-				plugin.jail.listJailedPlayerTo(sender);
-			}
-			else
-			{
-				sender.sendMessage(ChatColor.YELLOW+"Usage: /gm jail add <player> <hours>\n     /gm jail list");
-			}
-		}
 		else if (subCommand.matches("spawn") && GameMasterHandler.IsAdmin(sender.getName())) 
 		{
 			if(args.length == 3 && args[1].matches("add"))
@@ -1771,7 +1750,7 @@ public abstract class CommandsHandler
 						sender.sendMessage("Player banned.");
 						Player p = plugin.getServer().getPlayerExact(playerNameToBan);
 						if (p != null)
-							p.kickPlayer("Vas ucet byl zabanovan. Ban vyprsi "+ new Date(expiration).toString());
+							p.kickPlayer("Vas ucet byl zabanovan. Ban vyprsi "+ new Date(expiration*1000).toString());
 					}
 					else
 					{
