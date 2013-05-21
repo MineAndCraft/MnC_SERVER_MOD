@@ -41,15 +41,19 @@ public class VipManager
 		}
 	}
 	
-	public void onVipLogOn(String name)
+	public void onVipLogOn(Player player)
 	{
-		VipUser vip = getVip(name);
+		VipUser vip = getVip(player.getName());
 		if(vip.getExpiration() < System.currentTimeMillis()/1000 && vip.getExpiration() != VIP_PERMANENT)
 		{
-			removeVip(name);
+			removeVip(player.getName());
 			return;
 		}
-		this.flyingVips.put(name,true);
+		this.flyingVips.put(player.getName(),true);
+		// VIPs should be able to fly right after logging in
+		// (Don't remember that awkward moment logging in in mid-air?)
+		player.setAllowFlight(true);
+		player.setFlying(true);
 	}
 	
 	/**

@@ -69,7 +69,7 @@ public class UserManager
 			plugin.currencyManager.onPlayerJoin(player);
 			if(plugin.vipManager.isVip(playerName))
 			{
-				plugin.vipManager.onVipLogOn(playerName);
+				plugin.vipManager.onVipLogOn(player);
 			}
 		}
 		Thread th = new Thread(){
