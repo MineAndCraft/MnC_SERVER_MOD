@@ -1,5 +1,6 @@
 package me.MnC.MnC_SERVER_MOD.optimization;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -7,6 +8,7 @@ import me.MnC.MnC_SERVER_MOD.Config;
 
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Villager;
@@ -57,6 +59,9 @@ public class MobLimiter implements Listener
 		if(mob == null)
 			return;
 		
+		if(mob.getType() == EntityType.PLAYER)
+			return;
+		
 		if(!(mob instanceof Monster || mob instanceof Animals || mob instanceof Villager))
 			return;
 		
@@ -64,7 +69,13 @@ public class MobLimiter implements Listener
 			return;
 		
 		//check for too many entities
-		List<Entity> entities = mob.getNearbyEntities(Config.MOB_LIMITER_RADIUS, Config.MOB_LIMITER_RADIUS, Config.MOB_LIMITER_RADIUS);
+		List<Entity> entities = new LinkedList<Entity>();
+		for(Entity e : mob.getWorld().getEntities())
+		{
+			if(e.getLocation().distance(mob.getLocation()) < Config.MOB_LIMITER_RADIUS)
+				entities.add(e);
+		}
+		
 		if(entities.size() > Config.MOB_LIMITER_LIMIT)
 		{
 			int toKill = entities.size()-Config.MOB_LIMITER_LIMIT;
