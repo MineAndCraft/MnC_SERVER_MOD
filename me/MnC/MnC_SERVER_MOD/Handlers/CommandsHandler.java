@@ -350,76 +350,62 @@ public abstract class CommandsHandler
 				}
 			}
 		}
-		else if (args.length == 3)
+		else if (args.length == 3 && args[0].equalsIgnoreCase("tp") && args[1].equalsIgnoreCase("player"))
 		{
-			String subCommand = args[0];
-			String arg1 = args[1];
 			String arg2 = args[2];
-			if (subCommand.matches("tp"))
+			Player p = plugin.getServer().getPlayer(arg2);
+			if (p == null)
 			{
-				if (arg1.matches("player"))
-				{
-					Player p = plugin.getServer().getPlayer(arg2);
-					if (p == null)
-					{
-						ChatHandler.FailMsg(sender,"Tento hrac neni online!");
-						return;
-					}
-					if (p.getLocation().getWorld().getName().matches("world_basic"))
-					{
-						ChatHandler.FailMsg(sender, "Tento hrac je ve svete pro novacky!");
-						return;
-					}
-					if (p.getLocation().getWorld().getName().matches("arena"))
-					{
-						ChatHandler.FailMsg(sender, "Tento hrac je v arene!");
-						return;
-					}
-					if (p.getLocation().getWorld().getName().matches("world_event"))
-					{
-						ChatHandler.FailMsg(sender, "Tento hrac je v EventWorldu!");
-						return;
-					}
-					ChatHandler.InfoMsg(plugin.getServer().getPlayer(arg2), "Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijeti napiste prikaz /y");
-					vipTeleports.put(p, sender);
-					ChatHandler.SuccessMsg(sender, "Pozadavek odeslan");
-				}
+				ChatHandler.FailMsg(sender,"Tento hrac neni online!");
+				return;
 			}
-
-			else if (subCommand.matches("time"))
+			if (p.getLocation().getWorld().getName().matches("world_basic"))
 			{
-				if (arg1.matches("set"))
-				{
-					int time = Integer.parseInt(arg2);
-					if ( (time >= 0) && (time <= 24000) )
-					{
-						sender.setPlayerTime(time, false);
-						ChatHandler.SuccessMsg(sender,"Cas byl uspesne zmenen");
-					}
-					else 
-						ChatHandler.FailMsg(sender,"Tato hodnota nelze nastavit!");
-				}
+				ChatHandler.FailMsg(sender, "Tento hrac je ve svete pro novacky!");
+				return;
 			}
+			if (p.getLocation().getWorld().getName().matches("arena"))
+			{
+				ChatHandler.FailMsg(sender, "Tento hrac je v arene!");
+				return;
+			}
+			if (p.getLocation().getWorld().getName().matches("world_event"))
+			{
+				ChatHandler.FailMsg(sender, "Tento hrac je v EventWorldu!");
+				return;
+			}
+			ChatHandler.InfoMsg(plugin.getServer().getPlayer(arg2), "Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijeti napiste prikaz /y");
+			vipTeleports.put(p, sender);
+			ChatHandler.SuccessMsg(sender, "Pozadavek odeslan");
 		}
-		else if (args.length == 4)
+		else if (args.length == 3 && args[0].equalsIgnoreCase("time") && args[1].equalsIgnoreCase("set"))
 		{
-			String subCommand = args[0];
-			if(subCommand.matches("item"))
+			int time = Integer.parseInt(args[2]);
+			if ( (time >= 0) && (time <= 24000) )
+			{
+				sender.setPlayerTime(time, false);
+				ChatHandler.SuccessMsg(sender,"Cas byl uspesne zmenen");
+			}
+			else 
+				ChatHandler.FailMsg(sender,"Tato hodnota nelze nastavit!");
+		}
+		else if ((args.length == 4 || args.length == 3) && args[0].equalsIgnoreCase("item"))
+		{
+			if(args[1].matches("add"))
 			{
 				int itemID = Integer.parseInt(args[2]);
 				if(VipItems.IsVipItem(itemID))
 				{
-					if(args[1].matches("add"))
+					int numberOfStacks = 1;
+					if(args.length == 4)
+						Integer.parseInt(args[3]);
+					int i = 0;
+					while(i<numberOfStacks)
 					{
-						int numberOfStacks = Integer.parseInt(args[3]);
-						int i = 0;
-						while(i<numberOfStacks)
-						{
-							sender.getInventory().addItem(new ItemStack(itemID, 64));
-							i++;
-						}
-						ChatHandler.SuccessMsg(sender, "Itemy byly pridany!");
+						sender.getInventory().addItem(new ItemStack(itemID, 64));
+						i++;
 					}
+					ChatHandler.SuccessMsg(sender, "Itemy byly pridany!");
 				}
 				else
 					ChatHandler.FailMsg(sender, "Tento item nelze pridat!");
