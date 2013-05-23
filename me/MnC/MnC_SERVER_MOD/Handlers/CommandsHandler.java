@@ -2388,6 +2388,22 @@ public abstract class CommandsHandler
 			else
 				sender.sendMessage("Usage: /gm enderchest <player>");
 		}
+		else if(subCommand.equalsIgnoreCase("inventory") && GameMasterHandler.IsAtleastGM(sender.getName()))
+		{
+			if(args.length == 2)
+			{
+				Player target = plugin.getServer().getPlayer(args[1]);
+				if(target != null)
+				{
+					sender.sendMessage(ChatColor.YELLOW+"You are showed \""+args[1]+"\"'s inventory.");
+					sender.openInventory(target.getInventory());
+				}
+				else
+					sender.sendMessage("Player is not online");
+			}
+			else
+				sender.sendMessage("Ussage: /gm inventory <player>");
+		}
 		else if (subCommand.matches("genblock") && GameMasterHandler.IsAdmin(sender.getName()))
 		{
 			if (args.length == 5)
