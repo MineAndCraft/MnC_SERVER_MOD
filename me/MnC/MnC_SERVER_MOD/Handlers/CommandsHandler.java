@@ -398,7 +398,7 @@ public abstract class CommandsHandler
 				{
 					int numberOfStacks = 1;
 					if(args.length == 4)
-						Integer.parseInt(args[3]);
+						numberOfStacks = Integer.parseInt(args[3]);
 					int i = 0;
 					while(i<numberOfStacks)
 					{
