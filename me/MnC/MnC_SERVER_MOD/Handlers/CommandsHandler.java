@@ -1275,7 +1275,7 @@ public abstract class CommandsHandler
 				}
 				
 				String playerNameToBan = args[1];
-				Double expiration = Double.valueOf(args[3]);
+				Double expiration = Double.valueOf(args[2]);
 				if(!(0 < expiration && expiration < 49))
 				{
 					ChatHandler.FailMsg(sender, "Invalid ban duration. Ban duration has to be in (0,48)");
@@ -1285,7 +1285,7 @@ public abstract class CommandsHandler
 				expiration = expiration + System.currentTimeMillis()/1000;
 				
 				StringBuilder sb = new StringBuilder("");
-				for(int i=4;i<args.length;i++)
+				for(int i=3;i<args.length;i++)
 				{
 					sb.append(args[i]);
 					sb.append(" ");
