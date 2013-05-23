@@ -72,6 +72,10 @@ public class MobLimiter implements Listener
 		List<Entity> entities = new LinkedList<Entity>();
 		for(Entity e : mob.getWorld().getEntities())
 		{
+			if(e.getType() == EntityType.PLAYER)
+				continue;
+			if(e.getType() != mob.getType())
+				continue;
 			if(e.getLocation().distance(mob.getLocation()) < Config.MOB_LIMITER_RADIUS)
 				entities.add(e);
 		}
@@ -82,7 +86,7 @@ public class MobLimiter implements Listener
 			log.info("Found "+entities.size()+" entities '"+mob.getType()+"' near '"+mob.getLocation().getWorld().getName()+"'["+mob.getLocation().getBlockX()+", "+mob.getLocation().getBlockY()+", "+mob.getLocation().getBlockZ()+"]. Triming by "+toKill+".");
 			for(int i=0;i < toKill;i++)
 			{
-				Entity e = entities.get(i);
+				Entity e = entities.get(i);				
 				if(e instanceof LivingEntity)
 					((LivingEntity)e).damage(((LivingEntity) e).getHealth()+1);
 				e.remove();
