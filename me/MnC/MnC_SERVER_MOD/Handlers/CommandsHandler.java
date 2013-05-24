@@ -13,6 +13,7 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.ServerRegion;
 import me.MnC.MnC_SERVER_MOD.UserManager;
+import me.MnC.MnC_SERVER_MOD.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.GugaArena.ArenaSpawn;
@@ -335,7 +336,7 @@ public abstract class CommandsHandler
 			{
 				if(args[1].matches("on"))
 				{
-					if(sender.getWorld().getName().matches("world") || sender.getWorld().getName().matches("world_mine"))
+					if(VipManager.isFlyEnabled(sender.getWorld().getName()))
 					{
 						plugin.vipManager.setFly(sender.getName(),true);
 						ChatHandler.SuccessMsg(sender, "Letani zapnuto!");

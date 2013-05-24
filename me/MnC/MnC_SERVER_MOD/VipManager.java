@@ -52,8 +52,11 @@ public class VipManager
 		this.flyingVips.put(player.getName(),true);
 		// VIPs should be able to fly right after logging in
 		// (Don't remember that awkward moment logging in in mid-air?)
-		player.setAllowFlight(true);
-		player.setFlying(true);
+		if(isFlyEnabled(player.getWorld().getName()))
+		{
+			player.setAllowFlight(true);
+			player.setFlying(true);
+		}
 	}
 	
 	/**
@@ -155,7 +158,7 @@ public class VipManager
 			return;
 		p.setAllowFlight(fly);
 		p.setFlying(fly);
-		this.flyingVips.put(name, fly);
+		this.flyingVips.put(name, fly);			
 	}
 	
 	
@@ -288,5 +291,15 @@ public class VipManager
 			e.printStackTrace();
 		}
 		return vips;
+	}
+
+	/**
+	 * 
+	 * @param world_name The name of the World
+	 * @return true if VIP fly is enabled in <b>world_name</b>, false otherwise
+	 */
+	public static boolean isFlyEnabled(String world_name)
+	{
+		return world_name.equalsIgnoreCase("world") || world_name.equalsIgnoreCase("world_mine") || world_name.equalsIgnoreCase("world_basic");
 	}
 }
