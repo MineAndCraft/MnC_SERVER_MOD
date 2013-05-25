@@ -22,7 +22,7 @@ public class GugaProfession
 		xpCap = 4000;
 		thisLevel = 500;
 		skillCap=1000;
-		plugin = gugaSM;
+		//plugin = gugaSM;
 		playerName = pName;
 		level = 1;
 		xp = exp;
@@ -216,5 +216,5 @@ public class GugaProfession
 	int emeraldChance;
 	
 	
-	protected MnC_SERVER_MOD plugin;
+	//protected MnC_SERVER_MOD plugin;
 }
