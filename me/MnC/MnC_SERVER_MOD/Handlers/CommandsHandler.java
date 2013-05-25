@@ -1188,6 +1188,7 @@ public abstract class CommandsHandler
 	          sender.sendMessage("/helper mute - Zobrazi podmenu.");
 	          sender.sendMessage("/helper kick <hrac> - Vykopne hrace ze serveru kvuli zadanemu duvodu.");
 	          sender.sendMessage("/helper tp - Zobrazi podmenu.");
+	          sender.sendMessage("/helper ban <hrac> <hodiny> <duvod> - Zabanuje hrace, max 48 hodin.");
 	        }
 	        else if (args[0].toLowerCase().matches("tp"))
 	        {
