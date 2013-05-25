@@ -588,7 +588,7 @@ public class PlayerListener implements Listener
 		{
 			player.sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
 			player.sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
-			player.sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/world");
+			player.sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/pp spawn");
 			ChatHandler.InitializeDisplayName(player);
 		}
 	}
