@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 
 public class GugaProfession2 extends GugaProfession
 {
-	private int blocksBroken = 0;
-	
 	protected int userId;
 	
 	protected Player _player;
@@ -33,13 +31,8 @@ public class GugaProfession2 extends GugaProfession
 	{
 		if(block.getTypeId() == 50 || block.getTypeId() == 78 )
 			return;
-		
-		blocksBroken++;
+
 		this.GainExperience(4);	
-		if(blocksBroken>=100)
-		{
-			save();
-		}
 	}
 
 	public void addExperience(int exp)
@@ -50,7 +43,6 @@ public class GugaProfession2 extends GugaProfession
 	
 	public synchronized void save()
 	{
-		blocksBroken = 0;
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE `mnc_profession` prof SET prof.experience = ? WHERE prof.user_id = ?");)
 		{
 		    stat.setInt(1, this.xp);
