@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import me.MnC.MnC_SERVER_MOD.DatabaseManager;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class GugaProfession2 extends GugaProfession
 {
@@ -14,10 +16,13 @@ public class GugaProfession2 extends GugaProfession
 	
 	protected int userId;
 	
-	private GugaProfession2(String n,int id,int exp)
+	protected Player _player;
+	
+	private GugaProfession2(Player player,int id,int exp)
 	{
-		super(n,exp,MnC_SERVER_MOD.getInstance());
+		super(player.getName(),exp,MnC_SERVER_MOD.getInstance());
 		this.userId = id;
+		_player = player;
 	}
 	
 	protected GugaProfession2(){
@@ -57,18 +62,28 @@ public class GugaProfession2 extends GugaProfession
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Method designed as internal event so GugaProfession2 knows when player levels up
+	 */
 	@Override
-	@Deprecated
-	public String GetPlayerName(){ return "";}
+	protected void onLevelUp()
+	{
+		Bukkit.getServer().getPluginManager().callEvent(new GugaProfessionPlayerLevelUpEvent(this));
+	}
+	
+	public Player getPlayer()
+	{
+		return _player;
+	}
 	
 	/**
 	 * 
-	 * @param name Name of the player
+	 * @param player org.bukkit.entity.Player instance of the Player
 	 * @param playerId Id of the player (This is actually used to load the profession data)
 	 * @return null if there is no profession for player playerId, valid GugaProfession2 class instance otherwise 
 	 */
-	public static GugaProfession2 loadProfession(String name,int playerId)
+	public static GugaProfession2 loadProfession(Player player,int playerId)
 	{
 		if(playerId==0)
 			return null;
@@ -81,7 +96,7 @@ public class GugaProfession2 extends GugaProfession
 			if(result.next())
 			{
 				int exp = result.getInt("experience");
-				profession = new GugaProfession2(name,playerId,exp);
+				profession = new GugaProfession2(player,playerId,exp);
 			}
 		}
 		catch(Exception e)

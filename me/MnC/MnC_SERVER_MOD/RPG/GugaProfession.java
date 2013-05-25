@@ -2,11 +2,7 @@ package me.MnC.MnC_SERVER_MOD.RPG;
 
 import java.util.Random;
 
-import org.bukkit.ChatColor;
-
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
-import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
-import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 
 public class GugaProfession 
 {
@@ -71,14 +67,7 @@ public class GugaProfession
 			}
 		}
 		thisLevel = xpNeeded - xpNeededOld;
-		plugin.getServer().broadcastMessage(plugin.getServer().getPlayer(playerName).getName() + " prekrocil/a level " + level + "!");
-		if(level >= 10 && BasicWorld.IsBasicWorld(plugin.getServer().getPlayer(playerName).getLocation()))
-		{
-			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
-			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
-			plugin.getServer().getPlayer(playerName).sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/world");
-			ChatHandler.InitializeDisplayName(plugin.getServer().getPlayer(playerName));
-		}
+		onLevelUp();
 		//if (level <= 20)
 		//{
 			UpdateSkills();
@@ -205,6 +194,8 @@ public class GugaProfession
 		}
 	}
 
+	protected void onLevelUp(){}
+	
 	protected int xp;
 	protected int xpNeeded;
 	protected int xpIncrement;

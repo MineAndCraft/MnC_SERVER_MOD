@@ -14,6 +14,7 @@ import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
+import me.MnC.MnC_SERVER_MOD.RPG.GugaProfessionPlayerLevelUpEvent;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.Home;
@@ -21,6 +22,7 @@ import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
@@ -573,6 +575,21 @@ public class PlayerListener implements Listener
 					p.getInventory().clear();
 				}
 			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerRPGLevelUp(GugaProfessionPlayerLevelUpEvent event)
+	{
+		GugaProfession2 profession = event.getProfession();
+		Player player = event.getProfession().getPlayer();
+		Bukkit.getServer().broadcastMessage(player.getName() + " prekrocil/a level " + profession.GetLevel() + "!");
+		if(profession.GetLevel() >= 10 && BasicWorld.IsBasicWorld(player.getLocation()))
+		{
+			player.sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
+			player.sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
+			player.sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/world");
+			ChatHandler.InitializeDisplayName(player);
 		}
 	}
 	
