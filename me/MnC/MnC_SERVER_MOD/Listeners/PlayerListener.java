@@ -234,7 +234,8 @@ public class PlayerListener implements Listener
 		}
 		if(!plugin.userManager.userIsLogged(e.getPlayer().getName()))
 		{
-			if(e.getMessage().contains("/login") || e.getMessage().contains("/help") || e.getMessage().contains("/register"))
+			//Unless the player is logged in only [/login, /help, /register] commands are allowed
+			if(e.getMessage().startsWith("/login") || e.getMessage().startsWith("/help") || e.getMessage().startsWith("/register"))
 			{
 			}
 			else
@@ -271,9 +272,9 @@ public class PlayerListener implements Listener
 			{
 				e.setCancelled(true);
 			}
-		}
-		
+		}	
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
 	{
@@ -628,8 +629,6 @@ public class PlayerListener implements Listener
 	}
 
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
-	public String[] vipCommands = { "/tp", "/time" };
-	public String[] allowedCommands = { "/login", "/register", "/help"};
 	private static String creativePlayersPath = "plugins/MineAndCraft_plugin/creativePlayers.dat";
 	public static MnC_SERVER_MOD plugin;
 }
