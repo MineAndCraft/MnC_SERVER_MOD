@@ -188,16 +188,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		 {
 			 	CommandsHandler.TestCommand(args);
 		 }
-		 else if (cmd.getName().equalsIgnoreCase("tell"))
-		 {
-			 CommandsHandler.CommandWhisper(sender, args);
-			 return true;
-		 }
-		 else if (cmd.getName().equalsIgnoreCase("msg"))
-		 {
-			 CommandsHandler.CommandWhisper(sender, args);
-			 return true;
-		 }
 		 else if (cmd.getName().equalsIgnoreCase("places") && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandPlaces((Player)sender, args);
@@ -242,14 +232,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 			 if (sender instanceof Player)
 			 {
 				 CommandsHandler.CommandHelp((Player) sender);
-				 return true;
-			 }
-		 }
-		 else if (cmd.getName().equalsIgnoreCase("r"))
-		 {
-			 if (sender instanceof Player)
-			 {
-				 CommandsHandler.CommandReply((Player) sender, args);
 				 return true;
 			 }
 		 }
@@ -362,6 +344,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		getCommand("home").setExecutor(new HomeCommandExecutor());
 		getCommand("book").setExecutor(new CurrencyCommandExecutor());
 		this.blockLocker.registerCommands();
+		this.chat.registerCommands();
 	}
 
 	public void GenerateBlockType(Player p, int typeID, int x, int y, int z)

@@ -63,8 +63,7 @@ commands:
         description: Command for economy
     tell:
         description: Command for whisper
-    msg:
-        description: Command for whisper
+        aliases: [msg, w]
     friend:
         description: Friendlist commands
     block:

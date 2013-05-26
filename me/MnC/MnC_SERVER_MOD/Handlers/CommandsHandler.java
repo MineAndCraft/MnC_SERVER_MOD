@@ -802,29 +802,6 @@ public abstract class CommandsHandler
 		}
 	}
 
-	public static void CommandReply(Player sender, String args[])
-	{
-		if (args.length > 0)
-		{
-			Player p;
-			if ( (p = reply.get(sender)) != null)
-			{
-				int i = 0;
-				String msg = "";
-				while (i < args.length)
-				{
-					msg += args[i] + " ";
-					i++;
-				}
-				String cmd = "/tell " + p.getName() + " " + msg;
-				sender.chat(cmd);
-				reply.put(p, sender);
-				return;
-			}
-			sender.sendMessage("Nemate komu odpovedet!");
-		}
-	}
-
 	public static void CommandFeedback(Player sender, String args[])
 	{
 		if (!plugin.userManager.userIsLogged(sender.getName()))
@@ -2587,56 +2564,7 @@ public abstract class CommandsHandler
 		plugin.debug = !plugin.debug;
 		plugin.log.info("DEBUG="+plugin.debug);
 	}
-	public static void CommandWhisper(CommandSender sender, String[]args)
-	{
-		if(args.length < 2)
-		{
-			sender.sendMessage("Usage: /tell <player> <message>");
-			return;
-		}
-		
-		Player p = plugin.getServer().getPlayer(args[0]);
-		if(sender instanceof ConsoleCommandSender)
-		{
-			if(p == null)
-			{
-				plugin.log.info("This player is not online!");
-				return;
-			}
 
-			StringBuilder msg = new StringBuilder();
-			for(int i=1;i<args.length;i++)
-			{
-				msg.append(" ");
-				msg.append(args[i]);
-			}
-			p.sendMessage(ChatColor.DARK_AQUA + "[" + "CONSOLE septa" + "]" + msg);
-		}
-		else
-		{
-			Player playerSender = (Player)sender;
-			if(p == null)
-			{
-				ChatHandler.FailMsg(playerSender, "Tento hrac je offline!");
-				return;
-			}
-			if(ChatHandler.isBlockedBy(playerSender.getName(),p.getName()))
-			{
-				sender.sendMessage("Tento hrac vas ma v blocklistu.");
-				return;
-			}
-			
-			StringBuilder msg = new StringBuilder();
-			for(int i=1;i<args.length;i++)
-			{
-				msg.append(" ");
-				msg.append(args[i]);
-			}
-			playerSender.sendMessage(ChatColor.DARK_AQUA + "[" + "Vy -> " + p.getName() + "]" + msg);
-			p.sendMessage(ChatColor.DARK_AQUA + "[" + playerSender.getName() + " septa" + "]" + msg);
-			CommandsHandler.reply.put(p, playerSender);
-		}
-	}
 
 	public static void CommandEstates(Player sender, String[] args)
 	{
@@ -2814,7 +2742,6 @@ public abstract class CommandsHandler
 	}
 
 	public static HashMap<Player, Player> vipTeleports = new HashMap<Player, Player>();
-	public static HashMap<Player, Player> reply = new HashMap<Player, Player>();
 	public static ArrayList<String> godMode = new ArrayList<String>();
 	public static ArrayList<String> fly = new ArrayList<String>();
 	public static HashMap<String, Location> backTeleport = new HashMap<String,Location>();

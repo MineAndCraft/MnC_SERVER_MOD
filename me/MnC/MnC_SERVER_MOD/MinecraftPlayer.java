@@ -2,6 +2,8 @@ package me.MnC.MnC_SERVER_MOD;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
@@ -35,6 +37,11 @@ public class MinecraftPlayer
 	private Player playerInstance;
 	
 	private GugaProfession2 profession;
+	
+	
+	private LinkedList<String> chat_lastTellSenders = new LinkedList<String>();
+	private LinkedList<String> chat_lastTellRecipients = new LinkedList<String>();
+	
 	
 	public MinecraftPlayer(final Player player)
 	{
@@ -224,5 +231,44 @@ public class MinecraftPlayer
 	public String getEntityName()
 	{
 		return getNameColor()+this.name;
+	}
+
+	
+	
+	
+	public void addLastTellRecipient(MinecraftPlayer target)
+	{
+		chat_lastTellRecipients.addFirst(target.getName());
+		if(chat_lastTellRecipients.size() > 2) //TODO make this 5 for real usage
+			chat_lastTellRecipients.removeLast();
+	}
+
+	public void addLastTellSender(MinecraftPlayer sender)
+	{
+		chat_lastTellSenders.addFirst(sender.getName());
+		if(chat_lastTellSenders.size() > 2) //TODO make this 5 for real usage
+			chat_lastTellSenders.removeLast();
+	}
+	
+	public List<String> getLastTellSenders()
+	{
+		List<String> n = new LinkedList<String>();
+		n.addAll(chat_lastTellSenders);
+		return n;
+	}
+	
+	public List<String> getLastTellRecipients()
+	{
+		List<String> n = new LinkedList<String>();
+		n.addAll(chat_lastTellRecipients);
+		return n;
+	}
+
+	
+	public String getLastTellSender()
+	{
+		if(chat_lastTellSenders.size() > 0)
+			return chat_lastTellSenders.getFirst();
+		return null;
 	}
 }

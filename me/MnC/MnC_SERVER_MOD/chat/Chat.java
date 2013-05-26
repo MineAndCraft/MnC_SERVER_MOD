@@ -6,20 +6,21 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import me.MnC.MnC_SERVER_MOD.Config;
+import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
+import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
+import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
+import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
+
 import org.bukkit.ChatColor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import me.MnC.MnC_SERVER_MOD.Config;
-import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
-import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
-import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
-import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
-import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 
 public class Chat implements Listener
 {
@@ -207,5 +208,18 @@ public class Chat implements Listener
 	public boolean isGlobalMute()
 	{
 		return this.globalChatMute;
+	}
+
+	
+	public void registerCommands()
+	{
+		//tell
+		PluginCommand tell = plugin.getCommand("tell");
+		tell.setExecutor(new TellCommandExecutor());
+		tell.setTabCompleter(new TellTabCompleter());
+		
+		//r
+		PluginCommand r = plugin.getCommand("r");
+		r.setExecutor(new ReplyCommandExecutor());
 	}
 }

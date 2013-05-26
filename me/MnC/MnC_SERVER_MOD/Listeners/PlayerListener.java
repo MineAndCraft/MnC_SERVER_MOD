@@ -245,8 +245,14 @@ public class PlayerListener implements Listener
 			}
 		}
 		
-		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl") 
-				|| e.getMessage().equalsIgnoreCase("/me") || e.getMessage().equalsIgnoreCase("/w"))
+		if(e.getMessage().startsWith("/me") && plugin.chat.isPlayerMuted(e.getPlayer().getName()))
+		{
+			e.getPlayer().sendMessage("You are muted");
+			e.setCancelled(true);
+			return;
+		}
+		
+		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl"))
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
 			{
