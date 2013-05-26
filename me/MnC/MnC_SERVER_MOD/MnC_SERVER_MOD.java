@@ -53,7 +53,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		Config.load("plugins/MineAndCraft_plugin/config.properties");
 		
 		try{
-			this.db.connectDb();
+			this.db.connectDB();
 		}catch(SQLException e)
 		{
 			log.severe("Failed to connect to db:"+e.getMessage());
@@ -86,7 +86,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		arena.SaveArenas();
 		chat.onDisable();
 		antilag.disable();
-		db.disconnectDb();
+		db.disconnectDB();
 		_enabled = false;
 	}
 
