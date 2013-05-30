@@ -239,14 +239,14 @@ public class MinecraftPlayer
 	public void addLastTellRecipient(MinecraftPlayer target)
 	{
 		chat_lastTellRecipients.addFirst(target.getName());
-		if(chat_lastTellRecipients.size() > 2) //TODO make this 5 for real usage
+		if(chat_lastTellRecipients.size() > 5)  
 			chat_lastTellRecipients.removeLast();
 	}
 
 	public void addLastTellSender(MinecraftPlayer sender)
 	{
 		chat_lastTellSenders.addFirst(sender.getName());
-		if(chat_lastTellSenders.size() > 2) //TODO make this 5 for real usage
+		if(chat_lastTellSenders.size() > 5)
 			chat_lastTellSenders.removeLast();
 	}
 	
