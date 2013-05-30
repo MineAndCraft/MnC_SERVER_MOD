@@ -108,7 +108,9 @@ public class PlayerListener implements Listener
 			}
 			else if((banExpiration*1000)>System.currentTimeMillis())
 			{
-				player.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi "+ new Date(banExpiration).toString());					}
+				player.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi "+ new Date(banExpiration).toString());
+			}
+			e.setJoinMessage(null);
 			return;
 		}
 		
@@ -121,13 +123,13 @@ public class PlayerListener implements Listener
 				if(ipBanExpiration == -1)
 				{
 					player.kickPlayer("Vase IP je na nasem serveru permanentne zabanovana!");
-					return;
 				}
 				else if(ipBanExpiration*1000 > System.currentTimeMillis())
 				{
 					player.kickPlayer("Vase IP je na nasem serveru zabanovana! Ban vyprsi "+ new Date(ipBanExpiration).toString());
-					return;
 				}
+				e.setJoinMessage(null);
+				return;
 			}
 		}
 
@@ -317,7 +319,6 @@ public class PlayerListener implements Listener
 	{
 		Player player = e.getPlayer();
 		e.setLeaveMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
-
 		plugin.userManager.logoutUser(player.getName());
 	}
 	
