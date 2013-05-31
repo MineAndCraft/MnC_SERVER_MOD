@@ -65,7 +65,7 @@ public class MobLimiter implements Listener
 		if(mob == null)
 			return;
 		
-		if(mob.getType() == EntityType.PLAYER)
+		if(mob.getType() == EntityType.PLAYER || mob.getType() == EntityType.SHEEP)
 			return;
 		
 		if(!(mob instanceof Monster || mob instanceof Animals || mob instanceof Villager))
