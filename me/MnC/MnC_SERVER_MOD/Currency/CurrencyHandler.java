@@ -9,36 +9,35 @@ import org.bukkit.entity.Player;
 
 public class CurrencyHandler
 {
-	//needs table mnc_currency { user_id - int primary key, balance - long }
+	//needs table mnc_currency { user_id - int primary key, balance - float }
 	
 	public CurrencyHandler()
 	{	
 	}
 	
-	public int getBalance(String playerName)
+	public float getBalance(String playerName)
 	{
-		int balance = 0;
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT curr.balance as balance FROM `mnc_currency` curr LEFT JOIN mnc_users u ON curr.user_id=u.id WHERE u.username_clean = ?");)
 		{ 
 		    stat.setString(1, playerName.toLowerCase());
 		    ResultSet result = stat.executeQuery();
 		    if(result.next())
 		    {
-		    	balance = result.getInt("balance");
+		    	return result.getFloat("balance");
 		    }
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		return balance;
+		return 0;
 	}
 	
-	public synchronized boolean addCredits(String playerName, int amount)
+	public synchronized boolean addCredits(String playerName, float amount)
 	{
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE `mnc_currency` curr SET curr.balance = (curr.balance + (?)) WHERE curr.user_id = (SELECT `id` FROM mnc_users WHERE username_clean = ? LIMIT 1)");)
 		{
-		    stat.setLong(1, amount);
+		    stat.setFloat(1, amount);
 		    stat.setString(2, playerName.toLowerCase());
 		    return stat.executeUpdate()==1;
 		}

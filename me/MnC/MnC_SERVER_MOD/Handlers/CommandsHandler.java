@@ -610,7 +610,7 @@ public abstract class CommandsHandler
 			}
 			else if(subCommand.equalsIgnoreCase("create"))
 			{
-				long balance = plugin.currencyManager.getBalance(sender.getName());
+				float balance = plugin.currencyManager.getBalance(sender.getName());
 				if(balance < 550)
 				{
 					ChatHandler.FailMsg(sender, "Nemate dost kreditu. Place stoji 550.");

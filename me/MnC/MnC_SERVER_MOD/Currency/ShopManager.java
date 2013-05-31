@@ -61,14 +61,14 @@ public class ShopManager
 	private synchronized boolean handlePurchase(Player player, String playerName, ConfigurationSection item, int amount)
 	{
 		int itemId = item.getInt("ID",0);
-		int price = item.getInt("Price",0);
+		float price = (float)item.getDouble("Price",0);
 		int type = item.getInt("Type", 0);
 		
 		if(itemId == 0|| amount==0)
 			return false;
 		
-		int balance = plugin.currencyManager.getBalance(playerName);
-		int totalPrice = (price*amount);
+		float balance = plugin.currencyManager.getBalance(playerName);
+		float totalPrice = (price*amount);
 		if(balance < totalPrice)
 		{
 			ChatHandler.FailMsg(player,"Nemate dostatecne mnozstvi kreditu!");
