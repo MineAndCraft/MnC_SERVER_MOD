@@ -34,6 +34,9 @@ public class MobLimiter implements Listener
 		if(event.getSpawnReason() == SpawnReason.CUSTOM || event.getSpawnReason() == SpawnReason.EGG)
 			return;
 		
+		if(!event.getLocation().getWorld().getName().equalsIgnoreCase("world"))
+			return;
+		
 		fixTooManyMobs(event.getEntity());
 	}
 	
@@ -41,6 +44,9 @@ public class MobLimiter implements Listener
 	public void onChunkLoad(ChunkLoadEvent event)
 	{
 		if(event.isNewChunk())
+			return;
+		
+		if(!event.getChunk().getWorld().getName().equalsIgnoreCase("world"))
 			return;
 		
 		for(Entity e : event.getChunk().getEntities())
