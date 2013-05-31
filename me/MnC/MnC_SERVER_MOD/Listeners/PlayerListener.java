@@ -1,15 +1,19 @@
 package me.MnC.MnC_SERVER_MOD.Listeners;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
 import me.MnC.MnC_SERVER_MOD.GameMaster;
-import me.MnC.MnC_SERVER_MOD.GugaEvent;
-import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
-import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
-import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
+import me.MnC.MnC_SERVER_MOD.GugaEvent;
+import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
+import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
@@ -221,6 +225,20 @@ public class PlayerListener implements Listener
 			player.setFlying(true);
 		}
 		
+		if(!UserManager.getInstance().userIsRegistered(player.getName()))
+		{
+			try{
+				URL url = new URL("https://minecraft.net/haspaid.jsp?user="+player.getName());
+				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+				String haspaid = reader.readLine();
+				reader.close();
+				if("true".equals(haspaid))
+				{
+					player.sendMessage(ChatColor.YELLOW+"Vase jmeno je jiz zakoupeno jako legalni minecraft ucet. Je ten ucet opravdu vas? Pokud neni, prosim zvolte si jine a znova se pripojte.");
+				}
+			}catch(Exception ex){}
+		}
+			
 		if (plugin.debug)
 		{
 			plugin.log.info("DEBUG_TIME_PLAYERJOIN=" + ((System.nanoTime() - timeStart)/1000));
