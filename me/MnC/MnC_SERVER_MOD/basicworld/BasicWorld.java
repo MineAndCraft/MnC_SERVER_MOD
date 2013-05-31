@@ -51,9 +51,9 @@ public class BasicWorld
 		inv.addItem(new ItemStack(300,1));//leather pants
 		inv.addItem(new ItemStack(301,1));//leather boots
 		p.sendMessage(ChatColor.RED + "*************************************");
-		p.sendMessage(ChatColor.DARK_AQUA + "Nyni se nachazite ve svete pro novacky, kde musite dosahnout " + ChatColor.DARK_RED + "LEVELU 10" + ChatColor.DARK_AQUA +" (level zjistite prikazem /rpg). " + ChatColor.DARK_RED + "LEVELY" + ChatColor.DARK_AQUA +" ziskavate kopanim. Pote se muzete teleportovat do " + ChatColor.DARK_RED + "PROFESIONALNIHO SVETA.");	
-		p.sendMessage(ChatColor.YELLOW + "Vice na o nasem profesionalnim svete na: " + ChatColor.DARK_AQUA + ">>> http://www.mineandcraft.cz/navod-na-pripojeni <<<");
-		p.sendMessage(ChatColor.YELLOW + "Nezapomente si precist pravidla na: " + ChatColor.DARK_AQUA + ">>> http://www.mineandcraft.cz/pravidla <<<");
+		p.sendMessage(ChatColor.AQUA + "Nyni se nachazite ve svete pro novacky, kde musite dosahnout " + ChatColor.RED + "LEVELU 10" + ChatColor.AQUA +" (level zjistite prikazem /rpg). " + ChatColor.DARK_RED + "LEVELY" + ChatColor.AQUA +" ziskavate kopanim. Pote se muzete teleportovat do " + ChatColor.DARK_RED + "PROFESIONALNIHO SVETA.");	
+		p.sendMessage(ChatColor.YELLOW + "Vice na o nasem profesionalnim svete na: " + ChatColor.AQUA + ">>> http://www.mineandcraft.cz/navod-na-pripojeni <<<");
+		p.sendMessage(ChatColor.YELLOW + "Nezapomente si precist pravidla na: " + ChatColor.AQUA + ">>> http://www.mineandcraft.cz/pravidla <<<");
 		p.sendMessage(ChatColor.RED + "*************************************");
 		
 	}
