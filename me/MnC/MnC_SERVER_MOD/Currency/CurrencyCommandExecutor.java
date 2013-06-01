@@ -114,7 +114,7 @@ public class CurrencyCommandExecutor implements CommandExecutor
 				while (i.hasNext())
 				{
 					ShopItem item = i.next();
-					sender.sendMessage(String.format("%s - %s - cena za kus: %d ", item.getName(),item.getIdString(),item.getPrice()));
+					sender.sendMessage(String.format("%s - %s - cena za kus: %f ", item.getName(),item.getIdString(),item.getPrice()));
 				}
 				return true;
 			}

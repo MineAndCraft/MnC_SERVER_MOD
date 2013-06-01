@@ -107,7 +107,7 @@ public class ShopManager
 			if(itemData==null)
 				continue;
 			items.add(new ShopItem(name,
-					itemData.getInt("Price",0),
+					(float)itemData.getDouble("Price",0),
 					itemData.getInt("ID",0),
 					itemData.getInt("Type",0)));
 		}
@@ -118,11 +118,11 @@ public class ShopManager
 	public class ShopItem
 	{
 		private String name;
-		private int price;
+		private float price;
 		private int id;
 		private int type;
 
-		ShopItem(String name,int price,int id,int type)
+		ShopItem(String name,float price,int id,int type)
 		{
 			this.name = name;
 			this.price = price;
@@ -138,7 +138,7 @@ public class ShopManager
 			return id;
 		}
 
-		public int getPrice() {
+		public float getPrice() {
 			return price;
 		}
 
