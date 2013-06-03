@@ -31,6 +31,12 @@ public class GugaProfession2 extends GugaProfession
 	{
 		if(block.getTypeId() == 50 || block.getTypeId() == 78 )
 			return;
+		
+		if(block.getTypeId() == 17 && block.getData() == 3)
+		{
+			this.GainExperience(1);
+			return;
+		}
 
 		this.GainExperience(4);	
 	}
