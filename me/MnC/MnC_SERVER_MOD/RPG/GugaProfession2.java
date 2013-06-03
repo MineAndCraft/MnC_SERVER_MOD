@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import me.MnC.MnC_SERVER_MOD.DatabaseManager;
+import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 
 import org.bukkit.Bukkit;
@@ -15,16 +16,12 @@ public class GugaProfession2 extends GugaProfession
 	protected int userId;
 	
 	protected Player _player;
-	
-	private GugaProfession2(Player player,int id,int exp)
+
+	private GugaProfession2(MinecraftPlayer player, int exp)
 	{
 		super(player.getName(),exp,MnC_SERVER_MOD.getInstance());
-		this.userId = id;
-		_player = player;
-	}
-	
-	protected GugaProfession2(){
-		super("UNKNOWN",0,MnC_SERVER_MOD.getInstance());
+		this.userId = player.getId();
+		_player = player.getPlayerInstance();
 	}
 	
 	public void onBlockBreak(Block block)
@@ -77,25 +74,24 @@ public class GugaProfession2 extends GugaProfession
 	}
 	
 	/**
-	 * 
-	 * @param player org.bukkit.entity.Player instance of the Player
-	 * @param playerId Id of the player (This is actually used to load the profession data)
+	 * Loads GugaProfession instance for the player
+	 * @param player {@link MinecraftPlayer} instance of the player to load
 	 * @return null if there is no profession for player playerId, valid GugaProfession2 class instance otherwise 
 	 */
-	public static GugaProfession2 loadProfession(Player player,int playerId)
+	public static GugaProfession2 loadProfession(MinecraftPlayer player)
 	{
-		if(playerId==0)
+		if(player == null)
 			return null;
 				
 		GugaProfession2 profession = null;
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT experience FROM `mnc_profession` WHERE user_id=?");)
 		{
-			stat.setInt(1, playerId);
+			stat.setInt(1, player.getId());
 			ResultSet result = stat.executeQuery();
 			if(result.next())
 			{
 				int exp = result.getInt("experience");
-				profession = new GugaProfession2(player,playerId,exp);
+				profession = new GugaProfession2(player,exp);
 			}
 		}
 		catch(Exception e)

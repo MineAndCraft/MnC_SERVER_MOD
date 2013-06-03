@@ -77,7 +77,7 @@ public class MinecraftPlayer
 				e.printStackTrace();
 			}
 			
-			this.profession = GugaProfession2.loadProfession(player,this.id);
+			this.profession = GugaProfession2.loadProfession(this);
 			
 			try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO `mnc_playermetadata` (user_id) VALUES(?)");)
 			{
