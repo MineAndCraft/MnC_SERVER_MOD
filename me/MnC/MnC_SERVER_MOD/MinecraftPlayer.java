@@ -238,6 +238,7 @@ public class MinecraftPlayer
 	
 	public void addLastTellRecipient(MinecraftPlayer target)
 	{
+		chat_lastTellRecipients.remove(target.getName());
 		chat_lastTellRecipients.addFirst(target.getName());
 		if(chat_lastTellRecipients.size() > 5)  
 			chat_lastTellRecipients.removeLast();
@@ -245,6 +246,7 @@ public class MinecraftPlayer
 
 	public void addLastTellSender(MinecraftPlayer sender)
 	{
+		chat_lastTellSenders.remove(sender.getName());
 		chat_lastTellSenders.addFirst(sender.getName());
 		if(chat_lastTellSenders.size() > 5)
 			chat_lastTellSenders.removeLast();
