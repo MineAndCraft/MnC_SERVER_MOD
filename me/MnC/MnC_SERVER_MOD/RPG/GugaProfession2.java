@@ -67,6 +67,7 @@ public class GugaProfession2 extends GugaProfession
 	@Override
 	protected void onLevelUp()
 	{
+		save(); // save profession upon leveling up
 		Bukkit.getServer().getPluginManager().callEvent(new GugaProfessionPlayerLevelUpEvent(this));
 	}
 	
