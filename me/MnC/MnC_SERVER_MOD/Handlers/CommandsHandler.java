@@ -2710,7 +2710,7 @@ public abstract class CommandsHandler
 					sender.sendMessage("Pocet blocku musi byt cislo mensi nez 2147483648.");
 					return;
 				}
-				int price = (int)(numberOfBlocks * 0.2);
+				float price = numberOfBlocks * 0.2f;
 				if(plugin.currencyManager.getBalance(sender.getName()) >= price)
 				{
 					EstateHandler.addAvailableResidenceBlocks(sender.getName(), numberOfBlocks);
