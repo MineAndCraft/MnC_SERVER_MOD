@@ -7,6 +7,7 @@ import java.util.List;
 import me.MnC.MnC_SERVER_MOD.GugaEvent;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
+import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
@@ -273,6 +274,15 @@ public class EntityListener implements Listener
 				{
 					block.setTypeId(0);
 				}
+			}
+		}
+				
+		for(Block block : e.blockList())
+		{
+			if(EstateHandler.getResidenceId(block.getX(), block.getZ()) != 0)
+			{
+				e.setCancelled(true);
+				break;
 			}
 		}
 	}
