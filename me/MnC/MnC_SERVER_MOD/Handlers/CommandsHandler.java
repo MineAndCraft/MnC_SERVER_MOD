@@ -269,6 +269,11 @@ public abstract class CommandsHandler
 					{
 						plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
 						Location loc = sender.getBedSpawnLocation();
+						if(loc == null)
+						{
+							ChatHandler.FailMsg(sender, "Your bed was not found.");
+							return;
+						}
 						Location tpLoc = loc;
 						boolean canTeleport = false;
 						int i = loc.getBlockY();
