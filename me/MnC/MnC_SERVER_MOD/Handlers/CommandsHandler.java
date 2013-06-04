@@ -199,129 +199,137 @@ public abstract class CommandsHandler
 			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
 			sender.sendMessage("/vip fly - Podprikaz letani.");
 		}
-		else if (args.length == 1)
+		else
 		{
 			String subCommand = args[0];
-			if (subCommand.matches("expiration"))
+			if (subCommand.equals("expiration"))
 			{
 				//TODO: use better time handler
 				sender.sendMessage("Vase VIP vyprsi: " + new Date(vip.getExpiration()*1000));
 			}
-			else if (subCommand.matches("tp"))
+			else if (subCommand.equals("tp"))
 			{
-				sender.sendMessage("Teleport Menu:");
-				sender.sendMessage("/vip tp player <jmeno>  -  Teleport k danemu hraci.");
-				sender.sendMessage("/vip tp spawn  -  Teleport na spawn.");
-				sender.sendMessage("/vip tp back  -  Teleport zpet na predchozi pozici.");
-				sender.sendMessage("/vip tp bed  -  Teleport k posteli.");
-				sender.sendMessage("/vip tp death  -  Teleportuje vas na posledni misto smrti.");
-			}
-			else if (subCommand.matches("time"))
-			{
-				sender.sendMessage("Time Menu:");
-				sender.sendMessage("/vip time set <hodnota>  -  Nastavi cas na 0-24000.");
-				sender.sendMessage("/vip time reset  -  Zmeni cas zpet na serverovy cas.");
-			}
-			else if (subCommand.matches("item"))
-			{
-				sender.sendMessage("Item Menu:");
-				sender.sendMessage("/vip item add <itemID> <pocetStacku> -  Prida dany pocet stacku daneho itemu.");
-				sender.sendMessage("/vip item list - Vypise vsechny dostupne itemy a jejich ID.");
-			}
-			else if(subCommand.matches("nohunger"))
-			{
-				sender.setFoodLevel(20);
-				sender.setSaturation(20);
-				sender.sendMessage("Uspesne jste se najedli");
-			}
-			else if(subCommand.matches("fly"))
-			{
-				sender.sendMessage("VIP FLY MENU:");
-				sender.sendMessage("/vip fly on - Zapne letani.");
-				sender.sendMessage("/vip fly off - Vypne letani.");
-			}
-		}
-		else if (args.length == 2)
-		{
-			String subCommand = args[0];
-			String arg1 = args[1];
-			if (subCommand.matches("tp"))
-			{
-				if (arg1.matches("back"))
+				if(args.length == 1)
 				{
-					Location locCache = sender.getLocation();
-					Location tpLoc = plugin.vipManager.GetLastTeleportLoc(sender.getName());
-					if (tpLoc == null)
-					{
-						ChatHandler.FailMsg(sender, "Nejdrive se musite nekam teleportovat!");
-						return;
-					}
-					sender.teleport(tpLoc);
-					plugin.vipManager.SetLastTeleportLoc(sender.getName(),locCache);
+					sender.sendMessage("Teleport Menu:");
+					sender.sendMessage("/vip tp player <jmeno>  -  Teleport k danemu hraci.");
+					sender.sendMessage("/vip tp spawn  -  Teleport na spawn.");
+					sender.sendMessage("/vip tp back  -  Teleport zpet na predchozi pozici.");
+					sender.sendMessage("/vip tp bed  -  Teleport k posteli.");
+					sender.sendMessage("/vip tp death  -  Teleportuje vas na posledni misto smrti.");
 				}
-				else if (arg1.matches("spawn"))
+				else
 				{
-					plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
-					sender.teleport(sender.getWorld().getSpawnLocation());
-				}
-				else if (arg1.matches("bed"))
-				{
-					plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
-					Location loc = sender.getBedSpawnLocation();
-					Location tpLoc = loc;
-					boolean canTeleport = false;
-					int i = loc.getBlockY();
-					while (!canTeleport)
+					if(args[1].equals("player") && args.length == 3)
 					{
-						loc = tpLoc;
-						loc.add(0, 1, 0);
-						if (loc.getBlock().getTypeId() == 0)
+						String arg2 = args[2];
+						Player p = plugin.getServer().getPlayer(arg2);
+						if (p == null)
 						{
-							if (loc.getBlock().getRelative(BlockFace.UP).getTypeId() == 0)
+							ChatHandler.FailMsg(sender,"Tento hrac neni online!");
+							return;
+						}
+						if (p.getLocation().getWorld().getName().matches("world_basic"))
+						{
+							ChatHandler.FailMsg(sender, "Tento hrac je ve svete pro novacky!");
+							return;
+						}
+						if (p.getLocation().getWorld().getName().matches("arena"))
+						{
+							ChatHandler.FailMsg(sender, "Tento hrac je v arene!");
+							return;
+						}
+						if (p.getLocation().getWorld().getName().matches("world_event"))
+						{
+							ChatHandler.FailMsg(sender, "Tento hrac je v EventWorldu!");
+							return;
+						}
+						ChatHandler.InfoMsg(plugin.getServer().getPlayer(arg2), "Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijeti napiste prikaz /y");
+						vipTeleports.put(p, sender);
+						ChatHandler.SuccessMsg(sender, "Pozadavek odeslan");
+					}
+					else if (args[1].equals("back"))
+					{
+						Location locCache = sender.getLocation();
+						Location tpLoc = plugin.vipManager.GetLastTeleportLoc(sender.getName());
+						if (tpLoc == null)
+						{
+							ChatHandler.FailMsg(sender, "Nejdrive se musite nekam teleportovat!");
+							return;
+						}
+						sender.teleport(tpLoc);
+						plugin.vipManager.SetLastTeleportLoc(sender.getName(),locCache);
+					}
+					else if (args[1].equals("spawn"))
+					{
+						plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
+						sender.teleport(sender.getWorld().getSpawnLocation());
+					}
+					else if (args[1].equals("bed"))
+					{
+						plugin.vipManager.SetLastTeleportLoc(sender.getName(),sender.getLocation());
+						Location loc = sender.getBedSpawnLocation();
+						Location tpLoc = loc;
+						boolean canTeleport = false;
+						int i = loc.getBlockY();
+						while (!canTeleport)
+						{
+							loc = tpLoc;
+							loc.add(0, 1, 0);
+							if (loc.getBlock().getTypeId() == 0)
 							{
-								tpLoc = loc;
+								if (loc.getBlock().getRelative(BlockFace.UP).getTypeId() == 0)
+								{
+									tpLoc = loc;
+									break;
+								}
+							}
+							if (i >= 127)
+							{
 								break;
 							}
+							i++;
 						}
-						if (i >= 127)
+						sender.teleport(tpLoc);
+					}
+					else if (args[1].equals("death"))
+					{
+						if(EntityListener.playersDeaths.containsKey(sender.getName()))
 						{
-							break;
+							sender.teleport(EntityListener.playersDeaths.get(sender.getName()));
+							ChatHandler.SuccessMsg(sender, "Byl jsi uspesne teleportovan na misto posledni smrti!");
 						}
-						i++;
+						else
+						{
+							ChatHandler.FailMsg(sender, "Misto smrti zatim neexistuje!");
+						}
 					}
-					sender.teleport(tpLoc);
-				}
-				else if (arg1.matches("death"))
-				{
-					if(EntityListener.playersDeaths.containsKey(sender.getName()))
+					else if (args[1].equals("endtrap"))
 					{
-						sender.teleport(EntityListener.playersDeaths.get(sender.getName()));
-						ChatHandler.SuccessMsg(sender, "Byl jsi uspesne teleportovan na misto posledni smrti!");
-					}
-					else
-					{
-						ChatHandler.FailMsg(sender, "Misto smrti zatim neexistuje!");
-					}
-				}
-				else if (arg1.matches("endtrapka"))
-				{
-					sender.chat("/pp endtrapka");
-				}
-			}
-			else if (subCommand.matches("item"))
-			{
-				if (args[1].equalsIgnoreCase("list"))
-				{
-					sender.sendMessage("SEZNAM ITEMU: (Nazev - ID)");
-					for (VipItems i : VipItems.values())
-					{
-						sender.sendMessage(i.toString() + " - " + i.GetID());
+						sender.chat("/pp endtrap");
 					}
 				}
 			}
 			else if (subCommand.matches("time"))
 			{
-				if (arg1.matches("reset"))
+				if(args.length == 1)
+				{
+					sender.sendMessage("Time Menu:");
+					sender.sendMessage("/vip time set <hodnota>  -  Nastavi cas na 0-24000.");
+					sender.sendMessage("/vip time reset  -  Zmeni cas zpet na serverovy cas.");
+				}
+				else if(args.length == 3 && args[1].equalsIgnoreCase("set"))
+				{
+					int time = Integer.parseInt(args[2]);
+					if ( (time >= 0) && (time <= 24000) )
+					{
+						sender.setPlayerTime(time, false);
+						ChatHandler.SuccessMsg(sender,"Cas byl uspesne zmenen");
+					}
+					else 
+						ChatHandler.FailMsg(sender,"Tato hodnota nelze nastavit!");
+				}
+				else if (args.length == 2 && args[1].equals("reset"))
 				{
 					if (!sender.isPlayerTimeRelative())
 					{
@@ -332,9 +340,51 @@ public abstract class CommandsHandler
 						ChatHandler.FailMsg(sender, "Vas cas nepotrebuje restartovat!");
 				}
 			}
-			else if (subCommand.matches("fly"))
+			else if (subCommand.matches("item"))
 			{
-				if(args[1].matches("on"))
+				if(args.length == 1)
+				{
+					sender.sendMessage("Item Menu:");
+					sender.sendMessage("/vip item add <itemID> <pocetStacku> -  Prida dany pocet stacku daneho itemu.");
+					sender.sendMessage("/vip item list - Vypise vsechny dostupne itemy a jejich ID.");
+				}
+				else if (args[1].equalsIgnoreCase("list"))
+				{
+					sender.sendMessage("SEZNAM ITEMU: (Nazev - ID)");
+					for (VipItems i : VipItems.values())
+					{
+						sender.sendMessage(i.toString() + " - " + i.GetID());
+					}
+				}
+				else if ((args.length == 4 || args.length == 3) && args[1].equalsIgnoreCase("add"))
+				{
+					int itemID = Integer.parseInt(args[2]);
+					if(VipItems.IsVipItem(itemID))
+					{
+						int numberOfStacks = 1;
+						if(args.length == 4)
+							numberOfStacks = Integer.parseInt(args[3]);
+						int i = 0;
+						while(i<numberOfStacks)
+						{
+							sender.getInventory().addItem(new ItemStack(itemID, 64));
+							i++;
+						}
+						ChatHandler.SuccessMsg(sender, "Itemy byly pridany!");
+					}
+					else
+						ChatHandler.FailMsg(sender, "Tento item nelze pridat!");
+				}
+			}
+			else if(subCommand.matches("nohunger"))
+			{
+				sender.setFoodLevel(20);
+				sender.setSaturation(20);
+				sender.sendMessage("Uspesne jste se najedli");
+			}
+			else if(subCommand.matches("fly"))
+			{
+				if(args.length == 2 && args[1].matches("on"))
 				{
 					if(VipManager.isFlyEnabled(sender.getWorld().getName()))
 					{
@@ -344,72 +394,17 @@ public abstract class CommandsHandler
 					else
 						ChatHandler.FailMsg(sender, "Letani je povoleno pouze v hlavnim svete");
 				}
-				else if(args[1].matches("off"))
+				else if(args.length == 2 && args[1].matches("off"))
 				{
 					plugin.vipManager.setFly(sender.getName(),false);
 					ChatHandler.SuccessMsg(sender, "Letani vypnuto!");
 				}
-			}
-		}
-		else if (args.length == 3 && args[0].equalsIgnoreCase("tp") && args[1].equalsIgnoreCase("player"))
-		{
-			String arg2 = args[2];
-			Player p = plugin.getServer().getPlayer(arg2);
-			if (p == null)
-			{
-				ChatHandler.FailMsg(sender,"Tento hrac neni online!");
-				return;
-			}
-			if (p.getLocation().getWorld().getName().matches("world_basic"))
-			{
-				ChatHandler.FailMsg(sender, "Tento hrac je ve svete pro novacky!");
-				return;
-			}
-			if (p.getLocation().getWorld().getName().matches("arena"))
-			{
-				ChatHandler.FailMsg(sender, "Tento hrac je v arene!");
-				return;
-			}
-			if (p.getLocation().getWorld().getName().matches("world_event"))
-			{
-				ChatHandler.FailMsg(sender, "Tento hrac je v EventWorldu!");
-				return;
-			}
-			ChatHandler.InfoMsg(plugin.getServer().getPlayer(arg2), "Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijeti napiste prikaz /y");
-			vipTeleports.put(p, sender);
-			ChatHandler.SuccessMsg(sender, "Pozadavek odeslan");
-		}
-		else if (args.length == 3 && args[0].equalsIgnoreCase("time") && args[1].equalsIgnoreCase("set"))
-		{
-			int time = Integer.parseInt(args[2]);
-			if ( (time >= 0) && (time <= 24000) )
-			{
-				sender.setPlayerTime(time, false);
-				ChatHandler.SuccessMsg(sender,"Cas byl uspesne zmenen");
-			}
-			else 
-				ChatHandler.FailMsg(sender,"Tato hodnota nelze nastavit!");
-		}
-		else if ((args.length == 4 || args.length == 3) && args[0].equalsIgnoreCase("item"))
-		{
-			if(args[1].matches("add"))
-			{
-				int itemID = Integer.parseInt(args[2]);
-				if(VipItems.IsVipItem(itemID))
-				{
-					int numberOfStacks = 1;
-					if(args.length == 4)
-						numberOfStacks = Integer.parseInt(args[3]);
-					int i = 0;
-					while(i<numberOfStacks)
-					{
-						sender.getInventory().addItem(new ItemStack(itemID, 64));
-						i++;
-					}
-					ChatHandler.SuccessMsg(sender, "Itemy byly pridany!");
-				}
 				else
-					ChatHandler.FailMsg(sender, "Tento item nelze pridat!");
+				{
+					sender.sendMessage("VIP FLY MENU:");
+					sender.sendMessage("/vip fly on - Zapne letani.");
+					sender.sendMessage("/vip fly off - Vypne letani.");
+				}
 			}
 		}
 	}
