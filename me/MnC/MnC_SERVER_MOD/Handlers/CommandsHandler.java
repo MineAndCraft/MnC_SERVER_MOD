@@ -2791,6 +2791,6 @@ public abstract class CommandsHandler
 			}
 		}
 		
-		ChatHandler.broadcast(String.format("%s[ANNOUNCEMENT] %s",ChatColor.DARK_AQUA, sb.toString()));
+		ChatHandler.broadcast(ChatColor.DARK_PURPLE+"["+ChatColor.BLUE+"ANNOUNCEMENT"+ChatColor.DARK_PURPLE+"] " + ChatColor.AQUA + sb.toString());
 	}
 }
