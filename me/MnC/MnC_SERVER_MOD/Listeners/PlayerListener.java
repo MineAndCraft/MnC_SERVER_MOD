@@ -14,6 +14,7 @@ import me.MnC.MnC_SERVER_MOD.GugaEvent;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.UserManager;
+import me.MnC.MnC_SERVER_MOD.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
@@ -584,7 +585,7 @@ public class PlayerListener implements Listener
 		Player p = e.getPlayer();
 		if(p.getAllowFlight())
 		{
-			if(p.getGameMode() == GameMode.SURVIVAL)
+			if(p.getGameMode() == GameMode.SURVIVAL && !VipManager.isFlyEnabled(p.getWorld().getName()) && !plugin.vipManager.isVip(p.getName()))
 			{
 				p.setFlying(false);
 				p.setAllowFlight(false);
