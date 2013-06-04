@@ -29,8 +29,8 @@ public class CustomListener implements Listener
 		Player p;
 		if(plugin.userManager.userIsRegistered(player))
 		{
-			plugin.currencyManager.addCredits(player, 5);
-			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "Hrac " + ChatColor.LIGHT_PURPLE + player + ChatColor.DARK_GREEN +" ziskava 4 kredity, 3 diamanty a 1 emerald za hlasovani. " + ChatColor.AQUA + "Hlasuj take.");
+			plugin.currencyManager.addCredits(player, 4);
+			plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "Hrac " + ChatColor.LIGHT_PURPLE + player + ChatColor.DARK_GREEN +" ziskava 4 kredity, 2 diamanty, emerald a 3 Bottle o' Enchanting za hlasovani. " + ChatColor.AQUA + "Hlasuj take.");
 			if((p = plugin.getServer().getPlayer(player)) != null)
 			{
 				give(p);
@@ -41,10 +41,12 @@ public class CustomListener implements Listener
 	
 	public void give(Player p)
 	{
-		p.getInventory().addItem(new ItemStack(264, 3));
-		p.getInventory().addItem(new ItemStack(388, 1));
+		p.getInventory().addItem(gift_DIAMOND);
+		p.getInventory().addItem(gift_EMERALD);
+		p.getInventory().addItem(gift_BOTTLE_O_ENCHANTING);
 	}
 
-	public final ItemStack gift_DIAMOND = new ItemStack(264, 1);
+	public final ItemStack gift_DIAMOND = new ItemStack(264, 2);
 	public final ItemStack gift_EMERALD = new ItemStack(388, 1);
+	public final ItemStack gift_BOTTLE_O_ENCHANTING = new ItemStack(384,3);
 }
