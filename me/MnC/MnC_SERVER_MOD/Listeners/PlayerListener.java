@@ -549,9 +549,9 @@ public class PlayerListener implements Listener
 			try{
 				level = UserManager.getInstance().getUser(event.getPlayer().getName()).getProfession().GetLevel();
 			}catch(Exception e){}
-			if (level<10)
+			if (level<50)
 			{
-				ChatHandler.FailMsg(event.getPlayer(),"Musite byt alespon level 10, aby jste mohl pouzit lavu!");
+				ChatHandler.FailMsg(event.getPlayer(),"Musite byt alespon level 50, aby jste mohl pouzit lavu!");
 				event.setCancelled(true);
 				return;
 			}
