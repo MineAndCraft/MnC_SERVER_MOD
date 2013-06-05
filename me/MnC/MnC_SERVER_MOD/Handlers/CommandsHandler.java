@@ -2271,7 +2271,7 @@ public abstract class CommandsHandler
 				else if(vip.getExpiration() == -1)
 					sender.sendMessage("User '"+arg2+"' is permanent vip.");
 				else
-					sender.sendMessage("Vip for '"+arg2+"' expires "+new Date(vip.getExpiration()).toString());
+					sender.sendMessage("Vip for '"+arg2+"' expires "+new Date(vip.getExpiration()*1000).toString());
 			}
 			else if(arg1.equalsIgnoreCase("set") && args.length==4)
 			{
@@ -2292,6 +2292,7 @@ public abstract class CommandsHandler
 			else
 			{
 				sender.sendMessage("Usage:");
+				sender.sendMessage("/gm vip get <user> - displays current VIP status for the user");
 				sender.sendMessage("/gm vip add <user> <duration in months>");
 				sender.sendMessage("/gm vip remove <user>");
 				sender.sendMessage("/gm vip set <user <expiration in months from now>");
