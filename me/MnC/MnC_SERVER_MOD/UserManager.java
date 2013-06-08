@@ -71,38 +71,64 @@ public class UserManager
 			{
 				plugin.vipManager.onVipLogOn(player);
 			}
-		}
-		Thread th = new Thread(){
-			@Override
-			public void run()
-			{
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {}
-				int remainingTriesBeforeKick = 6;
-				while(MnC_SERVER_MOD.is_enabled() && remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
+			Thread th = new Thread(){
+				@Override
+				public void run()
 				{
-					remainingTriesBeforeKick--;
-					if(userIsRegistered(playerName))
-					{
-						player.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login <heslo>"+ChatColor.WHITE+"!");
-					}
-					else
-					{
-						player.sendMessage("Nejste zaregistrovan! Zaregistrujte se prosim pomoci " + 
-								ChatColor.YELLOW +" /register <heslo> <heslo znovu> <email>"+ ChatColor.WHITE +"!");
-					}
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {}
+					int remainingTriesBeforeKick = 6;
+					while(MnC_SERVER_MOD.is_enabled() && remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
+					{
+						remainingTriesBeforeKick--;
+						player.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login <heslo>"+ChatColor.WHITE+"!");
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {}
+					}
+					if(!userIsLogged(playerName))
+					{
+						Util.threadSafeKickPlayer(player, "Nestihl(a) jste se prihlasit do 30 sekund!");
+					}
 				}
-				if(!userIsLogged(playerName))
+			};
+			th.start();
+		}
+		else
+		{
+			Thread th = new Thread(){
+				@Override
+				public void run()
 				{
-					Util.threadSafeKickPlayer(player, "Nestihl(a) jste se prihlasit do 30 sekund!");
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {}
+					int remainingTriesBeforeKick = 24;
+					while(MnC_SERVER_MOD.is_enabled() && remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
+					{
+						remainingTriesBeforeKick--;
+						if(userIsRegistered(playerName))
+						{
+							player.sendMessage("Nejste prihlasen! Pro prihlaseni napiste "+ChatColor.YELLOW+" /login <heslo>"+ChatColor.WHITE+"!");
+						}
+						else
+						{
+							player.sendMessage("Nejste zaregistrovan! Zaregistrujte se prosim pomoci " + 
+									ChatColor.YELLOW +" /register <heslo> <heslo znovu> <email>"+ ChatColor.WHITE +"!");
+						}
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {}
+					}
+					if(!userIsLogged(playerName))
+					{
+						Util.threadSafeKickPlayer(player, "Nestihl(a) jste se prihlasit do 2 minut!");
+					}
 				}
-			}
-		};
-		th.start();
+			};
+			th.start();
+		}
 	}
 	
 	public void logoutUser(String name)
