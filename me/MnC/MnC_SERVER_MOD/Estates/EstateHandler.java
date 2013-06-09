@@ -13,6 +13,7 @@ import me.MnC.MnC_SERVER_MOD.ServerRegion;
 import me.MnC.MnC_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class EstateHandler
@@ -38,6 +39,14 @@ public class EstateHandler
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	public static int getResidenceId(Block block)
+	{
+		if(!block.getWorld().getName().equals("world"))
+			return 0;
+		
+		return getResidenceId(block.getX(),block.getZ());
 	}
 	
 	public static void pos1(String playername,int x, int z)
@@ -175,7 +184,7 @@ public class EstateHandler
 			return;
 		}
 		
-		if(!(available_residence_blocks > 0))
+		if(!(available_residence_blocks - size > 0))
 		{
 			ChatHandler.FailMsg(player, "Nemate zakoupene dostatecne mnozstvi blocku na ochranu. Muzete je dokoupit prikazem /estates buy <pocet>");
 			return;
@@ -420,15 +429,15 @@ public class EstateHandler
 	}
 	
 	/**
-	 * 
-	 * @param playername Name of player
-	 * @param blockX The X coordinate of dug/placed block
-	 * @param blockZ The Z coordinate of dug/placed block
-	 * @return false if the specified block is in a valid residence and the player is not owner nor he was granted access, true otherwise
+	 * Whether a player can interact with block 
+	 * @param playername The name of player
+	 * @param locX The X coordinate
+	 * @param locZ The Z coordinate
+	 * @return false if there is an estate protection upon this block and the player hasn't got access, true otherwise
 	 */
-	public static boolean canPlayerDigPlaceBlock(String playername,int blockX,int blockZ)
+	public static boolean canInteract(String playername,int locX,int locZ)
 	{
-		int residence_id = getResidenceId(blockX,blockZ);
+		int residence_id = getResidenceId(locX,locZ);
 		if(residence_id != 0)
 		{
 			String residence_owner = "";
@@ -455,6 +464,14 @@ public class EstateHandler
 			}
 		}
 		return true;
+	}
+	
+	public static boolean canInteract(String playername, Block block)
+	{
+		if(!block.getWorld().getName().equals("world"))
+			return true;
+		
+		return canInteract(playername, block.getX(), block.getZ());
 	}
 	
 	public static boolean hasUserResidenceAccess(int residence_id,int user_id)

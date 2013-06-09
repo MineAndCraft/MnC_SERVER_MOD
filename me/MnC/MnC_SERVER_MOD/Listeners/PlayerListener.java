@@ -463,8 +463,8 @@ public class PlayerListener implements Listener
 		
 		int estate = 0;
 		if(block!=null)
-			estate = EstateHandler.getResidenceId(block.getX(), block.getZ());
-		if(estate > 0 && !EstateHandler.hasUserResidenceAccess(estate,pl.getId()))
+			estate = EstateHandler.getResidenceId(block);
+		if(estate > 0 && !EstateHandler.canInteract(pl.getName(),block)) //TODO make this use less CPU time
 		{
 			boolean is_gm = GameMasterHandler.IsAtleastGM(player.getName());
 			

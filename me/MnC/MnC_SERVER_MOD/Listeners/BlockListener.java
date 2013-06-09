@@ -102,7 +102,7 @@ public class BlockListener implements Listener
 		}
 		
 		//UserRegions
-		if(!EstateHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
+		if(!EstateHandler.canInteract(player.getName(), e.getBlock()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
 			ChatHandler.FailMsg(p, "Nemuzete kopat blocky na pozemku jineho hrace.");
@@ -220,7 +220,7 @@ public class BlockListener implements Listener
 		}
 		
 		//UserRegions
-		if(!EstateHandler.canPlayerDigPlaceBlock(e.getPlayer().getName(), e.getBlock().getX(), e.getBlock().getZ()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
+		if(!EstateHandler.canInteract(player.getName(), e.getBlock()) && !GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
 		{
 			e.setCancelled(true);
 			ChatHandler.FailMsg(p, "Nemuzete pokladat blocky na pozemku jineho hrace.");

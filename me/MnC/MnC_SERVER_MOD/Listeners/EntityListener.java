@@ -107,12 +107,12 @@ public class EntityListener implements Listener
 			if (event.getDamager() instanceof Player)
 			{
 				Player damager = (Player)event.getDamager();
-				if (!plugin.userManager.userIsLogged(damager.getName()))
+				MinecraftPlayer player = plugin.userManager.getUser(damager.getName());
+				if (!player.isAuthenticated())
 				{
 					e.setCancelled(true);
 					return;
 				}
-				MinecraftPlayer player = plugin.userManager.getUser(damager.getName());
 				if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(damager.getLocation()))
 				{
 					e.setCancelled(true);
@@ -279,7 +279,7 @@ public class EntityListener implements Listener
 				
 		for(Block block : e.blockList())
 		{
-			if(EstateHandler.getResidenceId(block.getX(), block.getZ()) != 0)
+			if(EstateHandler.getResidenceId(block) != 0)
 			{
 				e.setCancelled(true);
 				break;
