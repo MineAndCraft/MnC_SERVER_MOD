@@ -300,6 +300,6 @@ public class VipManager
 	 */
 	public static boolean isFlyEnabled(String world_name)
 	{
-		return world_name.equalsIgnoreCase("world") || world_name.equalsIgnoreCase("world_mine") || world_name.equalsIgnoreCase("world_basic");
+		return world_name.equalsIgnoreCase("world") || world_name.equalsIgnoreCase("world_mine") || world_name.equalsIgnoreCase("world_basic") || world_name.equalsIgnoreCase("world_nether");
 	}
 }
