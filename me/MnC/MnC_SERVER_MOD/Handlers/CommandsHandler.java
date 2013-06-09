@@ -179,11 +179,6 @@ public abstract class CommandsHandler
 			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
 			return;
 		}
-		if (BasicWorld.IsBasicWorld(sender.getLocation()))
-		{
-			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
-			return;
-		}
 		if (sender.getWorld().getName().startsWith("survival_"))
 		{
 			ChatHandler.FailMsg(sender, "Prikazy pro VIP zde nelze pouzit.");
