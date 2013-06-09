@@ -49,14 +49,16 @@ public class VipManager
 			removeVip(player.getName());
 			return;
 		}
-		this.flyingVips.put(player.getName(),true);
 		// VIPs should be able to fly right after logging in
 		// (Don't remember that awkward moment logging in in mid-air?)
 		if(isFlyEnabled(player.getWorld().getName()))
 		{
+			this.flyingVips.put(player.getName(),true);
 			player.setAllowFlight(true);
 			player.setFlying(true);
 		}
+		else
+			this.flyingVips.put(player.getName(),false);
 	}
 	
 	/**

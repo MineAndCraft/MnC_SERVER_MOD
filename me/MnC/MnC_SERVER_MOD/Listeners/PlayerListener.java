@@ -585,7 +585,7 @@ public class PlayerListener implements Listener
 		Player p = e.getPlayer();
 		if(p.getAllowFlight())
 		{
-			if(p.getGameMode() == GameMode.SURVIVAL && !VipManager.isFlyEnabled(p.getWorld().getName()) && !plugin.vipManager.isVip(p.getName()))
+			if(p.getGameMode() == GameMode.SURVIVAL && !CommandsHandler.fly.contains(p.getName()) && !(VipManager.isFlyEnabled(p.getWorld().getName()) && plugin.vipManager.isVip(p.getName())))
 			{
 				p.setFlying(false);
 				p.setAllowFlight(false);
