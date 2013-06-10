@@ -77,6 +77,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	{
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
 		GugaEvent.ClearAllGroups();
+		GameTimeWatcher.stop();
 		//Tagger.stop();
 		this.userManager.save();
 		this.extensionManager.disable();
@@ -166,6 +167,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
 		//Tagger.start();
+		
+		GameTimeWatcher.start();
 		
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by MineAndCraft team 2011 - 2013.");
