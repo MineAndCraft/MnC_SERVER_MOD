@@ -16,13 +16,13 @@ public class GameTimeWatcher
 			GameTimeWatcher.broadcastTime();
 			long current = System.currentTimeMillis();
 			try{
-				Thread.sleep(1800000 - (current % 1800000)); 
+				Thread.sleep(21600000 - (current % 21600000)); 
 			}catch(Exception e){}
 			while(true)
 			{
 				GameTimeWatcher.broadcastTime();
 				try{
-					Thread.sleep(1800000); //1000 * 60 * 30 - 30 minutes in milliseconds 
+					Thread.sleep(21600000); //6 hours in milliseconds 
 				}catch(Exception e){}
 			}
 		}
