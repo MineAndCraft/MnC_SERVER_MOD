@@ -2,6 +2,7 @@ package me.MnC.MnC_SERVER_MOD.Currency;
 
 import java.util.Iterator;
 
+import me.MnC.MnC_SERVER_MOD.DatabaseManager;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.Currency.ShopManager.ShopItem;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
@@ -13,6 +14,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.sql.PreparedStatement;
 
 public class CurrencyCommandExecutor implements CommandExecutor
 {
@@ -34,6 +37,7 @@ public class CurrencyCommandExecutor implements CommandExecutor
 			{
 				sender.sendMessage("/credits send <hrac> <pocet> - Posle zadany pocet kreditu danemu hraci.");
 				sender.sendMessage("/credits balance - Zjisti stav Vasich kreditu.");
+				sender.sendMessage("/credits ftbtransfer <hrac> <pocet> - Posle zadany pocet kreditu hraci na FTB serveru.");
 				return true;
 			}
 			else if (args.length == 1)
@@ -72,6 +76,37 @@ public class CurrencyCommandExecutor implements CommandExecutor
 					}
 					else
 						ChatHandler.FailMsg(sender, "Na tuto akci nemate dostatek kreditu");
+				}
+				else if(subCommand.equals("ftbtransfer"))
+				{
+					if(plugin.currencyManager.getBalance(sender.getName()) < amount)
+					{
+						ChatHandler.FailMsg(sender, "You don't have enough redits to send that much.");
+						return false;
+					}
+					
+					try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("UPDATE `feed_the_beast`.`mncftb_currency` SET balance = (balance + (?)) WHERE LOWER(playername) = ? LIMIT 1");)
+					{
+						stat.setInt(1, amount);
+						stat.setString(2, player);
+						if(stat.executeUpdate() == 1)
+						{
+							sender.sendMessage("You have transferred "+amount+" credits to feed the beast account of "+player+".");
+							plugin.currencyManager.addCredits(sender.getName(), -amount);
+							return true;
+						}
+						else
+						{
+							sender.sendMessage("Failed to transfer credits. Have you written the receiver's name correctly?");
+							return false;
+						}
+					}
+					catch(Exception e)
+					{
+						sender.sendMessage("An error occured. Please contact the administrator.");
+						e.printStackTrace();
+						return false;
+					}
 				}
 			}
 		}
