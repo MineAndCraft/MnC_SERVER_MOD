@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Random;
 
 import me.MnC.MnC_SERVER_MOD.GameMaster;
@@ -116,6 +117,7 @@ public class PlayerListener implements Listener
 				player.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi "+ new Date(banExpiration).toString());
 			}
 			e.setJoinMessage(null);
+			noDisplayLeaveMessage.add(player.getName());
 			return;
 		}
 		
@@ -134,6 +136,7 @@ public class PlayerListener implements Listener
 					player.kickPlayer("Vase IP je na nasem serveru zabanovana! Ban vyprsi "+ new Date(ipBanExpiration).toString());
 				}
 				e.setJoinMessage(null);
+				noDisplayLeaveMessage.add(player.getName());
 				return;
 			}
 		}
@@ -339,6 +342,12 @@ public class PlayerListener implements Listener
 		Player player = e.getPlayer();
 		e.setLeaveMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
 		plugin.userManager.logoutUser(player.getName());
+		
+		if(noDisplayLeaveMessage.contains(player.getName()))
+		{
+			e.setLeaveMessage(null);
+			noDisplayLeaveMessage.remove(player.getName());
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -349,6 +358,13 @@ public class PlayerListener implements Listener
 		Player p = e.getPlayer();
 
 		plugin.userManager.logoutUser(p.getName());
+		
+		if(noDisplayLeaveMessage.contains(p.getName()))
+		{
+			e.setQuitMessage(null);
+			noDisplayLeaveMessage.remove(p.getName());
+		}
+		
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_QUIT_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000)+ ",playerName=" + e.getPlayer().getName());
@@ -648,6 +664,8 @@ public class PlayerListener implements Listener
 		return false;
 	}
 
+	private static LinkedList<String> noDisplayLeaveMessage = new LinkedList<String>();
+	
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	private static String creativePlayersPath = "plugins/MineAndCraft_plugin/creativePlayers.dat";
 	public static MnC_SERVER_MOD plugin;
