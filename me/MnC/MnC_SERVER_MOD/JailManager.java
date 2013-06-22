@@ -1,4 +1,7 @@
 package me.MnC.MnC_SERVER_MOD;
+public class JailManager{
+	
+}
 /*
 import java.util.Date;
 import java.util.HashMap;
