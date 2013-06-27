@@ -49,6 +49,7 @@ commands:
         description: Event menu
     pp:
         description: Alias for places port
+        aliases: [warp, port]
     feedback:
         description: Command for better feedback from players
     world:
