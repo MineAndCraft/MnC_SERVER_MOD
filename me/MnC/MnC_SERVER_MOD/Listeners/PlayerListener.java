@@ -42,7 +42,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -51,7 +50,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -67,22 +66,24 @@ public class PlayerListener implements Listener
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
+	public void onPlayerLogin(PlayerLoginEvent event)
 	{
+		Player player = event.getPlayer();
+		
 		// check if players's name is correct
-		if (event.getName().equals(""))
+		if (player.getName().equals(""))
 		{
 			event.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno!");
 			return;
 		}
-		if (!event.getName().matches("[a-zA-Z0-9_\\-\\.]{2,16}"))
+		if (!player.getName().matches("[a-zA-Z0-9_\\-\\.]{2,16}"))
 		{
 			event.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
 			return;
 		}
 		
 		// check for bans
-		long banExpiration = plugin.banHandler.userBanExpiration(event.getName());
+		long banExpiration = plugin.banHandler.userBanExpiration(player.getName());
 		if(banExpiration != 0)
 		{
 			if(banExpiration == -1)
@@ -96,7 +97,7 @@ public class PlayerListener implements Listener
 			return;
 		}
 		
-		if(!plugin.banHandler.isIPWhitelisted(event.getName()))
+		if(!plugin.banHandler.isIPWhitelisted(player.getName()))
 		{
 			long ipBanExpiration = plugin.banHandler.ipBanExpiration(event.getAddress().toString());
 			if(ipBanExpiration != 0)
@@ -112,12 +113,7 @@ public class PlayerListener implements Listener
 				return;
 			}
 		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerLogin(PlayerLoginEvent e)
-	{
-		Player player = e.getPlayer();
+		
 		//check if there is player with this name already connected
 		for(Player p : plugin.getServer().getOnlinePlayers())
 		{
@@ -125,7 +121,7 @@ public class PlayerListener implements Listener
 			{
 				if(plugin.userManager.userIsLogged(p.getName()))
 				{
-					e.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Hrac s timto jmenem uz je online!");
+					event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Hrac s timto jmenem uz je online!");
 				}
 			}
 		}		
@@ -244,6 +240,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
@@ -315,6 +312,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerKick(PlayerKickEvent event)
 	{
@@ -322,6 +320,7 @@ public class PlayerListener implements Listener
 		event.setLeaveMessage(ChatColor.YELLOW+event.getPlayer().getName()+" se odpojil/a.");
 		plugin.userManager.logoutUser(player.getName());
 	}
+	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent event)
@@ -332,6 +331,7 @@ public class PlayerListener implements Listener
 		plugin.userManager.logoutUser(p.getName());
 	}
 
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
@@ -371,6 +371,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
@@ -395,6 +396,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent event)
 	{
@@ -404,6 +406,7 @@ public class PlayerListener implements Listener
 	    int z = chunk.getZ();
 	    world.loadChunk(x, z, true);
 	}
+	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent event)
@@ -496,6 +499,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
 	{
@@ -513,6 +517,7 @@ public class PlayerListener implements Listener
 			}
 		}
 	}
+	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDropItem(PlayerDropItemEvent event)
@@ -534,6 +539,7 @@ public class PlayerListener implements Listener
 			return;
 		}
 	}
+	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event)
@@ -561,6 +567,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerRPGLevelUp(PlayerProfessionLevelUpEvent event)
 	{
@@ -576,6 +583,8 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDeath(PlayerDeathEvent event)
 	{
 		Player p = event.getEntity();
@@ -616,6 +625,7 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	
 	public static void LoadCreativePlayers()
 	{
 
@@ -631,6 +641,7 @@ public class PlayerListener implements Listener
 		file.Close();
 	}
 	
+	
 	public static boolean IsCreativePlayer(Player p)
 	{
 		String pName = p.getName();
@@ -644,6 +655,7 @@ public class PlayerListener implements Listener
 		return false;
 	}
 
+	
 	public static HashMap<String, Location> playersDeaths = new HashMap<String, Location>();
 	
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
