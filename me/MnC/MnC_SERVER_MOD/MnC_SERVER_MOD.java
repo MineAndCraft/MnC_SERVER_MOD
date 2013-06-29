@@ -532,7 +532,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public boolean debug = false;
 	public boolean redstoneDebug = false;
 	
-	public static final String version = "1.0.4";
+	public static final String version = "1.5.0 alpha";
 	
 	public final Logger log = Logger.getLogger("Minecraft");
 	public BukkitScheduler scheduler;
