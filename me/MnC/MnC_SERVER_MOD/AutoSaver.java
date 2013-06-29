@@ -20,9 +20,9 @@ public abstract class AutoSaver
 		plugin.scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
 			public void run()
 			{
+				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Autosaver] Saving game data.");
+				plugin.log.info("[Autosaver] Saving game data.");
 				SaveWorldStructures();
-				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] Autosave: Ukladam mapy pro Vase bezpeci...");
-				plugin.log.info("[AutoSaver] Saving worlds...");
 			}
 		}, 18000, 18000);
 	}
@@ -34,8 +34,10 @@ public abstract class AutoSaver
 			world.save();
 			plugin.log.info("Saving world " + world.getName() + ".");
 		}
-		plugin.getServer().savePlayers();
+		Bukkit.savePlayers();
+		plugin.userManager.save();
 	}
+	
 	public static void SaveAll()
 	{
 		Bukkit.savePlayers();
@@ -45,5 +47,6 @@ public abstract class AutoSaver
 		plugin.arena.SavePvpStats();
 		plugin.arena.SaveArenas();
 	}
+	
 	private static MnC_SERVER_MOD plugin;
 }
