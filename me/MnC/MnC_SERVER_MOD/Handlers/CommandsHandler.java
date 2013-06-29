@@ -18,10 +18,10 @@ import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.GugaArena.ArenaSpawn;
 import me.MnC.MnC_SERVER_MOD.GugaArena.ArenaTier;
-import me.MnC.MnC_SERVER_MOD.Listeners.EntityListener;
+import me.MnC.MnC_SERVER_MOD.Listeners.PlayerListener;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.MnC.MnC_SERVER_MOD.PlacesManager.Place;
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.VipManager.VipItems;
 import me.MnC.MnC_SERVER_MOD.VipManager.VipUser;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
@@ -42,6 +42,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 public abstract class CommandsHandler 
 {
 	public static void SetPlugin(MnC_SERVER_MOD gugaSM)
@@ -294,9 +295,9 @@ public abstract class CommandsHandler
 					}
 					else if (args[1].equals("death"))
 					{
-						if(EntityListener.playersDeaths.containsKey(sender.getName()))
+						if(PlayerListener.playersDeaths.containsKey(sender.getName()))
 						{
-							sender.teleport(EntityListener.playersDeaths.get(sender.getName()));
+							sender.teleport(PlayerListener.playersDeaths.get(sender.getName()));
 							ChatHandler.SuccessMsg(sender, "Byl jsi uspesne teleportovan na misto posledni smrti!");
 						}
 						else
@@ -1416,19 +1417,6 @@ public abstract class CommandsHandler
 					while (i.hasNext())
 						sender.sendMessage(i.next());
 				}
-			}
-		}
-		else if(subCommand.matches("rsdebug") && GameMasterHandler.IsAtleastGM(sender.getName()))
-		{
-			if(plugin.bListener.redStoneDebug.contains(sender))
-			{
-				plugin.bListener.redStoneDebug.remove(sender);
-				ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned off!");
-			}
-			else
-			{
-				plugin.bListener.redStoneDebug.add(sender);
-				ChatHandler.SuccessMsg(sender, "RedStone debug successfully turned on!");
 			}
 		}
 		else if(subCommand.matches("home") && GameMasterHandler.IsAtleastGM(sender.getName()))

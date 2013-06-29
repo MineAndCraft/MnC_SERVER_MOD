@@ -8,7 +8,7 @@ import java.util.List;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.util.Util;
 
 import org.bukkit.ChatColor;

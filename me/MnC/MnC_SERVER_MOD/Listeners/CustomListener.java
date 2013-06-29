@@ -35,7 +35,6 @@ public class CustomListener implements Listener
 			{
 				give(p);
 			}
-			
 		}
 	}
 	

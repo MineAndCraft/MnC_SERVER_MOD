@@ -1,4 +1,4 @@
-package me.MnC.MnC_SERVER_MOD.RPG;
+package me.MnC.MnC_SERVER_MOD.rpg;
 
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 

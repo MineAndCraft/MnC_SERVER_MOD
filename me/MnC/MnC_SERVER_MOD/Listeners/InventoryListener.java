@@ -19,12 +19,12 @@ public class InventoryListener implements Listener
 	public InventoryListener(){}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onInventoryMoveItemEvent(InventoryMoveItemEvent e)
+	public void onInventoryMoveItemEvent(InventoryMoveItemEvent event)
 	{
 		InventoryHolder source = null;
 		
 		try{
-			source = e.getSource().getHolder();
+			source = event.getSource().getHolder();
 		}catch(Exception ex){}
 		
 		if(source ==  null)
@@ -52,12 +52,12 @@ public class InventoryListener implements Listener
 		{
 			if(MnC_SERVER_MOD.getInstance().blockLocker.isLocked(block))
 			{
-				e.setCancelled(true);
+				event.setCancelled(true);
 				// Is it a hopper? Break it.
 				try{
-					if(e.getInitiator().getHolder() instanceof Hopper)
+					if(event.getInitiator().getHolder() instanceof Hopper)
 					{
-						Location loc = ((Hopper)e.getInitiator().getHolder()).getLocation();
+						Location loc = ((Hopper)event.getInitiator().getHolder()).getLocation();
 						final int x = loc.getBlockX();
 						final int y = loc.getBlockY();
 						final int z = loc.getBlockZ();

@@ -12,7 +12,7 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.*;
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 
 public class ChatHandler 
 {

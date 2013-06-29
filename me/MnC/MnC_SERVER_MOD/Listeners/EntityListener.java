@@ -1,6 +1,5 @@
 package me.MnC.MnC_SERVER_MOD.Listeners;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,11 +8,9 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
-import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -34,47 +31,41 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class EntityListener implements Listener
 {
-	public EntityListener(MnC_SERVER_MOD gugaSM)
+	public EntityListener(MnC_SERVER_MOD plugin)
 	{
-		plugin = gugaSM;
+		this.plugin = plugin;
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onCreatureSpawnEvent(CreatureSpawnEvent e)
+	public void onCreatureSpawnEvent(CreatureSpawnEvent event)
 	{
-		if((e.getEntity() instanceof Wither))
+		if((event.getEntity() instanceof Wither))
 		{
-			if(!(e.getEntity().getWorld().getName().matches("world_nether")))
+			if(!(event.getEntity().getWorld().getName().matches("world_nether")))
 			{
-				e.setCancelled(true);
+				event.setCancelled(true);
 			}
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onEntityRegainHealth(EntityRegainHealthEvent e)
+	public void onEntityRegainHealth(EntityRegainHealthEvent event)
 	{
-		if (plugin.debug)
+		if (event.getEntity() instanceof Player)
 		{
-			plugin.log.info("ENTITY_REGAIN_EVENT: entity=" + e.getEntity().toString());
-		}
-		if (e.getEntity() instanceof Player)
-		{
-			if (e.getRegainReason() == RegainReason.REGEN)
+			if (event.getRegainReason() == RegainReason.REGEN)
 			{
-				e.setCancelled(true);
+				event.setCancelled(true);
 			}
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(EntityDamageEvent e)
 	{
-		if (plugin.debug)
-		{
-			plugin.log.info("ENTITY_DAMAGE_EVENT: entity=" + e.getEntity().toString() + ",dmg=" + e.getDamage());
-		}
 		if(e.getEntity() instanceof Player)
 		{
 			if(((Player)e.getEntity()).getWorld().getName().matches("arena"))
@@ -132,51 +123,7 @@ public class EntityListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent e)
 	{
-		/*if (e.getDroppedExp() > 0)
-		{
-			e.setDroppedExp(0);
-		}*/
-		
-		if (e.getEntity() instanceof Player)
-		{			
-			Player p = (Player) e.getEntity();
-			
-	
-			if(p.getLocation().getWorld().getName().equalsIgnoreCase("world") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_mine") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_basic") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_the_nether"))
-			{
-				if(playersDeaths.containsKey(p.getName()))
-				{
-					playersDeaths.remove(p.getName());
-					playersDeaths.put(p.getName(), p.getLocation());
-				}
-				else
-				{
-					playersDeaths.put(p.getName(), p.getLocation());
-				}
-			}
-			if(p.getName().matches("czrikub"))
-			{
-				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
-				p.getInventory().clear();
-				e.getDrops().clear();
-				e.getDrops().add(new ItemStack(331, 1));
-			}
-			else if(p.getName().matches("Guga"))
-			{
-				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
-				p.getInventory().clear();
-				e.getDrops().clear();
-				e.getDrops().add(new ItemStack(383, 1, (short) 50));
-			}
-			else if(p.getName().matches("Stanley2"))
-			{
-				InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
-				p.getInventory().clear();
-				e.getDrops().clear();
-				e.getDrops().add(new ItemStack(42, 1));
-			}
-			
-		}
+		//TODO that thing about skill points was not that weird
 		if (plugin.arena.IsArena(e.getEntity().getLocation()))
 		{
 			if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent)
@@ -232,26 +179,23 @@ public class EntityListener implements Listener
 			}
 		}
 	}
+	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onEntityExplode(EntityExplodeEvent e)
+	public void onEntityExplode(EntityExplodeEvent event)
 	{
-		if (plugin.debug)
+		if(event.getEntity() instanceof Creeper)
 		{
-			plugin.log.info("ENTITY_EXPLODE_EVENT: entity=" + e.getEntity().toString());
-		}
-		if(e.getEntity() instanceof Creeper)
-		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
-		if (plugin.arena.IsArena(e.getLocation()))
+		if (plugin.arena.IsArena(event.getLocation()))
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
-		List<Block> blockList = e.blockList();
+		List<Block> blockList = event.blockList();
 
-		Iterator<Block> iter = e.blockList().iterator();
+		Iterator<Block> iter = event.blockList().iterator();
 		boolean foundChest = false;
 		while (iter.hasNext())
 		{
@@ -265,7 +209,7 @@ public class EntityListener implements Listener
 		}
 		if (foundChest)
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			iter = blockList.iterator();
 			while(iter.hasNext())
 			{
@@ -277,15 +221,15 @@ public class EntityListener implements Listener
 			}
 		}
 				
-		for(Block block : e.blockList())
+		for(Block block : event.blockList())
 		{
 			if(EstateHandler.getResidenceId(block) != 0)
 			{
-				e.setCancelled(true);
+				event.setCancelled(true);
 				break;
 			}
 		}
 	}
-	public static HashMap<String, Location> playersDeaths = new HashMap<String, Location>();
-	public static MnC_SERVER_MOD plugin;
+	
+	public MnC_SERVER_MOD plugin;
 }

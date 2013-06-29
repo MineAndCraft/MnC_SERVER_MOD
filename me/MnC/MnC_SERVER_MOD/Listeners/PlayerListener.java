@@ -5,8 +5,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Random;
 
 import me.MnC.MnC_SERVER_MOD.GameMaster;
@@ -19,8 +19,8 @@ import me.MnC.MnC_SERVER_MOD.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfessionLevelUpEvent;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfessionLevelUpEvent;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.Home;
@@ -41,7 +41,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -50,7 +51,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -60,10 +61,59 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener 
 {
-	public PlayerListener(MnC_SERVER_MOD gugaSM)
+	public PlayerListener(MnC_SERVER_MOD plugin)
 	{
-		plugin = gugaSM;
+		this.plugin = plugin;
 	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
+	{
+		// check if players's name is correct
+		if (event.getName().equals(""))
+		{
+			event.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno!");
+			return;
+		}
+		if (!event.getName().matches("[a-zA-Z0-9_\\-\\.]{2,16}"))
+		{
+			event.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
+			return;
+		}
+		
+		// check for bans
+		long banExpiration = plugin.banHandler.userBanExpiration(event.getName());
+		if(banExpiration != 0)
+		{
+			if(banExpiration == -1)
+			{
+				event.disallow(Result.KICK_OTHER, "Na nasem serveru jste permanentne zabanovan!");
+			}
+			else if((banExpiration*1000)>System.currentTimeMillis())
+			{
+				event.disallow(Result.KICK_OTHER, "Na nasem serveru jste zabanovan! Ban vyprsi "+ new Date(banExpiration).toString());
+			}
+			return;
+		}
+		
+		if(!plugin.banHandler.isIPWhitelisted(event.getName()))
+		{
+			long ipBanExpiration = plugin.banHandler.ipBanExpiration(event.getAddress().toString());
+			if(ipBanExpiration != 0)
+			{
+				if(ipBanExpiration == -1)
+				{
+					event.disallow(Result.KICK_OTHER, "Vase IP je na nasem serveru permanentne zabanovana!");
+				}
+				else if(ipBanExpiration*1000 > System.currentTimeMillis())
+				{
+					event.disallow(Result.KICK_OTHER, "Vase IP je na nasem serveru zabanovana! Ban vyprsi "+ new Date(ipBanExpiration).toString());
+				}
+				return;
+			}
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerLogin(PlayerLoginEvent e)
 	{
@@ -75,70 +125,21 @@ public class PlayerListener implements Listener
 			{
 				if(plugin.userManager.userIsLogged(p.getName()))
 				{
-					e.disallow(Result.KICK_OTHER, "Hrac s timto jmenem uz je online!");
+					e.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Hrac s timto jmenem uz je online!");
 				}
 			}
-		}
-		
-		//check if player has allowed name
-		if (player.getName().equals(""))
-		{
-			e.disallow(Result.KICK_OTHER, "Prosim zvolte si jmeno!");
-			return;
-		}
-		if (!player.getName().matches("[a-zA-Z0-9_\\-\\.]{2,16}"))
-		{
-			e.disallow(Result.KICK_OTHER,"Prosim zvolte si jmeno slozene jen z povolenych znaku!   a-z A-Z 0-9 ' _ - .");
-			return;
-		}
+		}		
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerJoin(PlayerJoinEvent e)
+	public void onPlayerJoin(PlayerJoinEvent event)
 	{
-		final Player player = e.getPlayer();
-		e.setJoinMessage(ChatColor.YELLOW+player.getName()+ " se pripojil/a.");
+		final Player player = event.getPlayer();
+		event.setJoinMessage(ChatColor.YELLOW+player.getName()+ " se pripojil/a.");
 		if (!player.isOnline())
 		{
 			player.kickPlayer("You have timed out.");
 			return;
-		}
-		
-		// check for bans
-		long banExpiration = plugin.banHandler.userBanExpiration(player.getName());
-		if(banExpiration != 0)
-		{
-			if(banExpiration == -1)
-			{
-				player.kickPlayer("Na nasem serveru jste permanentne zabanovan!");
-			}
-			else if((banExpiration*1000)>System.currentTimeMillis())
-			{
-				player.kickPlayer("Na nasem serveru jste zabanovan! Ban vyprsi "+ new Date(banExpiration).toString());
-			}
-			e.setJoinMessage(null);
-			noDisplayLeaveMessage.add(player.getName());
-			return;
-		}
-		
-		String ipAddress = player.getAddress().getAddress().toString();
-		if(!plugin.banHandler.isIPWhitelisted(player.getName()))
-		{
-			long ipBanExpiration = plugin.banHandler.ipBanExpiration(ipAddress);
-			if(ipBanExpiration != 0)
-			{
-				if(ipBanExpiration == -1)
-				{
-					player.kickPlayer("Vase IP je na nasem serveru permanentne zabanovana!");
-				}
-				else if(ipBanExpiration*1000 > System.currentTimeMillis())
-				{
-					player.kickPlayer("Vase IP je na nasem serveru zabanovana! Ban vyprsi "+ new Date(ipBanExpiration).toString());
-				}
-				e.setJoinMessage(null);
-				noDisplayLeaveMessage.add(player.getName());
-				return;
-			}
 		}
 
 		int maxP = plugin.getServer().getMaxPlayers();
@@ -178,7 +179,7 @@ public class PlayerListener implements Listener
 		
 		if (plugin.debug)
 		{
-			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + e.getPlayer().getName());
+			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + event.getPlayer().getName());
 		}
 		
 		if(!plugin.userManager.userIsRegistered(player.getName()))
@@ -195,7 +196,6 @@ public class PlayerListener implements Listener
 		
 		plugin.userManager.onPlayerJoin(player);
 		
-		long timeStart = System.nanoTime();
 		player.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
 		Player[]players = plugin.getServer().getOnlinePlayers();
 		
@@ -242,157 +242,114 @@ public class PlayerListener implements Listener
 				}
 			}catch(Exception ex){}
 		}
-			
-		if (plugin.debug)
-		{
-			plugin.log.info("DEBUG_TIME_PLAYERJOIN=" + ((System.nanoTime() - timeStart)/1000));
-		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e)
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
 		if (plugin.debug)
 		{
-			plugin.log.info("COMMAND_PREPROCESS_EVENT: playerName=" + e.getPlayer().getName() + ",cmd=" + e.getMessage());
+			plugin.log.info("COMMAND_PREPROCESS_EVENT: playerName=" + event.getPlayer().getName() + ",cmd=" + event.getMessage());
 		}
-		if(!plugin.userManager.userIsLogged(e.getPlayer().getName()))
+		if(!plugin.userManager.userIsLogged(event.getPlayer().getName()))
 		{
 			//Unless the player is logged in only [/login, /help, /register] commands are allowed
-			if(e.getMessage().startsWith("/login") || e.getMessage().startsWith("/help") || e.getMessage().startsWith("/register"))
+			if(event.getMessage().startsWith("/login") || event.getMessage().startsWith("/help") || event.getMessage().startsWith("/register"))
 			{
 			}
 			else
 			{
-				ChatHandler.SuccessMsg(e.getPlayer(),"Nejdrive se prihlaste!");
-				e.setCancelled(true);
+				ChatHandler.SuccessMsg(event.getPlayer(),"Nejdrive se prihlaste!");
+				event.setCancelled(true);
 				return;
 			}
 		}
 		
-		if(e.getMessage().startsWith("/me") && plugin.chat.isPlayerMuted(e.getPlayer().getName()))
+		if(event.getMessage().startsWith("/me") && plugin.chat.isPlayerMuted(event.getPlayer().getName()))
 		{
-			e.getPlayer().sendMessage("You are muted");
-			e.setCancelled(true);
+			event.getPlayer().sendMessage("You are muted");
+			event.setCancelled(true);
 			return;
 		}
 		
-		if(e.getMessage().equalsIgnoreCase("/plugins") || e.getMessage().equalsIgnoreCase("/pl"))
+		if(event.getMessage().equalsIgnoreCase("/plugins") || event.getMessage().equalsIgnoreCase("/pl"))
 		{
-			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()))
+			if(!GameMasterHandler.IsAtleastGM(event.getPlayer().getName()))
 			{
-				ChatHandler.FailMsg(e.getPlayer(), "K tomuto prikazu nemate pristup!");
-				e.setCancelled(true);
+				ChatHandler.FailMsg(event.getPlayer(), "K tomuto prikazu nemate pristup!");
+				event.setCancelled(true);
 				return;
 			}
 		}
-		if(e.getMessage().equalsIgnoreCase("/kill") && e.getPlayer().getWorld().getName().matches("arena"))
+		if(event.getMessage().equalsIgnoreCase("/kill") && event.getPlayer().getWorld().getName().matches("arena"))
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 		}
-		if(e.getMessage().toLowerCase().startsWith("/sg") || e.getMessage().toLowerCase().startsWith("/survivalgames"))
+		if(event.getMessage().toLowerCase().startsWith("/sg") || event.getMessage().toLowerCase().startsWith("/survivalgames"))
 		{
-			if(plugin.userManager.getUser(e.getPlayer().getName()).getProfession().GetLevel() < 10)
+			if(plugin.userManager.getUser(event.getPlayer().getName()).getProfession().GetLevel() < 10)
 			{
-				e.setCancelled(true);
+				event.setCancelled(true);
 			}
 		}	
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onAsyncPlayerChat(AsyncPlayerChatEvent e)
+	public void onPlayerPickupItem(PlayerPickupItemEvent event)
 	{
-		Player p = e.getPlayer();
-		
-		if (plugin.debug)
-		{
-			plugin.log.info("PLAYER_CHAT_EVENT: playerName=" + p.getName());
-		}
-	}
-
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerPickupItem(PlayerPickupItemEvent e)
-	{
-		if (plugin.debug)
-		{
-			plugin.log.info("PLAYER_PICKUP_EVENT: playerName=" + e.getPlayer() + ",itemID=" + e.getItem().getItemStack().getTypeId());
-		}
-
-		MinecraftPlayer pl = plugin.userManager.getUser(e.getPlayer().getName());
+		MinecraftPlayer pl = plugin.userManager.getUser(event.getPlayer().getName());
 		if(pl == null)
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 		if (!pl.isAuthenticated())
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}		 
 		if(pl.getProfession() == null || (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerKick(PlayerKickEvent e)
+	public void onPlayerKick(PlayerKickEvent event)
 	{
-		Player player = e.getPlayer();
-		e.setLeaveMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
+		Player player = event.getPlayer();
+		event.setLeaveMessage(ChatColor.YELLOW+event.getPlayer().getName()+" se odpojil/a.");
 		plugin.userManager.logoutUser(player.getName());
-		
-		if(noDisplayLeaveMessage.contains(player.getName()))
-		{
-			e.setLeaveMessage(null);
-			noDisplayLeaveMessage.remove(player.getName());
-		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerQuit(PlayerQuitEvent e)
+	public void onPlayerQuit(PlayerQuitEvent event)
 	{
-		e.setQuitMessage(ChatColor.YELLOW+e.getPlayer().getName()+" se odpojil/a.");
-		long timeStart = System.nanoTime();
-		Player p = e.getPlayer();
+		event.setQuitMessage(ChatColor.YELLOW+event.getPlayer().getName()+" se odpojil/a.");
+		Player p = event.getPlayer();
 
 		plugin.userManager.logoutUser(p.getName());
-		
-		if(noDisplayLeaveMessage.contains(p.getName()))
-		{
-			e.setQuitMessage(null);
-			noDisplayLeaveMessage.remove(p.getName());
-		}
-		
-		if (plugin.debug)
-		{
-			plugin.log.info("PLAYER_QUIT_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000)+ ",playerName=" + e.getPlayer().getName());
-		}	
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerRespawn(PlayerRespawnEvent e)
+	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		if (plugin.debug)
-		{
-			plugin.log.info("PLAYER_RESPAWN_EVENT: playerName=" + e.getPlayer().getName());
-		}
-		Player p = e.getPlayer();
+		Player p = event.getPlayer();
 		Home home;
 		if(p.getBedSpawnLocation() != null)
 		{
-			e.setRespawnLocation(p.getBedSpawnLocation());
+			event.setRespawnLocation(p.getBedSpawnLocation());
 		}
 		else if((home = HomesHandler.getHomeByPlayer(p.getName())) != null)
 		{
-			e.setRespawnLocation(HomesHandler.getLocation(home));
+			event.setRespawnLocation(HomesHandler.getLocation(home));
 		}
-		p.teleport(e.getRespawnLocation());
+		p.teleport(event.getRespawnLocation());
 		Location respawnLoc;
 		if ((respawnLoc =plugin.arena.GetPlayerBaseLocation(p)) != null)
 		{
-			e.setRespawnLocation(respawnLoc);
+			event.setRespawnLocation(respawnLoc);
 			plugin.arena.RemovePlayerBaseLocation(p);
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
@@ -412,68 +369,56 @@ public class PlayerListener implements Listener
 		{
 			InventoryBackup.InventoryReturnWrapped(p, true);
 		}
-		
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onPlayerMove(PlayerMoveEvent e)
+	public void onPlayerMove(PlayerMoveEvent event)
 	{
-		Player player = e.getPlayer();
+		Player player = event.getPlayer();
 		MinecraftPlayer pl = plugin.userManager.getUser(player.getName());
 		if(pl == null)
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 		
 		if (!pl.isAuthenticated())
 		{
-			Location from = e.getFrom();
-			Location to = e.getTo();
+			Location from = event.getFrom();
+			Location to = event.getTo();
 			if(!(from.getX()==to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()))
 			{
-				if(!e.getPlayer().teleport(e.getFrom()))
-					e.setCancelled(true);
+				if(!event.getPlayer().teleport(event.getFrom()))
+					event.setCancelled(true);
 				return;
 			}
 		}
-		
-
-		//if (!GugaWorldSizeHandler.CanMove(player.getLocation()))
-		//	GugaWorldSizeHandler.MoveBack(player);
-		//else if (player.getLocation().getBlockY() < 0)
-		//	player.teleport(plugin.GetAvailablePortLocation(player.getLocation()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerTeleport(PlayerTeleportEvent e)
+	public void onPlayerTeleport(PlayerTeleportEvent event)
 	{
-		World world = e.getPlayer().getWorld();
-	    Chunk chunk = world.getChunkAt(e.getTo());
+		World world = event.getPlayer().getWorld();
+	    Chunk chunk = world.getChunkAt(event.getTo());
 	    int x = chunk.getX();
 	    int z = chunk.getZ();
-	    world.refreshChunk(x, z);
+	    world.loadChunk(x, z, true);
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerInteract(PlayerInteractEvent e)
+	public void onPlayerInteract(PlayerInteractEvent event)
 	{
-		if (plugin.debug)
-		{
-			plugin.log.info("PLAYER_INTERACT_EVENT: playerName=" + e.getPlayer().getName() + ",typeID=" + e.getClickedBlock().getTypeId());
-		}
-		long timeStart = System.nanoTime();
-		Player player = e.getPlayer();
-		Block block = e.getClickedBlock();
-		MinecraftPlayer pl = plugin.userManager.getUser(e.getPlayer().getName());
+		Player player = event.getPlayer();
+		Block block = event.getClickedBlock();
+		MinecraftPlayer pl = plugin.userManager.getUser(event.getPlayer().getName());
 		if(pl == null)
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 		if (!pl.isAuthenticated())
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 		
@@ -484,7 +429,7 @@ public class PlayerListener implements Listener
 		{
 			boolean is_gm = GameMasterHandler.IsAtleastGM(player.getName());
 			
-			if(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)
+			if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
 			{
 				if(block.getTypeId() == 64 || block.getType() == Material.FENCE_GATE)
 				{
@@ -498,12 +443,12 @@ public class PlayerListener implements Listener
 			if(!is_gm)
 			{
 				ChatHandler.FailMsg(player, "Toto je pozemek jineho hrace.");
-				e.setCancelled(true);
+				event.setCancelled(true);
 				return;
 			}
 		}
 		
-		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
 			
 			PlayerProfession prof = pl.getProfession();
@@ -511,13 +456,13 @@ public class PlayerListener implements Listener
 			{
 				int itemID;
 				ItemStack item;
-				if ((item = e.getItem()) != null)
+				if ((item = event.getItem()) != null)
 				{
 					itemID = item.getTypeId();
 					if ( (itemID == 259) || (itemID == 327))
 					{
 						ChatHandler.FailMsg(player,"Musite byt alespon level 10, aby jste toto mohl pouzit!");
-						e.setCancelled(true);
+						event.setCancelled(true);
 						return;
 					}
 				}
@@ -529,30 +474,25 @@ public class PlayerListener implements Listener
 				{
 					int itemID;
 					ItemStack item;
-					if ((item= e.getItem()) != null)
+					if ((item= event.getItem()) != null)
 					{
 						itemID = item.getTypeId();
 						if (itemID == 259)
 						{
 							ChatHandler.FailMsg(player,"Musite byt alespon level 10, aby jste toto mohl pouzit!");
-							e.setCancelled(true);
+							event.setCancelled(true);
 							return;
 						}
 					}
 				}
 			}
 			
-			if(e.getItem() != null && e.getItem().getTypeId() == 407 && (plugin.userManager.getUser(player.getName()).getProfession() == null || plugin.userManager.getUser(player.getName()).getProfession().GetLevel() < 50))
+			if(event.getItem() != null && event.getItem().getTypeId() == 407 && (plugin.userManager.getUser(player.getName()).getProfession() == null || plugin.userManager.getUser(player.getName()).getProfession().GetLevel() < 50))
 			{
 				ChatHandler.FailMsg(player, "Nemate lvl 50, nemuzete pouzit TNT.");
-				e.setCancelled(true);
+				event.setCancelled(true);
 				return;
 			}
-			
-		}
-		if (plugin.debug == true)
-		{
-			plugin.log.info("DEBUG_TIME_PLAYERINTERACT=" + ((System.nanoTime() - timeStart)/1000));
 		}
 	}
 	
@@ -575,30 +515,30 @@ public class PlayerListener implements Listener
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerDropItem(PlayerDropItemEvent e)
+	public void onPlayerDropItem(PlayerDropItemEvent event)
 	{
-		MinecraftPlayer pl = plugin.userManager.getUser(e.getPlayer().getName());
+		MinecraftPlayer pl = plugin.userManager.getUser(event.getPlayer().getName());
 		if(pl == null)
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 		if (!pl.isAuthenticated())
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}		 
 		if(pl.getProfession() == null || (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
 		{
-			e.setCancelled(true);
+			event.setCancelled(true);
 			return;
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e)
+	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event)
 	{
-		Player p = e.getPlayer();
+		Player p = event.getPlayer();
 		if(p.getAllowFlight())
 		{
 			if(p.getGameMode() == GameMode.SURVIVAL && !CommandsHandler.fly.contains(p.getName()) && !(VipManager.isFlyEnabled(p.getWorld().getName()) && plugin.vipManager.isVip(p.getName())))
@@ -612,7 +552,7 @@ public class PlayerListener implements Listener
 		{
 			if(gm.GetRank() == Rank.EVENTER)
 			{
-				if(e.getFrom().getName().matches("world_event"))
+				if(event.getFrom().getName().matches("world_event"))
 				{
 					p.setGameMode(GameMode.SURVIVAL);
 					p.getInventory().clear();
@@ -633,6 +573,46 @@ public class PlayerListener implements Listener
 			player.sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
 			player.sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/pp spawn");
 			ChatHandler.InitializeDisplayName(player);
+		}
+	}
+	
+	public void onPlayerDeath(PlayerDeathEvent event)
+	{
+		Player p = event.getEntity();
+		
+		
+		if(p.getLocation().getWorld().getName().equalsIgnoreCase("world") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_mine") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_basic") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_nether"))
+		{
+			if(playersDeaths.containsKey(p.getName()))
+			{
+				playersDeaths.remove(p.getName());
+				playersDeaths.put(p.getName(), p.getLocation());
+			}
+			else
+			{
+				playersDeaths.put(p.getName(), p.getLocation());
+			}
+		}
+		if(p.getName().matches("czrikub"))
+		{
+			InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+			p.getInventory().clear();
+			event.getDrops().clear();
+			event.getDrops().add(new ItemStack(331, 1));
+		}
+		else if(p.getName().matches("Guga"))
+		{
+			InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+			p.getInventory().clear();
+			event.getDrops().clear();
+			event.getDrops().add(new ItemStack(383, 1, (short) 50));
+		}
+		else if(p.getName().matches("Stanley2"))
+		{
+			InventoryBackup.CreateBackup(p.getName(), p.getInventory().getArmorContents(), p.getInventory().getContents(), p.getActivePotionEffects());
+			p.getInventory().clear();
+			event.getDrops().clear();
+			event.getDrops().add(new ItemStack(42, 1));
 		}
 	}
 	
@@ -664,9 +644,9 @@ public class PlayerListener implements Listener
 		return false;
 	}
 
-	private static LinkedList<String> noDisplayLeaveMessage = new LinkedList<String>();
+	public static HashMap<String, Location> playersDeaths = new HashMap<String, Location>();
 	
 	private static ArrayList<String> creativePlayers = new ArrayList<String>();
 	private static String creativePlayersPath = "plugins/MineAndCraft_plugin/creativePlayers.dat";
-	public static MnC_SERVER_MOD plugin;
+	public MnC_SERVER_MOD plugin;
 }

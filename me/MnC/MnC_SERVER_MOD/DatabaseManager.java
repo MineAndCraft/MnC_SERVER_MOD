@@ -57,10 +57,12 @@ public class DatabaseManager
 	
 	/**
 	 * @return The database connection
-	 * @throws NullPointerException if the database is not initialized yet
+	 * @throws SQLException if the database is not initialized yet
 	 */
-	public static Connection getConnection()
+	public static Connection getConnection() throws SQLException
 	{
+		if(_instance == null || _instance.connection == null)
+			throw new SQLException("Database is null");
 		return _instance.connection;
 	}
 }

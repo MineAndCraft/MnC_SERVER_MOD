@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 

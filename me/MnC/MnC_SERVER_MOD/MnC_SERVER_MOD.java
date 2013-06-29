@@ -18,7 +18,7 @@ import me.MnC.MnC_SERVER_MOD.Listeners.EntityListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.InventoryListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.PlayerListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.PluginListener;
-import me.MnC.MnC_SERVER_MOD.RPG.RpgCommandExecutor;
+import me.MnC.MnC_SERVER_MOD.rpg.RpgCommandExecutor;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.MnC.MnC_SERVER_MOD.chat.Chat;

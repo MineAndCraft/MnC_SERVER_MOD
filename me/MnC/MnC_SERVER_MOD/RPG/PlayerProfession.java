@@ -1,4 +1,4 @@
-package me.MnC.MnC_SERVER_MOD.RPG;
+package me.MnC.MnC_SERVER_MOD.rpg;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
