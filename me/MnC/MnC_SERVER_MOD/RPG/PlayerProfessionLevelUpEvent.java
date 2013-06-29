@@ -3,7 +3,11 @@ package me.MnC.MnC_SERVER_MOD.RPG;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class GugaProfessionPlayerLevelUpEvent extends Event
+/**
+ * Event to be called by PlayerProfession when a player levels up
+ *
+ */
+public class PlayerProfessionLevelUpEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	
@@ -17,14 +21,14 @@ public class GugaProfessionPlayerLevelUpEvent extends Event
 	    return handlers;
 	}
 	
-	private GugaProfession2 _profession;
+	private PlayerProfession _profession;
 	
-	GugaProfessionPlayerLevelUpEvent(GugaProfession2 profession)
+	PlayerProfessionLevelUpEvent(PlayerProfession profession)
 	{
 		_profession = profession;
 	}
 	
-	public GugaProfession2 getProfession()
+	public PlayerProfession getProfession()
 	{
 		return _profession;
 	}

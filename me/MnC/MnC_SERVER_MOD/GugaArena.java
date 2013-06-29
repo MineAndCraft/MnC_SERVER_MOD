@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 
@@ -39,7 +39,7 @@ public class GugaArena
 	{
 		if (victim != killCache)
 		{
-			GugaProfession prof;
+			PlayerProfession prof;
 			if ((prof = plugin.userManager.getUser(killer.getName()).getProfession()) != null)
 			{
 				prof.GainExperience(100);

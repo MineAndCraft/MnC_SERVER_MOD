@@ -8,7 +8,7 @@ import java.util.List;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.util.Util;
 
 import org.bukkit.ChatColor;
@@ -36,7 +36,7 @@ public class MinecraftPlayer
 	private PlayerRankState rank;
 	private Player playerInstance;
 	
-	private GugaProfession2 profession;
+	private PlayerProfession profession;
 	
 	
 	private LinkedList<String> chat_lastTellSenders = new LinkedList<String>();
@@ -77,7 +77,7 @@ public class MinecraftPlayer
 				e.printStackTrace();
 			}
 			
-			this.profession = GugaProfession2.loadProfession(this);
+			this.profession = PlayerProfession.loadProfession(this);
 			
 			try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("INSERT IGNORE INTO `mnc_playermetadata` (user_id) VALUES(?)");)
 			{
@@ -119,7 +119,7 @@ public class MinecraftPlayer
 	/**
 	 * @return player's profession
 	 */
-	public GugaProfession2 getProfession(){
+	public PlayerProfession getProfession(){
 		return this.profession;
 	}
 

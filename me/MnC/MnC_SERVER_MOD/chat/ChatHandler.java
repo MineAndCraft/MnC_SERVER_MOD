@@ -12,7 +12,7 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.*;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 
 public class ChatHandler 
 {
@@ -94,7 +94,7 @@ public class ChatHandler
 		}
 		else
 		{
-			GugaProfession prof=null;
+			PlayerProfession prof=null;
 			MinecraftPlayer pl = plugin.userManager.getUser(p.getName());
 			if(pl!=null) prof = pl.getProfession();
 			if(prof!=null && prof.GetLevel() < 10)

@@ -3,7 +3,7 @@ package me.MnC.MnC_SERVER_MOD.basicworld;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.ServerRegion;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 
@@ -83,7 +83,7 @@ public class BasicWorld
 		if(p==null)
 			return true;
 		
-		GugaProfession prof = p.getProfession();
+		PlayerProfession prof = p.getProfession();
 		if(prof == null || prof.GetLevel() < 10)
 		{
 			return true;

@@ -21,7 +21,7 @@ import me.MnC.MnC_SERVER_MOD.GugaArena.ArenaTier;
 import me.MnC.MnC_SERVER_MOD.Listeners.EntityListener;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.MnC.MnC_SERVER_MOD.PlacesManager.Place;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.VipManager.VipItems;
 import me.MnC.MnC_SERVER_MOD.VipManager.VipUser;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
@@ -67,7 +67,7 @@ public abstract class CommandsHandler
 		while(i<onlinePlayers.length)
 		{
 			Player p = onlinePlayers[i];
-			GugaProfession2 prof = plugin.userManager.getUser(p.getName()).getProfession();
+			PlayerProfession prof = plugin.userManager.getUser(p.getName()).getProfession();
 			int level = (prof==null)? 0 : prof.GetLevel();
 			if(GameMasterHandler.IsRank(p.getName(), Rank.ADMIN))
 			{
@@ -2483,7 +2483,7 @@ public abstract class CommandsHandler
 				 if (player.getState() == ConnectionState.AUTHENTICATED)
 				 {
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
-					GugaProfession2 prof = player.getProfession();
+					PlayerProfession prof = player.getProfession();
 					if(prof!=null && prof.GetXp() == 0 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
 						BasicWorld.BasicWorldEnter(sender);
@@ -2537,7 +2537,7 @@ public abstract class CommandsHandler
 				{
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
 					ChatHandler.InitializeDisplayName(sender);
-					GugaProfession2 prof = player.getProfession();
+					PlayerProfession prof = player.getProfession();
 					if(prof!=null && prof.GetLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
 						BasicWorld.BasicWorldEnter(sender);

@@ -9,7 +9,7 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 
@@ -204,7 +204,7 @@ public class EntityListener implements Listener
 			if (ent instanceof Player)
 			{
 				Player damager = (Player)ent;
-				GugaProfession prof = plugin.userManager.getUser(damager.getName()).getProfession();
+				PlayerProfession prof = plugin.userManager.getUser(damager.getName()).getProfession();
 				if (target instanceof Creeper)
 				{
 					prof.GainExperience(75);

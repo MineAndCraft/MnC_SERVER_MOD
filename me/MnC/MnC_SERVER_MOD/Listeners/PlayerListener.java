@@ -19,8 +19,8 @@ import me.MnC.MnC_SERVER_MOD.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfessionPlayerLevelUpEvent;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfessionLevelUpEvent;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.Home;
@@ -506,7 +506,7 @@ public class PlayerListener implements Listener
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
 			
-			GugaProfession2 prof = pl.getProfession();
+			PlayerProfession prof = pl.getProfession();
 			if (prof == null)
 			{
 				int itemID;
@@ -622,10 +622,10 @@ public class PlayerListener implements Listener
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerRPGLevelUp(GugaProfessionPlayerLevelUpEvent event)
+	public void onPlayerRPGLevelUp(PlayerProfessionLevelUpEvent event)
 	{
-		GugaProfession2 profession = event.getProfession();
-		Player player = event.getProfession().getPlayer();
+		PlayerProfession profession = event.getProfession();
+		Player player = event.getProfession().getPlayer().getPlayerInstance();
 		Bukkit.getServer().broadcastMessage(player.getName() + " prekrocil/a level " + profession.GetLevel() + "!");
 		if(profession.GetLevel() >= 10 && BasicWorld.IsBasicWorld(player.getLocation()))
 		{

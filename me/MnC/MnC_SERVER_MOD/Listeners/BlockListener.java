@@ -11,8 +11,8 @@ import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.ServerRegionHandler;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaBonusDrop;
-import me.MnC.MnC_SERVER_MOD.RPG.GugaProfession2;
+import me.MnC.MnC_SERVER_MOD.RPG.BonusDrop;
+import me.MnC.MnC_SERVER_MOD.RPG.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 
@@ -29,7 +29,6 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener
 {
@@ -108,11 +107,11 @@ public class BlockListener implements Listener
 			ChatHandler.FailMsg(p, "Nemuzete kopat blocky na pozemku jineho hrace.");
 		}
 		
-		GugaProfession2 prof = player.getProfession();
+		PlayerProfession prof = player.getProfession();
 		int level = prof.GetLevel();
 		//*************************GRIEFING PROTECTION*************************
-		Block targetBlock;
-		targetBlock = e.getBlock();
+		Block block;
+		block = e.getBlock();
 		if(level >= 10 && BasicWorld.IsBasicWorld(e.getPlayer().getLocation()))
 		{
 			if(!GameMasterHandler.IsAtleastGM(e.getPlayer().getName()) && !(level > 20))
@@ -121,41 +120,24 @@ public class BlockListener implements Listener
 			}
 		}
 		
-		int typeId = targetBlock.getTypeId();
-		prof.onBlockBreak(targetBlock);
-		if (typeId == 1)
+		if(!(block.getTypeId() == 50 || block.getTypeId() == 78 ))
 		{
-			GugaBonusDrop bonus = prof.CobbleStoneDrop();
-			if (bonus == GugaBonusDrop.DIAMOND)
-			{
-				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(264,1));
-				prof.GainExperience(50);
-				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.AQUA + "diamant" + ChatColor.YELLOW + "!");
-			}
-			else if (bonus == GugaBonusDrop.GOLD)
-			{
-				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(14,1));
-				prof.GainExperience(40);
-				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.GOLD + "zlato" + ChatColor.YELLOW + "!");
-			}
-			else if (bonus == GugaBonusDrop.IRON)
-			{
-				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(15,1));
-				prof.GainExperience(30);
-				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.GRAY + "zelezo" + ChatColor.YELLOW + "!");
-			}
-			else if (bonus == GugaBonusDrop.EMERALD)
-			{
-				p.getWorld().dropItem(targetBlock.getLocation(), new ItemStack(388,1));
-				prof.GainExperience(60);
-				ChatHandler.InfoMsg(p, "Nasel jste " + ChatColor.GREEN + "emerald" + ChatColor.YELLOW + "!");
-			}
+			prof.GainExperience(4);
 		}
+		
+		BonusDrop.dropBonusDrops(prof, block);
 		
 		if (plugin.debug == true)
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000));
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onBlockBreakMonitor(BlockBreakEvent event)
+	{
+		MinecraftPlayer player = plugin.userManager.getUser(event.getPlayer().getName());
+		BonusDrop.dropBonusDrops(player.getProfession(), event.getBlock());
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
