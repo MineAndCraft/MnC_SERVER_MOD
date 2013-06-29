@@ -125,8 +125,6 @@ public class BlockListener implements Listener
 			prof.GainExperience(4);
 		}
 		
-		BonusDrop.dropBonusDrops(prof, block);
-		
 		if (plugin.debug == true)
 		{
 			plugin.log.info("BLOCK_BREAK_EVENT: Time=" + ((System.nanoTime() - timeStart)/1000));
