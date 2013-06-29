@@ -20,7 +20,7 @@ public abstract class AutoSaver
 		plugin.scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
 			public void run()
 			{
-				plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Autosaver] Saving game data.");
+				//plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + "[Autosaver] Saving game data.");
 				plugin.log.info("[Autosaver] Saving game data.");
 				SaveWorldStructures();
 			}
