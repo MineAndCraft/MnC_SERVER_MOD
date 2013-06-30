@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 import me.MnC.MnC_SERVER_MOD.Config;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
@@ -194,9 +195,9 @@ public class Chat implements Listener
 	public void printMutedPlayers(Player player)
 	{
 		player.sendMessage("List of currently muted players");
-		for(String name : this.chatMute.keySet())
+		for(Map.Entry<String, Long> muted: this.chatMute.entrySet())
 		{
-			player.sendMessage(" - "+name);
+			player.sendMessage(" - " + muted.getKey() + " " + (muted.getValue()-System.currentTimeMillis())/1000f );
 		}
 	}
 	
