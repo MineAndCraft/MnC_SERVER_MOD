@@ -205,7 +205,7 @@ public class PlayerListener implements Listener
 				toSend += ", " + players[i].getName();
 			i++;
 		}
-		ChatHandler.InitializeDisplayName(player);
+
 		player.sendMessage(ChatColor.YELLOW + "Online hraci: " + ChatColor.GRAY + toSend + ".");
 		if(!(GameMasterHandler.IsAtleastRank(player.getName(), Rank.BUILDER)))
 		{
@@ -579,7 +579,7 @@ public class PlayerListener implements Listener
 			player.sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
 			player.sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");
 			player.sendMessage(ChatColor.GREEN + "Pro opusteni zakladniho sveta napiste "+ ChatColor.YELLOW	 + "/pp spawn");
-			ChatHandler.InitializeDisplayName(player);
+			event.getProfession().getPlayer().initializeDisplayName();
 		}
 	}
 	

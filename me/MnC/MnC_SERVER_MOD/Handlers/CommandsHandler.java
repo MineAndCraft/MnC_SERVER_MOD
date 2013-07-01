@@ -2091,7 +2091,7 @@ public abstract class CommandsHandler
 			if(disabledGMs.contains(sender.getName()))
 			{
 				disabledGMs.remove(sender.getName());
-				ChatHandler.InitializeDisplayName(sender);
+				UserManager.getInstance().getUser(sender.getName()).initializeDisplayName();
 				sender.setGameMode(GameMode.CREATIVE);
 				sender.sendMessage("GM state succesfully turned on!");
 			}
@@ -2101,7 +2101,7 @@ public abstract class CommandsHandler
 			if(!disabledGMs.contains(sender.getName()))
 			{
 				disabledGMs.add(sender.getName());
-				ChatHandler.InitializeDisplayName(sender);
+				UserManager.getInstance().getUser(sender.getName()).initializeDisplayName();
 				sender.setGameMode(GameMode.SURVIVAL);
 				sender.sendMessage("GM state succesfully turned off!");
 			}
@@ -2238,6 +2238,9 @@ public abstract class CommandsHandler
 					sender.sendMessage("Vip for user '"+userName+"' added.");
 				else
 					sender.sendMessage("Vip could not be added");
+				MinecraftPlayer pl = UserManager.getInstance().getUser(userName);
+				if(pl !=null)
+					pl.initializeDisplayName();
 			}
 			else if(arg1.equalsIgnoreCase("remove") && args.length==3)
 			{
@@ -2245,6 +2248,9 @@ public abstract class CommandsHandler
 					sender.sendMessage("User '"+arg2+"' is no londer VIP.");
 				else
 					sender.sendMessage("Could not remove VIP.");
+				MinecraftPlayer pl = UserManager.getInstance().getUser(arg2);
+				if(pl !=null)
+					pl.initializeDisplayName();
 			}
 			else if(arg1.equalsIgnoreCase("get") && args.length==3)
 			{
@@ -2266,6 +2272,9 @@ public abstract class CommandsHandler
 					sender.sendMessage("Vip for user '"+userName+"' updated.");
 				else
 					sender.sendMessage("Vip could not be updated");
+				MinecraftPlayer pl = UserManager.getInstance().getUser(userName);
+				if(pl !=null)
+					pl.initializeDisplayName();
 			}
 			else if(arg1.equalsIgnoreCase("list") && args.length==2)
 			{
@@ -2524,7 +2533,7 @@ public abstract class CommandsHandler
 				if(player.login(pwd1))
 				{
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
-					ChatHandler.InitializeDisplayName(sender);
+					player.initializeDisplayName();
 					PlayerProfession prof = player.getProfession();
 					if(prof!=null && prof.GetLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{

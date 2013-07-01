@@ -3,6 +3,7 @@ package me.MnC.MnC_SERVER_MOD.basicworld;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.ServerRegion;
+import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
@@ -63,7 +64,7 @@ public class BasicWorld
 		Location loc = RandomSpawnsHandler.getRandomSpawn();
 		HomesHandler.addHome(p, loc);
 		p.teleport(loc);
-		ChatHandler.InitializeDisplayName(p);
+		UserManager.getInstance().getUser(p.getName()).initializeDisplayName();
 	}
 	public static void setSpawn(Location l)
 	{

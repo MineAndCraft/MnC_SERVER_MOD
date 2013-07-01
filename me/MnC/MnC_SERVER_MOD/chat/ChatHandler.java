@@ -12,7 +12,6 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.*;
-import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 
 public class ChatHandler 
 {
@@ -33,86 +32,9 @@ public class ChatHandler
 		p.sendMessage(ChatColor.YELLOW + message);
 	}
 	
-	public static void InitializeDisplayName(Player p)
-	{		
-		if(GameMasterHandler.IsAdmin(p.getName()))
-		{
-			if(CommandsHandler.disabledGMs.contains(p.getName()))
-			{
-				if(plugin.vipManager.isVip(p.getName()))
-				{
-					ChatHandler.SetPrefix(p, "vip");
-					p.setPlayerListName(ChatColor.GOLD+p.getName());
-				}
-				else
-				{
-					p.setDisplayName(p.getName());
-					p.setPlayerListName(ChatColor.WHITE+p.getName());
-				}
-			}
-			else
-			{
-				ChatHandler.SetPrefix(p, "admin");
-				p.setPlayerListName(ChatColor.AQUA+p.getName());
-			}
-		}
-		else if(GameMasterHandler.IsAtleastGM(p.getName()))
-		{
-			if(CommandsHandler.disabledGMs.contains(p.getName()))
-			{
-				if(plugin.vipManager.isVip(p.getName()))
-				{
-					ChatHandler.SetPrefix(p, "vip");
-					p.setPlayerListName(ChatColor.GOLD+p.getName());
-				}
-				else
-				{
-					p.setDisplayName(p.getName());
-					p.setPlayerListName(ChatColor.WHITE+p.getName());
-				}
-			}
-			else
-			{
-				ChatHandler.SetPrefix(p, "gm");
-				p.setPlayerListName(ChatColor.GREEN+p.getName());
-			}
-		}
-		else if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.BUILDER))
-		{
-			ChatHandler.SetPrefix(p, "builder");
-			p.setPlayerListName(ChatColor.GOLD+p.getName());
-		}
-		else if(GameMasterHandler.IsAtleastRank(p.getName(), Rank.HELPER))
-		{
-			ChatHandler.SetPrefix(p, "helper");
-			p.setPlayerListName(ChatColor.BLUE+p.getName());
-		}
-		else if(plugin.vipManager.isVip(p.getName()))
-		{
-			ChatHandler.SetPrefix(p, "vip");
-			p.setPlayerListName(ChatColor.GOLD+p.getName());
-		}
-		else
-		{
-			PlayerProfession prof=null;
-			MinecraftPlayer pl = plugin.userManager.getUser(p.getName());
-			if(pl!=null) prof = pl.getProfession();
-			if(prof!=null && prof.GetLevel() < 10)
-			{
-				ChatHandler.SetPrefix(p, "new");
-				p.setPlayerListName(ChatColor.GRAY + p.getName());
-			}
-		}
-	}
-	
 	public static void SetPrefix(Player p, String prefix)
 	{
 		p.setDisplayName(ChatColor.RED + prefix.toUpperCase() + "'" + ChatColor.WHITE + p.getName());
-	}
-	
-	public static void SetDefault(Player p)
-	{
-		InitializeDisplayName(p);
 	}
 	
 	private static String _getPrefixString(Player player,String prefix)

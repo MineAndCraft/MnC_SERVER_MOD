@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 import me.MnC.MnC_SERVER_MOD.GameMaster;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
-import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 
 public abstract class GameMasterHandler 
@@ -32,7 +32,7 @@ public abstract class GameMasterHandler
 			p.setOp(true);
 		}
 		GameMasterHandler.gameMasters.add(new GameMaster(name, r));
-		ChatHandler.InitializeDisplayName(p);
+		UserManager.getInstance().getUser(name).initializeDisplayName();
 		SaveGMs();
 	}
 	public static void RemoveGMIng(String name)

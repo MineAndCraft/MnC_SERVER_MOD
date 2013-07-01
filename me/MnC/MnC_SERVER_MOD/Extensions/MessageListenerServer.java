@@ -7,7 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 
 public class MessageListenerServer extends Thread
@@ -92,6 +94,11 @@ public class MessageListenerServer extends Thread
 			catch(Exception e){}
 			try{
 				ChatHandler.InfoMsg(MnC_SERVER_MOD.getInstance().getServer().getPlayerExact(args[1]),String.format("Bylo vam prodlouzeno VIP o 30 dnu."));
+			}
+			catch(Exception e){}
+			try{
+				MinecraftPlayer pl = UserManager.getInstance().getUser(args[1]);
+				if(pl !=null) pl.initializeDisplayName();
 			}
 			catch(Exception e){}
 		}

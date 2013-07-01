@@ -43,6 +43,10 @@ public class MinecraftPlayer
 	private LinkedList<String> chat_lastTellRecipients = new LinkedList<String>();
 	
 	
+	// with colors
+	private ChatColor entityNameColor = ChatColor.WHITE;
+	private ChatColor chatColor = ChatColor.WHITE;
+	
 	public MinecraftPlayer(final Player player)
 	{
 		this.state = ConnectionState.CONNECTED;
@@ -94,6 +98,8 @@ public class MinecraftPlayer
 			this.id = 0;
 			this.name = player.getName();
 		}
+		
+		this.initializeDisplayName();
 	}
 
 	public int getId(){
@@ -230,10 +236,89 @@ public class MinecraftPlayer
 	 */
 	public String getEntityName()
 	{
-		return getNameColor()+this.name;
+		return this.entityNameColor + this.name;
+	}
+	
+	public ChatColor getChatColor()
+	{
+		return this.chatColor;
 	}
 
 	
+	/**
+	 * Initializes player's display name and player list name
+	 */
+	public void initializeDisplayName()
+	{
+		boolean isPlayerVip = MnC_SERVER_MOD.getInstance().vipManager.isVip(this.id);
+		
+		String prefix = null;
+		this.chatColor = ChatColor.WHITE;
+		this.entityNameColor = ChatColor.WHITE;
+		
+		if(GameMasterHandler.IsAtleastRank(this.name,Rank.GAMEMASTER))
+		{
+			if(CommandsHandler.disabledGMs.contains(name))
+			{
+				if(isPlayerVip)
+				{
+					prefix = "vip";
+					this.playerInstance.setPlayerListName(ChatColor.GOLD + this.name);
+					this.chatColor = ChatColor.GOLD;
+				}
+				else
+				{
+					this.playerInstance.setPlayerListName(this.name);
+				}
+			}
+			else
+			{
+				if(GameMasterHandler.IsAdmin(this.name))
+				{
+					prefix = "admin";
+					this.playerInstance.setPlayerListName(ChatColor.AQUA + this.name);
+					this.chatColor = ChatColor.AQUA;
+				}
+				else
+				{
+					prefix = "gm";
+					this.playerInstance.setPlayerListName(ChatColor.GREEN + this.name);
+					this.chatColor = ChatColor.GREEN;
+				}
+				this.entityNameColor = ChatColor.AQUA;
+			}
+		}
+		else if(GameMasterHandler.IsAtleastRank(this.name, Rank.BUILDER))
+		{
+			prefix = "builder";
+			this.playerInstance.setPlayerListName(ChatColor.GOLD + this.name);
+		}
+		else if(GameMasterHandler.IsAtleastRank(this.name, Rank.HELPER))
+		{
+			prefix = "helper";
+			this.playerInstance.setPlayerListName(ChatColor.BLUE + this.name);
+		}
+		else if(isPlayerVip)
+		{
+			prefix = "vip";
+			this.playerInstance.setPlayerListName(ChatColor.BLUE + this.name);
+			this.entityNameColor = ChatColor.GOLD;
+			this.chatColor = ChatColor.GOLD;
+		}
+		else
+		{
+			if(this.profession.GetLevel() < 10)
+			{
+				prefix = "new";
+				this.playerInstance.setPlayerListName(ChatColor.GRAY + this.name);
+			}
+		}
+		
+		if(prefix != null)
+			this.getPlayerInstance().setDisplayName(ChatColor.RED + prefix.toUpperCase() + "'" + ChatColor.WHITE + this.name);
+		else
+			this.getPlayerInstance().setDisplayName(this.name);
+	}
 	
 	
 	public void addLastTellRecipient(MinecraftPlayer target)
