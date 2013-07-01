@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.UserManager;
+import me.MnC.MnC_SERVER_MOD.chat.social.Blocklist;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,7 +50,7 @@ public class TellCommandExecutor implements CommandExecutor
 				ChatHandler.FailMsg(playerSender, "Tento hrac je offline!");
 				return false;
 			}
-			if(ChatHandler.isBlockedBy(playerSender.getName(),playerTarget.getName()))
+			if(Blocklist.isBlockedBy(playerSender.getName(),playerTarget.getName()))
 			{
 				sender.sendMessage("Tento hrac vas ma v blocklistu.");
 				return false;

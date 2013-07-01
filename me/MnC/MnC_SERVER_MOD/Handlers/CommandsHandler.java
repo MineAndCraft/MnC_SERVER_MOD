@@ -27,6 +27,7 @@ import me.MnC.MnC_SERVER_MOD.VipManager.VipUser;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
+import me.MnC.MnC_SERVER_MOD.chat.social.Blocklist;
 import me.MnC.MnC_SERVER_MOD.home.Home;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.util.DataPager;
@@ -2751,18 +2752,18 @@ public abstract class CommandsHandler
 		if(args.length == 1 && args[0].equalsIgnoreCase("list"))
 		{
 			sender.sendMessage("You have currently blocklisted these players:");
-			sender.sendMessage(String.format("  %s",ChatHandler.listBlocklistedFor(sender).toString()));
+			sender.sendMessage(String.format("  %s",Blocklist.listBlocklistedFor(sender).toString()));
 		}
 		else if(args.length == 1)
 		{
-			if(ChatHandler.addBlocklist(sender,args[0]))
+			if(Blocklist.addBlocklist(sender.getName(),args[0]))
 				sender.sendMessage("User blocklisted");
 			else
 				sender.sendMessage("Cannot blocklist user.");
 		}
 		else if(args.length == 2 && args[0].equalsIgnoreCase("remove"))
 		{
-			if(ChatHandler.removeBlocklist(sender,args[1]))
+			if(Blocklist.removeBlocklist(sender.getName(),args[1]))
 				sender.sendMessage("User no longer blocklisted");
 			else
 				sender.sendMessage("Cannot remove user from blocklist.");
