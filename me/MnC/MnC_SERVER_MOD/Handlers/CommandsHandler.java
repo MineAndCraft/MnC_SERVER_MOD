@@ -27,7 +27,6 @@ import me.MnC.MnC_SERVER_MOD.VipManager.VipUser;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
-import me.MnC.MnC_SERVER_MOD.chat.social.Blocklist;
 import me.MnC.MnC_SERVER_MOD.home.Home;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.util.DataPager;
@@ -2742,36 +2741,7 @@ public abstract class CommandsHandler
 	public static ArrayList<String> disabledGMs = new ArrayList<String>();
 	private static MnC_SERVER_MOD plugin;
 	
-	public static void CommandFriend(Player sender, String[] args)
-	{
-		sender.sendMessage("Friendlist does not work yet.");
-	}
-	
-	public static void CommandBlock(Player sender, String[] args)
-	{
-		if(args.length == 1 && args[0].equalsIgnoreCase("list"))
-		{
-			sender.sendMessage("You have currently blocklisted these players:");
-			sender.sendMessage(String.format("  %s",Blocklist.listBlocklistedFor(sender).toString()));
-		}
-		else if(args.length == 1)
-		{
-			if(Blocklist.addBlocklist(sender.getName(),args[0]))
-				sender.sendMessage("User blocklisted");
-			else
-				sender.sendMessage("Cannot blocklist user.");
-		}
-		else if(args.length == 2 && args[0].equalsIgnoreCase("remove"))
-		{
-			if(Blocklist.removeBlocklist(sender.getName(),args[1]))
-				sender.sendMessage("User no longer blocklisted");
-			else
-				sender.sendMessage("Cannot remove user from blocklist.");
-		}
-		else
-			sender.sendMessage("Usage:\n  /block <user>\n  /block list\n  /block remove <user>");
-	}
-	
+
 	public static void CommandAnnounce(CommandSender sender, String[] args)
 	{
 		StringBuilder sb = new StringBuilder();

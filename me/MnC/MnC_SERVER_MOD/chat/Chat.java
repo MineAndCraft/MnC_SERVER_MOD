@@ -222,5 +222,13 @@ public class Chat implements Listener
 		//r
 		PluginCommand r = plugin.getCommand("r");
 		r.setExecutor(new ReplyCommandExecutor());
+		
+		//block
+		PluginCommand block = plugin.getCommand("block");
+		block.setExecutor(new BlockCommandExecutor());
+		
+		//friend
+		PluginCommand friend = plugin.getCommand("friend");
+		friend.setExecutor(new FriendCommandExecutor());
 	}
 }

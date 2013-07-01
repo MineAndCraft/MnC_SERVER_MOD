@@ -293,14 +293,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 				 sender.sendMessage("Block coordinates:null");
 			 return true;
 		 }
-		 else if(cmd.getName().equalsIgnoreCase("friend") && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandFriend((Player)sender,args);
-		 }
-		 else if(cmd.getName().equalsIgnoreCase("block") && (sender instanceof Player))
-		 {
-			 CommandsHandler.CommandBlock((Player)sender,args);
-		 }
 		 else if(cmd.getName().equalsIgnoreCase("register"))
 		 {
 			 CommandsHandler.CommandRegister((Player)sender,args);
