@@ -34,7 +34,7 @@ public class BonusDrop
 		droplist.add(new BonusDrop(56, -1, 500, 500, 399, 0));	// diamond ore - beacon
 		
 		droplist.add(new BonusDrop(18, 0, 666, 300, 322, 0));	// leaves:0 - golden apple
-		droplist.add(new BonusDrop(18, 0, 666, 300, 322, 2));	// leaves:2 - golden apple
+		droplist.add(new BonusDrop(18, 2, 666, 300, 322, 0));	// leaves:2 - golden apple
 		
 		droplist.add(new BonusDrop(87, -1, 4000, 50, 372, 0));	// netherrack - nether wart seeds
 
