@@ -1378,11 +1378,39 @@ public abstract class CommandsHandler
 				sender.sendMessage("/gm world <world> - Teleports you to the selected world");
 				sender.sendMessage("/gm inventory <player> - Opens a player's inventory for you to inspect/edit");
 				sender.sendMessage("/gm time <world> <time> - Sets the time for selected world");
+				sender.sendMessage("/gm to <player> - Teleports you to a specified player");
+				sender.sendMessage("/gm back - Treturns you back to the position before your previous releport. (only works for \"to\" so far)");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
 			sender.sendMessage("/gm gmmode <name> -  Toggles gm mode for a certain player.");
 		}
+		else if(subCommand.equals("to"))
+		{
+			Player p = plugin.getServer().getPlayer(args[1]);
+			if (p != null)
+			{
+				String name = sender.getName();
+				backTeleport.put(name, sender.getLocation());
+				sender.teleport(p);
+				ChatHandler.SuccessMsg(sender, "You were teleported.");
+			}
+			else
+			{
+				ChatHandler.FailMsg(sender, "The player could not be found.");
+            }
+		}
+		else if(subCommand.equals("back"))
+		{
+			if (backTeleport.containsKey(sender.getName()))
+			{
+				sender.teleport((Location)backTeleport.get(sender.getName()));
+				ChatHandler.SuccessMsg(sender, "You were returned.");
+			}
+			else {
+				ChatHandler.FailMsg(sender, "You have not teleported yet.");
+			}
+		}	
 		else if (subCommand.matches("log"))
 		{
 			if(args.length==1)
