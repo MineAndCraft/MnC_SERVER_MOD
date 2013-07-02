@@ -1349,12 +1349,10 @@ public abstract class CommandsHandler
 				sender.sendMessage("/gm ip <name> - Shows an IP of a player");
 				sender.sendMessage("/gm setspawn - Sets a world spawn to GM's position");
 				sender.sendMessage("/gm credits - Credits sub-menu.");
-				sender.sendMessage("/gm setvip <name> <months>  -  Set VIP to certain player for (now + months)");
-				sender.sendMessage("/gm getvip <name>  -  Gets VIP expiration date");
+				sender.sendMessage("/gm vip - VIP management submenu");
 				sender.sendMessage("/gm genblock <typeID> <reltiveX> <relativeY> <relativeZ>  -  Spawns a blocks from block you point at.");
 				sender.sendMessage("/gm replace <typeID> <typeID2> <reltiveX> <relativeY> <relativeZ> - Replaces a blocks from block you point at.");
 				sender.sendMessage("/gm godmode <name>  -  Toggles immortality for a certain player.");
-				sender.sendMessage("/gm spectate  -  Spectation sub-menu.");
 				sender.sendMessage("/gm places - Places sub-menu.");
 				sender.sendMessage("/gm regions - Regions sub-menu.");
 				sender.sendMessage("/gm arena - Arenas sub-menu.");
@@ -1368,17 +1366,18 @@ public abstract class CommandsHandler
 			if(GameMasterHandler.IsAtleastGM(sender.getName()))
 			{
 				sender.sendMessage("/gm ban - Bans sub-menu.");
-				//sender.sendMessage("/gm invis <name>  -  Toggles invisibility for a certain player.");
 				sender.sendMessage("/gm mute - Mute sub-menu.");
 				sender.sendMessage("/gm kill <player> - Kills target player.");
 				sender.sendMessage("/gm on - Turn your GM status to on");
 				sender.sendMessage("/gm off - Turn your GM status to off");
 				sender.sendMessage("/gm bw - BasicWorld sub-menu");
-				sender.sendMessage("/gm home- Homes sub-menu.");
+				sender.sendMessage("/gm home - Homes sub-menu.");
 				sender.sendMessage("/gm cmd <cmd> <arg1>... - Perform a bukkit command.");
-				sender.sendMessage("/gm rsdebug - Toggles RedStone debug.");
 				sender.sendMessage("/gm speed - Speed sub-menu");
 				sender.sendMessage("/gm enderchest - Enderchest sub-menu.");
+				sender.sendMessage("/gm world <world> - Teleports you to the selected world");
+				sender.sendMessage("/gm inventory <player> - Opens a player's inventory for you to inspect/edit");
+				sender.sendMessage("/gm time <world> <time> - Sets the time for selected world");
 			}
 			sender.sendMessage("/gm log - Shows a log records for target block.(+saveall - saves unsaved progress)");
 			sender.sendMessage("/gm tp <x> <y> <z>  -  Teleports gm to specified coords.");
@@ -2079,7 +2078,7 @@ public abstract class CommandsHandler
 		}
 		else if (subCommand.matches("save-all") && GameMasterHandler.IsAdmin(sender.getName()))
 		{
-			AutoSaver.SaveWorldStructures();
+			AutoSaver.SaveAll();
 			ChatHandler.SuccessMsg(sender, "Successfully saved!");
 		}
 		else if (subCommand.matches("book") && GameMasterHandler.IsAdmin(sender.getName()))
