@@ -301,7 +301,7 @@ public class MinecraftPlayer
 		else if(isPlayerVip)
 		{
 			prefix = "vip";
-			this.playerInstance.setPlayerListName(ChatColor.BLUE + this.name);
+			this.playerInstance.setPlayerListName(ChatColor.GOLD + this.name);
 			this.entityNameColor = ChatColor.GOLD;
 			this.chatColor = ChatColor.GOLD;
 		}
