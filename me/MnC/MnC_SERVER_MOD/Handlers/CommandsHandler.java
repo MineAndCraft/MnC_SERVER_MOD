@@ -109,7 +109,6 @@ public abstract class CommandsHandler
 		sender.sendMessage(ChatColor.AQUA + " /lock " + ChatColor.WHITE + "- Zamkne block.");
 		sender.sendMessage(ChatColor.AQUA + " /unlock  " + ChatColor.WHITE + "- Odemkne block.");
 		sender.sendMessage(ChatColor.AQUA + " /who  " + ChatColor.WHITE + "-  Seznam online hracu.");
-		sender.sendMessage(ChatColor.AQUA + " /password " + ChatColor.GRAY + "<stare_heslo> <nove_heslo>  " + ChatColor.WHITE + "-  Zmeni heslo.");
 		sender.sendMessage(ChatColor.AQUA + " /rpg  " + ChatColor.WHITE + "-  Informace o Vasem RPG.");
 		sender.sendMessage(ChatColor.AQUA + " /credits " + ChatColor.WHITE + "- Menu ekonomiky.");
 		sender.sendMessage(ChatColor.AQUA + " /arena  " + ChatColor.WHITE + "-  Menu areny.");
@@ -117,7 +116,15 @@ public abstract class CommandsHandler
 		sender.sendMessage(ChatColor.AQUA + " /shop  " + ChatColor.WHITE + "-  Menu Obchodu.");
 		sender.sendMessage(ChatColor.AQUA + " /vip  " + ChatColor.WHITE + "-  VIP menu.");
 		sender.sendMessage(ChatColor.AQUA + " /places " + ChatColor.WHITE + "- Menu mist, kam se da teleportovat.");
+		sender.sendMessage(ChatColor.AQUA + " /pp " + ChatColor.WHITE + "- Alias pro /places port");
+		sender.sendMessage(ChatColor.AQUA + " /home " + ChatColor.WHITE + "- Teleportuje vas na home");
+		sender.sendMessage(ChatColor.AQUA + " /home set " + ChatColor.WHITE + "- Nastavi home na aktualni pozici");
+		sender.sendMessage(ChatColor.AQUA + " /getcoords " + ChatColor.WHITE + "- Zobrazi souradnice o bloku na ktery ukazujete");
+		sender.sendMessage(ChatColor.AQUA + " /logout " + ChatColor.WHITE + "- Odpoji vas ze serveru");
+		sender.sendMessage(ChatColor.AQUA + " /y " + ChatColor.WHITE + "- Povoli teleport VIP hrace");
+		sender.sendMessage(ChatColor.AQUA + " /block <hrac>" + ChatColor.WHITE + "- Prida hrace do blocklistu - hrac vam nebude moci posilat soukrome zpravy");
 		sender.sendMessage(ChatColor.AQUA + " /r " + ChatColor.GRAY + "<message> " + ChatColor.WHITE + "-  Odpoved na whisper.");
+		sender.sendMessage(ChatColor.AQUA + " /help " + ChatColor.WHITE + "- Zobrazi tuto napovedu");
 		sender.sendMessage("******************************");
 		sender.sendMessage("Created by MineAndCraft team 2011-2013");
 		sender.sendMessage("******************************");
@@ -2437,7 +2444,7 @@ public abstract class CommandsHandler
 				sender.teleport(loc);
 			}
 		}
-			
+	
 	}
 	
 	public static void CommandGMChat(CommandSender sender, String[] args)
