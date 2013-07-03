@@ -17,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +27,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener
 {
@@ -131,7 +133,12 @@ public class BlockListener implements Listener
 			player.getProfession().GainExperience(4);
 		}
 		
-		BonusDrop.dropBonusDrops(player.getProfession(), event.getBlock());
+		ItemStack itemInHand = event.getPlayer().getItemInHand();
+		if(!(itemInHand != null && itemInHand.getItemMeta() !=null && itemInHand.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)))
+		{
+			BonusDrop.dropBonusDrops(player.getProfession(), event.getBlock());
+		}
+		
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
