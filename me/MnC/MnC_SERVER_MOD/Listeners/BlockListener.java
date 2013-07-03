@@ -113,11 +113,6 @@ public class BlockListener implements Listener
 			}
 		}
 		
-		if(!(block.getTypeId() == 50 || block.getTypeId() == 78 ))
-		{
-			prof.GainExperience(4);
-		}
-		
 		//TODO debug message
 		if (plugin.debug)
 		{
@@ -128,7 +123,14 @@ public class BlockListener implements Listener
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreakMonitor(BlockBreakEvent event)
 	{
+		Block block = event.getBlock();
 		MinecraftPlayer player = plugin.userManager.getUser(event.getPlayer().getName());
+		
+		if(!(block.getTypeId() == 50 || block.getTypeId() == 78 ))
+		{
+			player.getProfession().GainExperience(4);
+		}
+		
 		BonusDrop.dropBonusDrops(player.getProfession(), event.getBlock());
 	}
 	
