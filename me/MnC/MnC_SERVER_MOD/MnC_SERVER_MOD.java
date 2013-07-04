@@ -290,9 +290,9 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		 {
 			 Location l=((Player)sender).getTargetBlock(null, 50).getLocation();
 			 if(l!=null)
-				 sender.sendMessage(String.format("Block coordinates: %d=x:%d,y:%d,z:%d", l.getBlock().getTypeId(),l.getBlockX(),l.getBlockY(),l.getBlockZ()));
+				 sender.sendMessage(String.format("Target Coordinates: %d %s[%d,%d,%d]", l.getBlock().getTypeId(),l.getWorld().getName(),l.getBlockX(),l.getBlockY(),l.getBlockZ()));
 			 else
-				 sender.sendMessage("Block coordinates:null");
+				 sender.sendMessage("Target not found. (Aren't you too far?)");
 			 return true;
 		 }
 		 else if(cmd.getName().equalsIgnoreCase("register"))
