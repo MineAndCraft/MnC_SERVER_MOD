@@ -69,7 +69,9 @@ public class ManorManager
 		try(PreparedStatement stat = DatabaseManager.getConnection().prepareStatement("SELECT id FROM mnc_manors WHERE LOWER(name) = ? LIMIT 1");)
 		{
 			stat.setString(1, name.toLowerCase());
-			manorId = stat.executeQuery().getInt("id");
+			ResultSet rset = stat.executeQuery();
+			rset.next();
+			manorId = rset.getInt("id");
 		}
 		catch(Exception e)
 		{
