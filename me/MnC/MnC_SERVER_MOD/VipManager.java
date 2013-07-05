@@ -11,7 +11,6 @@ import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class VipManager
 {
@@ -125,24 +124,7 @@ public class VipManager
 		}
 		return false;
 	}
-	
-	public synchronized boolean addVipItem(Player player,String item)
-	{
-		String[] args = item.split(":");
-		if(args.length > 2)
-		{
-			return false;
-		}
-		int itemId = Integer.valueOf(args[0]);
-		short itemType = (args.length==1)? 0 : Short.valueOf(args[1]);
-		if(VipItems.IsVipItem(itemId))
-		{
-			player.getInventory().addItem(new ItemStack(itemId, 64, itemType));
-			return true;
-		}
-		return false;
-	}
-	
+
 	public Location GetLastTeleportLoc(String name)
 	{
 		return this.teleportLocations.get(name);
@@ -188,7 +170,7 @@ public class VipManager
 	
 	public enum VipItems
 	{
-		SAND(12), COBBLESTONE(4), WOODEN_PLANKS(5), STONE(1), DIRT(3), SANDSTONE(24);
+		SAND(12), COBBLESTONE(4), WOOD(17), WOODEN_PLANKS(5), STONE(1), DIRT(3), SANDSTONE(24);
 		private VipItems(int id)
 		{
 			this.id = id;
