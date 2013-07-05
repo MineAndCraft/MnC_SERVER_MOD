@@ -377,7 +377,11 @@ public abstract class CommandsHandler
 				}
 				else if ((args.length == 4 || args.length == 3) && args[1].equalsIgnoreCase("add"))
 				{
-					int itemID = Integer.parseInt(args[2]);
+					String[] id_split = args[2].split(":");
+					int itemID = Integer.parseInt(id_split[0]);
+					short itemData = 0;
+					if(id_split.length > 1)
+						itemData = Short.parseShort(id_split[1]);
 					if(VipItems.IsVipItem(itemID))
 					{
 						int numberOfStacks = 1;
@@ -386,7 +390,7 @@ public abstract class CommandsHandler
 						int i = 0;
 						while(i<numberOfStacks)
 						{
-							sender.getInventory().addItem(new ItemStack(itemID, 64));
+							sender.getInventory().addItem(new ItemStack(itemID, 64, itemData));
 							i++;
 						}
 						ChatHandler.SuccessMsg(sender, "Itemy byly pridany!");
