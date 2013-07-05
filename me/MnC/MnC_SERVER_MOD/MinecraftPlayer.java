@@ -12,6 +12,7 @@ import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.util.Util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class MinecraftPlayer
@@ -46,6 +47,9 @@ public class MinecraftPlayer
 	// with colors
 	private ChatColor entityNameColor = ChatColor.WHITE;
 	private ChatColor chatColor = ChatColor.WHITE;
+	
+	
+	private Location previousKnownLocation = null;
 	
 	public MinecraftPlayer(final Player player)
 	{
@@ -100,6 +104,8 @@ public class MinecraftPlayer
 		}
 		
 		this.initializeDisplayName();
+		
+		this.previousKnownLocation = player.getLocation();
 	}
 
 	public int getId(){
@@ -307,7 +313,7 @@ public class MinecraftPlayer
 		}
 		else
 		{
-			if(this.profession.GetLevel() < 10)
+			if(this.profession != null && this.profession.GetLevel() < 10)
 			{
 				prefix = "new";
 				this.playerInstance.setPlayerListName(ChatColor.GRAY + this.name);
@@ -357,5 +363,17 @@ public class MinecraftPlayer
 		if(chat_lastTellSenders.size() > 0)
 			return chat_lastTellSenders.getFirst();
 		return null;
+	}
+
+	
+	public Location getPreviousKnownLocation()
+	{
+		return previousKnownLocation;
+	}
+
+	
+	public void updatePosition()
+	{
+		this.previousKnownLocation = this.playerInstance.getLocation();
 	}
 }

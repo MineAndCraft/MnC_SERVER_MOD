@@ -26,6 +26,7 @@ import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.HomeCommandExecutor;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.locker.BlockLocker;
+import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
 import me.MnC.MnC_SERVER_MOD.optimization.AntiLag;
 //import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
@@ -111,6 +112,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		
 		chat.onEnable();		
 
+		PositionCheck.enable();
+		
 		CommandsHandler.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		ServerRegionHandler.SetPlugin(this);
@@ -121,6 +124,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		HomesHandler.setPlugin(this);
 
 		antilag = new AntiLag();
+		
+		new ManorManager();
 		
 		if (getServer().getWorld("arena") == null)
 		{

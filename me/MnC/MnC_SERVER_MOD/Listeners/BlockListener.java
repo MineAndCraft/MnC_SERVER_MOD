@@ -1,17 +1,19 @@
 package me.MnC.MnC_SERVER_MOD.Listeners;
 
+import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.GugaEventWorld;
-import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
+import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.ServerRegion;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
-import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.ServerRegionHandler;
-import me.MnC.MnC_SERVER_MOD.rpg.BonusDrop;
-import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
+import me.MnC.MnC_SERVER_MOD.manor.Manor;
+import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
+import me.MnC.MnC_SERVER_MOD.rpg.BonusDrop;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -104,6 +106,16 @@ public class BlockListener implements Listener
 			event.setCancelled(true);
 			ChatHandler.FailMsg(p, "Nemuzete kopat blocky na pozemku jineho hrace.");
 		}
+		
+		// Manors
+		Manor manor = ManorManager.getInstance().getManorByLocation(event.getBlock().getLocation());
+		if(manor != null && !manor.canBlockPlaceBreak(player))
+		{
+			event.setCancelled(true);
+			player.getPlayerInstance().sendMessage("This is manor "+manor.getName()+". You are not allowed to break blocks here.");
+			return;
+		}
+		
 		
 		PlayerProfession prof = player.getProfession();
 		int level = prof.GetLevel();	
@@ -204,6 +216,15 @@ public class BlockListener implements Listener
 		{
 			event.setCancelled(true);
 			ChatHandler.FailMsg(p, "Nemuzete pokladat blocky na pozemku jineho hrace.");
+		}
+		
+		// Manors
+		Manor manor = ManorManager.getInstance().getManorByLocation(event.getBlock().getLocation());
+		if(manor != null && !manor.canBlockPlaceBreak(player))
+		{
+			event.setCancelled(true);
+			player.getPlayerInstance().sendMessage("This is manor "+manor.getName()+". You are not allowed to place blocks here.");
+			return;
 		}
 		
 		Block block = event.getBlockPlaced();

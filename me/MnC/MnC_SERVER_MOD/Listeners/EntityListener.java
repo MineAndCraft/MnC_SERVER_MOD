@@ -8,12 +8,15 @@ import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
+import me.MnC.MnC_SERVER_MOD.manor.Manor;
+import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
 import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
@@ -28,6 +31,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -45,6 +49,15 @@ public class EntityListener implements Listener
 		if((event.getEntity() instanceof Wither))
 		{
 			if(!(event.getEntity().getWorld().getName().matches("world_nether")))
+			{
+				event.setCancelled(true);
+			}
+		}
+		
+		if(event.getSpawnReason() == SpawnReason.NATURAL && event.getEntity() instanceof Monster)
+		{
+			Manor manor = ManorManager.getInstance().getManorByLocation(event.getEntity().getLocation());
+			if(manor != null && !manor.getFlag("monsters"))
 			{
 				event.setCancelled(true);
 			}
@@ -193,6 +206,13 @@ public class EntityListener implements Listener
 			event.setCancelled(true);
 			return;
 		}
+		
+		Manor manor = ManorManager.getInstance().getManorByLocation(event.getEntity().getLocation());
+		if(manor != null && !manor.getFlag("tnt"))
+		{
+			event.setCancelled(true);
+		}
+		
 		List<Block> blockList = event.blockList();
 
 		Iterator<Block> iter = event.blockList().iterator();

@@ -68,7 +68,11 @@ commands:
     friend:
         description: Friendlist commands
     block:
-        description: Blocklist commands
+        description: Adds a player into blocklsit
+    blocklist:
+        description: Shows the list of blocked players
+    unblock:
+        description: Removes player from blocklist  
     gc:
         description: Writes into GM chat
     announce:
@@ -79,3 +83,5 @@ commands:
         description: Economy command for copying books
     jailinfo:
         description: Lets the player know when his/her jail expires
+    manor:
+        description: Manor commands

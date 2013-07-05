@@ -14,17 +14,20 @@ import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.GugaEvent;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.events.PlayerPositionCheckEvent;
 import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
-import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
-import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfessionLevelUpEvent;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 import me.MnC.MnC_SERVER_MOD.home.Home;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
+import me.MnC.MnC_SERVER_MOD.manor.Manor;
+import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfessionLevelUpEvent;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 
@@ -498,16 +501,23 @@ public class PlayerListener implements Listener
 			}
 		}
 	}
-	
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
-	{
+	{		
+		MinecraftPlayer player = UserManager.getInstance().getUser(event.getPlayer().getName());
+		if(!player.isAuthenticated())
+		{
+			event.setCancelled(true);
+			return;
+		}
+		
+		
 		if(event.getBucket() == Material.LAVA_BUCKET)
 		{
 			int level = 0;
 			try{
-				level = UserManager.getInstance().getUser(event.getPlayer().getName()).getProfession().GetLevel();
+				level = player.getProfession().GetLevel();
 			}catch(Exception e){}
 			if (level<50)
 			{
@@ -515,6 +525,14 @@ public class PlayerListener implements Listener
 				event.setCancelled(true);
 				return;
 			}
+		}
+		
+		Manor manor = ManorManager.getInstance().getManorByLocation(event.getBlockClicked().getLocation());
+		if(manor != null && !manor.canUseBucket(player))
+		{
+			player.getPlayerInstance().sendMessage("You cannot use bucket here. This is "+manor.getName()+" manor.");
+			event.setCancelled(true);
+			return;
 		}
 	}
 	
@@ -625,6 +643,25 @@ public class PlayerListener implements Listener
 		}
 	}
 	
+	public void onPlayerPositionCheck(PlayerPositionCheckEvent event)
+	{
+		MinecraftPlayer player = event.getPlayer();
+		Manor previous = ManorManager.getInstance().getManorByLocation(player.getPreviousKnownLocation());
+		Manor current = ManorManager.getInstance().getManorByLocation(player.getPlayerInstance().getLocation());
+		
+		if(!((previous == null && current == null) || (previous != null && previous.equals(current))))
+		{
+		
+			if(previous != null)
+			{
+				player.getPlayerInstance().sendMessage(ChatColor.GRAY + "You have left the "+previous.getName()+" manor.");
+			}
+			if(current != null)
+			{
+				player.getPlayerInstance().sendMessage(ChatColor.GRAY + "You have entered the "+current.getName()+" manor.");
+			}
+		}
+	}
 	
 	public static void LoadCreativePlayers()
 	{

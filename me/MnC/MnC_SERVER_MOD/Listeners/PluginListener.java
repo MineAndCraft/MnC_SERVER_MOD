@@ -2,6 +2,7 @@ package me.MnC.MnC_SERVER_MOD.Listeners;
 
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.Estates.EstatesDynMapHandler;
+import me.MnC.MnC_SERVER_MOD.manor.ManorDynMapHandler;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,6 +25,8 @@ public class PluginListener implements Listener
 		if(event.getPlugin().getName().equals("dynmap"))
 		{
 			EstatesDynMapHandler.setup();
+			
+			ManorDynMapHandler.setup();
 		}
 	}
 	
@@ -33,6 +36,8 @@ public class PluginListener implements Listener
 		if(event.getPlugin().getName().equals("dynmap"))
 		{
 			EstatesDynMapHandler.disable();
+			
+			ManorDynMapHandler.disable();
 		}
 	}
 }

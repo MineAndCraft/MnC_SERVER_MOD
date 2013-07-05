@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import me.MnC.MnC_SERVER_MOD.AutoSaver;
 import me.MnC.MnC_SERVER_MOD.Config;
@@ -21,12 +22,15 @@ import me.MnC.MnC_SERVER_MOD.GugaArena.ArenaTier;
 import me.MnC.MnC_SERVER_MOD.Listeners.PlayerListener;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer.ConnectionState;
 import me.MnC.MnC_SERVER_MOD.PlacesManager.Place;
+import me.MnC.MnC_SERVER_MOD.manor.Manor;
+import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
 import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.VipManager.VipItems;
 import me.MnC.MnC_SERVER_MOD.VipManager.VipUser;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
+import me.MnC.MnC_SERVER_MOD.data.Point2D;
 import me.MnC.MnC_SERVER_MOD.home.Home;
 import me.MnC.MnC_SERVER_MOD.home.HomesHandler;
 import me.MnC.MnC_SERVER_MOD.util.DataPager;
@@ -42,6 +46,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
+import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.regions.Polygonal2DRegion;
 
 public abstract class CommandsHandler 
 {
@@ -2444,7 +2455,100 @@ public abstract class CommandsHandler
 				sender.teleport(loc);
 			}
 		}
-	
+		else if (subCommand.equals("manor") && GameMasterHandler.IsAdmin(sender.getName()))
+		{
+			String subSubCommand = (args.length > 1) ? args[1] : "";
+			if(args.length == 1)
+			{
+				sender.sendMessage(new String[]{
+					"/gm manor create <name>",
+					"/gm manor list",
+					"/gm manor changelord <name> <new lord>",
+				});
+			}
+			else if (subSubCommand.equals("list"))
+			{
+				sender.sendMessage("There are these manors:");
+				for(Manor manor : ManorManager.getInstance().getManorList())
+				{
+					sender.sendMessage("- "+manor.getName()+" lord: "+manor.getLordId());
+				}
+			}
+			else if (subSubCommand.equals("create") && args.length == 3)
+			{
+				WorldEditPlugin we = null;
+				try {
+					we = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
+				} catch(Exception e){}
+				if(we == null)
+				{
+					sender.sendMessage("WorldEdit wasn't found.");
+					return;
+				}
+				
+				Selection sel = we.getSelection(sender);
+				if(sel == null)
+				{
+					sender.sendMessage("You have no selection");
+					return;
+				}
+				
+				if(!(sel instanceof Polygonal2DSelection))
+				{
+					sender.sendMessage("Your selection has to be polygonal");
+					return;
+				}
+				
+				List<BlockVector2D> selectionPoints = null;
+				try {
+					selectionPoints = ((Polygonal2DRegion)((Polygonal2DSelection) sel).getRegionSelector().getRegion()).getPoints();
+				} catch (IncompleteRegionException e) {
+					sender.sendMessage("Your region is not complete.");
+					return;
+				}
+				Point2D[] borders = new Point2D[selectionPoints.size()];
+				int i = 0;
+				for(BlockVector2D bv : selectionPoints)
+				{
+					borders[i] = new Point2D(bv.getBlockX(),bv.getBlockZ());
+					i++;
+				}
+				
+				ManorManager.getInstance().createManor(args[2],borders);
+				sender.sendMessage("Manor created");
+			}
+			else if (subSubCommand.equals("changelord") && args.length == 4)
+			{
+				Manor manor = ManorManager.getInstance().getManorByName(args[2]);
+				if(manor == null)
+				{
+					sender.sendMessage("This manor desn't exist");
+					return;
+				}
+				int lordId = UserManager.getInstance().getUserId(args[3]);
+				manor.setLordId(lordId);
+				sender.sendMessage("Lord changed");
+			}
+			else if (subSubCommand.equals("setspawn") && args.length == 3)
+			{
+				Manor manor = ManorManager.getInstance().getManorByName(args[2]);
+				if(manor == null)
+				{
+					sender.sendMessage("This manor desn't exist");
+					return;
+				}
+				manor.setSpawnLocation(sender.getLocation());
+				sender.sendMessage("Manor spawn for manor "+manor.getName()+" was set.");				
+			}
+			else if (subSubCommand.equals("reload") && args.length == 3)
+			{
+				if(ManorManager.getInstance().reloadManor(args[2]))
+					sender.sendMessage("Manor reloaded");
+				else
+					sender.sendMessage("Failed to reload manor");
+			}
+		}
+
 	}
 	
 	public static void CommandGMChat(CommandSender sender, String[] args)
