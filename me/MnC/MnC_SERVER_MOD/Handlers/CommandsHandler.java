@@ -380,15 +380,32 @@ public abstract class CommandsHandler
 				else if ((args.length == 4 || args.length == 3) && args[1].equalsIgnoreCase("add"))
 				{
 					String[] id_split = args[2].split(":");
-					int itemID = Integer.parseInt(id_split[0]);
+					int itemID = 0;
+					try{
+						itemID = Integer.parseInt(id_split[0]);
+					}catch(NumberFormatException e){}
+					if(itemID == 0)
+					{
+						sender.sendMessage("ID blocku neni platne");
+						return;
+					}
+					
 					short itemData = 0;
 					if(id_split.length > 1)
-						itemData = Short.parseShort(id_split[1]);
+					{
+						try{
+							itemData = Short.parseShort(id_split[1]);
+						}catch(NumberFormatException e){}
+					}
 					if(VipItems.IsVipItem(itemID))
 					{
 						int numberOfStacks = 1;
 						if(args.length == 4)
-							numberOfStacks = Integer.parseInt(args[3]);
+						{
+							try{
+								numberOfStacks = Integer.parseInt(args[3]);
+							}catch(NumberFormatException e){}
+						}
 						int i = 0;
 						while(i<numberOfStacks)
 						{
@@ -435,7 +452,10 @@ public abstract class CommandsHandler
 			{
 				if(args.length == 2)
 				{
-					int blockId = Integer.parseInt(args[1]);
+					int blockId = 0;
+					try{
+						blockId = Integer.parseInt(args[1]);
+					}catch(NumberFormatException e){}
 					if(blockId == 0)
 					{
 						sender.sendMessage("Invalid block id");
