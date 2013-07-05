@@ -41,6 +41,7 @@ import me.MnC.MnC_SERVER_MOD.util.Enchantments.EnchantmentResult;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -212,6 +213,7 @@ public abstract class CommandsHandler
 			sender.sendMessage("/vip item  -  Podprikaz itemu.");
 			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
 			sender.sendMessage("/vip fly - Podprikaz letani.");
+			sender.sendMessage("/vip clearinventory <item id>  -  Odstrani z vaseho inventare vsechny tyto itemy.");
 		}
 		else
 		{
@@ -427,6 +429,38 @@ public abstract class CommandsHandler
 					sender.sendMessage("VIP FLY MENU:");
 					sender.sendMessage("/vip fly on - Zapne letani.");
 					sender.sendMessage("/vip fly off - Vypne letani.");
+				}
+			}
+			else if(subCommand.equals("clearinventory"))
+			{
+				if(args.length == 2)
+				{
+					int blockId = Integer.parseInt(args[1]);
+					if(blockId == 0)
+					{
+						sender.sendMessage("Invalid block id");
+						return;
+					}
+					
+					int totalClearedCount = 0;
+					ItemStack[] inventoryContents = sender.getInventory().getContents();
+					for(int i=0; i<inventoryContents.length; i++)
+					{
+						if(inventoryContents[i]!=null)
+						{
+							if(inventoryContents[i].getTypeId() == blockId)
+							{
+								totalClearedCount += inventoryContents[i].getAmount();
+								inventoryContents[i] = null;
+							}
+						}
+					}
+					sender.getInventory().setContents(inventoryContents);
+					ChatHandler.SuccessMsg(sender,"Total of " + totalClearedCount + " " + Material.getMaterial(blockId).toString() + " items cleared");
+				}
+				else
+				{
+					sender.sendMessage("Usage: /vip clearinventory <item id>");
 				}
 			}
 		}
