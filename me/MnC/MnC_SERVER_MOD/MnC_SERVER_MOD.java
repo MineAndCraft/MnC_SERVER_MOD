@@ -33,6 +33,7 @@ import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
@@ -143,6 +144,11 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		{
 			getServer().createWorld(WorldCreator.name("world_mine").environment(Environment.NORMAL));
 		}
+		if(getServer().getWorld("world_build")==null)
+		{
+			World world_build =getServer().createWorld(WorldCreator.name("world_build").environment(Environment.NORMAL));
+			world_build.setSpawnFlags(false, false);
+		}
 		
 		arena.LoadArenas();
 		arena.LoadPvpStats();
@@ -159,8 +165,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		getServer().getWorld("world_mine").setFullTime(4000);
 		getServer().getWorld("world_mine").setPVP(false);
 		getServer().getWorld("world_mine").setSpawnFlags(false, false);
-		getServer().getWorld("survival_games").setPVP(true);
-		getServer().getWorld("survival_games").setSpawnFlags(false, false);
 		scheduler = getServer().getScheduler();
 		loadVIPCodes();
 		loadCreditsCodes();
