@@ -143,10 +143,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		{
 			getServer().createWorld(WorldCreator.name("world_mine").environment(Environment.NORMAL));
 		}
-		if(getServer().getWorld("survival_games")==null)
-		{
-			getServer().createWorld(WorldCreator.name("survival_games").environment(Environment.NORMAL));
-		}
+		
 		arena.LoadArenas();
 		arena.LoadPvpStats();
 		getServer().getWorld("arena").setPVP(true);
