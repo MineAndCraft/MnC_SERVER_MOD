@@ -283,14 +283,13 @@ public class MinecraftPlayer
 				{
 					prefix = "admin";
 					this.playerInstance.setPlayerListName(ChatColor.AQUA + this.name);
-					this.chatColor = ChatColor.AQUA;
 				}
 				else
 				{
 					prefix = "gm";
 					this.playerInstance.setPlayerListName(ChatColor.GREEN + this.name);
-					this.chatColor = ChatColor.GREEN;
 				}
+				this.chatColor = ChatColor.AQUA;
 				this.entityNameColor = ChatColor.AQUA;
 			}
 		}
@@ -298,11 +297,13 @@ public class MinecraftPlayer
 		{
 			prefix = "builder";
 			this.playerInstance.setPlayerListName(ChatColor.GOLD + this.name);
+			this.chatColor = ChatColor.GOLD;
 		}
 		else if(GameMasterHandler.IsAtleastRank(this.name, Rank.HELPER))
 		{
 			prefix = "helper";
 			this.playerInstance.setPlayerListName(ChatColor.BLUE + this.name);
+			this.chatColor = ChatColor.GOLD;
 		}
 		else if(isPlayerVip)
 		{
