@@ -145,8 +145,7 @@ public abstract class CommandsHandler
 	public static void CommandConfirm(Player sender, String args[])
 	{
 		Player p = vipTeleports.get(sender);
-		VipUser vip = plugin.vipManager.getVip(p.getName());
-		if (p != null && vip != null)
+		if (p != null)
 		{
 			if (GugaEvent.ContainsPlayer(p.getName()))
 			{
