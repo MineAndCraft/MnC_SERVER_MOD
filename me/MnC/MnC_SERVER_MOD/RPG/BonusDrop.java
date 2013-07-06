@@ -56,6 +56,7 @@ public class BonusDrop
 	{
 		LinkedList<ItemStack> drops = new LinkedList<ItemStack>();
 		
+		int chance = Rnd.get(MAX_CHANCE);
 		for(BonusDrop drop : droplist)
 		{
 			if(drop.getLevelLimit() > profession.GetLevel())
@@ -67,8 +68,10 @@ public class BonusDrop
 			if(drop.getBlockData()!= -1 && drop.getBlockData() != block.getData())
 				continue;
 			
-			if(drop.getChance() * profession.getDropChanceMultiplier() > Rnd.get(MAX_CHANCE))
+			if(drop.getChance() * profession.getDropChanceMultiplier() > chance)
+			{
 				drops.add(drop.toItemStack());
+			}
 		}
 		
 		for(ItemStack drop : drops)
