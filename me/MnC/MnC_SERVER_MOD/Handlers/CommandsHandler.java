@@ -244,11 +244,6 @@ public abstract class CommandsHandler
 							ChatHandler.FailMsg(sender,"Tento hrac neni online!");
 							return;
 						}
-						if (p.getLocation().getWorld().getName().matches("world_basic"))
-						{
-							ChatHandler.FailMsg(sender, "Tento hrac je ve svete pro novacky!");
-							return;
-						}
 						if (p.getLocation().getWorld().getName().matches("arena"))
 						{
 							ChatHandler.FailMsg(sender, "Tento hrac je v arene!");
@@ -257,6 +252,11 @@ public abstract class CommandsHandler
 						if (p.getLocation().getWorld().getName().matches("world_event"))
 						{
 							ChatHandler.FailMsg(sender, "Tento hrac je v EventWorldu!");
+							return;
+						}
+						if (p.getLocation().getWorld().getName().matches("world_build"))
+						{
+							ChatHandler.FailMsg(sender, "Tento hrac je v BuildWorldu!");
 							return;
 						}
 						ChatHandler.InfoMsg(plugin.getServer().getPlayer(arg2), "Hrac " + sender.getName() + " se na vas chce teleportovat, pro prijeti napiste prikaz /y");
