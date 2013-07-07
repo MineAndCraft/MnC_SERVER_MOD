@@ -1992,9 +1992,9 @@ public abstract class CommandsHandler
 						return;
 					}
 					plugin.currencyManager.addCredits(name, amount);
-					Player dest = plugin.getServer().getPlayer(name);
-					if (dest != null)
-						dest.sendMessage("You received +" + amount + " credits!");
+					Player p = plugin.getServer().getPlayerExact(name);
+					if (p != null)
+						p.sendMessage("You received +" + amount + " credits!");
 					sender.sendMessage("You added +" + amount + " credits to " + name);
 				}
 				else if (arg1.matches("remove"))
@@ -2012,8 +2012,8 @@ public abstract class CommandsHandler
 					if(plugin.currencyManager.addCredits(name, -amount))
 					{
 						sender.sendMessage("You removed +" + amount + " credits from " + name);
-						Player p = null;
-						if((p = plugin.getServer().getPlayerExact(name))!=null)
+						Player p = plugin.getServer().getPlayerExact(name);
+						if(p != null)
 							p.sendMessage("You lost +" + amount + " credits!");
 					}
 					else
