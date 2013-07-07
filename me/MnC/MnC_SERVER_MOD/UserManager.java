@@ -76,7 +76,7 @@ public class UserManager
 				public void run()
 				{
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(700);
 					} catch (InterruptedException e) {}
 					int remainingTriesBeforeKick = 6;
 					while(MnC_SERVER_MOD.is_enabled() && remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
@@ -102,7 +102,7 @@ public class UserManager
 				public void run()
 				{
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(700);
 					} catch (InterruptedException e) {}
 					int remainingTriesBeforeKick = 24;
 					while(MnC_SERVER_MOD.is_enabled() && remainingTriesBeforeKick > 0 && !userIsLogged(playerName))
