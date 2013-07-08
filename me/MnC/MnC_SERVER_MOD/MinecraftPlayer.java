@@ -297,12 +297,14 @@ public class MinecraftPlayer
 		{
 			prefix = "builder";
 			this.playerInstance.setPlayerListName(ChatColor.GOLD + this.name);
+			this.entityNameColor = ChatColor.GOLD;
 			this.chatColor = ChatColor.GOLD;
 		}
 		else if(GameMasterHandler.IsAtleastRank(this.name, Rank.HELPER))
 		{
 			prefix = "helper";
 			this.playerInstance.setPlayerListName(ChatColor.BLUE + this.name);
+			this.entityNameColor = ChatColor.GREEN;
 			this.chatColor = ChatColor.GOLD;
 		}
 		else if(isPlayerVip)
