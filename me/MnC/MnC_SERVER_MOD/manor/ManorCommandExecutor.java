@@ -62,8 +62,15 @@ public class ManorCommandExecutor implements CommandExecutor
 						player.getPlayerInstance().sendMessage("There is no such manor");
 					else
 					{
-						player.getPlayerInstance().teleport(manor.getSpawnLocation());
-						player.getPlayerInstance().sendMessage("You have been teleported to "+manor.getName());
+						if(manor.getSpawnLocation() == null)
+						{
+							player.getPlayerInstance().sendMessage("This manor has no teleport");	
+						}
+						else
+						{
+							player.getPlayerInstance().teleport(manor.getSpawnLocation());
+							player.getPlayerInstance().sendMessage("You have been teleported to manor "+manor.getName());
+						}
 					}
 				}
 				else
