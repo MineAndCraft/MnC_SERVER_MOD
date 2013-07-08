@@ -2521,6 +2521,7 @@ public abstract class CommandsHandler
 					"/gm manor create <name>",
 					"/gm manor list",
 					"/gm manor changelord <name> <new lord>",
+					"/gm manor setspawn <manor>",
 				});
 			}
 			else if (subSubCommand.equals("list"))

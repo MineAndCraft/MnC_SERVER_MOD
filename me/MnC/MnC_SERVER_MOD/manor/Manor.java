@@ -75,11 +75,21 @@ public class Manor
 			{
 				sb2.append(citizenId).append("\n");
 			}
+			stat.setString(5, sb2.toString());			
 			
 			// spawn location
-			stat.setFloat(6, (float)spawnLocation.getX());
-			stat.setFloat(7, (float)spawnLocation.getY());
-			stat.setFloat(8, (float)spawnLocation.getZ());
+			if(spawnLocation != null)
+			{
+				stat.setFloat(6, (float)spawnLocation.getX());
+				stat.setFloat(7, (float)spawnLocation.getY());
+				stat.setFloat(8, (float)spawnLocation.getZ());
+			}
+			else
+			{
+				stat.setString(6, "NULL");
+				stat.setString(7, "NULL");
+				stat.setString(8, "NULL");
+			}
 			
 			// manor id
 			stat.setInt(9, id);
