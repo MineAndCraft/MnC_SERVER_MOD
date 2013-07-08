@@ -44,6 +44,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -605,7 +606,7 @@ public class PlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDeath(PlayerDeathEvent event)
 	{
-		Player p = event.getEntity();
+		final Player p = event.getEntity();
 		
 		
 		if(p.getLocation().getWorld().getName().equalsIgnoreCase("world") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_mine") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_basic") || p.getLocation().getWorld().getName().equalsIgnoreCase("world_nether"))
@@ -640,6 +641,19 @@ public class PlayerListener implements Listener
 			p.getInventory().clear();
 			event.getDrops().clear();
 			event.getDrops().add(new ItemStack(42, 1));
+		}
+		
+		if((p.getWorld().getName().equals("world") || p.getWorld().getName().equals("world_mine") || p.getWorld().getName().equals("world_nether")) && p.getLastDamageCause().getCause() != DamageCause.LAVA && plugin.vipManager.isVip(p.getName()))
+		{			
+			final ItemStack[] armors = p.getInventory().getArmorContents();
+			final ItemStack[] inventory = p.getInventory().getContents();
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+				public void run()
+				{
+					p.getInventory().setArmorContents(armors);
+					p.getInventory().setContents(inventory);
+				}
+			});
 		}
 	}
 	
