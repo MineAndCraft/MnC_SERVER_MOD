@@ -13,7 +13,6 @@ import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.ServerRegionHandler;
 import me.MnC.MnC_SERVER_MOD.Listeners.BlockListener;
-import me.MnC.MnC_SERVER_MOD.Listeners.CustomListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.EntityListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.InventoryListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.PlayerListener;
@@ -108,7 +107,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		pManager.registerEvents(pListener, this);
 		pManager.registerEvents(bListener, this);
 		pManager.registerEvents(enListener, this);
-		pManager.registerEvents(customListener, this);
 		pManager.registerEvents(inventoryListener, this);
 		pManager.registerEvents(pluginListener, this);
 		
@@ -545,7 +543,6 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public final PlayerListener pListener = new PlayerListener(this);
 	public final EntityListener enListener = new EntityListener(this);
 	public final BlockListener bListener = new BlockListener(this);
-	public final CustomListener customListener = new CustomListener(this);
 	public final InventoryListener inventoryListener = new InventoryListener();
 	public final PluginListener pluginListener = new PluginListener(this); 
 	
