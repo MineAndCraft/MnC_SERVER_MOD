@@ -29,6 +29,7 @@ import me.MnC.MnC_SERVER_MOD.locker.BlockLocker;
 import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
 import me.MnC.MnC_SERVER_MOD.optimization.AntiLag;
 //import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
+import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 
 import org.bukkit.Bukkit;
@@ -81,8 +82,10 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	{
 		log.info("GUGA MINECRAFT SERVER MOD has been disabled.");
 		GugaEvent.ClearAllGroups();
+		
+		Tagger.stop();
+		
 		GameTimeWatcher.stop();
-		//Tagger.stop();
 		this.userManager.save();
 		this.extensionManager.disable();
 		ServerRegionHandler.SaveRegions();
@@ -174,9 +177,10 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		RandomSpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
-		//Tagger.start();
 		
 		GameTimeWatcher.start();
+		
+		Tagger.start();
 		
 		log.info("GUGA MINECRAFT SERVER MOD " + version + " is running.");
 		log.info("Created by MineAndCraft team 2011 - 2013.");

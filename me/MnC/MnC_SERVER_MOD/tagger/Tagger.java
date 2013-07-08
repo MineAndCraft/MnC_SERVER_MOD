@@ -18,8 +18,14 @@ public class Tagger
 {
 	private static PacketAdapter listener;
 	
+	private static boolean started = false;
+	
 	public static void start()
 	{
+		stop();
+		if(started)
+			return;
+		started = true;
 		listener = new PacketAdapter(MnC_SERVER_MOD.getInstance(),ConnectionSide.SERVER_SIDE,ListenerPriority.NORMAL,Packets.Server.NAMED_ENTITY_SPAWN){
 			@Override
 			public void onPacketSending(PacketEvent event)
@@ -35,6 +41,10 @@ public class Tagger
 	
 	public static void stop()
 	{
+		if(!started)
+			return;
+		started = false;
+		
 		ProtocolLibrary.getProtocolManager().removePacketListener(listener);
 	}
 	
