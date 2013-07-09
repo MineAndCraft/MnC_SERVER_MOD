@@ -644,7 +644,8 @@ public class PlayerListener implements Listener
 		}
 		
 		if((p.getWorld().getName().equals("world") || p.getWorld().getName().equals("world_mine") || p.getWorld().getName().equals("world_nether")) && p.getLastDamageCause().getCause() != DamageCause.LAVA && plugin.vipManager.isVip(p.getName()))
-		{			
+		{
+			event.getDrops().clear();
 			final ItemStack[] armors = p.getInventory().getArmorContents();
 			final ItemStack[] inventory = p.getInventory().getContents();
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
