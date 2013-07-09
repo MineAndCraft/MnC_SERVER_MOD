@@ -75,6 +75,18 @@ public class ShopManager
 			return false;
 		}
 		
+		if(amount > 64)
+		{
+			ChatHandler.FailMsg(player, "Muzete koupit maximalne 64 kusu naraz.");
+			return false;
+		}
+		
+		if(player.getInventory().firstEmpty() == -1)
+		{
+			ChatHandler.FailMsg(player, "Musite mit v inventari alespon jeden volny slot.");
+			return false;
+		}
+		
 		ItemStack purchase = new ItemStack(itemId, amount, (short)type);
 		player.getInventory().addItem(purchase);
 		plugin.logger.LogShopTransaction(this.getItemNameByItem(item), amount, playerName);
