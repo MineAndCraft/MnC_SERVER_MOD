@@ -46,6 +46,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -2326,7 +2327,7 @@ public abstract class CommandsHandler
 				Player target = plugin.getServer().getPlayer(args[1]);
 				if(target.isOnline())
 				{
-					target.setHealth(0);
+					target.damage((((Damageable)target).getHealth())+1);
 					target.sendMessage("Byl jste zabit adminem/GM!");
 					sender.sendMessage("Hrac "+target.getName()+" byl zabit!");
 				}
