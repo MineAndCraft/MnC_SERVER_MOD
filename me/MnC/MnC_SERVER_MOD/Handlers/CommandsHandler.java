@@ -34,6 +34,7 @@ import me.MnC.MnC_SERVER_MOD.util.DataPager;
 import me.MnC.MnC_SERVER_MOD.util.Enchantments;
 import me.MnC.MnC_SERVER_MOD.util.Enchantments.EnchantmentResult;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
+import me.MnC.MnC_SERVER_MOD.vip.VipGUIHandler;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager.VipItems;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager.VipUser;
@@ -213,6 +214,7 @@ public abstract class CommandsHandler
 			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
 			sender.sendMessage("/vip fly - Podprikaz letani.");
 			sender.sendMessage("/vip clearinventory <item id>  -  Odstrani z vaseho inventare vsechny tyto itemy.");
+			sender.sendMessage("/vip gui - Otevre GUI pro vip funkce");
 		}
 		else
 		{
@@ -481,6 +483,10 @@ public abstract class CommandsHandler
 				{
 					sender.sendMessage("Usage: /vip clearinventory <item id>");
 				}
+			}
+			else if(subCommand.equals("gui"))
+			{
+				VipGUIHandler.openVIPGUI(sender);
 			}
 		}
 	}

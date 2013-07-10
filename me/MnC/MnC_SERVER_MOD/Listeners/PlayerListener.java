@@ -16,6 +16,7 @@ import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.events.PlayerPositionCheckEvent;
 import me.MnC.MnC_SERVER_MOD.UserManager;
+import me.MnC.MnC_SERVER_MOD.vip.VipGUIHandler;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
@@ -46,6 +47,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -677,6 +679,16 @@ public class PlayerListener implements Listener
 			}
 		}
 	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlatyerInventoryClick(InventoryClickEvent event)
+	{
+		if(!(event.getWhoClicked() instanceof Player))
+			return;
+		
+		VipGUIHandler.onClickVIPGUIAction(event);
+	}
+	
 	
 	public static void LoadCreativePlayers()
 	{
