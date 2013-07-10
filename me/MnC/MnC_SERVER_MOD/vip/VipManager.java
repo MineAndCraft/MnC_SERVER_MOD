@@ -1,4 +1,4 @@
-package me.MnC.MnC_SERVER_MOD;
+package me.MnC.MnC_SERVER_MOD.vip;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TreeMap;
 
+import me.MnC.MnC_SERVER_MOD.DatabaseManager;
+import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
+import me.MnC.MnC_SERVER_MOD.UserManager;
 import me.MnC.MnC_SERVER_MOD.chat.ChatHandler;
 
 import org.bukkit.ChatColor;

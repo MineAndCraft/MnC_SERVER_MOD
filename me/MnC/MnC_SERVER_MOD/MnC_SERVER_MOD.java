@@ -30,6 +30,7 @@ import me.MnC.MnC_SERVER_MOD.optimization.AntiLag;
 //import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
+import me.MnC.MnC_SERVER_MOD.vip.VipManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

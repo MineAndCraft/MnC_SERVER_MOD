@@ -16,7 +16,7 @@ import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
 import me.MnC.MnC_SERVER_MOD.events.PlayerPositionCheckEvent;
 import me.MnC.MnC_SERVER_MOD.UserManager;
-import me.MnC.MnC_SERVER_MOD.VipManager;
+import me.MnC.MnC_SERVER_MOD.vip.VipManager;
 import me.MnC.MnC_SERVER_MOD.Estates.EstateHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;

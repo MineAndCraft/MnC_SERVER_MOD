@@ -7,10 +7,11 @@ import org.bukkit.entity.Player;
 
 public class PositionCheck
 {
-	private static int checkTaskId;
+	//private static int checkTaskId;
 	
 	public static void enable()
 	{
+		/*
 		checkTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MnC_SERVER_MOD.getInstance(), new Runnable(){
 			public void run()
 			{
@@ -26,11 +27,12 @@ public class PositionCheck
 				}
 			}
 		}, 10, 10);
+		*/
 	}
 	
 	public static void disable()
 	{
-		Bukkit.getScheduler().cancelTask(checkTaskId);
+		//Bukkit.getScheduler().cancelTask(checkTaskId);
 	}
 
 }
