@@ -170,7 +170,7 @@ public class VipManager
 	
 	public enum VipItems
 	{
-		SAND(12), COBBLESTONE(4), WOOD(17), WOODEN_PLANKS(5), STONE(1), DIRT(3), SANDSTONE(24);
+		SAND(12), COBBLESTONE(4), WOODEN_PLANKS(5), STONE(1), DIRT(3), SANDSTONE(24);
 		private VipItems(int id)
 		{
 			this.id = id;
