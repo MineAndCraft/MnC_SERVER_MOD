@@ -49,7 +49,7 @@ public class BonusDrop
 		
 		droplist.add(new BonusDrop(89, -1, 3333, 100, 369, 0));	// glowstone - blaze rod
 		
-		droplist.add(new BonusDrop(88, -1, 1000, 300, 397, 0));	// soul sand - wither skeleton skull
+		droplist.add(new BonusDrop(88, -1, 1000, 300, 397, 1));	// soul sand - wither skeleton skull
 	}
 
 	public static void dropBonusDrops(PlayerProfession profession, Block block)
