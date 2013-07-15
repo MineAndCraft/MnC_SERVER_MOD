@@ -1,14 +1,8 @@
--- ---------------------------------------------
--- Table structure for MnC server mod beta 1.0.0
--- ---------------------------------------------
+-- --------------------------------------------------------
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- MySQL table structure for MnC_SERVER_MOD v1.5
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `mnc_bans`
@@ -23,7 +17,37 @@ CREATE TABLE IF NOT EXISTS `mnc_bans` (
   `banningone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `banned_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mnc_blocklock_locks`
+--
+
+CREATE TABLE IF NOT EXISTS `mnc_blocklock_locks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL,
+  `world` varchar(32) COLLATE utf8_bin NOT NULL,
+  `x` int(11) NOT NULL,
+  `y` int(11) NOT NULL,
+  `z` int(11) NOT NULL,
+  `type` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `COORDS` (`x`,`y`,`z`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mnc_blocklock_perms`
+--
+
+CREATE TABLE IF NOT EXISTS `mnc_blocklock_perms` (
+  `lock_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  UNIQUE KEY `lock_user` (`lock_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -34,26 +58,8 @@ CREATE TABLE IF NOT EXISTS `mnc_bans` (
 CREATE TABLE IF NOT EXISTS `mnc_chat_blocklist` (
   `user_id` int(11) NOT NULL,
   `blocked_id` int(11) NOT NULL,
-  UNIQUE KEY `blocker_blocked` (`user_id`,`blocked_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mnc_chests`
---
-
-CREATE TABLE IF NOT EXISTS `mnc_chests` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `owner_id` int(11) NOT NULL,
-  `world` varchar(32) COLLATE utf8_bin NOT NULL,
-  `x` int(11) NOT NULL,
-  `y` int(11) NOT NULL,
-  `z` int(11) NOT NULL,
-  `type` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `coords` (`x`,`y`,`z`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  UNIQUE KEY `user_id` (`user_id`,`blocked_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -63,9 +69,9 @@ CREATE TABLE IF NOT EXISTS `mnc_chests` (
 
 CREATE TABLE IF NOT EXISTS `mnc_currency` (
   `user_id` int(11) NOT NULL,
-  `balance` bigint(20) NOT NULL,
+  `balance` float NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -90,7 +96,42 @@ CREATE TABLE IF NOT EXISTS `mnc_ips` (
 CREATE TABLE IF NOT EXISTS `mnc_ipwhitelist` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mnc_manors`
+--
+
+CREATE TABLE IF NOT EXISTS `mnc_manors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(16) COLLATE utf8_bin NOT NULL,
+  `lord_id` int(11) NOT NULL DEFAULT '0',
+  `boundaries` text COLLATE utf8_bin NOT NULL,
+  `flags` text COLLATE utf8_bin NOT NULL,
+  `citizens` text COLLATE utf8_bin NOT NULL,
+  `spawn_x` float DEFAULT NULL,
+  `spawn_y` float DEFAULT NULL,
+  `spawn_z` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mnc_passwordrecovery`
+--
+
+CREATE TABLE IF NOT EXISTS `mnc_passwordrecovery` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `reckey` varchar(40) COLLATE utf8_bin NOT NULL,
+  `expiration` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `reckey` (`reckey`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -110,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `mnc_places` (
   `num_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`name`),
   UNIQUE KEY `coordinates` (`x`,`y`,`z`,`world`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
 
@@ -122,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `mnc_places_permissions` (
   `place_id` varchar(16) COLLATE utf8_bin NOT NULL,
   `user_id` int(11) NOT NULL,
   UNIQUE KEY `place_user` (`place_id`,`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -210,4 +251,6 @@ CREATE TABLE IF NOT EXISTS `mnc_vip` (
   `user_id` int(11) NOT NULL,
   `expiration` bigint(20) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
