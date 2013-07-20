@@ -140,7 +140,7 @@ public class BlockListener implements Listener
 		Block block = event.getBlock();
 		MinecraftPlayer player = plugin.userManager.getUser(event.getPlayer().getName());
 		
-		if(!(block.getTypeId() == 50 || block.getTypeId() == 78 ))
+		if(!(block.getTypeId() == 50 || block.getTypeId() == 78 || block.getTypeId() == 6 || block.getTypeId() == 55 || block.getTypeId() == 76))
 		{
 			player.getProfession().GainExperience(4);
 		}
