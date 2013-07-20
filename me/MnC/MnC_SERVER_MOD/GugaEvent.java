@@ -10,6 +10,7 @@ import java.util.Set;
 
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -279,6 +280,24 @@ public abstract class GugaEvent
 		}
 		return count;
 	}
+	/*					<JASON>					*/
+	public static void sendMessageToEventPlayers(String sender,String msg)
+	{
+		for(String s : players)
+		{
+			Player p = plugin.getServer().getPlayer(s);
+			if(p != null)
+			{
+				p.sendMessage(ChatColor.AQUA + "[EVENT CHANNEL]: " + ChatColor.RED + msg);
+			}
+		}
+		Player pSender = plugin.getServer().getPlayer(sender);
+		if(pSender != null)
+		{
+			pSender.sendMessage(ChatColor.AQUA + "[EVENT CHANNEL]: " + ChatColor.RED + msg);
+		}
+	}
+	/*				</JASON>				*/
 	public static ArrayList<String> players = new ArrayList<String>();
 	public static boolean godMode = false;
 	public static boolean acceptInv = false;
