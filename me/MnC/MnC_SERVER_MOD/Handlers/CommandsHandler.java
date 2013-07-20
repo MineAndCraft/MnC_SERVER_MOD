@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import me.MnC.MnC_SERVER_MOD.AutoSaver;
 import me.MnC.MnC_SERVER_MOD.Config;
@@ -47,6 +48,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -956,6 +958,12 @@ public abstract class CommandsHandler
 			sender.sendMessage("/event godmode " + stateGodMode + " - Toggles immortality for tagged players.");
 			sender.sendMessage("/event stats <itemID> - Prints stats of all tagged players.");
 			sender.sendMessage("/event allowinv " + stateInv + " - Allow players to join your event.");
+			/*										<JASON> 										*/
+			sender.sendMessage("/event msg <msg> - Broadcasts EVENT message.");
+			sender.sendMessage("/event chat - Shows event chat channel sub menu.");
+			sender.sendMessage("/event spawn <Entity Name> - Spawns certain Entity at your locations.");
+			/*										</JASON> 										*/
+
 			return;
 		}
 		String arg1 = args[0];
@@ -1026,6 +1034,76 @@ public abstract class CommandsHandler
 				return;
 			}
 		}
+		/*										<JASON>										*/
+		else if(arg1.equalsIgnoreCase("chat"))
+		{
+			if(args.length == 1)
+			{
+				sender.sendMessage("/event chat <msg> - Sends certain <msg> to event chat channel.");
+				sender.sendMessage("/event chat dice - Generates random nuber (1-6) and sends it to event chat channel.");
+				return;
+			}
+			else if(args.length > 1)
+			{
+				if(args[1].equals("dice"))
+				{
+					Random rnd = new Random();
+					int rndI = rnd.nextInt(6 - 1 + 1) + 1;
+					GugaEvent.sendMessageToEventPlayers(sender.getName(), "DICE: " + rndI);
+					return;
+				}
+				else
+				{
+					String msg;
+					for(int i = 1; i < args.length; i++)
+					{
+						msg += args[i] + " ";
+					}
+					GugaEvent.sendMessageToEventPlayers(sender.getName(), msg);
+					return;
+				}
+			}
+		}
+		else if(arg1.equalsIgnoreCase("spawn"))
+		{
+			if(args.length == 1)
+			{
+				sender.sendMessage("Usage: /event spawn <Entity Name>");
+				return;
+			}
+			else if(args.length == 2)
+			{
+				String eName = args[1];
+				Location loc = sender.getLocation();
+				if(loc.getWorld().getName().equalsIgnoreCase("world_build"))
+				{
+					EntityType type = EntityType.valueOf(eName);
+					if(type != null)
+					{
+						loc.getWorld().spawnEntity(loc, type);
+						sender.sendMessage("Entity spawned!");
+						return;	
+					} 
+					else
+					{
+						sender.sendMessage("Invalid Entity Name!");
+						return;
+					}
+
+				} 
+				else
+				{
+					sender.sendMessage("You can spawn enityes only in Build Wordl!");
+					return;
+				}
+			}
+			else 
+			{
+				sender.sendMessage("Ivalid arguments.");
+				return;
+			}
+		}
+		/*										</JASON>										*/
 		/*else if (arg1.equalsIgnoreCase("spawners"))
 		{
 			if (args.length == 1)
