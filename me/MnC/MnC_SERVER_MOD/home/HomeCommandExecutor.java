@@ -19,13 +19,14 @@ public class HomeCommandExecutor implements CommandExecutor
 		{
 			Player player = (Player)sender;
 		
-			if(!(player.getWorld().getName().matches("world") || player.getWorld().getName().matches("world_basic")))
-			{
-				ChatHandler.FailMsg(player, "Tento prikaz zde nelze pouzit!");
-				return true;
-			}
 			if(args.length == 0)
 			{
+				if(!(player.getWorld().getName().equals("world") || player.getWorld().getName().equals("world_basic") || player.getWorld().getName().equals("world_the_end") || player.getWorld().getName().equals("world_mine")))
+				{
+					ChatHandler.FailMsg(player, "Tento prikaz zde nelze pouzit!");
+					return true;
+				}
+				
 				Home home = HomesHandler.getHomeByPlayer(player.getName());
 				if(home != null)
 				{
@@ -41,6 +42,12 @@ public class HomeCommandExecutor implements CommandExecutor
 			{
 				if(args[0].equalsIgnoreCase("set"))
 				{
+					if(!(player.getWorld().getName().equals("world") || player.getWorld().getName().equals("world_basic")))
+					{
+						ChatHandler.FailMsg(player, "Tento prikaz zde nelze pouzit!");
+						return true;
+					}
+					
 					if(HomesHandler.isWorldAllowedToSetHomeIn(player.getWorld().getName()))
 					{
 						HomesHandler.addHome(player);
