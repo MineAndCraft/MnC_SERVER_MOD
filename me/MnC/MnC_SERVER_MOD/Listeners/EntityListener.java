@@ -15,9 +15,9 @@ import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
-import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Spider;
@@ -171,23 +171,23 @@ public class EntityListener implements Listener
 				}
 				else if(target instanceof Spider)
 				{
-					prof.GainExperience(50);
+					prof.GainExperience(8);
 				}
 				else if(target instanceof Skeleton)
 				{
-					prof.GainExperience(50);
+					prof.GainExperience(10);
 				}
 				else if(target instanceof Zombie)
 				{
-					prof.GainExperience(25);
+					prof.GainExperience(8);
 				}
-				else if (target instanceof Pig)
+				else if (target instanceof Enderman)
 				{
-					prof.GainExperience(5);
+					prof.GainExperience(12);
 				}
 				else
 				{
-					prof.GainExperience(15);
+					prof.GainExperience(5);
 				}
 			}
 		}
