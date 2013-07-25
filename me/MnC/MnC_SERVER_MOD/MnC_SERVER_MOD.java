@@ -149,7 +149,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		if(getServer().getWorld("world_build")==null)
 		{
 			World world_build =getServer().createWorld(WorldCreator.name("world_build").environment(Environment.NORMAL));
-			world_build.setSpawnFlags(false, false);
+			world_build.setSpawnFlags(true, true);
 		}
 		
 		arena.LoadArenas();

@@ -62,6 +62,11 @@ public class EntityListener implements Listener
 				event.setCancelled(true);
 			}
 		}
+		
+		if(event.getLocation().getWorld().getName().equals("world_build") && event.getSpawnReason() == SpawnReason.NATURAL)
+		{
+			event.setCancelled(true);
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
