@@ -57,6 +57,8 @@ import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 
+//TODO: We need a permission system here
+
 public abstract class CommandsHandler 
 {
 	public static void SetPlugin(MnC_SERVER_MOD gugaSM)
@@ -910,7 +912,7 @@ public abstract class CommandsHandler
 			sender.sendMessage("Nejprve se musite prihlasit!");
 			return;
 		}
-		if ((!GameMasterHandler.IsAtleastGM(sender.getName())) && (!GameMasterHandler.IsRank(sender.getName(), Rank.EVENTER)))
+		if ((!GameMasterHandler.IsAtleastGM(sender.getName())) && (!GameMasterHandler.IsAtleastRank(sender.getName(), Rank.EVENTER)))
 		{
 			if (args.length > 0)
 			{
