@@ -578,8 +578,8 @@ public class PlayerListener implements Listener
 		{
 			if(p.getGameMode() == GameMode.SURVIVAL && VipManager.isFlyEnabled(p.getWorld().getName()) && plugin.vipManager.isVip(p.getName()))
 			{
-				p.setFlying(true);
 				p.setAllowFlight(true);
+				p.setFlying(true);
 			}
 		}
 		GameMaster gm = GameMasterHandler.GetGMByName(p.getName());
