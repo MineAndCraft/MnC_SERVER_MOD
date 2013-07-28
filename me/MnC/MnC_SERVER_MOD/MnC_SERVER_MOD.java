@@ -29,6 +29,7 @@ import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
 import me.MnC.MnC_SERVER_MOD.optimization.AntiLag;
 //import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
+import me.MnC.MnC_SERVER_MOD.util.CommandController;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager;
 
@@ -176,6 +177,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		RandomSpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
+											//TODO: organize imports! :D
+		CommandController.registerCommands(this, new me.MnC.MnC_SERVER_MOD.Handlers.commands.CommandsHandler(this));
 		
 		GameTimeWatcher.start();
 		
@@ -188,12 +191,8 @@ public class MnC_SERVER_MOD extends JavaPlugin
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
 	//*****************************************/who*****************************************
-		 if(cmd.getName().equalsIgnoreCase("who") && (sender instanceof Player))
-		 { 
-		   CommandsHandler.CommandWho((Player)sender);
-		   return true;
-		 }
-		 else if (cmd.getName().equalsIgnoreCase("event") && (sender instanceof Player))
+	//Commands: /who; /help are now handled by CommandsController...	
+		 if (cmd.getName().equalsIgnoreCase("event") && (sender instanceof Player))
 		 {
 			 CommandsHandler.CommandEvent((Player)sender, args);
 			 return true;
@@ -241,14 +240,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 			 return true;
 		 }
 		//*****************************************/help*****************************************
-		 else if (cmd.getName().equalsIgnoreCase("help"))
-		 {
-			 if (sender instanceof Player)
-			 {
-				 CommandsHandler.CommandHelp((Player) sender);
-				 return true;
-			 }
-		 }
+		 //Commands: /who; /help are now handled by CommandsController...
 		 else if (cmd.getName().equalsIgnoreCase("gm"))
 		 {
 			 if (sender instanceof Player)
