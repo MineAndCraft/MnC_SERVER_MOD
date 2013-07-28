@@ -85,3 +85,6 @@ commands:
         description: Lets the player know when his/her jail expires
     manor:
         description: Manor commands
+permissions:
+   mnc_server_mod.command.who:
+      default: true
