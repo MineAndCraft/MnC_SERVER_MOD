@@ -18,6 +18,7 @@ import me.MnC.MnC_SERVER_MOD.Listeners.InventoryListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.PlayerListener;
 import me.MnC.MnC_SERVER_MOD.Listeners.PluginListener;
 import me.MnC.MnC_SERVER_MOD.rpg.RpgCommandExecutor;
+import me.MnC.MnC_SERVER_MOD.admincommands.AdminCommandHandler;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 import me.MnC.MnC_SERVER_MOD.basicworld.RandomSpawnsHandler;
 import me.MnC.MnC_SERVER_MOD.chat.Chat;
@@ -117,6 +118,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 
 		PositionCheck.enable();
 		
+		AdminCommandHandler.registerCommands();
 		CommandsHandler.SetPlugin(this);
 		AutoSaver.SetPlugin(this);
 		ServerRegionHandler.SetPlugin(this);
