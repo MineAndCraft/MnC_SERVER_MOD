@@ -58,12 +58,12 @@ public class PlayerProfession
 			if (diff > 0)
 				thisLevel = diff;
 		}
-		UpdateSkills();
+		updateSkills();
 	}
 	
 	public void addExperience(int exp)
 	{
-		this.GainExperience(exp);
+		this.gainExperience(exp);
 		this.save();
 	}
 	
@@ -81,9 +81,6 @@ public class PlayerProfession
 		}
 	}
 	
-	/**
-	 * Method designed as internal event so GugaProfession2 knows when player levels up
-	 */
 	protected void onLevelUp()
 	{
 		save(); // save the profession upon leveling up
@@ -97,13 +94,13 @@ public class PlayerProfession
 
 	public float getDropChanceMultiplier()
 	{
-		return GetLevel()*0.000100010001f + 1;
+		return getLevel()*0.000100010001f + 1;
 	}
 	
 	/**
-	 * Loads GugaProfession instance for the player
-	 * @param player {@link MinecraftPlayer} instance of the player to load
-	 * @return null if there is no profession for player playerId, valid GugaProfession2 class instance otherwise 
+	 * Loads the profession instance for player
+	 * @param player {@link MinecraftPlayer} instance of the profession's owner
+	 * @return null if there is no profession for player playerId, valid Profession instance otherwise. 
 	 */
 	public static PlayerProfession loadProfession(MinecraftPlayer player)
 	{
@@ -128,11 +125,11 @@ public class PlayerProfession
 		return profession;
 	}
 
-	protected void LevelUp()
+	protected void levelUp()
 	{
 		level++;
 		int xpNeededOld = xpNeeded;
-		if (CanLevelUp())
+		if (canLevelUp())
 		{
 			if (xpNeeded>=xpCap)
 			{
@@ -146,15 +143,15 @@ public class PlayerProfession
 		}
 		thisLevel = xpNeeded - xpNeededOld;
 		onLevelUp();
-		UpdateSkills();
+		updateSkills();
 	}
 	
-	public void UpdateSkills()
+	public void updateSkills()
 	{
 		// no skills to be updated yet
 	}
 
-	protected boolean ReachedNewLevel()
+	protected boolean reachedNewLevel()
 	{
 		if (xp >= xpNeeded)
 		{
@@ -162,7 +159,7 @@ public class PlayerProfession
 		}
 		return false;
 	}
-	protected boolean CanLevelUp()
+	protected boolean canLevelUp()
 	{
 		if (level<lvlCap)
 		{
@@ -175,34 +172,34 @@ public class PlayerProfession
 		return false;
 	}
 	
-	public int GetLevel()
+	public int getLevel()
 	{
 		return level;
 	}
 	
-	public int GetXp()
+	public int getXp()
 	{
 		return xp;
 	}
 	
-	public int GetXpNeeded()
+	public int getXpNeeded()
 	{
 		return xpNeeded;
 	}
 	
-	public int GetLvlCap()
+	public int getLvlCap()
 	{
 		return lvlCap;
 	}
 	
-	public void GainExperience(int exp)
+	public void gainExperience(int exp)
 	{
-		if (CanLevelUp())
+		if (canLevelUp())
 		{
 			xp = xp+exp;
-			if (ReachedNewLevel())
+			if (reachedNewLevel())
 			{
-				LevelUp();
+				levelUp();
 			}
 		}
 	}

@@ -24,9 +24,9 @@ public class RpgCommandExecutor implements CommandExecutor
 				PlayerProfession prof;
 				if ((prof = plugin.userManager.getUser(sender.getName()).getProfession()) != null)
 				{
-					int lvl = prof.GetLevel();
-					int xp = prof.GetXp();
-					int xpNeeded = prof.GetXpNeeded();
+					int lvl = prof.getLevel();
+					int xp = prof.getXp();
+					int xpNeeded = prof.getXpNeeded();
 					sender.sendMessage(ChatColor.YELLOW + "**************************");
 					sender.sendMessage("RPG Miner");
 					sender.sendMessage("**Level:" + lvl);

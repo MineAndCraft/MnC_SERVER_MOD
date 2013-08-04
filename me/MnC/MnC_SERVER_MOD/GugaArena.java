@@ -42,7 +42,7 @@ public class GugaArena
 			PlayerProfession prof;
 			if ((prof = plugin.userManager.getUser(killer.getName()).getProfession()) != null)
 			{
-				prof.GainExperience(100);
+				prof.gainExperience(100);
 			}
 			Integer multiKill = multiKillCounter.get(killer.getName());
 			if (multiKill == null)

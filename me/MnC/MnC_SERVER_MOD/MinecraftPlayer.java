@@ -316,7 +316,7 @@ public class MinecraftPlayer
 		}
 		else
 		{
-			if(this.profession != null && this.profession.GetLevel() < 10)
+			if(this.profession != null && this.profession.getLevel() < 10)
 			{
 				prefix = "new";
 				this.playerInstance.setPlayerListName(ChatColor.GRAY + this.name);

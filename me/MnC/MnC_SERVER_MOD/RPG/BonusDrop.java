@@ -59,7 +59,7 @@ public class BonusDrop
 		int chance = Rnd.get(MAX_CHANCE);
 		for(BonusDrop drop : droplist)
 		{
-			if(drop.getLevelLimit() > profession.GetLevel())
+			if(drop.getLevelLimit() > profession.getLevel())
 				continue;
 			
 			if(drop.getBlockId()!= -1 && drop.getBlockId() != block.getTypeId())

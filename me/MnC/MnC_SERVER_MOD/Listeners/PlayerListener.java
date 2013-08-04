@@ -290,7 +290,7 @@ public class PlayerListener implements Listener
 		}
 		if(event.getMessage().toLowerCase().startsWith("/sg") || event.getMessage().toLowerCase().startsWith("/survivalgames"))
 		{
-			if(plugin.userManager.getUser(event.getPlayer().getName()).getProfession().GetLevel() < 10)
+			if(plugin.userManager.getUser(event.getPlayer().getName()).getProfession().getLevel() < 10)
 			{
 				event.setCancelled(true);
 			}
@@ -311,7 +311,7 @@ public class PlayerListener implements Listener
 			event.setCancelled(true);
 			return;
 		}		 
-		if(pl.getProfession() == null || (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
+		if(pl.getProfession() == null || (pl.getProfession().getLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
 		{
 			event.setCancelled(true);
 			return;
@@ -478,7 +478,7 @@ public class PlayerListener implements Listener
 			}
 			else 
 			{
-				int level = prof.GetLevel();
+				int level = prof.getLevel();
 				if (level<10)
 				{
 					int itemID;
@@ -496,7 +496,7 @@ public class PlayerListener implements Listener
 				}
 			}
 			
-			if(event.getItem() != null && event.getItem().getTypeId() == 407 && (plugin.userManager.getUser(player.getName()).getProfession() == null || plugin.userManager.getUser(player.getName()).getProfession().GetLevel() < 50))
+			if(event.getItem() != null && event.getItem().getTypeId() == 407 && (plugin.userManager.getUser(player.getName()).getProfession() == null || plugin.userManager.getUser(player.getName()).getProfession().getLevel() < 50))
 			{
 				ChatHandler.FailMsg(player, "Nemate lvl 50, nemuzete pouzit TNT.");
 				event.setCancelled(true);
@@ -520,7 +520,7 @@ public class PlayerListener implements Listener
 		{
 			int level = 0;
 			try{
-				level = player.getProfession().GetLevel();
+				level = player.getProfession().getLevel();
 			}catch(Exception e){}
 			if (level<50)
 			{
@@ -554,7 +554,7 @@ public class PlayerListener implements Listener
 			event.setCancelled(true);
 			return;
 		}		 
-		if(pl.getProfession() == null || (pl.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
+		if(pl.getProfession() == null || (pl.getProfession().getLevel() < 10 && !BasicWorld.IsBasicWorld(pl.getPlayerInstance().getLocation())))
 		{
 			event.setCancelled(true);
 			return;
@@ -602,8 +602,8 @@ public class PlayerListener implements Listener
 	{
 		PlayerProfession profession = event.getProfession();
 		Player player = event.getProfession().getPlayer().getPlayerInstance();
-		Bukkit.getServer().broadcastMessage(player.getName() + " prekrocil/a level " + profession.GetLevel() + "!");
-		if(profession.GetLevel() >= 10 && BasicWorld.IsBasicWorld(player.getLocation()))
+		Bukkit.getServer().broadcastMessage(player.getName() + " prekrocil/a level " + profession.getLevel() + "!");
+		if(profession.getLevel() >= 10 && BasicWorld.IsBasicWorld(player.getLocation()))
 		{
 			player.sendMessage(ChatColor.GREEN + "Nyni muzete vstoupit do profesionalniho sveta.");
 			player.sendMessage(ChatColor.GREEN + "Dokazal jste povahu skveleho hrace.");

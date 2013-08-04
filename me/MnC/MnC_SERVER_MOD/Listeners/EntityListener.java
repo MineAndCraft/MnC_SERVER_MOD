@@ -122,7 +122,7 @@ public class EntityListener implements Listener
 					e.setCancelled(true);
 					return;
 				}
-				if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(damager.getLocation()))
+				if(player.getProfession() != null && player.getProfession().getLevel() < 10 && !BasicWorld.IsBasicWorld(damager.getLocation()))
 				{
 					e.setCancelled(true);
 					return;
@@ -172,27 +172,27 @@ public class EntityListener implements Listener
 				PlayerProfession prof = plugin.userManager.getUser(damager.getName()).getProfession();
 				if (target instanceof Creeper)
 				{
-					prof.GainExperience(75);
+					prof.gainExperience(75);
 				}
 				else if(target instanceof Spider)
 				{
-					prof.GainExperience(8);
+					prof.gainExperience(8);
 				}
 				else if(target instanceof Skeleton)
 				{
-					prof.GainExperience(10);
+					prof.gainExperience(10);
 				}
 				else if(target instanceof Zombie)
 				{
-					prof.GainExperience(8);
+					prof.gainExperience(8);
 				}
 				else if (target instanceof Enderman)
 				{
-					prof.GainExperience(12);
+					prof.gainExperience(12);
 				}
 				else
 				{
-					prof.GainExperience(5);
+					prof.gainExperience(5);
 				}
 			}
 		}

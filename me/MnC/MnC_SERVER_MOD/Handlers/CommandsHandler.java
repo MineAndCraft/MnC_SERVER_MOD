@@ -85,7 +85,7 @@ public abstract class CommandsHandler
 		{
 			Player p = onlinePlayers[i];
 			PlayerProfession prof = plugin.userManager.getUser(p.getName()).getProfession();
-			int level = (prof==null)? 0 : prof.GetLevel();
+			int level = (prof==null)? 0 : prof.getLevel();
 			if(GameMasterHandler.IsRank(p.getName(), Rank.ADMIN))
 			{
 				list += ChatColor.AQUA + p.getName() + ChatColor.GRAY + "(" + level + ")" + ChatColor.WHITE;
@@ -2651,7 +2651,7 @@ public abstract class CommandsHandler
 	
 	public static void CommandWorld(Player sender)
 	{
-		if(plugin.userManager.getUser(sender.getName()).getProfession().GetLevel() >= 10)
+		if(plugin.userManager.getUser(sender.getName()).getProfession().getLevel() >= 10)
 		{
 			if(BasicWorld.IsBasicWorld(sender.getLocation()))
 			{
@@ -2686,7 +2686,7 @@ public abstract class CommandsHandler
 				 {
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
 					PlayerProfession prof = player.getProfession();
-					if(prof!=null && prof.GetXp() == 0 && !BasicWorld.IsBasicWorld(sender.getLocation()))
+					if(prof!=null && prof.getXp() == 0 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
 						BasicWorld.BasicWorldEnter(sender);
 					}
@@ -2740,7 +2740,7 @@ public abstract class CommandsHandler
 					ChatHandler.SuccessMsg(sender, "Byl jste uspesne prihlasen!");
 					player.initializeDisplayName();
 					PlayerProfession prof = player.getProfession();
-					if(prof!=null && prof.GetLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
+					if(prof!=null && prof.getLevel() < 10 && !BasicWorld.IsBasicWorld(sender.getLocation()))
 					{
 						BasicWorld.BasicWorldEnter(sender);
 					}
@@ -2767,7 +2767,7 @@ public abstract class CommandsHandler
 	public static void CommandEstates(Player sender, String[] args)
 	{
 		MinecraftPlayer player = UserManager.getInstance().getUser(sender.getName());
-		if(player == null || player.getProfession() == null || player.getProfession().GetLevel() < 30)
+		if(player == null || player.getProfession() == null || player.getProfession().getLevel() < 30)
 		{
 			ChatHandler.FailMsg(sender, "Nemuzete pouzit command /estates. Nemate level 30.");
 			return;

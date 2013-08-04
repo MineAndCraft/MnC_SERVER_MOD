@@ -85,7 +85,7 @@ public class BasicWorld
 			return true;
 		
 		PlayerProfession prof = p.getProfession();
-		if(prof == null || prof.GetLevel() < 10)
+		if(prof == null || prof.getLevel() < 10)
 		{
 			return true;
 		}

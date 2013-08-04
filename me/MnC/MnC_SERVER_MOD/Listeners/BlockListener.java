@@ -54,7 +54,7 @@ public class BlockListener implements Listener
 		}
 		
 		//*************************GRIEFING PROTECTION*************************
-		if(player.getProfession() != null && player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(event.getBlock().getLocation()))
+		if(player.getProfession() != null && player.getProfession().getLevel() < 10 && !BasicWorld.IsBasicWorld(event.getBlock().getLocation()))
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw.");
 			event.setCancelled(true);
@@ -91,7 +91,7 @@ public class BlockListener implements Listener
 				ChatHandler.FailMsg(p, "Tady nemuzete kopat! Nazev pozemku: " + ChatColor.YELLOW + region.GetName());
 		        if(region.GetWorld().equals("world_basic"))
 		        {
-		        	if(player.getProfession()!=null && player.getProfession().GetLevel() < 10)
+		        	if(player.getProfession()!=null && player.getProfession().getLevel() < 10)
 		        	{
 		        		BasicWorld.basicWorldRegionBlockBreak(region,event.getPlayer(),event.getBlock());
 		        	}
@@ -118,7 +118,7 @@ public class BlockListener implements Listener
 		
 		
 		PlayerProfession prof = player.getProfession();
-		int level = prof.GetLevel();	
+		int level = prof.getLevel();	
 		if(level >= 10 && BasicWorld.IsBasicWorld(event.getPlayer().getLocation()))
 		{
 			if(!GameMasterHandler.IsAtleastGM(event.getPlayer().getName()) && !(level > 20))
@@ -142,7 +142,7 @@ public class BlockListener implements Listener
 		
 		if(!(block.getTypeId() == 50 || block.getTypeId() == 78 || block.getTypeId() == 6 || block.getTypeId() == 55 || block.getTypeId() == 76))
 		{
-			player.getProfession().GainExperience(4);
+			player.getProfession().gainExperience(4);
 		}
 		
 		ItemStack itemInHand = event.getPlayer().getItemInHand();
@@ -165,7 +165,7 @@ public class BlockListener implements Listener
 			return;
 		}
 		
-		if(player.getProfession() == null || player.getProfession().GetLevel() < 10 && !BasicWorld.IsBasicWorld(event.getBlock().getLocation()))
+		if(player.getProfession() == null || player.getProfession().getLevel() < 10 && !BasicWorld.IsBasicWorld(event.getBlock().getLocation()))
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Jste novacek. Novacci smi stavet jenom ve svete pro novacky. Dostanete se tam /pp bw.");
 			event.setCancelled(true);
@@ -173,7 +173,7 @@ public class BlockListener implements Listener
 		}
 		
 	
-		if(event.getBlock().getType() == Material.TNT && (player.getProfession() == null || player.getProfession().GetLevel() < 50))
+		if(event.getBlock().getType() == Material.TNT && (player.getProfession() == null || player.getProfession().getLevel() < 50))
 		{
 			ChatHandler.FailMsg(player.getPlayerInstance(), "Nemate lvl 50, nemuzete pouzit TNT.");
 			event.setCancelled(true);
