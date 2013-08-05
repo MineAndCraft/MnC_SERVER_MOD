@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import me.MnC.MnC_SERVER_MOD.AutoSaver;
 import me.MnC.MnC_SERVER_MOD.Config;
 import me.MnC.MnC_SERVER_MOD.GameMaster;
@@ -34,6 +33,7 @@ import me.MnC.MnC_SERVER_MOD.util.DataPager;
 import me.MnC.MnC_SERVER_MOD.util.Enchantments;
 import me.MnC.MnC_SERVER_MOD.util.Enchantments.EnchantmentResult;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
+import me.MnC.MnC_SERVER_MOD.util.Rnd;
 import me.MnC.MnC_SERVER_MOD.vip.VipGUIHandler;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager.VipItems;
@@ -958,6 +958,8 @@ public abstract class CommandsHandler
 			sender.sendMessage("/event godmode " + stateGodMode + " - Toggles immortality for tagged players.");
 			sender.sendMessage("/event stats <itemID> - Prints stats of all tagged players.");
 			sender.sendMessage("/event allowinv " + stateInv + " - Allow players to join your event.");
+			sender.sendMessage("/event msg <text> - Broadcasts [EVENT]<text> message.");
+			sender.sendMessage("/event chat - Shows event chat sub menu.");
 			return;
 		}
 		String arg1 = args[0];
@@ -977,6 +979,36 @@ public abstract class CommandsHandler
 				i++;
 			}
 			plugin.getServer().broadcastMessage(ChatColor.AQUA + "[EVENT]" + ChatColor.RED + msg);
+		}
+		else if(arg1.equalsIgnoreCase("chat"))
+		{
+			if(args.length == 1)
+			{
+				sender.sendMessage("EVENT CHAT SUB-MENU:");
+				sender.sendMessage("/event chat <text> - Sends <text> message across chat channel.");
+				sender.sendMessage("/event chat dice - Generates random number (1 - 6) and sends it across chat channel.");
+				return;
+			}
+			else if(args.length > 1)
+			{
+				if(args[1].equalsIgnoreCase("dice"))
+				{
+					int rndI = Rnd.nextInt(6) + 1;
+					GugaEvent.sendMessageToChatChannel(ChatColor.GREEN + "DICE: " + rndI, sender.getName());
+					return;
+				}
+				else
+				{
+					String msg = "";
+					for(int i = 1; i < args.length;i ++)
+					{
+						msg += args[i] + " ";
+					}
+					GugaEvent.sendMessageToChatChannel(msg, sender.getName());
+					return;
+				}
+				
+			}
 		}
 		else if (arg1.equalsIgnoreCase("allowinv"))
 		{
