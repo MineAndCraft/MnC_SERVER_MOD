@@ -68,7 +68,7 @@ public class Chat implements Listener
 		{
 			if(GameMasterHandler.IsRank(sender.getName(), Rank.GAMEMASTER))
 			{
-				messageColor = ChatColor.AQUA;
+				messageColor = ChatColor.GREEN;
 			}
 			else if(GameMasterHandler.IsRank(sender.getName(), Rank.BUILDER))
 			{
