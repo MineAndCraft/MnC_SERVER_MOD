@@ -4,15 +4,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import me.MnC.MnC_SERVER_MOD.Config;
-import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
+//import me.MnC.MnC_SERVER_MOD.GameMaster.Rank;
 import me.MnC.MnC_SERVER_MOD.MinecraftPlayer;
 import me.MnC.MnC_SERVER_MOD.MnC_SERVER_MOD;
-import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
+//import me.MnC.MnC_SERVER_MOD.Handlers.CommandsHandler;
 import me.MnC.MnC_SERVER_MOD.Handlers.GameMasterHandler;
+import me.MnC.MnC_SERVER_MOD.permissions.Group;
+import me.MnC.MnC_SERVER_MOD.permissions.GroupManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
@@ -61,7 +64,7 @@ public class Chat implements Listener
 		{
 			ChatHandler.FailMsg(sender, "Chat je nyni dostupny pouze pro ADMINy/GM");
 		}
-		
+		/*
 		ChatColor messageColor = ChatColor.WHITE;
 		
 		if(GameMasterHandler.IsAtleastRank(sender.getName(),Rank.HELPER) && !CommandsHandler.disabledGMs.contains(sender.getName()))
@@ -91,13 +94,20 @@ public class Chat implements Listener
 		{
 			messageColor = ChatColor.WHITE;
 		}
-		
+		*/
 		if(message.replaceAll("[^a-zA-Z0-9]","").matches(".*[A-Z]{5,}.*") && !GameMasterHandler.IsAtleastGM(sender.getName()))
 		{
 			message = message.toLowerCase();
 		}
-		
-		plugin.getServer().broadcastMessage(String.format("<%s> %s%s",sender.getDisplayName(),messageColor.toString(),message));	
+		ArrayList<Group> playersGroups = GroupManager.getPlayersGroups(sender.getName());
+		String messageFormat = "<%player> %message";
+		if(playersGroups != null)
+		{
+			messageFormat = playersGroups.get(playersGroups.size() - 1).getChatFormat();
+		}
+		messageFormat = messageFormat.replace("%player", sender.getName());
+		messageFormat = messageFormat.replace("%message", message);
+		plugin.getServer().broadcastMessage(messageFormat);	
 	}
 	
 	public boolean performChatCommand(MinecraftPlayer player,String message)
