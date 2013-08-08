@@ -31,6 +31,7 @@ import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfessionLevelUpEvent;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.util.InventoryBackup;
+import me.MnC.MnC_SERVER_MOD.permissions.GroupManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -178,7 +179,6 @@ public class PlayerListener implements Listener
 		}
 		
 		plugin.logger.LogPlayerJoins(player.getName() ,player.getAddress().toString());
-		
 		if (plugin.debug)
 		{
 			plugin.log.info("PLAYER_JOIN_EVENT: playerName=" + event.getPlayer().getName());
@@ -197,7 +197,7 @@ public class PlayerListener implements Listener
 		}
 		
 		plugin.userManager.onPlayerJoin(player);
-		
+		GroupManager.resolvePlayersGroups(player);
 		player.sendMessage(ChatColor.RED + "Vitejte na serveru" + ChatColor.AQUA + " MineAndCraft!");
 		Player[]players = plugin.getServer().getOnlinePlayers();
 		
