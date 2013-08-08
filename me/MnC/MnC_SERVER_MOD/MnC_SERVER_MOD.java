@@ -32,6 +32,7 @@ import me.MnC.MnC_SERVER_MOD.optimization.AntiLag;
 import me.MnC.MnC_SERVER_MOD.tagger.Tagger;
 import me.MnC.MnC_SERVER_MOD.util.GugaFile;
 import me.MnC.MnC_SERVER_MOD.vip.VipManager;
+import me.MnC.MnC_SERVER_MOD.permissions.GroupManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -178,7 +179,7 @@ public class MnC_SERVER_MOD extends JavaPlugin
 		RandomSpawnsHandler.LoadSpawns();
 		HomesHandler.loadHomes();
 		AutoSaver.StartSaver();
-		
+		GroupManager.loadGroupConfiguration();
 		GameTimeWatcher.start();
 		
 		Tagger.start();
