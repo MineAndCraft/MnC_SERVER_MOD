@@ -1,0 +1,13 @@
+grouplist:
+    - Admin
+groups:
+    Admin:
+        players:
+            - Jason
+            - Stanley2
+            - Alma_Lodaka
+        permissions:
+            - mnc.admin
+        chatformat: "&4%player: &1%message"
+        playerlistformat: "&4%player"
+        priority: 5
