@@ -653,7 +653,7 @@ public class PlayerListener implements Listener
 			event.getDrops().add(new ItemStack(42, 1));
 		}
 		
-		if((p.getWorld().getName().equals("world") || p.getWorld().getName().equals("world_mine") || p.getWorld().getName().equals("world_nether")) && p.getLastDamageCause().getCause() != DamageCause.LAVA && plugin.vipManager.isVip(p.getName()))
+		if((p.getWorld().getName().equals("world") || p.getWorld().getName().equals("world_mine") || p.getWorld().getName().equals("world_nether") || p.getWorld().getName().equals("world_basic")) && p.getLastDamageCause().getCause() != DamageCause.LAVA && plugin.vipManager.isVip(p.getName()))
 		{
 			event.getDrops().clear();
 			final ItemStack[] armors = p.getInventory().getArmorContents();
