@@ -47,6 +47,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -960,6 +961,7 @@ public abstract class CommandsHandler
 			sender.sendMessage("/event allowinv " + stateInv + " - Allow players to join your event.");
 			sender.sendMessage("/event msg <text> - Broadcasts [EVENT]<text> message.");
 			sender.sendMessage("/event chat - Shows event chat sub menu.");
+			sender.sendMessage("/event spawn - Shows spawn command help.");
 			return;
 		}
 		String arg1 = args[0];
@@ -1008,6 +1010,71 @@ public abstract class CommandsHandler
 					return;
 				}
 				
+			}
+		}
+		else if(arg1.equalsIgnoreCase("spawn"))
+		{
+			if(args.length == 1)
+			{
+				sender.sendMessage("EVENT SPAWN COMMAND:");
+				sender.sendMessage("Usage: /event spawn <entity_type> [ammount]");
+				sender.sendMessage("Description: Spawns certain entity type on your location.");
+				sender.sendMessage("You can only spawn entityes in build world.");
+				sender.sendMessage("You can only spawn up to 20 entityes.");
+				return;
+			}
+			else if(args.length == 2 || args.length == 3)
+			{
+				if(!sender.getWorld().getName().equalsIgnoreCase("world_build"))
+				{
+					sender.sendMessage(ChatColor.RED + "You can only spawn entityes in build world!");
+					return;
+				}
+				EntityType entity = EntityType.fromName(args[1]);
+				if(entity == null)
+				{
+					sender.sendMessage(ChatColor.RED + "Invalid entity type ('" + args[1] + "')!");
+					return;
+				}
+				if(entity == EntityType.ENDER_DRAGON || entity == EntityType.WITHER)
+				{
+					sender.sendMessage("This type of entity is restricted!");
+					return;
+				}
+				if(args.length == 2)
+				{
+					sender.getWorld().spawnEntity(sender.getLocation(), entity);
+					sender.sendMessage("Entity(es) spawned!");
+					return;
+				}
+				int ammount;
+				try
+				{
+					ammount = Integer.parseInt(args[2]);
+				}
+				catch(NumberFormatException e)
+				{
+					sender.sendMessage(ChatColor.RED + "'" + args[2]+ "'" + " is not valid number!");
+					return;
+				}
+
+				if(ammount <= 0)
+				{
+					sender.sendMessage(ChatColor.RED + "Invalid ammount!");
+					return;
+				}
+				if(ammount > 20)
+				{
+					sender.sendMessage(ChatColor.RED + "Maximum ammount for spawning entityes is 20!");
+					return;
+				}
+				
+				for(int i = 0; i < ammount; i++)
+				{
+					sender.getWorld().spawnEntity(sender.getLocation(), entity);
+				}
+				sender.sendMessage("Entity(es) spawned!");
+				return;
 			}
 		}
 		else if (arg1.equalsIgnoreCase("allowinv"))
