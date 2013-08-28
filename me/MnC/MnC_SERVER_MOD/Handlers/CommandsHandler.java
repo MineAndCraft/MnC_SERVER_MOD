@@ -1019,15 +1019,23 @@ public abstract class CommandsHandler
 				sender.sendMessage("EVENT SPAWN COMMAND:");
 				sender.sendMessage("Usage: /event spawn <entity_type> [ammount]");
 				sender.sendMessage("Description: Spawns certain entity type on your location.");
-				sender.sendMessage("You can only spawn entityes in build world.");
-				sender.sendMessage("You can only spawn up to 20 entityes.");
+				sender.sendMessage("You can only spawn entities in build world.");
+				sender.sendMessage("You can only spawn up to 20 entities.");
+				sender.sendMessage("Available entity types:");
+				sender.sendMessage("XPOrb, Arrow, Snowball, Fireball, SmallFireball, " +
+						"WitherSkull, PrimedTnt, FireworksRocketEntity, Creeper, Skeleton, " +
+						"Spider, Giant, Zombie, Slime, Ghast, " +
+						"PigZombie, Enderman, CaveSpider, Silverfish, Blaze, " +
+						"LavaSlime, Bat, Witch, Pig, Sheep, " +
+						"Cow, Chicken, Squid, Wolf, MushroomCow, " +
+						"SnowMan, Ozelot, VillagerGolem, Villager, EnderCrystal");
 				return;
 			}
 			else if(args.length == 2 || args.length == 3)
 			{
 				if(!sender.getWorld().getName().equalsIgnoreCase("world_build"))
 				{
-					sender.sendMessage(ChatColor.RED + "You can only spawn entityes in build world!");
+					sender.sendMessage(ChatColor.RED + "You can only spawn entities in build world!");
 					return;
 				}
 				EntityType entity = EntityType.fromName(args[1]);
@@ -1065,7 +1073,7 @@ public abstract class CommandsHandler
 				}
 				if(ammount > 20)
 				{
-					sender.sendMessage(ChatColor.RED + "Maximum ammount for spawning entityes is 20!");
+					sender.sendMessage(ChatColor.RED + "Maximum ammount for spawning entities is 20!");
 					return;
 				}
 				
