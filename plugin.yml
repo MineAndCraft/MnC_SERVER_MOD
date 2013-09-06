@@ -7,6 +7,8 @@ commands:
         description: Gets Names of Online players
     help:
         description: Prints all possible commands
+    motd:
+        description: Prints the current Message of the Day 
     getcoords:
         description: Prints coordinates of target block
     login:

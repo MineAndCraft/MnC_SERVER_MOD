@@ -230,5 +230,9 @@ public class Chat implements Listener
 		//friend
 		PluginCommand friend = plugin.getCommand("friend");
 		friend.setExecutor(new FriendCommandExecutor());
+		
+		//motd
+		PluginCommand motd = plugin.getCommand("motd");
+		motd.setExecutor(new MotdCommandExecutor());
 	}
 }
