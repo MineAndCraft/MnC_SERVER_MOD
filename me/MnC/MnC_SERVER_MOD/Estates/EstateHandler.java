@@ -245,7 +245,8 @@ public class EstateHandler
 		}
 		
 		markers.remove(player.getName().toLowerCase());
-		
+
+		addResidenceAccess(player.getName().toLowerCase(), residence_name);
 		ChatHandler.SuccessMsg(player, "Pozemek byl vytvoren.");
 		MnC_SERVER_MOD.getInstance().log.info(String.format("Player '%s' created estate named '%s' with coordinates %d,%d,%d,%d",player.getName(),residence_name,left,top,right,bottom));
 		
