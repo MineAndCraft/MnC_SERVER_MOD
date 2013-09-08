@@ -23,7 +23,7 @@ public class VipGUIHandler
 
 	public static ItemStack[] createMainVipGui()
 	{	
-		ItemStack[] items = new ItemStack[5];
+		ItemStack[] items = new ItemStack[6];
 		
 		ItemStack fly = new ItemStack(Material.FEATHER,1);
 		ItemMeta flyItemMeta = fly.getItemMeta();
@@ -59,6 +59,13 @@ public class VipGUIHandler
 		portalMeta.setLore(Arrays.asList(ChatColor.GRAY + "Pomoci teto sikovne", ChatColor.GRAY + "vecicky, se muzete teleportovat",ChatColor.GRAY + "na ruzne pozice."));
 		portal.setItemMeta(portalMeta);
 		items[4] = portal;
+		
+		ItemStack craftingTable = new ItemStack(Material.WORKBENCH,1);
+		ItemMeta craftingTableMeta = craftingTable.getItemMeta();
+		craftingTableMeta.setDisplayName(ChatColor.AQUA + (ChatColor.BOLD + "Crafting Table"));
+		craftingTableMeta.setLore(Arrays.asList(ChatColor.GRAY + "Otevre virtualni Crafting Table"));
+		craftingTable.setItemMeta(craftingTableMeta);
+		items[5] = craftingTable;
 		
 		return items;
 	}
@@ -234,6 +241,11 @@ public class VipGUIHandler
 					teleport.setItem(26, createExitButton());
 					eventPlayer.openInventory(teleport);
 					
+				} else if(ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()).equalsIgnoreCase("Crafting Table")){
+					
+					eventPlayer.closeInventory();
+					
+					eventPlayer.chat("/vip craft");
 				}
 
 			}

@@ -218,6 +218,7 @@ public abstract class CommandsHandler
 			sender.sendMessage("/vip nohunger - Utisi Vas hlad.");
 			sender.sendMessage("/vip fly - Podprikaz letani.");
 			sender.sendMessage("/vip clearinventory (clear) <item id | all>  -  Odstrani z vaseho inventare vsechny itemy daneho id.");
+			sender.sendMessage("/vip craft - Otevre crafting table");
 			sender.sendMessage("/vip gui - Otevre GUI pro vip funkce");
 		}
 		else
@@ -506,6 +507,10 @@ public abstract class CommandsHandler
 				{
 					sender.sendMessage("Usage: /vip clearinventory (clear) <item id | all>");
 				}
+			}
+			else if(subCommand.equals("craft"))
+			{
+				sender.openWorkbench(null, true);
 			}
 			else if(subCommand.equals("gui"))
 			{
