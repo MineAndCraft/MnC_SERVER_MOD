@@ -14,6 +14,7 @@ import me.MnC.MnC_SERVER_MOD.manor.Manor;
 import me.MnC.MnC_SERVER_MOD.manor.ManorManager;
 import me.MnC.MnC_SERVER_MOD.rpg.BonusDrop;
 import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
+import me.MnC.MnC_SERVER_MOD.util.SpongeUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -235,8 +237,8 @@ public class BlockListener implements Listener
 			int x = block.getX();
 			int y = block.getY();
 			int z = block.getZ();
-			this.clearWaterSponge(world, x, y, z, 4);
-			block.setTypeId(12);
+			SpongeUtil.clearWater(world, x, y, z);
+			SpongeUtil.setUsedAsSponge(block);
 		}
 	}
 	
@@ -283,22 +285,31 @@ public class BlockListener implements Listener
 		}
 	}
 	
-	private void clearWaterSponge(World world, int x, int y, int z, int radius)
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onBlockFromTo(BlockFromToEvent event)
 	{
-		for (int cx = -radius; cx <= radius; cx++) 
-		{
-			for (int cy = -radius; cy <=radius; cy++) 
-			{
-				for (int cz = -radius; cz <= radius; cz++) 
-				{
-					if (world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 8 || world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 9) //isWater?
-					{
-						world.getBlockAt(x + cx, y + cy, z + cz).setTypeId(0);
-					}
-				}
-			}
-		}
-	}
+        World world = event.getBlock().getWorld();
+        Block blockTo = event.getToBlock();
+        
+        int ox = blockTo.getX();
+        int oy = blockTo.getY();
+        int oz = blockTo.getZ();
 
+        for (int cx = -4; cx <= 4; cx++)
+        {
+        	for (int cy = -4; cy <= 4; cy++) 
+        	{
+        		for (int cz = -4; cz <= 4; cz++) 
+        		{
+        			Block sponge = world.getBlockAt(ox + cx, oy + cy, oz + cz);
+        			if (sponge.getTypeId() == 19 || SpongeUtil.wasUsedAsSponge(sponge)) 
+        			{
+                            event.setCancelled(true);
+                            return;
+        			}
+        		}
+        	}
+        }
+	}
 	public MnC_SERVER_MOD plugin;
 }
