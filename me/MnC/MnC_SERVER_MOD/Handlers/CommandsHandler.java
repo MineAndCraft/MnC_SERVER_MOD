@@ -743,6 +743,10 @@ public abstract class CommandsHandler
 	{
 		if(args.length==1)
 		{
+			if(plugin.vipManager.isVip(sender.getName()))
+			{
+				plugin.vipManager.SetLastTeleportLoc(sender.getName(), sender.getLocation());
+			}
 			Teleport(sender,args[0]);
 		}
 	}
