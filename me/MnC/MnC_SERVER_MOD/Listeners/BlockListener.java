@@ -294,12 +294,13 @@ public class BlockListener implements Listener
         int ox = blockTo.getX();
         int oy = blockTo.getY();
         int oz = blockTo.getZ();
-
-        for (int cx = -4; cx <= 4; cx++)
+        int waterClearRadius = SpongeUtil.getClearWaterRadius();
+        
+        for (int cx = -waterClearRadius; cx <= waterClearRadius; cx++)
         {
-        	for (int cy = -4; cy <= 4; cy++) 
+        	for (int cy = -waterClearRadius; cy <= waterClearRadius; cy++) 
         	{
-        		for (int cz = -4; cz <= 4; cz++) 
+        		for (int cz = -waterClearRadius; cz <= waterClearRadius; cz++) 
         		{
         			Block sponge = world.getBlockAt(ox + cx, oy + cy, oz + cz);
         			if (sponge.getTypeId() == 19 || SpongeUtil.wasUsedAsSponge(sponge)) 

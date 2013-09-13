@@ -12,17 +12,17 @@ import org.bukkit.metadata.MetadataValue;
 
 public class SpongeUtil 
 {
-	private static final int CLEAR_WATER_RADIUS = 4;
+	private static final int WATER_CLEAR_RADIUS = 4;
 	private static final FixedMetadataValue USED_SPONGE_METADATA = new FixedMetadataValue(MnC_SERVER_MOD.getInstance(), true);
 	private static final String USED_SPONGE_METADATA_KEY = "mnc.plugin.sponge";
 	
 	public static void clearWater(World world, int x, int y, int z)
 	{
-		for (int cx = -CLEAR_WATER_RADIUS; cx <= CLEAR_WATER_RADIUS; cx++) 
+		for (int cx = -WATER_CLEAR_RADIUS; cx <= WATER_CLEAR_RADIUS; cx++) 
 		{
-			for (int cy = -CLEAR_WATER_RADIUS; cy <=CLEAR_WATER_RADIUS; cy++) 
+			for (int cy = -WATER_CLEAR_RADIUS; cy <=WATER_CLEAR_RADIUS; cy++) 
 			{
-				for (int cz = -CLEAR_WATER_RADIUS; cz <= CLEAR_WATER_RADIUS; cz++) 
+				for (int cz = -WATER_CLEAR_RADIUS; cz <= WATER_CLEAR_RADIUS; cz++) 
 				{
 					if (world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 8 || world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 9) //isWater?
 					{
@@ -54,5 +54,10 @@ public class SpongeUtil
 			}
 		}
 		return false;
+	}
+	
+	public static int getClearWaterRadius()
+	{
+		return WATER_CLEAR_RADIUS;
 	}
 }
