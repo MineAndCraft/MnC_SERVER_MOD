@@ -14,6 +14,7 @@ import me.MnC.MnC_SERVER_MOD.rpg.PlayerProfession;
 import me.MnC.MnC_SERVER_MOD.basicworld.BasicWorld;
 
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -154,6 +155,21 @@ public class EntityListener implements Listener
 					Player target = (Player)event.getEntity();
 					plugin.arena.ArenaKill(damager, target);
 					((PlayerDeathEvent)e).setDeathMessage(null);
+				}
+				else if((event.getDamager() instanceof Arrow) && (event.getEntity() instanceof Player))
+				{
+					Arrow arrow = (Arrow) event.getDamager();
+					if(arrow.getShooter() instanceof Player)
+					{
+						e.getDrops().clear();
+						Player damager = (Player) arrow.getShooter();
+						Player target = (Player) event.getEntity();
+						if(!damager.getName().equals(target.getName()))
+						{
+							plugin.arena.ArenaKill(damager, target);
+							((PlayerDeathEvent)e).setDeathMessage(null);
+						}
+					}
 				}
 			}
 			return;
