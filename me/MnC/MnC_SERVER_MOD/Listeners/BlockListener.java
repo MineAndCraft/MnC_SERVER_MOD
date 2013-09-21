@@ -288,29 +288,29 @@ public class BlockListener implements Listener
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockFromTo(BlockFromToEvent event)
 	{
-        World world = event.getBlock().getWorld();
-        Block blockTo = event.getToBlock();
+        	World world = event.getBlock().getWorld();
+        	Block blockTo = event.getToBlock();
         
-        int ox = blockTo.getX();
-        int oy = blockTo.getY();
-        int oz = blockTo.getZ();
-        int waterClearRadius = SpongeUtil.getClearWaterRadius();
+        	int ox = blockTo.getX();
+        	int oy = blockTo.getY();
+        	int oz = blockTo.getZ();
+        	int waterClearRadius = SpongeUtil.getClearWaterRadius();
         
-        for (int cx = -waterClearRadius; cx <= waterClearRadius; cx++)
-        {
-        	for (int cy = -waterClearRadius; cy <= waterClearRadius; cy++) 
+		for (int cx = -waterClearRadius; cx <= waterClearRadius; cx++)
         	{
-        		for (int cz = -waterClearRadius; cz <= waterClearRadius; cz++) 
+        		for (int cy = -waterClearRadius; cy <= waterClearRadius; cy++) 
         		{
-        			Block sponge = world.getBlockAt(ox + cx, oy + cy, oz + cz);
-        			if (sponge.getTypeId() == 19 || SpongeUtil.wasUsedAsSponge(sponge)) 
+        			for (int cz = -waterClearRadius; cz <= waterClearRadius; cz++) 
         			{
-                            event.setCancelled(true);
-                            return;
+        				Block sponge = world.getBlockAt(ox + cx, oy + cy, oz + cz);
+        				if (sponge.getTypeId() == 19 || SpongeUtil.wasUsedAsSponge(sponge)) 
+        				{
+                            			event.setCancelled(true);
+                            			return;
+        				}
         			}
         		}
         	}
-        }
 	}
 	public MnC_SERVER_MOD plugin;
 }
