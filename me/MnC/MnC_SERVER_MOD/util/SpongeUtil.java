@@ -39,6 +39,33 @@ public class SpongeUtil
 		sponge.setMetadata(USED_SPONGE_METADATA_KEY, USED_SPONGE_METADATA);
 	}
 	
+	public static boolean isNearbyWater(Block block)
+	{
+		int x = block.getX();
+		int y = block.getY();
+		int z = block.getZ();
+		World world = block.getWorld();
+		return isNearbyWater(world, x, y, z);
+	}
+	
+	public static boolean isNearbyWater(World world, int x, int y, int z)
+	{
+		for (int cx = -WATER_CLEAR_RADIUS; cx <= WATER_CLEAR_RADIUS; cx++) 
+		{
+			for (int cy = -WATER_CLEAR_RADIUS; cy <=WATER_CLEAR_RADIUS; cy++) 
+			{
+				for (int cz = -WATER_CLEAR_RADIUS; cz <= WATER_CLEAR_RADIUS; cz++) 
+				{
+					if (world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 8 || world.getBlockTypeIdAt(x + cx, y + cy, z + cz) == 9)
+					{
+							return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static boolean wasUsedAsSponge(Block block)
 	{
 		List<MetadataValue> metaList = block.getMetadata(USED_SPONGE_METADATA_KEY);
