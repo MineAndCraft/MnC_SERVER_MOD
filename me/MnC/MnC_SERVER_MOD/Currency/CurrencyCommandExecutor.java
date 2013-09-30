@@ -57,7 +57,7 @@ public class CurrencyCommandExecutor implements CommandExecutor
 				int amount = Integer.parseInt(args[2]);
 				if(subCommand.matches("send"))
 				{
-					if(plugin.currencyManager.getBalance(sender.getName()) >= amount)
+					if(plugin.currencyManager.getBalance(sender.getName()) >= amount && amount > 0)
 					{
 						if(plugin.currencyManager.addCredits(player, amount))
 						{
@@ -75,7 +75,7 @@ public class CurrencyCommandExecutor implements CommandExecutor
 							ChatHandler.FailMsg(sender, "Kredity se nepodarilo poslat. Zkontrolujte prosim spravnost zadaneho nicku.");
 					}
 					else
-						ChatHandler.FailMsg(sender, "Na tuto akci nemate dostatek kreditu");
+						ChatHandler.FailMsg(sender, "Na tuto akci nemate dostatek kreditu (Kredity nemuzou byt zaporne)!");
 				}
 				else if(subCommand.equals("ftbtransfer"))
 				{
